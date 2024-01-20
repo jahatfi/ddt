@@ -396,6 +396,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
         state['Exception'] = {}
         state['Exception']['Type'] = str(type(caught_exception))
         state['Exception']['message'] = str(caught_exception)
+        this_metadata.needs_pytest = True
 
     if isinstance(result, DataFrame):
         state['Result'] = f"pd.DataFrame.from_dict({result.to_dict()})"
@@ -478,6 +479,7 @@ class FunctionMetaData(Jsonable):
                     test_coverage:dict = None,
                     types_in_use:set = None,
                     unified_test_coverage:set = None,
+                    needs_pytest:bool = False
                 ):
         # These properties are always provided
         self.name = name
@@ -500,7 +502,7 @@ class FunctionMetaData(Jsonable):
             self.unified_test_coverage = set()
         else:
             self.unified_test_coverage = unified_test_coverage
-
+        self.needs_pytest = needs_pytest
 
         #self.exceptions = exceptions
         # This last property is created programmatically
@@ -560,6 +562,7 @@ class FunctionMetaData(Jsonable):
         result.append(self.test_coverage.__repr__())
         result.append(self.types_in_use.__repr__())
         result.append(self.unified_test_coverage.__repr__())
+        result.append(self.needs_pytest.__repr__())
         result.append(')')
         #logger.critical(f"{result=}")
         return ','.join(result)
@@ -1141,7 +1144,7 @@ def meta_program_function_call( this_state:dict,
     else:
         call = f"{file_stem}.{func_name}(*args{kwargs_str})\n"
 
-    if "Exception" in this_state:
+    if 'Exception' in this_state:
         e_type = this_state['Exception']['Type']
         e_type =  re.search("<class '([^']+)'", e_type).groups()[0]
         e_str = this_state['Exception']['message']
@@ -1294,10 +1297,13 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     imports = [
         f"import {file_stem}\n",
-        f"import pytest\n",
+
         # TODO Add any specific modules for whom repr doesn't work
         #"import pandas as pd\n"
     ]
+
+    if function_metadata.needs_pytest:
+        imports.append(f"import pytest\n")
 
     # Only functions/methods that access
     # global variables will need to be patched
