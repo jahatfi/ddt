@@ -10,7 +10,7 @@ import pprint
 import logging
 import coverage
 import subprocess
-#import pandas as pd
+import pandas as pd
 
 from dis import dis
 from io import StringIO
@@ -88,8 +88,9 @@ def unit_test_generator_decorator(func:callable):
             logger.warning(f"{e=}")
             raise e
     return unit_test_generator_decorator_inner
-'''
+
 def _pandas_df_repr(df: pd.DataFrame)->str:
+    '''
     Sadly, the 'repr' method for Pandas DataFrames does not work the
     same as 'repr' for built-in types.  Specifically, while 'repr' on
     built-in types (strings, lists, dicts, etc) produces valid Python
@@ -98,10 +99,11 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
     printed as a table.  The best alternative for non-empty dataframes is
     https://stackoverflow.com/questions/67845199 by user Silveri
     Overwrite the native Pandas DataFram repr() method with that approach.
+    '''
     return f"DataFrame.from_dict({df.to_dict()})"
 
 pd.DataFrame.__repr__ = _pandas_df_repr
-'''
+
 @unit_test_generator_decorator
 def sorted_set_repr(obj: set):
     """
@@ -119,7 +121,7 @@ def sorted_set_repr(obj: set):
     return repr(obj)
 
 # TODO Import any modules here for whom 'repr' doesn't work
-#from pandas import DataFrame
+from pandas import DataFrame
 
 pp = pprint.PrettyPrinter(indent=3)
 
@@ -218,13 +220,13 @@ def do_the_decorator_thing(func, *args, **kwargs):
         if callable(arg):
             logger.debug(f"{func_name} decorator got {arg.__module__}.{arg.__qualname__} as callable")
             if arg.__module__ == "__main__":
-                file_name = re.search(r", file \"\.*([\w]+).py\",", str(arg.__code__))
+                file_name = re.search(r"([\w]+).py", str(arg.__code__))
                 if file_name:
                     file_name = file_name.groups()[0]
-                    logger.info(f"{file_name}.{arg.__name__}")
+                    logger.debug(f"{file_name}.{arg.__name__}")
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
-                    logger.critical("OOF")
+                    logger.critical(f"NO FILENAME FOUND!: {re.escape(str(arg.__code__))=}")
             #logger.critical(dir(arg))
             #logger.critical(arg.__module__)
             else:
@@ -260,10 +262,14 @@ def do_the_decorator_thing(func, *args, **kwargs):
                     all_metadata[func_name] = this_metadata
                     return x
             else:
-                #logger.debug(f"repr arg: {arg} {type(arg).__module__=}")
+                #logger.critical(f"repr arg: {arg} {type(arg).__module__=}")
                 args_copy.append(repr(arg))
         else:
             args_copy.append("\""+re.sub(r"(?<!\\) \"", r'\\"',arg)+"\"")
+        #if "__main__" in args_copy[-1] and "at_index" in args_copy[-1]:
+        #    logger.critical(args_copy)
+    if len(args) != len(args_copy):
+        logger.critical(f"{args=} != {args_copy=}")
 
     this_metadata.types_in_use |= new_types_in_use
     state['Before']['args'] = args_copy
@@ -391,8 +397,8 @@ def do_the_decorator_thing(func, *args, **kwargs):
         state['Exception']['Type'] = str(type(caught_exception))
         state['Exception']['message'] = str(caught_exception)
 
-    #if isinstance(result, DataFrame):
-    #    state['Result'] = f"pd.DataFrame.from_dict({result.to_dict()})"
+    if isinstance(result, DataFrame):
+        state['Result'] = f"pd.DataFrame.from_dict({result.to_dict()})"
     elif isinstance(result, str):
         state['Result'] = result
     else:
@@ -765,7 +771,11 @@ def get_all_types(loc: str, obj:any, import_modules:bool=True)->set:
     if callable(obj):
         if hasattr(obj, "__code__"):
             logger.debug(f"{loc} {obj.__module__}.{obj.__name__} as callable")
-            file_name = re.search(r", file \"\.*([\w]+).py\",", str(obj.__code__))
+            # TODO: This is
+            # 1. Redundant, the line below is duplicated elsewhere
+            # 2. Perhaps not complete, I may need the (partial)
+            #    path to the python file, not such the file itself
+            file_name = re.search(r"([\w]+).py", str(obj.__code__))
             if file_name:
                 file_name = file_name.groups()[0]
             if file_name:
@@ -1303,7 +1313,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         if not suffix:
             logger.error("NO SUFFIX")
             continue
-
         if prefix == "__main__":
             custom_imports.append(f"from {file_stem} import {suffix}\n")
         elif prefix:
@@ -1320,6 +1329,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     # Delete all references to "__main__"
     test_str_list = [re.sub("__main__.", "", x) for x in test_str_list]
+    if not test_str_list:
+        test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
     final_result = test_str_list
     final_result = "".join([x for x in final_result]).encode()
     #logger.critical(final_result)
