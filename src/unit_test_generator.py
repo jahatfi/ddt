@@ -1293,14 +1293,21 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     if needs_monkeypatch:
         header.append(tab + "monkeypatch = MonkeyPatch()\n")
 
+    imports = []
+    # TODO Add to the import list any specific modules for
+    # which repr doesn't work, e.g.
+    # imports.append(import pandas as pd\n")
+
     test_str_list += test_str_list_2
-
-    imports = [
-        f"import {file_stem}\n",
-
-        # TODO Add any specific modules for whom repr doesn't work
-        #"import pandas as pd\n"
-    ]
+    # Delete all references to "__main__", it's needless
+    test_str_list = [re.sub("__main__.", "", x) for x in test_str_list]
+    if not test_str_list:
+        # If this function was never executed, its coverage is 0%
+        # Raise an exception to alert the user
+        # Note that we don't need any imports at all
+        test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
+    else:
+        imports.append(f"import {file_stem}\n")
 
     if function_metadata.needs_pytest:
         imports.append(f"import pytest\n")
@@ -1332,11 +1339,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     logger.debug(f"{func_name=}")
     result_file = tests_dir.joinpath(f"test_{func_name.replace('.','_')}.py")
-
-    # Delete all references to "__main__"
-    test_str_list = [re.sub("__main__.", "", x) for x in test_str_list]
-    if not test_str_list:
-        test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
     final_result = test_str_list
     final_result = "".join([x for x in final_result]).encode()
     #logger.critical(final_result)
