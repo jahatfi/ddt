@@ -1,6 +1,9 @@
 # Development Driven Testing, or "Self-Testing Code"
 
-## Setup
+## Setup (TODO: Fill this out more)
+Use poetry 
+
+## Old Setup (Outdated - not guaranteed to work as of 20 Jan 2024)
 Clone this repo to your local environment:  
 `git clone $git_repo_url`  
 Change directories into the newly cloned repo:  
@@ -27,7 +30,7 @@ Linux/Unix Users (Untested on Mac but should work):
 The easiest way to get started it to run one of the provided eamples.
 Note that the various functions and methods in the example Python files 
 are all decorated with the @unit_test_generator_decorator.  
-\# TODO Decorate a class constructor!   
+
 This is the decorator that enables automatic generation of unit tests.
 
 Copy the unit_test_generator.py file straight into the example folders  
@@ -42,13 +45,13 @@ Run the code with Python, e.g.
     `python fizzbuzz.py`
 
 Relevant files in directory of ..\ddt\example_oo_car **prior** to running `python car.py`:
-```
+```python
 | car.py                         # The orginal (untested) code that needs tests!
 | unit_test_generator.py         # Local copy (copied with copy_unit_test_generator.{sh,bat})
 ```
 Relevant files in directory of ..\ddt\example_oo_car **after** running `python car.py`:  
 Note the **.json** and **test_*.py** files created after running the command above:
-```
+```python
 | Car.change_steer_angle.json    # Saved metadata for this decorated method
 | Car.gas.json                   # Saved metadata for this decorated method
 | car.py
@@ -59,7 +62,7 @@ Note the **.json** and **test_*.py** files created after running the command abo
 ## Notes:
 There is no need to monkey-unpatch (i.e. call `monkeypatch.delattr()`) variables after assertions to clean up the environment for the next function call, as every patchable variable on which a function depends is freshly patched before callling the function and asserting the results.
 To demonstrate this idea, see these results from test_divideints.py:
-```
+```python
     # Coverage: 45.45% of function lines [17-27]
     # Covered Lines: 17-18;21;24;27
     # Lines not covered: 19-20;22-23;25-26
@@ -97,22 +100,25 @@ used by the tested function will be set before every call.
 **Solution:**  Check the cutoff parameter.  It might be to low for the desired executions to be hit.  Try setting it to 50 to start.
 
 
-##  Paper TODO:
+## Code TODO:
+[] Decorate a class constructor!   
 
-[] Prevent deadlocks by using a unique filename for each coverage or None to do it in memory (make this configurable)
+[X] Prevent deadlocks by using a unique filename for each coverage or None to do it in memory (make this configurable)
 
 [X] What if the decorated function throws an exception?  Catch all exceptions, save it, then re-raise it.  The test should assert the same exception is thrown.
 
-[X] Methods differ from classes
+[X] Do methods differ from classes?  Decorate both.
+
+## Paper TODO
 
 Last: Update section references, e.g. "In sectionV/% I'll discuss..."
 
 | Item         | Status (master) |
 |--------------|-----------|
-|test_auto_generate_tests.py||
-|test_count_objects.py||
-|test_coverage_str_helper.py||
-|test_divide_ints.py||
-|test_gen_coverage_list.py||
-|test_meta_program_function_call.py||
+|test_auto_generate_tests.py|Working|
+|test_count_objects.py|Not used|
+|test_coverage_str_helper.py|Working|
+|test_divide_ints.py|Working|
+|test_gen_coverage_list.py|Working|
+|test_meta_program_function_call.py|Working|
 |test_return_function_line_numbers_and_accessed_globals|Working|

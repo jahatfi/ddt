@@ -1,0 +1,5 @@
+coverage
+black
+pandas
+pyarrow
+pytest
