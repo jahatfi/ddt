@@ -1,10 +1,10 @@
 import re
+import os
 import sys
 import json
 import copy
 import time
 import types
-import hashlib
 import inspect
 import pprint
 import logging
@@ -15,9 +15,9 @@ import pandas as pd
 from dis import dis
 from io import StringIO
 from functools import wraps
+# NOTE: WindowsPath is in fact required is running on Windows!
 from pathlib import Path, WindowsPath
 from json import JSONEncoder
-from multiprocessing import Lock
 from collections import defaultdict
 from subprocess import CalledProcessError
 from types import MappingProxyType
@@ -1181,8 +1181,8 @@ def meta_program_function_call( this_state:dict,
 
 @unit_test_generator_decorator
 def auto_generate_tests(function_metadata:FunctionMetaData,
-                        state:dict, func_name:str, source_file,
-                        tests_dir:Path, indent_size=2):
+                        state:dict, func_name:str, source_file:Path,
+                        tests_dir:Path, indent_size:int=2):
     """
     This is the function that can automatically create a unit
     test file for each decorated function.
@@ -1291,7 +1291,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     # What if a global variable is written to but not read from?
     # handle that here, otherwise I'd have to put this code in the loop above
     if needs_monkeypatch:
-        header.append(tab + "monkeypatch = MonkeyPatch()\n")
+        header.append(f"{tab}monkeypatch = MonkeyPatch()\n")
 
     imports = []
     # TODO Add to the import list any specific modules for
@@ -1307,10 +1307,33 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         # Note that we don't need any imports at all
         test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
     else:
-        imports.append(f"import {file_stem}\n")
+        # TODO: This block feels messy; clean it up if possible
+        # Convert the relative path to the source file to a proper python import
+        rel_path = os.path.relpath(source_file, ".")
+        # Replace all slashes with periods after dropping any leading "../"
+        # Windows uses backslashes
+        rel_path = re.sub(r"\.\.\\", "", rel_path)
+        # Other other OS's use forward slashes
+        rel_path = re.sub(r"\.\./", "", rel_path)
+        # Windows uses backslashes
+        rel_path = re.sub(r"\\", ".", rel_path)
+        # Other other OS's use forward slashes
+        rel_path = re.sub(r"/", ".", rel_path)
+        # Trim off the trailing ".py"
+        if rel_path.endswith(".py"):
+            rel_path = rel_path[:-3]
+        rel_path = rel_path.split('.')
+        file_stem = '.'.join(rel_path[:-1])
+        suffix = rel_path[-1]
+        this_import = None
+        if file_stem:
+            this_import = f"from {file_stem} import {suffix}\n"
+        else:
+            this_import = f"import {rel_path[0]}\n"
+        imports.append(this_import)
 
     if function_metadata.needs_pytest:
-        imports.append(f"import pytest\n")
+        imports.append("import pytest\n")
 
     # Only functions/methods that access
     # global variables will need to be patched
@@ -1334,7 +1357,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             custom_imports.append(f"import {suffix}\n")
 
     if custom_imports:
-        imports.append("# Procedurally generated imports below:\n")
+        imports.append("\n")
+        imports.append(f"# Now import modules specific to {func_name}:\n")
     imports += custom_imports
 
     logger.debug(f"{func_name=}")
@@ -1342,18 +1366,24 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     final_result = test_str_list
     final_result = "".join([x for x in final_result]).encode()
     #logger.critical(final_result)
-    hash_object = hashlib.sha256(final_result)
-    hex_dig = hash_object.hexdigest()
+
     if "pytest" in sys.modules:
-        # Return hash of resulting string here
+        """
+        Return hash of resulting string here,
+        this is used when self-testing auto_generate_tests with
+        unit_test_generator_decorator
+        """
         return final_result
+
     with open(result_file, "w") as st:
-        st.writelines(imports)
-        st.writelines(header)
-        st.writelines(test_str_list)
+        for list in [imports, header, test_str_list]:
+            if list:
+                st.writelines(list)
+
     logger.info(f"Wrote to {result_file}")
 
     # Format the generated Python file with black for easier reading
+
     try:
         subprocess.run( f"black {result_file}".split(),
                         check=True,
@@ -1367,5 +1397,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(f"\n{e.stdout.decode()}")
 
     logger.info(f"Re-formatted {result_file} with black formatter")
+
     # Return hash of resulting string here
     return final_result
