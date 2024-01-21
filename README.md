@@ -29,7 +29,7 @@ Linux/Unix Users (Untested on Mac but should work):
 
 The easiest way to get started it to run one of the provided eamples.
 Note that the various functions and methods in the example Python files 
-are all decorated with the @unit_test_generator_decorator.  
+are all decorated with the `@unit_test_generator_decorator`.  
 
 This is the decorator that enables automatic generation of unit tests.
 
@@ -38,16 +38,17 @@ Copy the unit_test_generator.py file straight into the example folders
 `.\copy_unit_test_generator.bat` # Windows  
 `./copy_unit_test_generator.sh`  # Linux, Unix, etc  
 
-`cd` into the chosen example directory (e.g. example_oo_car, example_procedural_division, etc)
-Run the code with Python, e.g.
-    `python car.py` or
-    `python divide_ints.py` or
+`cd` into the chosen example directory (e.g. example_all_types) (more examples to come)  
+Run the code with Python, e.g.  
+    `python all_types.py` or  (later once new examples are added)   
+    `python car.py` or  (later once new examples are added)   
+    `python divide_ints.py` or  (later once new examples are added)   
     `python fizzbuzz.py`
 
 Relevant files in directory of ..\ddt\example_oo_car **prior** to running `python car.py`:
 ```python
-| car.py                         # The orginal (untested) code that needs tests!
-| unit_test_generator.py         # Local copy (copied with copy_unit_test_generator.{sh,bat})
+| car.py                  # The orginal (untested) code that needs tests!
+| unit_test_generator.py  # Local copy (copied with copy_unit_test_generator.{sh,bat})
 ```
 Relevant files in directory of ..\ddt\example_oo_car **after** running `python car.py`:  
 Note the **.json** and **test_*.py** files created after running the command above:
@@ -61,7 +62,8 @@ Note the **.json** and **test_*.py** files created after running the command abo
 ```
 ## Notes:
 There is no need to monkey-unpatch (i.e. call `monkeypatch.delattr()`) variables after assertions to clean up the environment for the next function call, as every patchable variable on which a function depends is freshly patched before callling the function and asserting the results.
-To demonstrate this idea, see these results from test_divideints.py:
+To demonstrate this idea, see these results from test_divide_ints.py:
+### TODO: Add other examples (including this one) to the repo:
 ```python
     # Coverage: 45.45% of function lines [17-27]
     # Covered Lines: 17-18;21;24;27
@@ -111,8 +113,11 @@ used by the tested function will be set before every call.
 
 ## Paper TODO
 
-Last: Update section references, e.g. "In sectionV/% I'll discuss..."
+[ ] Add other examples to the repo
 
+[ ] Last: Update section references, e.g. "In sectionV/% I'll discuss..."
+
+## Status
 | Item         | Status (master) |
 |--------------|-----------|
 |test_auto_generate_tests.py|Working|
