@@ -27,18 +27,13 @@ Linux/Unix Users (Untested on Mac but should work):
 
 ## Runing the code
 
-The easiest way to get started it to run one of the provided eamples.
+The easiest way to get started is to run one of the provided examples.
 Note that the various functions and methods in the example Python files 
-are all decorated with the `@unit_test_generator_decorator`.  
+are all decorated with `@unit_test_generator_decorator`.  
 
 This is the decorator that enables automatic generation of unit tests.
 
-Copy the unit_test_generator.py file straight into the example folders  
-**\# (TODO: figure out the import issue to make this unnecessary)**  
-`.\copy_unit_test_generator.bat` # Windows  
-`./copy_unit_test_generator.sh`  # Linux, Unix, etc  
-
-`cd` into the chosen example directory (e.g. example_all_types) (more examples to come)  
+`cd` into the chosen example directory (e.g. tests/example_all_types/) (more examples to come)  
 Run the code with Python, e.g.  
     `python all_types.py` or  (later once new examples are added)   
     `python car.py` or  (later once new examples are added)   
