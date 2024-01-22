@@ -8,6 +8,7 @@ import types
 import inspect
 import pprint
 import logging
+import importlib
 import coverage
 import subprocess
 import pandas as pd
@@ -32,6 +33,18 @@ logger.setLevel(logging.DEBUG)
 # this value as a percent, e.g. 80 = 80% coverage
 coverage_cutoff = 100
 recursion_depth_per_decoratee = defaultdict(int)
+
+
+def fullname(o:any):
+    """
+    Return the "Fully Qualified Name (FQN) of a provided Python
+    object. Copied on 21 jAN 2024 directly from Greg Bacon's answer on
+    https://stackoverflow.com/questions/2020014/
+    """
+    module = o.__class__.__module__
+    if module is None or module == str.__class__.__module__:
+        return o.__class__.__name__
+    return module + '.' + o.__class__.__name__
 
 def unit_test_generator_decorator(func:callable):
     """
@@ -253,6 +266,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
                     logging.debug(f"Possible bug here for update_global: {class_repr=}")
                 #logger.debug(f"Got class!: {class_repr}")
                 try:
+                    logger.info(class_repr)
                     eval(class_repr)
                     args_copy.append(class_repr)
                 except SyntaxError as e:
@@ -261,6 +275,37 @@ def do_the_decorator_thing(func, *args, **kwargs):
                     x = func(*args, **kwargs)
                     all_metadata[func_name] = this_metadata
                     return x
+                except NameError as e:
+                    '''
+                    # "arg" is likely an object from another module
+                    # Dynamically import that module
+                    for fi, f in enumerate(inspect.stack()[::-1]):
+                        F = inspect.getframeinfo(f[0])
+                        logger.critical(" "*fi+f"{F.function=} ")
+                    logger.info(f"{arg=}\n{inspect.getfile(arg.__class__)=}\n{os.getcwd()=}\n{__name__=}")
+                    fqn = fullname(arg)
+                    logger.info(f"{fqn=}")
+
+                    if fqn.startswith("__main__"):
+
+                        ext_module_file = inspect.getfile(arg.__class__)
+                        logger.info(ext_module_file)
+                        matched = re.search("(\w+).py", ext_module_file)
+                        if matched:
+                            ext_module_file = matched.groups()[0]
+                            logger.info(ext_module_file)
+                            fqn = re.sub("__main__", ext_module_file, fqn)
+                            logger.info(fqn)
+                    my_module = importlib.import_module("car")
+                    #importlib.__import__
+                    my_class = getattr(my_module, "Car")
+                    my_instance = my_class()
+                    logger.critical(my_instance)
+                    #eval(class_repr)
+                    args_copy.append(class_repr)
+                    #raise e
+                    '''
+                    ...
             else:
                 #logger.critical(f"repr arg: {arg} {type(arg).__module__=}")
                 args_copy.append(repr(arg))
@@ -809,7 +854,19 @@ def get_all_types(loc: str, obj:any, import_modules:bool=True)->set:
             logger.debug(f"{loc} {type_str=} < I need this non-callable FQDN!")
             parsed_type = re.match("<class '([^']+)'>", type_str)
             if parsed_type:
-                return set([parsed_type.groups()[0]])
+                parsed_type = parsed_type.groups()[0]
+                if parsed_type.startswith("__main__"):
+                    ext_module_file = inspect.getfile(obj.__class__)
+                    logger.info(ext_module_file)
+                    matched = re.search("(\w+).py", ext_module_file)
+                    if matched:
+                        ext_module_file = matched.groups()[0]
+                        logger.info(ext_module_file)
+                        fqn = re.sub("__main__", ext_module_file, parsed_type)
+                        logger.info(fqn)
+                        return set([fqn])
+
+                return set([parsed_type])
 
     if isinstance(obj, dict):
         for k,v in obj.items():
@@ -1326,11 +1383,19 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         file_stem = '.'.join(rel_path[:-1])
         suffix = rel_path[-1]
         this_import = None
+
         if file_stem:
             this_import = f"from {file_stem} import {suffix}\n"
         else:
-            this_import = f"import {rel_path[0]}\n"
-        imports.append(this_import)
+            break_flag = False
+            for type in function_metadata.types_in_use:
+                if type.startswith(f"{rel_path[0]}."):
+                    break_flag = True
+                break
+            if not break_flag:
+                this_import = f"import {rel_path[0]}\n"
+        if this_import:
+            imports.append(this_import)
 
     if function_metadata.needs_pytest:
         imports.append("import pytest\n")
@@ -1350,7 +1415,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error("NO SUFFIX")
             continue
         if prefix == "__main__":
-            custom_imports.append(f"from {file_stem} import {suffix}\n")
+            if file_stem:
+                custom_imports.append(f"from {file_stem} import {suffix}\n")
         elif prefix:
             custom_imports.append(f"from {prefix} import {suffix}\n")
         elif suffix:
