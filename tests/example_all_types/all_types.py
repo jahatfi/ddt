@@ -69,6 +69,14 @@ def main():
         except Exception as e:
             logger.error(e)
 
+    my_dict = {
+        10: set([90, 95, 100]),
+        3: set([20, 40, 80]),
+        -1: set([x*x for x in range(10)]),
+    }
+
+    logger.info(f"{get_key_to_set_with_highest_value(my_dict)=}")
+
     """
     The generate_all_tests_and_metadata() function takes 2 Paths:
     1. The output directory for the unit tests (.py)
