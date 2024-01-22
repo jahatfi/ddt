@@ -27,9 +27,9 @@ Linux/Unix Users (Untested on Mac but should work):
 
 ## Runing the code
 
-The easiest way to get started it to run one of the provided eamples.
+The easiest way to get started it to run one of the provided examples.
 Note that the various functions and methods in the example Python files 
-are all decorated with the `@unit_test_generator_decorator`.  
+are all decorated with `@unit_test_generator_decorator`.
 
 This is the decorator that enables automatic generation of unit tests.
 

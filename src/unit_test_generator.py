@@ -36,7 +36,7 @@ recursion_depth_per_decoratee = defaultdict(int)
 def unit_test_generator_decorator(func:callable):
     """
     Any function wrapped with this decorator will have
-    it's execution coverage saved as though under a unit test.
+    its execution coverage saved as though under a unit test.
     Additionally, all the following will be saved:
     1. All accessed global variables (both read from and written to)
     2. The arguments to the function, both args and kwargs
@@ -136,7 +136,7 @@ coverage_cutoff = 60
 def do_the_decorator_thing(func, *args, **kwargs):
     """
     Any function wrapped with this decorator will have
-    it's execution coverage saved as though under a unit test.
+    its execution coverage saved as though under a unit test.
     Additionally, all the following will be saved:
     1. All accessed global variables (both read from and written to)
     2. The arguments to the function, both args and kwargs
