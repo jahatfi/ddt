@@ -33,17 +33,18 @@ are all decorated with `@unit_test_generator_decorator`.
 
 This is the decorator that enables automatic generation of unit tests.
 
-`cd` into the chosen example directory (e.g. tests/example_all_types/) (more examples to come)  
+`cd` into the chosen example directory (e.g. tests/example_all_types/) 
+(more examples to come)  
 Run the code with Python, e.g.  
     `python all_types.py` or  (later once new examples are added)   
     `python car.py` or  (later once new examples are added)   
     `python divide_ints.py` or  (later once new examples are added)   
     `python fizzbuzz.py`
 
-Relevant files in directory of ..\ddt\example_oo_car **prior** to running `python car.py`:
+Relevant files in directory of ..\ddt\example_oo_car **prior** 
+to running `python car.py`:
 ```python
 | car.py                  # The orginal (untested) code that needs tests!
-| unit_test_generator.py  # Local copy (copied with copy_unit_test_generator.{sh,bat})
 ```
 Relevant files in directory of ..\ddt\example_oo_car **after** running `python car.py`:  
 Note the **.json** and **test_*.py** files created after running the command above:
@@ -56,7 +57,11 @@ Note the **.json** and **test_*.py** files created after running the command abo
 | unit_test_generator.py
 ```
 ## Notes:
-There is no need to monkey-unpatch (i.e. call `monkeypatch.delattr()`) variables after assertions to clean up the environment for the next function call, as every patchable variable on which a function depends is freshly patched before callling the function and asserting the results.
+There is no need to monkey-unpatch (i.e. call `monkeypatch.delattr()`) 
+variables after assertions to clean up the environment for the next 
+function call, as every patchable variable on which a function 
+depends is freshly patched before callling the function and 
+asserting the results.
 To demonstrate this idea, see these results from test_divide_ints.py:
 ### TODO: Add other examples (including this one) to the repo:
 ```python
@@ -88,21 +93,27 @@ To demonstrate this idea, see these results from test_divide_ints.py:
     error_code_modified = -3
     assert divide_ints.__dict__.get("error_code") == error_code_modified
 ```
-I don't call need to call `monkeypatch.delattr("error_code")`, because I overwrite it with `setattr` before the next call.  EVERY global variable 
+I don't call need to call `monkeypatch.delattr("error_code")`, 
+because I overwrite it with `setattr` before the next call.  EVERY global variable 
 used by the tested function will be set before every call.
 
 
 ## Troubleshooting:
 **Problem:** Decorator not running when expected  
-**Solution:**  Check the cutoff parameter.  It might be to low for the desired executions to be hit.  Try setting it to 50 to start.
+**Solution:**  Check the cutoff parameter.
+It might be to low for the desired executions to be hit.
+Try setting it to 50 to start.
 
 
 ## Code TODO:
 [] Decorate a class constructor!   
 
-[X] Prevent deadlocks by using a unique filename for each coverage or None to do it in memory (make this configurable)
+[X] Prevent deadlocks by using a unique filename 
+for each coverage or None to do it in memory (make this configurable)
 
-[X] What if the decorated function throws an exception?  Catch all exceptions, save it, then re-raise it.  The test should assert the same exception is thrown.
+[X] What if the decorated function throws an exception?
+Catch all exceptions, save it, then re-raise it.
+The test should assert the same exception is thrown.
 
 [X] Do methods differ from classes?  Decorate both.
 
