@@ -123,7 +123,7 @@ def get_module_import_string(arg:Path):
     fully qualified name to that module, e.g.
     "package.module"
     """
-    logger.critical(arg)
+
     my_path = arg# Path(inspect.getabsfile(arg))
     files = set(sorted(sys.path))
     keep_file = None
@@ -135,15 +135,15 @@ def get_module_import_string(arg:Path):
             logger.debug(f"{os.path.relpath(file, my_path, )=}")
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
-        logger.critical(f"{my_path} is rel to:")
-        logger.critical(keep_file)
+
+
         my_path = str(my_path)[len(str(keep_file)):]
         my_path = re.sub(r"^[\\/]", "", my_path)
         this_type = re.sub(".py$", "", my_path)
         this_type = re.sub(r"\\", ".", this_type)
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
-    logger.critical(f"this_type = {this_type}")
+
     return this_type
 
 def get_class_import_string(arg:any):
@@ -152,7 +152,7 @@ def get_class_import_string(arg:any):
     fully qualified name to that class, e.g.
     "package.module.class"
     """
-    logger.critical(arg)
+
     my_path = Path(inspect.getabsfile(arg.__class__))
     files = set(sorted(sys.path))
     keep_file = None
@@ -160,23 +160,21 @@ def get_class_import_string(arg:any):
     for file in files:
         file = Path(file)
         if my_path.is_relative_to(file):
-            #logger.critical()
+
 
             keep_file = file
-            logger.critical(f"{os.path.relpath(file, my_path, )=}")
+
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
-        logger.critical(f"{my_path} is rel to:")
-        logger.critical(keep_file)
+
+
         my_path = str(my_path)[len(str(keep_file)):]
         my_path = re.sub(r"^[\\/]", "", my_path)
-        ##logger.critical(my_path)
-        #logger.critical(args[0].__class__.__qualname__)
         this_type = re.sub(".py$", "", my_path) + "." + arg.__class__.__qualname__
         this_type = re.sub(r"\\", ".", this_type)
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
-    logger.critical(f"this_type = {this_type}")
+
     return this_type
 
 def get_method_class_import_string(arg:any):
@@ -192,22 +190,20 @@ def get_method_class_import_string(arg:any):
     for file in files:
         file = Path(file)
         if my_path.is_relative_to(file):
-            #logger.critical()
-
             keep_file = file
-            logger.critical(f"{os.path.relpath(file, my_path, )=}")
+
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
-        logger.critical(f"{my_path} is rel to {keep_file}")
+
         my_path = str(my_path)[len(str(keep_file)):]
         my_path = re.sub(r"^[\\/]", "", my_path)
-        ##logger.critical(my_path)
-        #logger.critical(args[0].__class__.__qualname__)
+
+
         this_type = re.sub(".py$", "", my_path) + "." + arg.__name__
         this_type = re.sub(r"\\", ".", this_type)
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
-    logger.critical(f"this_type = {this_type}")
+
     return this_type
 
 @unit_test_generator_decorator
@@ -316,66 +312,40 @@ def do_the_decorator_thing(func, *args, **kwargs):
     class_type = None
     if this_metadata.is_method:
         state['Constructor'] = args[0].repr()
-        #logger.critical(fullname(args[0])+__name__)
-        #logger.critical(inspect.getmodule(args[0]))
-        #ogger.critical(inspect.getabsfile(args[0].__class__))
 
         this_type = get_class_import_string(args[0])
-        logger.critical(f"{this_type=}")
-
-        logger.critical(func.__name__)
-        logger.critical(f"{len(args)=}")
         class_type = copy.deepcopy(this_type)
 
     new_types_in_use = set()
-    #logger.critical(f"{args=}")
-    random.seed(time.time_ns())
-    rand = random.randint(0, 1000000)
 
     for arg_i, arg in enumerate(args):
+        # Do not include the first arg of a method (it's "self")
+        # in the argument list
         if this_metadata.is_method and arg_i == 0:
-            logger.critical(f"Skipping first {arg=} of method (should be self)")
             continue
-        if callable(arg):
-            logger.debug(f"YEET #2: {arg_i}")
-
-            logger.critical(f"{rand=} {func_name} decorator got {arg.__module__}..{arg.__qualname__} as callable")
-            if inspect.isfunction(arg) and "." in arg.__qualname__ and arg.__qualname__[0].isupper():
-                logger.critical(f"{rand=} {arg.__qualname__=} is a method? {arg.__module__=} {arg.__class__=}")
-                logger.debug(f"YEET 8: {func_name} {arg_i}: append {arg.__qualname__} ")
-                newest_import = f"{arg.__module__}.{arg.__qualname__}".split('.')
-                logger.critical(newest_import)
-                newest_import = '.'.join(newest_import[:-1])
-                args_copy.append(arg.__qualname__)
-                try:
-                    logger.critical("OK5")
-                    x = get_method_class_import_string(arg)
-                    logger.critical(f"x={x}")
-                except TypeError:
-                    logger.error(f"{rand=} OK")
-                logger.critical(f"{rand=} LOL")
-                try:
-                    logger.critical(f"Trying to convert {arg.__qualname__} {arg.__class__} to a full path")
-                    new_type = get_method_class_import_string(arg)
-                    logger.critical(f"{new_type=} | {newest_import}")
-                    class_type = None
-
-                    if arg.__module__ == "__main__":
-                        file_name = re.search(r"([\w]+).py", str(arg.__code__))
-                        if file_name:
-                            file_name = file_name.groups()[0]
-                            newest_import = re.sub("__main__", file_name, newest_import)
-                            logger.critical(f"{newest_import=}")
-                        else:
-                            logger.critical(f"NO FILENAME FOUND!: {re.escape(str(arg.__code__))=}")
-                    new_types_in_use.add(newest_import)
+        if callable(arg) and  inspect.isfunction(arg) and "." in arg.__qualname__ and arg.__qualname__[0].isupper():
+            newest_import = f"{arg.__module__}.{arg.__qualname__}".split('.')
+            newest_import = '.'.join(newest_import[:-1])
+            args_copy.append(arg.__qualname__)
+            try:
+                # Reset the class type, as this newes_import will be used
+                # instead
+                class_type = None
+                if arg.__module__ == "__main__":
+                    file_name = re.search(r"([\w]+).py", str(arg.__code__))
+                    if file_name:
+                        file_name = file_name.groups()[0]
+                        newest_import = re.sub("__main__", file_name, newest_import)
+                    else:
+                        logger.critical(f"NO FILENAME FOUND!: {re.escape(str(arg.__code__))=}")
+                new_types_in_use.add(newest_import)
 
 
-                except Exception as e:
-                    print(traceback.format_exc())
-                    logger.critical(e)
-                    sys.exit(2)
-                continue
+            except Exception as e:
+                print(traceback.format_exc())
+                logger.critical(e)
+                sys.exit(2)
+            continue
 
         new_types_in_use |= get_all_types("1", arg, False)
         if hasattr(arg, "__dict__"):
@@ -391,13 +361,8 @@ def do_the_decorator_thing(func, *args, **kwargs):
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
                     logger.critical(f"NO FILENAME FOUND!: {re.escape(str(arg.__code__))=}")
-            #logger.critical(dir(arg))
-            #logger.critical(arg.__module__)
             else:
-                logger.debug(f"YEET 3: {func_name} {arg_i}: append {repr(arg)} ")
-                logger.critical(arg.__qualname__)
                 args_copy.append(arg.__qualname__)
-                #this_metadata.types_in_use.add(f"{arg.__module__}.{arg.__name__}")
 
             #sys.exit(1)
         elif not isinstance(arg, str):
@@ -416,16 +381,16 @@ def do_the_decorator_thing(func, *args, **kwargs):
 
                 except AttributeError as e:
                     class_repr = arg.__repr__()
-                    logging.debug(f"Possible bug here for update_global: {class_repr=}")
+                    logging.critical(f"Possible bug here for update_global: {class_repr=}")
                 #logger.debug(f"Got class!: {class_repr}")
                 try:
                     logger.info(class_repr)
                     eval(class_repr)
-                    logger.debug(f"YEET 4: {func_name} {arg_i}: append {repr(arg)} ")
+                    logger.critical(f"YEET 4: {func_name} {arg_i}: append {repr(arg)} ")
                     args_copy.append(class_repr)
                 except SyntaxError as e:
                     # skip on error
-                    #logger.critical(f"Got {type(e)} decorating {func_name} repr'ing {arg=}:\n{e}")
+                    logger.critical(f"Got {type(e)} {class_repr=} decorating {func_name} repr'ing {arg=}:\n{e}")
                     x = func(*args, **kwargs)
                     all_metadata[func_name] = this_metadata
                     return x
@@ -442,18 +407,11 @@ def do_the_decorator_thing(func, *args, **kwargs):
 
                     args_copy.append(class_repr)
             else:
-                #logger.critical(f"repr arg: {arg} {type(arg).__module__=}")
                 logger.debug(f"YEET 5: {func_name} {arg_i}: append {repr(arg)} ")
                 args_copy.append(repr(arg))
         else:
             logger.debug(f"YEET 6: {func_name} {arg_i}: append {repr(arg)} ")
             args_copy.append("\""+re.sub(r"(?<!\\) \"", r'\\"',arg)+"\"")
-        #if "__main__" in args_copy[-1] and "at_index" in args_copy[-1]:
-        #    logger.critical(args_copy)
-
-
-    if len(args) != len(args_copy):
-        logger.critical(f"{args.__repr__()} != {args_copy=}")
 
     if class_type:
         this_metadata.types_in_use.add(class_type)
@@ -641,7 +599,7 @@ class Jsonable:
 
 class JsonableEncoder(json.JSONEncoder):
     def default(self, obj):
-        logger.critical(f"{obj=}")
+        logger.debug(f"{obj=}")
         if isinstance(obj, set):
             return sorted(list(obj))
         #if isinstance(obj, type):
@@ -751,7 +709,7 @@ class FunctionMetaData(Jsonable):
         result.append(self.unified_test_coverage.__repr__())
         result.append(self.needs_pytest.__repr__())
         result.append(')')
-        #logger.critical(f"{result=}")
+        logger.debug(f"{result=}")
         return ','.join(result)
 
     def __repr__(self) -> str:
@@ -776,7 +734,6 @@ class FunctionMetaData(Jsonable):
         # TODO call self.update_types_in_use here
 
     def default(self):
-        logger.critical("DIggity")
         return _default()
 
     # https://stackoverflow.com/questions/3768895
@@ -1143,6 +1100,7 @@ def update_global(obj: any, this_global:str, phase:str, state:dict):
         this_entry = sorted_set_repr(obj)
     else:
         this_entry = repr(obj)
+    # The block below is for a separate project
     #if this_global == "g_function_params_write_locs":
         #logger.critical(f"{this_global=}\n{obj=}")
     if this_entry.startswith("<"):
@@ -1423,10 +1381,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         initial_import = f"import {initial_import_suffix}\n"
     else:
         initial_import = ""
-    logger.critical(f"{package=} {initial_import=}")
-    #logger.critical(state)
+
     for timestamp in sorted(state):
-        #logger.critical(f"{func_name=} {timestamp=}")
         coverage_list = gen_coverage_list(  function_metadata,
                                             state[timestamp]["Coverage"],
                                             func_name,
@@ -1524,40 +1480,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         # Raise an exception to alert the user
         # Note that we don't need any imports at all
         test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
-    elif False:
-        # TODO: This block feels messy; clean it up if possible
-        # Convert the relative path to the source file to a proper python import
-        rel_path = os.path.relpath(source_file, ".")
-        # Replace all slashes with periods after dropping any leading "../"
-        # Windows uses backslashes
-        rel_path = re.sub(r"\.\.\\", "", rel_path)
-        # Other other OS's use forward slashes
-        rel_path = re.sub(r"\.\./", "", rel_path)
-        # Windows uses backslashes
-        rel_path = re.sub(r"\\", ".", rel_path)
-        # Other other OS's use forward slashes
-        rel_path = re.sub(r"/", ".", rel_path)
-        # Trim off the trailing ".py"
-        if rel_path.endswith(".py"):
-            rel_path = rel_path[:-3]
-        rel_path = rel_path.split('.')
-        package = '.'.join(rel_path[:-1])
-        suffix = rel_path[-1]
-        this_import = None
 
-        if package:
-            this_import = f"from {package} import {suffix}\n"
-        else:
-            break_flag = False
-            for type in function_metadata.types_in_use:
-                if type.startswith(f"{rel_path[0]}."):
-                    break_flag = True
-                break
-            if not break_flag and not function_metadata.is_method:
-                this_import = f"import {rel_path[0]}\n"
-        if this_import:
-            imports.append(this_import)
-        
     else:
         imports.append(initial_import)
 

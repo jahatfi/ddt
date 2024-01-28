@@ -169,7 +169,9 @@ def second_test():
         print(f"{car_1} is going slower than {car_2}")
 
     print(f"Test 2.2".center(80, '-'))
-    #Car.is_going_faster_than(car_1, car_2)
+    # The invocation below will also work,
+    # demonstrating that the unit_test_generator_decorator works on both
+    Car.is_going_faster_than(car_1, car_2)
 
 if __name__ == "__main__":
     first_test()
