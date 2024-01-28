@@ -18,7 +18,7 @@ import pandas as pd
 from dis import dis
 from io import StringIO
 from functools import wraps
-# NOTE: WindowsPath is in fact required is running on Windows!
+# NOTE: WindowsPath is in fact required if running on Windows!
 from pathlib import Path, WindowsPath
 from json import JSONEncoder
 from collections import defaultdict
