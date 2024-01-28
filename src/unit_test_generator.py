@@ -1419,6 +1419,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     initial_import_suffix = initial_import[-1]
     if initial_import_prefix:
         initial_import = f"from {initial_import_prefix} import {initial_import_suffix}\n"
+    elif initial_import_suffix:
+        initial_import = f"import {initial_import_suffix}\n"
     else:
         initial_import = ""
     logger.critical(f"{package=} {initial_import=}")

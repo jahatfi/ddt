@@ -1,8 +1,8 @@
+from src import unit_test_generator
 from src.unit_test_generator import unit_test_generator_decorator,\
                                 generate_all_tests_and_metadata
 from pathlib import Path
 import logging
-from src import unit_test_generator
 
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
