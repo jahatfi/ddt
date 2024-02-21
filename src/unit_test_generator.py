@@ -1114,7 +1114,7 @@ def update_global(obj: any, this_global:str, phase:str, state:dict):
 def normalize_arg(arg:any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
-    that by writing it to a file it become proper Python code.
+    that by writing it to a file it becomes proper Python code.
     """
     if isinstance(arg, str):
         arg = re.sub("<class '([^']+)'>", "\\1", arg)

@@ -147,7 +147,7 @@ def first_test():
         #car.change_steer_angle(c_angle)
         try:
             ...
-            #car.change_steer_angle(c_angle)
+            car.change_steer_angle(c_angle)
         except Exception as e:
             logger.error(f"change_steer_angle({c_angle}) raised {type(e)}")
             logger.error(e)
