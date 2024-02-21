@@ -173,7 +173,10 @@ def second_test():
     # demonstrating that the unit_test_generator_decorator works on both
     Car.is_going_faster_than(car_1, car_2)
 
-if __name__ == "__main__":
+def main():
     first_test()
     #second_test()
     generate_all_tests_and_metadata(Path('.'), Path('.'))
+
+if __name__ == "__main__":
+    main()

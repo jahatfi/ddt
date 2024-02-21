@@ -28,7 +28,7 @@ def divide_ints(a: int, b: int):
         raise ValueError("ValueError: Cannot divide by zero!")
     return f"{a}/{b}={a/b}"
 
-if __name__ == "__main__":
+def main():
     start = time.perf_counter()
     a_list = [6, 3,"10", 8, [], {}, 4]
     b_list = [2, 0, 2, [], 2, 3, set()]
@@ -45,3 +45,6 @@ if __name__ == "__main__":
 
     generate_all_tests_and_metadata(Path('.'), Path('.'))
     print(f"Took {time.perf_counter()-start} seconds")
+
+if __name__ == "__main__":
+    main()

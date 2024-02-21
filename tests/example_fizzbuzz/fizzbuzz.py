@@ -46,18 +46,27 @@ def fizzbuzz(number: int):
     else:
        result = f"Mode '{mode}' invalid for blackbox()"
     return result
-# Begin ad hoc tests
-print(fizzbuzz(6))
-print(fizzbuzz(30))
-mode = 'buzzfizz'
-print(fizzbuzz(45))
-print(fizzbuzz(9))
-mode = "a_test"
-print(fizzbuzz(60))
 
-"""
-The generate_all_tests_and_metadata() function takes 2 Paths:
-1. The output directory for the unit tests (.py)
-2. The output directory for the .json files (I/O for each test)
-"""
-generate_all_tests_and_metadata(Path('.'), Path('.'))
+def main():
+    """
+    Begin ad hoc tests
+    """
+    global mode
+    print(fizzbuzz(6))
+    print(fizzbuzz(30))
+    mode = 'buzzfizz'
+    print(fizzbuzz(6))
+    print(fizzbuzz(30))
+    mode = "a_test"
+    print(fizzbuzz(6))
+
+    """
+    The generate_all_tests_and_metadata() function takes 2 Paths:
+    1. The output directory for the unit tests (.py)
+    2. The output directory for the .json files (I/O for each test)
+    """
+    generate_all_tests_and_metadata(Path('.'), Path('.'))
+
+
+if __name__ == "__main__":
+    main()

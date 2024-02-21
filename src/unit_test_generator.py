@@ -357,7 +357,6 @@ def do_the_decorator_thing(func, *args, **kwargs):
                 if file_name:
                     file_name = file_name.groups()[0]
                     logger.debug(f"{file_name}.{arg.__name__}")
-                    logger.debug(f"YEET 2: {func_name} {arg_i}: append {repr(arg)} ")
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
                     logger.critical(f"NO FILENAME FOUND!: {re.escape(str(arg.__code__))=}")
@@ -381,16 +380,14 @@ def do_the_decorator_thing(func, *args, **kwargs):
 
                 except AttributeError as e:
                     class_repr = arg.__repr__()
-                    logging.critical(f"Possible bug here for update_global: {class_repr=}")
                 #logger.debug(f"Got class!: {class_repr}")
                 try:
                     logger.info(class_repr)
                     eval(class_repr)
-                    logger.critical(f"YEET 4: {func_name} {arg_i}: append {repr(arg)} ")
                     args_copy.append(class_repr)
                 except SyntaxError as e:
                     # skip on error
-                    logger.critical(f"Got {type(e)} {class_repr=} decorating {func_name} repr'ing {arg=}:\n{e}")
+                    logger.debug(f"Got {type(e)} {class_repr=} decorating {func_name} repr'ing {arg=}:\n{e}")
                     x = func(*args, **kwargs)
                     all_metadata[func_name] = this_metadata
                     return x
@@ -403,14 +400,11 @@ def do_the_decorator_thing(func, *args, **kwargs):
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
                     logger.debug(f"{class_repr=} {arg=}")
-                    logger.debug(f"YEET 7: {func_name} {arg_i}: append {repr(arg)} ")
 
                     args_copy.append(class_repr)
             else:
-                logger.debug(f"YEET 5: {func_name} {arg_i}: append {repr(arg)} ")
                 args_copy.append(repr(arg))
         else:
-            logger.debug(f"YEET 6: {func_name} {arg_i}: append {repr(arg)} ")
             args_copy.append("\""+re.sub(r"(?<!\\) \"", r'\\"',arg)+"\"")
 
     if class_type:
