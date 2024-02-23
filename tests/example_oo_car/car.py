@@ -166,7 +166,7 @@ def second_test():
     if car_1.is_going_faster_than(car_2):
         print(f"{car_1} is going faster than {car_2}")
     else:
-        print(f"{car_1} is going slower than {car_2}")
+        print(f"{car_1}'s speed is less than or equal to {car_2}'s speed")
 
     print(f"Test 2.2".center(80, '-'))
     # The invocation below will also work,
