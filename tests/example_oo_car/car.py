@@ -9,10 +9,6 @@ logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
 
-# NOTE:
-#logging.disable(logging.CRITICAL)
-print("WARNING: ALL LOGGING DISABLED")
-
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
 # unit test will be empty and will raise an exception.
