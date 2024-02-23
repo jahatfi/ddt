@@ -131,7 +131,6 @@ def first_test():
         print(f"Driving {car.repr()}")
         # Note the intentional bug here for the
         # sake of demonstrating the ValueError:
-        #car.gas(c_speed, duration)
         try:
             car.gas(c_speed, duration)
         except Exception as e:
