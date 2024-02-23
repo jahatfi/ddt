@@ -36,9 +36,9 @@ This is the decorator that enables automatic generation of unit tests.
 `cd` into the chosen example directory (e.g. tests/example_all_types/) 
 (more examples to come)  
 Run the code with Python, e.g.  
-    `python all_types.py` or  (later once new examples are added)   
-    `python car.py` or  (later once new examples are added)   
-    `python divide_ints.py` or  (later once new examples are added)   
+    `python all_types.py` or 
+    `python car.py` or 
+    `python divide_ints.py` or 
     `python fizzbuzz.py`
 
 Relevant files in directory of ..\ddt\example_oo_car **prior** 
@@ -54,7 +54,6 @@ Note the **.json** and **test_*.py** files created after running the command abo
 | car.py
 | test_Car_change_steer_angle.py # Automatically generated unit test given car.py
 | test_Car_gas.py                # Automatically generated unit test given car.py
-| unit_test_generator.py
 ```
 ## Notes:
 There is no need to monkey-unpatch (i.e. call `monkeypatch.delattr()`) 
@@ -97,7 +96,6 @@ I don't call need to call `monkeypatch.delattr("error_code")`,
 because I overwrite it with `setattr` before the next call.  EVERY global variable 
 used by the tested function will be set before every call.
 
-
 ## Troubleshooting:
 **Problem:** Decorator not running when expected  
 **Solution:**  Check the cutoff parameter.
@@ -120,16 +118,4 @@ The test should assert the same exception is thrown.
 ## Paper TODO
 
 [ ] Add other examples to the repo
-
-[ ] Last: Update section references, e.g. "In sectionV/% I'll discuss..."
-
-## Status
-| Item         | Status (master) |
-|--------------|-----------|
-|test_auto_generate_tests.py|Working|
-|test_count_objects.py|Not used|
-|test_coverage_str_helper.py|Working|
-|test_divide_ints.py|Working|
-|test_gen_coverage_list.py|Working|
-|test_meta_program_function_call.py|Working|
-|test_return_function_line_numbers_and_accessed_globals|Working|
+[ ] Last: Update section references, e.g. "In sectionV/% I'll discuss...
