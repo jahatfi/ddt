@@ -98,7 +98,7 @@ def unit_test_generator_decorator(func:callable):
             result = do_the_decorator_thing(func, *args, **kwargs)
             return result
         except Exception as e:
-            logger.warning(f"{e=}")
+            logger.warning("e=%s", e, exc_info=True)
             raise e
     return unit_test_generator_decorator_inner
 
@@ -132,7 +132,7 @@ def get_module_import_string(arg:Path):
         file = Path(file)
         if my_path.is_relative_to(file):
             keep_file = file
-            logger.debug(f"{os.path.relpath(file, my_path, )=}")
+            logger.debug("os.path.relpath(file, my_path, )=%s", os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
 
@@ -296,7 +296,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
                                             global_vars_written_to=z,
                                             source_file=source_file
                                         )
-        logger.debug(f"{func_name} has source line #s: {min(x)}-{max(x)}")
+        logger.debug("%s has source line #s: %d-%d", func_name, min(x), max(x))
 
     elif func_name in all_metadata:
         this_metadata = all_metadata.pop(func_name)
@@ -337,7 +337,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
                         file_name = file_name.groups()[0]
                         newest_import = re.sub("__main__", file_name, newest_import)
                     else:
-                        logger.critical(f"NO FILENAME FOUND!: {re.escape(str(arg.__code__))=}")
+                        logger.critical("NO FILENAME FOUND!: %s", re.escape(str(arg.__code__)))
                 new_types_in_use.add(newest_import)
 
 
@@ -356,10 +356,10 @@ def do_the_decorator_thing(func, *args, **kwargs):
                 file_name = re.search(r"([\w]+).py", str(arg.__code__))
                 if file_name:
                     file_name = file_name.groups()[0]
-                    logger.debug(f"{file_name}.{arg.__name__}")
+                    logger.debug("%s.%s",file_name, arg.__name__)
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
-                    logger.critical(f"NO FILENAME FOUND!: {re.escape(str(arg.__code__))=}")
+                    logger.critical("NO FILENAME FOUND!: %s", re.escape(str(arg.__code__)))
             else:
                 args_copy.append(arg.__qualname__)
 
@@ -387,7 +387,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
                     args_copy.append(class_repr)
                 except SyntaxError as e:
                     # skip on error
-                    logger.debug(f"Got {type(e)} {class_repr=} decorating {func_name} repr'ing {arg=}:\n{e}")
+                    logger.debug("Got %s %s decorating %s repr'ing arg=%s:\ne=%s", type(e), class_repr, func_name, arg, e)
                     x = func(*args, **kwargs)
                     all_metadata[func_name] = this_metadata
                     return x
@@ -399,7 +399,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
                     # can import it later; now we simply record it as one of
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
-                    logger.debug(f"{class_repr=} {arg=}")
+                    logger.debug("class_repr=%s arg=%s", class_repr, arg)
 
                     args_copy.append(class_repr)
             else:
@@ -445,17 +445,16 @@ def do_the_decorator_thing(func, *args, **kwargs):
             logger.debug("No exception :)")
         except Exception as e:
             #this_metadata.exceptions[timestamp] = e
-            logger.debug(f"Caught {e=}")
+            logger.debug("Caught e=%s", e)
             caught_exception = e
             #raise caught_exception
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
-    #logger.debug(f"{type(result)=}, {result=}")
     cov_report_ = json.loads(stdout_lines[0])
     timestamp = f"{func_name}_{time.time_ns()}"#cov_report_['meta']['timestamp']
     if caught_exception:
-        logger.debug(f"{caught_exception=} @ {timestamp} {result=}")
+        logger.debug("caught_exception=%s @ %s result=%s", caught_exception, timestamp, result)
 
     result_type = str(type(result))
     parsed_type = re.match("<class '([^']+)'>", result_type)
@@ -471,7 +470,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
     assert len(cov_report_['files']) == 1
     this_coverage = set(cov_report_['files'].popitem()[1]['executed_lines'])
     assert this_coverage & set(this_metadata.lines)
-    #logger.critical(f"{this_coverage=}")
+    #logger.critical("this_coverage=%s", this_coverage)
     is_subset = False
     Path.unlink(Path(data_file))
 
@@ -484,7 +483,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
 
     if delta == 0:
         all_metadata[func_name] = this_metadata
-        logger.debug(f"No new coverage decorating {func_name}; skipping.")
+        logger.debug("No new coverage decorating %s; skipping.", func_name)
         if caught_exception:
             raise caught_exception
         return result
@@ -507,13 +506,13 @@ def do_the_decorator_thing(func, *args, **kwargs):
         prev_coverage = this_metadata.test_coverage[key]
         # Discard this test if it covered a subset of a previous test
         if this_coverage.issubset(prev_coverage):
-            logger.debug(f"{source_file}: discarding current test.")
+            logger.debug("%s: discarding current test.", source_file)
             is_subset = True
             break
         # Discard all previous tests that covered a smaller subset
         # of the lines covered by this test
         if prev_coverage.issubset(this_coverage):
-            logger.debug(f"{source_file} removing subset coverage @ {key}.")
+            logger.debug("%s removing subset coverage @ %s.", source_file, key)
             this_metadata.test_coverage.pop(key)
 
 
@@ -524,14 +523,14 @@ def do_the_decorator_thing(func, *args, **kwargs):
         if caught_exception:
             raise caught_exception
         else:
-            logger.debug(f"{func_name} coverage is a subset {this_metadata.coverage_percentage=}")
+            logger.debug("%s coverage is a subset this_metadata.coverage_percentage=%s", func_name, this_metadata.coverage_percentage)
             #logger.critical(f"Undecorating {func_name}".center(80, '-'))
             return result
 
-    logger.debug(f"{func_name} coverage @{timestamp} is not a subset")
+    logger.debug("%s coverage @%s is not a subset", func_name, timestamp)
 
     if caught_exception:
-        logger.debug(f"{caught_exception=}")
+        logger.debug("caught_exception=%s", caught_exception)
         state['Exception'] = {}
         state['Exception']['Type'] = str(type(caught_exception))
         state['Exception']['message'] = str(caught_exception)
@@ -546,10 +545,6 @@ def do_the_decorator_thing(func, *args, **kwargs):
             state['Result'] = sorted_set_repr(result)
         else:
             state['Result'] = repr(result)
-        #print("State['Result']:")
-        #pp.pprint(state['Result'])
-    #logger.debug(f"{result_type} {type(result)=} {result=}")
-    #assert result_type == type(result), f"{result_type} {type(result)} type or result changed!"
 
     phase = "After"
     for this_global in this_metadata.global_vars_written_to:
@@ -561,9 +556,9 @@ def do_the_decorator_thing(func, *args, **kwargs):
     this_metadata.unified_test_coverage |= this_coverage
     percent_covered = this_metadata.percent_covered(2)
 
-    logger.debug(f"Achieved {percent_covered}% for {func_name}")
+    logger.debug("Achieved %s% coverage %s for %s", percent_covered, func_name)
     sorted_coverage = sorted(list(this_coverage))
-    logger.debug(f"{sorted_coverage=}")
+    logger.debug("sorted_coverage=%s", sorted_coverage)
     # TODO remove these assserts and the timestamps set
     assert set(sorted_coverage) & set(this_metadata.lines)
     state["Coverage"] = sorted_coverage
@@ -593,7 +588,7 @@ class Jsonable:
 
 class JsonableEncoder(json.JSONEncoder):
     def default(self, obj):
-        logger.debug(f"{obj=}")
+        logger.debug("obj=%s", obj)
         if isinstance(obj, set):
             return sorted(list(obj))
         #if isinstance(obj, type):
@@ -665,12 +660,12 @@ class FunctionMetaData(Jsonable):
         uncovered = set(self.lines)
         for _, record in self.coverage_io.items():
             uncovered -= set(record["Coverage"])
-        logger.debug(f"{uncovered=} {self.non_code_lines=}")
+        logger.debug("uncovered=%s self.non_code_lines=%s", uncovered, self.non_code_lines)
         if uncovered:
             result = coverage_str_helper(list(uncovered), self.non_code_lines)
         else:
             result = uncovered
-        logger.debug(f"{result}")
+        logger.debug("result=%s", result)
         return result
 
 
@@ -703,7 +698,7 @@ class FunctionMetaData(Jsonable):
         result.append(self.unified_test_coverage.__repr__())
         result.append(self.needs_pytest.__repr__())
         result.append(')')
-        logger.debug(f"{result=}")
+        logger.debug("result=%s", result)
         return ','.join(result)
 
     def __repr__(self) -> str:
@@ -724,7 +719,7 @@ class FunctionMetaData(Jsonable):
                 field.pop(timestamp)
             except KeyError as e:
                 # TODO: Fix the root cause of this bug
-                logger.error(f"Failed to pop key {e}")
+                logger.error("Failed to pop key: %s", e)
         # TODO call self.update_types_in_use here
 
     def default(self):
@@ -814,7 +809,7 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
         is_variable = True
     elif this_global in function_globals and \
     isinstance(function_globals[this_global], types.ModuleType):
-        logger.debug(f"Got import for {func_name} {this_global=}")
+        logger.debug("Got import for %s this_gloabl=%s", func_name, this_global)
     return is_variable
 
 @unit_test_generator_decorator
@@ -833,7 +828,7 @@ def return_function_line_numbers_and_accessed_globals(f: callable):
     global_vars_read_from = set()
     global_vars_written_to = set()
     dis_ = capture(dis)
-    logger.debug(f"{f=} {type(f)=}")
+    logger.debug("f=%s type(f)=%s", f, type(f))
     disassembled_function = dis_(f)
     result = []
     for line in disassembled_function.splitlines():
@@ -908,10 +903,10 @@ def get_all_types(loc: str, obj:any, import_modules:bool=True)->set:
     type_str = str(type(obj))
     type_list =  ['str', 'int', 'list', 'set', 'dictionry', 'dict']
     if not any(x in type_str for x in type_list):
-        logger.debug(f"{loc} {type_str=}")
+        logger.debug("%s type_str=%s", loc, type_str)
     if callable(obj):
         if hasattr(obj, "__code__"):
-            logger.debug(f"{loc} {obj.__module__}.{obj.__name__} as callable")
+            logger.debug("%s %s.%s as callable", loc, obj.__module__, obj.__name__)
             # TODO: This is
             # 1. Redundant, the line below is duplicated elsewhere
             # 2. Perhaps not complete, I may need the (partial)
@@ -922,29 +917,29 @@ def get_all_types(loc: str, obj:any, import_modules:bool=True)->set:
             if file_name:
                 if import_modules:
                     file_name = file_name.groups()[0]
-                    logger.debug(f"Adding {file_name}.{obj.__name__}")
+                    logger.debug("Adding %s.%s", file_name, obj.__name__)
                     return set([f"{file_name}.{obj.__name__}"])
                 else:
-                    logger.debug(f"I NEED jusT THE MODULE: {str(file_name)}")
+                    logger.debug("I NEED just THE MODULE: %s", str(file_name))
                     return set([str(file_name)])
             else:
                 if import_modules:
-                    logger.debug(f"No filename parsed, use the module: {obj.__module__}")
+                    logger.debug("No filename parsed, use the module: %s", obj.__module__)
                     return set([obj.__module__])
                 else:
-                    logger.debug(f"No filename parsed, use the FQDN: {obj.__module__}")
+                    logger.debug("No filename parsed, use the FQDN: %s", obj.__module__)
                     return set([f"{obj.__module__}.{obj.__name__}"])
         elif import_modules:
-            logger.debug(f"{loc} {obj} missing __code__ < I need this module!")
+            logger.debug("%s %s missing __code__ < I need this module!", loc, obj)
         else:
-            logger.debug(f"{loc} {type_str=} < I need this FQDN!")
+            logger.debug("%s type_str=%s < I need this FQDN!", loc, type_str)
 
 
     elif "." in type_str:
         if import_modules:
-            logger.debug(f"{loc} {type_str=} < I need this non-callable module!")
+            logger.debug("%s type_str=%s < I need this non-callable module!", loc, type_str)
         else:
-            logger.debug(f"{loc} {type_str=} < I need this non-callable FQDN!")
+            logger.debug("%s type_str=%s < I need this non-callable FQDN!", loc, type_str)
             parsed_type = re.match("<class '([^']+)'>", type_str)
             if parsed_type:
                 parsed_type = parsed_type.groups()[0]
@@ -980,11 +975,11 @@ def get_all_types(loc: str, obj:any, import_modules:bool=True)->set:
         parsed_type = re.match("<class '([^']+)'>", str(this_type))
         if parsed_type:
             result_type = parsed_type.groups()[0]
-            logger.debug(f"Adding {result_type}")
+            logger.debug("Adding %s", result_type)
             result.add(result_type)
 
     if result:
-        logger.debug(f"{result=}")
+        logger.debug("result=%s", result)
     return result
 
 
@@ -1006,7 +1001,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
     """
 
     for func_name in func_names:
-        logger.debug(f"{func_name=}")
+        logger.debug("func_name=%s", func_name)
         function_metadata:FunctionMetaData = copy.deepcopy(local_all_metadata[func_name])
         coverage_io_keys = copy.deepcopy(list(function_metadata.coverage_io.keys()))
 
@@ -1037,7 +1032,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         '''
         filename = outdir.joinpath(f"{func_name}{suffix}")
         with open(filename, "w") as test_io_file:
-            logger.info(f"Dumping test metadata to {str(filename)}...")
+            logger.info("Dumping test metadata to %s...", str(filename))
             json.dump(function_metadata, test_io_file, cls=FunctionMetaDataEncoder)
 
         auto_generate_tests(local_all_metadata[func_name],
@@ -1071,10 +1066,10 @@ def generate_all_tests_and_metadata(outdir:Path,
     file and called by generate_all_tests_and_metadata_helper()
     """
     for phase in ["Before", "After"]:
-        logger.debug(f"{phase=}")
+        logger.debug("phase=%s", phase)
         #pp.pprint(all_metadata)
 
-        logger.debug(f"{phase}: {all_metadata.keys()=}")
+        logger.debug("%s: %s", phase, all_metadata.keys())
 
         func_names = copy.deepcopy(list(all_metadata.keys()))
         local_all_metadata = all_metadata
@@ -1089,7 +1084,6 @@ def update_global(obj: any, this_global:str, phase:str, state:dict):
     """
     Update and return state dictionary with new global.
     """
-    #logger.debug(f"{this_global=}\n{func.__globals__[this_global]}")
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
     else:
@@ -1191,7 +1185,7 @@ def coverage_str_helper(this_list:list, non_code_lines:set)->list:
         if low_number == high_number:
             results_list.append(low_number)
         else:
-            logger.critical(f"Invalid coverage! {this_list}")
+            logger.critical("Invalid coverage! %s", this_list)
 
     return results_list
 
@@ -1209,20 +1203,19 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     range_source_line_nums =   set([x for x in range(first_source_line_num,
                                                      last_source_line_num+1)
                                     ])
-    #logger.critical(f"{func_name} {coverage_list=}")
     coverage_list = set(coverage_list)
     coverage_list = sorted(list(range_source_line_nums & coverage_list))
     if not coverage_list:
-        logger.warning(f"Fix the bug here; no coverage for {func_name}")
+        logger.warning("Fix the bug here; no coverage for %s", func_name)
         return []
     non_code_lines = function_metadata.return_non_code_lines()
 
-    logger.debug(f"{coverage_list=}")
-    logger.debug(f"{range_source_line_nums=}")
-    logger.debug(f"{func_name=}")
+    logger.debug("coverage_list=%s", coverage_list)
+    logger.debug("range_source_line_nums=%s", range_source_line_nums)
+    logger.debug("func_name=%s", func_name)
     if logger.level >= logging.DEBUG:
         msg = pp.pformat(function_metadata.lines)
-        logger.debug(f"lines=\n{msg}")
+        logger.debug("lines=\n%s", msg)
 
     percent_covered = 100*len(coverage_list)/len(function_metadata.lines)
     #percent_covered = 100*percent_covered
@@ -1315,9 +1308,9 @@ def meta_program_function_call( this_state:dict,
             line = f"{tab}assert not x\n"
         else:
             result_str = ""
-            logger.debug(f"{func_name=}")
+            logger.debug("func_name=%s", func_name)
             if result_type == "str":
-                logger.debug(f"String: {this_state=}")
+                logger.debug("String: %s", this_state)
                 x = this_state['Result'].replace("'", "\\'").replace('"', '\\"')
                 result_str = f"\'{x}\'"
             else:
@@ -1404,7 +1397,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         test_str_list_2 = []
         test_str_list += f"{tab}args = []\n"
         is_method = function_metadata.is_method
-        logger.debug(f"{func_name} is method: {is_method}")
+        logger.debug("%s is method: %s", func_name, is_method)
 
         # Remove the 'self' argument from the arg list if this
         # decoratee is a class method (as opposed to a regular function)
@@ -1413,10 +1406,10 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
             args = state[timestamp][timeframe]['args'][1:]
             if "gas" in function_metadata.name:
-                logger.critical(f"{args=}")
+                logger.critical("args=%s", args)
             state[timestamp][timeframe]['args'] = args
             if function_metadata.name == "gas":
-                logger.critical(f"{args=}")
+                logger.critical("args=%s", args)
         """
 
         for arg in state[timestamp][timeframe]['args']:
@@ -1426,7 +1419,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #else:
             #    unpacked_args.append(arg)
             test_str_list += f"{tab}args.append({arg})\n"
-        #logger.debug(f"{unpacked_args=}")
+        #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 
         this_result_type = function_metadata.result_types[timestamp]
@@ -1487,7 +1480,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         imports.append("from _pytest.monkeypatch import MonkeyPatch\n")
 
     custom_imports = []
-    logger.debug(f"{func_name=}\n{function_metadata.types_in_use}")
+    logger.debug("func_name=%s\nfunction_metadata.types_in_use=%s", func_name, function_metadata.types_in_use)
     for this_type in function_metadata.types_in_use:
         continue_flag = False
         for other_type in function_metadata.types_in_use:
@@ -1517,7 +1510,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         imports.append(f"# Now import modules specific to {func_name}:\n")
     imports += custom_imports
 
-    logger.debug(f"{func_name=}")
+    logger.debug("func_name=%s", func_name)
     result_file = tests_dir.joinpath(f"test_{func_name.replace('.','_')}.py")
     final_result = test_str_list
     final_result = "".join([x for x in final_result]).encode()
@@ -1536,7 +1529,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             if list:
                 st.writelines(list)
 
-    logger.info(f"Wrote to {result_file}")
+    logger.info("Wrote to %s", result_file)
 
     # Format the generated Python file with black for easier reading
 
@@ -1546,13 +1539,13 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         capture_output=True
                         )
     except CalledProcessError as e:
-        logger.error(f"Got Error running black formatter on {result_file}:")
-        logger.error(pp.pformat(e))
-        logger.error(f"\n{e.stderr.decode()}")
+        logger.error("Got Error running black formatter on %s:", result_file)
+        logger.error(pp.pformat(e)+"\n")
+        logger.error(e.stderr.decode()+"\n")
         if e.stdout:
-            logger.error(f"\n{e.stdout.decode()}")
+            logger.error(e.stdout.decode())
 
-    logger.info(f"Re-formatted {result_file} with black formatter")
+    logger.info("Re-formatted %s with black formatter", result_file)
 
     # Return hash of resulting string here
     return final_result
