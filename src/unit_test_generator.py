@@ -6,11 +6,9 @@ import copy
 import time
 import types
 import inspect
-import random
 import traceback
 import pprint
 import logging
-import importlib
 import coverage
 import subprocess
 import pandas as pd
@@ -160,14 +158,9 @@ def get_class_import_string(arg:any):
     for file in files:
         file = Path(file)
         if my_path.is_relative_to(file):
-
-
             keep_file = file
-
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
-
-
         my_path = str(my_path)[len(str(keep_file)):]
         my_path = re.sub(r"^[\\/]", "", my_path)
         this_type = re.sub(".py$", "", my_path) + "." + arg.__class__.__qualname__
@@ -197,8 +190,6 @@ def get_method_class_import_string(arg:any):
 
         my_path = str(my_path)[len(str(keep_file)):]
         my_path = re.sub(r"^[\\/]", "", my_path)
-
-
         this_type = re.sub(".py$", "", my_path) + "." + arg.__name__
         this_type = re.sub(r"\\", ".", this_type)
         # Other other OS's use forward slashes
@@ -212,7 +203,6 @@ def sorted_set_repr(obj: set):
     I want sets to appear sorted when initialized in unit tests.
     Thus function does just that.
     """
-
     obj = sorted(list(obj))
     # 2. Convert the list to valid Python code
     obj = repr(obj)
@@ -300,8 +290,6 @@ def do_the_decorator_thing(func, *args, **kwargs):
 
     elif func_name in all_metadata:
         this_metadata = all_metadata.pop(func_name)
-
-
 
     state = {   "Before":{'globals':dict()},
                 "After":{'globals':dict()},

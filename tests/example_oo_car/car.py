@@ -175,7 +175,7 @@ def second_test():
 
 def main():
     first_test()
-    #second_test()
+    second_test()
     generate_all_tests_and_metadata(Path('.'), Path('.'))
 
 if __name__ == "__main__":

@@ -44,7 +44,7 @@ def fizzbuzz(number: int):
         if 0 == number % 15:
             result = f"{number:<2} with {mode=} yields 'buzzfizz'"
     else:
-       result = f"Mode '{mode}' invalid for blackbox()"
+       result = f"Mode '{mode}' invalid for fizzbuzz()"
     return result
 
 def main():
