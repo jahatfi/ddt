@@ -22,6 +22,8 @@ from json import JSONEncoder
 from collections import defaultdict
 from subprocess import CalledProcessError
 from types import MappingProxyType
+from collections.abc import Callable
+import typing
 
 pp = pprint.PrettyPrinter(indent=3)
 
@@ -35,7 +37,7 @@ coverage_cutoff = 100
 recursion_depth_per_decoratee = defaultdict(int)
 
 
-def fullname(o:any):
+def fullname(o:object):
     """
     Return the "Fully Qualified Name (FQN) of a provided Python
     object. Copied on 21 jAN 2024 directly from Greg Bacon's answer on
@@ -46,7 +48,7 @@ def fullname(o:any):
         return o.__class__.__name__
     return module + '.' + o.__class__.__name__
 
-def unit_test_generator_decorator(func:callable):
+def unit_test_generator_decorator(func:Callable):
     """
     Any function wrapped with this decorator will have
     its execution coverage saved as though under a unit test.
@@ -115,36 +117,36 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
 
 pd.DataFrame.__repr__ = _pandas_df_repr
 
-def get_module_import_string(arg:Path):
+def get_module_import_string(my_path:Path):
     """
     Given a module, return a dotted import string, the
     fully qualified name to that module, e.g.
     "package.module"
     """
 
-    my_path = arg# Path(inspect.getabsfile(arg))
     files = set(sorted(sys.path))
     keep_file = None
-    this_type = None
-    for file in files:
-        file = Path(file)
+    this_type = ""
+    for file_str in files:
+        file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
             logger.debug("os.path.relpath(file, my_path, )=%s", os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
-
-
-        my_path = str(my_path)[len(str(keep_file)):]
-        my_path = re.sub(r"^[\\/]", "", my_path)
-        this_type = re.sub(".py$", "", my_path)
+        my_path_str = str(my_path)[len(str(keep_file)):]
+        my_path_str = re.sub(r"^[\\/]", "", my_path_str)
+        this_type = re.sub(".py$", "", my_path_str)
+        if not this_type:
+            return
         this_type = re.sub(r"\\", ".", this_type)
+        
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
 
     return this_type
 
-def get_class_import_string(arg:any):
+def get_class_import_string(arg:typing.Any):
     """
     Given a class, return a dotted import string, the
     fully qualified name to that class, e.g.
@@ -154,23 +156,23 @@ def get_class_import_string(arg:any):
     my_path = Path(inspect.getabsfile(arg.__class__))
     files = set(sorted(sys.path))
     keep_file = None
-    this_type = None
+    this_type = ""
     for file in files:
         file = Path(file)
         if my_path.is_relative_to(file):
             keep_file = file
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
-        my_path = str(my_path)[len(str(keep_file)):]
-        my_path = re.sub(r"^[\\/]", "", my_path)
-        this_type = re.sub(".py$", "", my_path) + "." + arg.__class__.__qualname__
+        my_path_str = str(my_path)[len(str(keep_file)):]
+        my_path_str = re.sub(r"^[\\/]", "", my_path_str)
+        this_type = re.sub(".py$", "", my_path_str) + "." + arg.__class__.__qualname__
         this_type = re.sub(r"\\", ".", this_type)
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
 
     return this_type
 
-def get_method_class_import_string(arg:any):
+def get_method_class_import_string(arg:typing.Any):
     """
     Given a method, return a dotted import string, the
     fully qualified name to its class, e.g.
@@ -179,18 +181,16 @@ def get_method_class_import_string(arg:any):
     my_path = Path(inspect.getabsfile(arg))
     files = set(sorted(sys.path))
     keep_file = None
-    this_type = None
-    for file in files:
-        file = Path(file)
+    this_type = ""
+    for file_str in files:
+        file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
-
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
-
-        my_path = str(my_path)[len(str(keep_file)):]
-        my_path = re.sub(r"^[\\/]", "", my_path)
-        this_type = re.sub(".py$", "", my_path) + "." + arg.__name__
+        my_path_str = str(my_path)[len(str(keep_file)):]
+        my_path_str = re.sub(r"^[\\/]", "", my_path_str)
+        this_type = re.sub(".py$", "", my_path_str) + "." + arg.__name__
         this_type = re.sub(r"\\", ".", this_type)
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
@@ -203,14 +203,14 @@ def sorted_set_repr(obj: set):
     I want sets to appear sorted when initialized in unit tests.
     Thus function does just that.
     """
-    obj = sorted(list(obj))
+    obj_list = sorted(list(obj))
     # 2. Convert the list to valid Python code
-    obj = repr(obj)
+    obj_list_repr = repr(obj_list)
     # Replace the square brackets (list) to curly braces (set)
-    obj = f"{{{obj[1:-1]}}}"
+    obj_set_code = f"{{{obj_list_repr[1:-1]}}}"
     # "obj" is now valid Python code that will create a set.
     # The objects in this line of code appear in sorted order
-    return repr(obj)
+    return repr(obj_set_code)
 
 # TODO Import any modules here for whom 'repr' doesn't work
 from pandas import DataFrame
@@ -418,6 +418,8 @@ def do_the_decorator_thing(func, *args, **kwargs):
         these_types = get_all_types("3", func.__globals__[this_global])
         this_metadata.types_in_use |= these_types
 
+    start_time = None
+    end_time = None
     cov_report_ = None
     timestamp = None
     result = None
@@ -427,9 +429,12 @@ def do_the_decorator_thing(func, *args, **kwargs):
         try:
             if kwargs:
                 state['Before']['kwargs'] = kwargs
+                start_time = time.perf_counter()
                 result = func(*args, **kwargs)
             else:
+                start_time = time.perf_counter()
                 result = func(*args)
+            end_time = time.perf_counter()
             logger.debug("No exception :)")
         except Exception as e:
             #this_metadata.exceptions[timestamp] = e
@@ -555,7 +560,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
     this_metadata.coverage_percentage = percent_covered
     # TODO remove this deepcopy
     this_metadata.coverage_io[timestamp] = copy.deepcopy(state)
-    this_metadata.coverage_cost[timestamp] = count_objects(state)
+    this_metadata.coverage_cost[timestamp] = round(end_time - start_time, 3)
     this_metadata.test_coverage[timestamp] = this_coverage
     # TODO Remove this assert
     assert timestamp.startswith(func_name)
@@ -594,12 +599,12 @@ class FunctionMetaData(Jsonable):
                     global_vars_read_from:set,
                     global_vars_written_to:set,
                     source_file:Path,
-                    coverage_cost:dict = None,
-                    coverage_io:dict = None,
+                    coverage_cost:dict = {},
+                    coverage_io:dict = {},
                     coverage_percentage:float=0.0,
-                    result_types:dict = None,
-                    test_coverage:dict = None,
-                    types_in_use:set = None,
+                    result_types:dict = {},
+                    test_coverage:dict = {},
+                    types_in_use:set = set(),
                     unified_test_coverage:set = None,
                     needs_pytest:bool = False
                 ):
@@ -613,12 +618,12 @@ class FunctionMetaData(Jsonable):
 
         # These properties are not provided unless this class
         # is being constructed as part of a unit test
-        self.coverage_cost = {} if coverage_cost == None else coverage_cost
-        self.coverage_io = {} if coverage_io == None else coverage_io
+        self.coverage_cost = {} if not coverage_cost else coverage_cost
+        self.coverage_io = {} if not coverage_io else coverage_io
         self.coverage_percentage = coverage_percentage
-        self.result_types = {} if result_types == None else result_types
-        self.test_coverage = {} if test_coverage == None else test_coverage
-        self.types_in_use = set() if types_in_use == None else types_in_use
+        self.result_types = {} if not result_types else result_types
+        self.test_coverage = {} if not test_coverage else test_coverage
+        self.types_in_use = set() if not types_in_use else types_in_use
         # Change in style simply to keep line length below 80 characters
         if unified_test_coverage == None:
             self.unified_test_coverage = set()
@@ -720,7 +725,7 @@ class FunctionMetaData(Jsonable):
 
 # https://pynative.com/make-python-class-json-serializable/
 class FunctionMetaDataEncoder(JSONEncoder):
-    def default(self, o) ->str:
+    def default(self, o):
         if isinstance(o, set):
             return sorted(list(o))
         elif isinstance(o, MappingProxyType):
@@ -801,7 +806,7 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
     return is_variable
 
 @unit_test_generator_decorator
-def return_function_line_numbers_and_accessed_globals(f: callable):
+def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     Given a function, returns two sets:
     1. a set of the line numbers of this function's source code
@@ -843,7 +848,7 @@ def return_function_line_numbers_and_accessed_globals(f: callable):
     return result
 
 @unit_test_generator_decorator
-def count_objects(obj: any):
+def count_objects(obj: typing.Any):
     """
     Given a Python object, e.g. a number, string, list, list of lists,
     list of dictionaries of sets ...
@@ -882,7 +887,7 @@ def count_objects(obj: any):
             count += 1
     return count
 
-def get_all_types(loc: str, obj:any, import_modules:bool=True)->set:
+def get_all_types(loc: str, obj, import_modules:bool=True)->set:
     """
     Return the set of all types contained in this object,
     It might be a list of sets so return {"list", "set"}
@@ -931,7 +936,7 @@ def get_all_types(loc: str, obj:any, import_modules:bool=True)->set:
             parsed_type = re.match("<class '([^']+)'>", type_str)
             if parsed_type:
                 parsed_type = parsed_type.groups()[0]
-                if parsed_type.startswith("__main__"):
+                if parsed_type and parsed_type.startswith("__main__"):
                     ext_module_file = inspect.getfile(obj.__class__)
                     logger.info(ext_module_file)
                     matched = re.search(r"([\w]+).py", ext_module_file)
@@ -1068,7 +1073,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     suffix)
 
 @unit_test_generator_decorator
-def update_global(obj: any, this_global:str, phase:str, state:dict):
+def update_global(obj: __builtins__, this_global:str, phase:str, state:dict):
     """
     Update and return state dictionary with new global.
     """
@@ -1093,7 +1098,7 @@ def update_global(obj: any, this_global:str, phase:str, state:dict):
 
 
 @unit_test_generator_decorator
-def normalize_arg(arg:any):
+def normalize_arg(arg:typing.Any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
     that by writing it to a file it becomes proper Python code.
@@ -1191,8 +1196,8 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     range_source_line_nums =   set([x for x in range(first_source_line_num,
                                                      last_source_line_num+1)
                                     ])
-    coverage_list = set(coverage_list)
-    coverage_list = sorted(list(range_source_line_nums & coverage_list))
+    coverage_set = set(coverage_list)
+    coverage_list = sorted(list(range_source_line_nums & coverage_set))
     if not coverage_list:
         logger.warning("Fix the bug here; no coverage for %s", func_name)
         return []
