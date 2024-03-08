@@ -9,10 +9,6 @@ logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
 
-# NOTE:
-#logging.disable(logging.CRITICAL)
-print("WARNING: ALL LOGGING DISABLED")
-
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
 # unit test will be empty and will raise an exception.
@@ -131,7 +127,6 @@ def first_test():
         print(f"Driving {car.repr()}")
         # Note the intentional bug here for the
         # sake of demonstrating the ValueError:
-        #car.gas(c_speed, duration)
         try:
             car.gas(c_speed, duration)
         except Exception as e:
@@ -166,7 +161,7 @@ def second_test():
     if car_1.is_going_faster_than(car_2):
         print(f"{car_1} is going faster than {car_2}")
     else:
-        print(f"{car_1} is going slower than {car_2}")
+        print(f"{car_1}'s speed is less than or equal to {car_2}'s speed")
 
     print(f"Test 2.2".center(80, '-'))
     # The invocation below will also work,
