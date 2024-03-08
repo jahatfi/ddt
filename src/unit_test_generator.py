@@ -158,10 +158,10 @@ def get_class_import_string(arg:typing.Any):
     keep_file = None
     this_type = ""
     for file in files:
-        file = Path(file)
-        if my_path.is_relative_to(file):
-            keep_file = file
-            this_type = f"{os.path.relpath(file, my_path)}"
+        file_path = Path(file)
+        if my_path.is_relative_to(file_path):
+            keep_file_path = file_path
+            this_type = f"{os.path.relpath(file_path, my_path)}"
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
@@ -605,7 +605,7 @@ class FunctionMetaData(Jsonable):
                     result_types:dict = {},
                     test_coverage:dict = {},
                     types_in_use:set = set(),
-                    unified_test_coverage:set = None,
+                    unified_test_coverage:set = set(),
                     needs_pytest:bool = False
                 ):
         # These properties are always provided
@@ -625,7 +625,7 @@ class FunctionMetaData(Jsonable):
         self.test_coverage = {} if not test_coverage else test_coverage
         self.types_in_use = set() if not types_in_use else types_in_use
         # Change in style simply to keep line length below 80 characters
-        if unified_test_coverage == None:
+        if not unified_test_coverage:
             self.unified_test_coverage = set()
         else:
             self.unified_test_coverage = unified_test_coverage
@@ -747,8 +747,8 @@ def _default(obj):
         return list(iterable)
     return json.JSONEncoder.default(obj)
 
-all_metadata = defaultdict(FunctionMetaData)
-timestamps = set()
+all_metadata: defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData)
+timestamps:set[str] = set()
 
 class Capturing(list):
     '''
@@ -1073,7 +1073,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     suffix)
 
 @unit_test_generator_decorator
-def update_global(obj: __builtins__, this_global:str, phase:str, state:dict):
+def update_global(obj: object, this_global:str, phase:str, state:dict):
     """
     Update and return state dictionary with new global.
     """
@@ -1213,11 +1213,11 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     percent_covered = 100*len(coverage_list)/len(function_metadata.lines)
     #percent_covered = 100*percent_covered
     coverage_str_list = []
-    start = []
-    start.append(f"{tab}# Coverage: {percent_covered:.2f}% of function lines ")
-    start.append(f"[{first_source_line_num}-{last_source_line_num}]\n")
-    start.append(f"{tab}# Covered Lines: ")
-    start = ''.join(start)
+    start_list = []
+    start_list.append(f"{tab}# Coverage: {percent_covered:.2f}% of function lines ")
+    start_list.append(f"[{first_source_line_num}-{last_source_line_num}]\n")
+    start_list.append(f"{tab}# Covered Lines: ")
+    start = ''.join(start_list)
     uncovered_str_list = []
     start2 = f"{tab}# Lines not covered: "
     # Create the uncovered list now for use laster in this function
@@ -1283,7 +1283,9 @@ def meta_program_function_call( this_state:dict,
 
     if 'Exception' in this_state:
         e_type = this_state['Exception']['Type']
-        e_type =  re.search("<class '([^']+)'", e_type).groups()[0]
+        e_type =  re.search("<class '([^']+)'", e_type)
+        if e_type:
+            e_type = e_type.groups()[0]
         e_str = this_state['Exception']['message']
         # Any special chars, e.g. an empty list: [] in the e_str will break
         # the pytest.raise() parser, so use re.escape()
@@ -1506,7 +1508,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     logger.debug("func_name=%s", func_name)
     result_file = tests_dir.joinpath(f"test_{func_name.replace('.','_')}.py")
     final_result = test_str_list
-    final_result = "".join([x for x in final_result]).encode()
+    final_result_bytes = "".join([x for x in final_result]).encode()
     #logger.critical(final_result)
 
     if "pytest" in sys.modules:
@@ -1515,7 +1517,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         this is used when self-testing auto_generate_tests with
         unit_test_generator_decorator
         """
-        return final_result
+        return final_result_bytes
 
     with open(result_file, "w") as st:
         for list in [imports, header, test_str_list]:
@@ -1541,4 +1543,4 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     logger.info("Re-formatted %s with black formatter", result_file)
 
     # Return hash of resulting string here
-    return final_result
+    return final_result_bytes
