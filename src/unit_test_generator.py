@@ -1488,7 +1488,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         imports.append("from _pytest.monkeypatch import MonkeyPatch\n")
 
     custom_imports = []
-    logger.critical("func_name=%s\nfunction_metadata.types_in_use=%s", func_name, function_metadata.types_in_use)
+    logger.debug("func_name=%s\nfunction_metadata.types_in_use=%s", func_name, function_metadata.types_in_use)
     for this_type in function_metadata.types_in_use:
         continue_flag = False
         for other_type in function_metadata.types_in_use:
