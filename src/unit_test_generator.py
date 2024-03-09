@@ -158,10 +158,10 @@ def get_class_import_string(arg:typing.Any):
     keep_file = None
     this_type = ""
     for file in files:
-        file_path = Path(file)
-        if my_path.is_relative_to(file_path):
-            keep_file_path = file_path
-            this_type = f"{os.path.relpath(file_path, my_path)}"
+        file = Path(file)
+        if my_path.is_relative_to(file):
+            keep_file_path = file
+            this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
@@ -625,10 +625,7 @@ class FunctionMetaData(Jsonable):
         self.test_coverage = {} if not test_coverage else test_coverage
         self.types_in_use = set() if not types_in_use else types_in_use
         # Change in style simply to keep line length below 80 characters
-        if not unified_test_coverage:
-            self.unified_test_coverage = set()
-        else:
-            self.unified_test_coverage = unified_test_coverage
+        self.unified_test_coverage = unified_test_coverage
         self.needs_pytest = needs_pytest
 
         #self.exceptions = exceptions
@@ -747,8 +744,8 @@ def _default(obj):
         return list(iterable)
     return json.JSONEncoder.default(obj)
 
-all_metadata: defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData)
-timestamps:set[str] = set()
+all_metadata = defaultdict(FunctionMetaData)
+timestamps = set()
 
 class Capturing(list):
     '''
