@@ -5,6 +5,7 @@ import json
 import copy
 import time
 import types
+import hashlib
 import inspect
 import traceback
 import pprint
@@ -140,7 +141,7 @@ def get_module_import_string(my_path:Path):
         if not this_type:
             return
         this_type = re.sub(r"\\", ".", this_type)
-        
+
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
 
@@ -158,10 +159,10 @@ def get_class_import_string(arg:typing.Any):
     keep_file = None
     this_type = ""
     for file in files:
-        file = Path(file)
-        if my_path.is_relative_to(file):
-            keep_file_path = file
-            this_type = f"{os.path.relpath(file, my_path)}"
+        file_path = Path(file)
+        if my_path.is_relative_to(file_path):
+            keep_file_path = file_path
+            this_type = f"{os.path.relpath(file_path, my_path)}"
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
@@ -219,6 +220,7 @@ pp = pprint.PrettyPrinter(indent=3)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.CRITICAL)
+
 
 # Set this value to disable the
 # unit_test_generator_decorator once coverage hits
@@ -434,13 +436,15 @@ def do_the_decorator_thing(func, *args, **kwargs):
             else:
                 start_time = time.perf_counter()
                 result = func(*args)
-            end_time = time.perf_counter()
+
             logger.debug("No exception :)")
         except Exception as e:
             #this_metadata.exceptions[timestamp] = e
             logger.debug("Caught e=%s", e)
             caught_exception = e
-            #raise caught_exception
+            #raise caught_exception'
+        finally:
+            end_time = time.perf_counter()
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
@@ -625,7 +629,10 @@ class FunctionMetaData(Jsonable):
         self.test_coverage = {} if not test_coverage else test_coverage
         self.types_in_use = set() if not types_in_use else types_in_use
         # Change in style simply to keep line length below 80 characters
-        self.unified_test_coverage = unified_test_coverage
+        if not unified_test_coverage:
+            self.unified_test_coverage = set()
+        else:
+            self.unified_test_coverage = unified_test_coverage
         self.needs_pytest = needs_pytest
 
         #self.exceptions = exceptions
@@ -744,8 +751,8 @@ def _default(obj):
         return list(iterable)
     return json.JSONEncoder.default(obj)
 
-all_metadata = defaultdict(FunctionMetaData)
-timestamps = set()
+all_metadata: defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData)
+timestamps:set[str] = set()
 
 class Capturing(list):
     '''
@@ -1327,12 +1334,13 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     written to a file, one per decorated function.
     """
     imports = []
+    was_executed = False
     # TODO Add to the import list any specific modules for
     # which repr doesn't work, e.g.
     # imports.append(import pandas as pd\n")
 
     tab = " "*indent_size
-    header = [f"def test_{func_name.replace('.','_')}():\n"]
+    header = []
     pct = function_metadata.coverage_percentage
     #assert pct <= 100, "Bad math"
     line = f"{tab}# In sum, these tests covered {pct}% of {func_name}'s lines\n"
@@ -1344,8 +1352,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                     f"{tab}# {uncovered_str}\n"
                 ]
         header += lines
-    test_str_list = []
-    test_str_list_2 = []
+
+    test_str_list_def_dict = defaultdict(int)
     # Only functions/methods that accessed global
     # variables will need to be patched
     # The variable below will help us keep track of this.
@@ -1361,7 +1369,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     else:
         initial_import = ""
 
-    for timestamp in sorted(state):
+    item = "globals"
+    for timestamp_index, timestamp in enumerate(sorted(state)):
+        test_str_list = [f"def test_{func_name.replace('.','_')}_{timestamp_index}():\n",
+                         f"{tab}monkeypatch = MonkeyPatch()\n"]
+        monkey_patches = []
         coverage_list = gen_coverage_list(  function_metadata,
                                             state[timestamp]["Coverage"],
                                             func_name,
@@ -1370,7 +1382,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         # coverage_str might be empty.  That's fine, so continue
         if not coverage_list:
             continue
-
         coverage_str = ''.join(coverage_list)
         test_str_list.append(coverage_str)
         #test_str_list += f'{tab}# Coverage: {state[timestamp]["Coverage"]}\n'
@@ -1384,10 +1395,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             v = normalize_arg(v)
             test_str_list.append(f"{tab}{k} = {v}\n")
             line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k})\n'
-            test_str_list_2.append(line)
-        test_str_list += test_str_list_2
-        test_str_list_2 = []
-        test_str_list += f"{tab}args = []\n"
+            monkey_patches.append(line)
+        if monkey_patches:
+            test_str_list += monkey_patches
+        #monkey_patches = []
+        test_str_list.append(f"{tab}args = []\n")
         is_method = function_metadata.is_method
         logger.debug("%s is method: %s", func_name, is_method)
 
@@ -1410,17 +1422,17 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #    unpacked_args.append(f"{arg}")
             #else:
             #    unpacked_args.append(arg)
-            test_str_list += f"{tab}args.append({arg})\n"
+            test_str_list.append(f"{tab}args.append({arg})\n")
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 
         this_result_type = function_metadata.result_types[timestamp]
         test_str_list += meta_program_function_call(state[timestamp],
-                                                    timeframe,
-                                                    tab,
-                                                    package,
-                                                    func_name,
-                                                    this_result_type)
+                                                        timeframe,
+                                                        tab,
+                                                        package,
+                                                        func_name,
+                                                        this_result_type)
         timeframe = "After"
         item = "globals"
         dict_get = ".__dict__.get"
@@ -1444,23 +1456,30 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             test_str_list.append(line)
             needs_monkeypatch = True
 
-    # What if a global variable is written to but not read from?
-    # handle that here, otherwise I'd have to put this code in the loop above
-    if needs_monkeypatch:
-        header.append(f"{tab}monkeypatch = MonkeyPatch()\n")
 
 
+        # What if a global variable is written to but not read from?
+        # handle that here, otherwise I'd have to put this code in the loop above
+        if not needs_monkeypatch:
+            test_str_list[1] = ""
 
-    test_str_list += test_str_list_2
-    # Delete all references to "__main__", it's needless
-    test_str_list = [re.sub("__main__.", "", x) for x in test_str_list]
-    if not test_str_list:
-        # If this function was never executed, its coverage is 0%
-        # Raise an exception to alert the user
-        # Note that we don't need any imports at all
-        test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
+        #test_str_list += monkey_patches
+        # Delete all references to "__main__", it's needless
+        #print(test_str_list)
+        test_str_list = [re.sub("__main__.", "", x) for x in test_str_list]
+        if not test_str_list:
+            # If this function was never executed, its coverage is 0%
+            # Raise an exception to alert the user
+            # Note that we don't need any imports at all
+            test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
 
-    else:
+        if test_str_list:
+            test_str_list_def_dict[timestamp_index] = test_str_list
+            was_executed = True
+
+    # End of loop over all samples
+
+    if was_executed:
         imports.append(initial_import)
 
     if function_metadata.needs_pytest:
@@ -1472,7 +1491,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         imports.append("from _pytest.monkeypatch import MonkeyPatch\n")
 
     custom_imports = []
-    logger.debug("func_name=%s\nfunction_metadata.types_in_use=%s", func_name, function_metadata.types_in_use)
+    logger.critical("func_name=%s\nfunction_metadata.types_in_use=%s", func_name, function_metadata.types_in_use)
     for this_type in function_metadata.types_in_use:
         continue_flag = False
         for other_type in function_metadata.types_in_use:
@@ -1504,8 +1523,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     logger.debug("func_name=%s", func_name)
     result_file = tests_dir.joinpath(f"test_{func_name.replace('.','_')}.py")
-    final_result = test_str_list
-    final_result_bytes = "".join([x for x in final_result]).encode()
+    #final_result = ''.join(y for y in x for x in test_str_list_def_dict.values())
+    #print(final_result)
+    #final_result_bytes = "".join([x for x in final_result]).encode()
     #logger.critical(final_result)
 
     if "pytest" in sys.modules:
@@ -1514,12 +1534,17 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         this is used when self-testing auto_generate_tests with
         unit_test_generator_decorator
         """
-        return final_result_bytes
+        h = hashlib.new('sha256')
+        h.update(str(sorted(test_str_list_def_dict.items())).encode())
+        return h.digest().hex()
+        #return str(sorted(test_str_list_def_dict.items()))#final_result_bytes
 
     with open(result_file, "w") as st:
-        for list in [imports, header, test_str_list]:
+        for list in [imports, header]:
             if list:
                 st.writelines(list)
+        for list in test_str_list_def_dict.values():
+            st.writelines(list)
 
     logger.info("Wrote to %s", result_file)
 
@@ -1540,4 +1565,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     logger.info("Re-formatted %s with black formatter", result_file)
 
     # Return hash of resulting string here
-    return final_result_bytes
+    h = hashlib.new('sha256')
+    h.update(str(sorted(test_str_list_def_dict.items())).encode())
+    return h.digest().hex()
