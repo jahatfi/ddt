@@ -3,13 +3,16 @@ from src.unit_test_generator import unit_test_generator_decorator,\
                                 generate_all_tests_and_metadata
 from pathlib import Path
 import logging
+import argparse
+
 
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
+generate_unit_tests_toggle = True
 
-@unit_test_generator_decorator
+#@unit_test_generator_decorator(generate_unit_tests_toggle)
 def get_item_at_index(iterable, index: int):
     """
     Used to test unit_test_generator_decorator with
@@ -25,7 +28,7 @@ def get_item_at_index(iterable, index: int):
 
     return iterable[index]
 
-@unit_test_generator_decorator
+#@unit_test_generator_decorator(generate_unit_tests_toggle)
 def get_key_to_set_with_highest_value(dictionary:dict):
     """
     Used to test unit_test_generator_decorator with
@@ -52,6 +55,7 @@ def get_key_to_set_with_highest_value(dictionary:dict):
     return best_key
 
 def main():
+    print(f"{generate_unit_tests_toggle=}")
     # Begin ad hoc tests
     # Test get_item_at_index
     iterables = [
@@ -85,4 +89,22 @@ def main():
     generate_all_tests_and_metadata(Path('.'), Path('.'))
 
 if __name__ == "__main__":
+    # Create the parser and add argument(s)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--disable-unit-test-generation", "-d",
+                        action="store_true",
+                        help="Set this flag to deactivate unit test generation for this code")
+    args = parser.parse_args()
+    print(f"{args=}")
+
+    # The code below applies the CLI arg above to selectively enable/disable
+    # automatic unit test generation (Could not use the syntactic sugar method
+    # of applying decorators as the user's input isn't parsed until now.)
+    # Alternatively, move the argument parsing to the very top of this file.
+    # NOTE:
+    # Decorating all functions programmatically is left as an exercise to the reader:
+    # Hint: https://stackoverflow.com/questions/3467526/
+    get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value)
+    get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index)
+
     main()

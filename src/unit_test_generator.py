@@ -37,6 +37,7 @@ logger.setLevel(logging.DEBUG)
 coverage_cutoff = 100
 recursion_depth_per_decoratee = defaultdict(int)
 
+active = False
 
 def fullname(o:object):
     """
@@ -49,59 +50,61 @@ def fullname(o:object):
         return o.__class__.__name__
     return module + '.' + o.__class__.__name__
 
-def unit_test_generator_decorator(func:Callable):
-    """
-    Any function wrapped with this decorator will have
-    its execution coverage saved as though under a unit test.
-    Additionally, all the following will be saved:
-    1. All accessed global variables (both read from and written to)
-    2. The arguments to the function, both args and kwargs
-    3. The result of the function
+def unit_test_generator_decorator(active:bool):
+    def actual_decorator(func:Callable):
+        """
+        Any function wrapped with this decorator will have
+        its execution coverage saved as though under a unit test.
+        Additionally, all the following will be saved:
+        1. All accessed global variables (both read from and written to)
+        2. The arguments to the function, both args and kwargs
+        3. The result of the function
 
-    Execution coverage (set of line numbers executed) of
-    each invocation will be tracked and aggregated to the
-    union of coverage of all previous executions.
+        Execution coverage (set of line numbers executed) of
+        each invocation will be tracked and aggregated to the
+        union of coverage of all previous executions.
 
-    When the coverage percent (as measured by $lines_executed/$lines_in_file)
-    meets or exceeds coverage_cutoff, this wrapper will
-    deactivate and simply return the results of the function, ceasing to
-    track any further coverage and removing the overhead involved in such
-    monitoring.
+        When the coverage percent (as measured by $lines_executed/$lines_in_file)
+        meets or exceeds coverage_cutoff, this wrapper will
+        deactivate and simply return the results of the function, ceasing to
+        track any further coverage and removing the overhead involved in such
+        monitoring.
 
-    When main() completes, main() writes out the coverage results to one file
-    per decorated function.
-    """
-    @wraps(func)
-    def unit_test_generator_decorator_inner(*args, **kwargs):
-        global recursion_depth_per_decoratee
-        if "pytest" in sys.modules:
-            logger.debug("pytest is loaded; don't decorate when under a test")
-            result = func(*args, **kwargs)
-            return result
-
-        function_calls = None
-        function_calls = defaultdict(int)
-
-        for f in inspect.stack()[::-1]:
-            F = inspect.getframeinfo(f[0])
-            function_calls[F.function] += 1
-        if func.__name__ not in recursion_depth_per_decoratee:
-            recursion_depth_per_decoratee[func.__name__] = max(function_calls.values())
-
-        elif 1 < max(function_calls.values()) >= recursion_depth_per_decoratee[func.__name__]:
-            try:
+        When main() completes, main() writes out the coverage results to one file
+        per decorated function.
+        """
+        @wraps(func)
+        def unit_test_generator_decorator_inner(*args, **kwargs):
+            if not active:
+                return func(*args, **kwargs)
+            global recursion_depth_per_decoratee
+            if "pytest" in sys.modules:
+                logger.debug("pytest is loaded; don't decorate when under a test")
                 result = func(*args, **kwargs)
                 return result
+
+            function_calls = None
+            function_calls = defaultdict(int)
+
+            for f in inspect.stack()[::-1]:
+                F = inspect.getframeinfo(f[0])
+                function_calls[F.function] += 1
+            if func.__name__ not in recursion_depth_per_decoratee:
+                recursion_depth_per_decoratee[func.__name__] = max(function_calls.values())
+
+            elif 1 < max(function_calls.values()) >= recursion_depth_per_decoratee[func.__name__]:
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    logger.critical(e)
+                    raise e
+            try:
+                return do_the_decorator_thing(func, *args, **kwargs)
             except Exception as e:
-                logger.critical(e)
+                logger.warning("e=%s", e, exc_info=True)
                 raise e
-        try:
-            result = do_the_decorator_thing(func, *args, **kwargs)
-            return result
-        except Exception as e:
-            logger.warning("e=%s", e, exc_info=True)
-            raise e
-    return unit_test_generator_decorator_inner
+        return unit_test_generator_decorator_inner
+    return actual_decorator
 
 def _pandas_df_repr(df: pd.DataFrame)->str:
     '''
@@ -198,7 +201,7 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def sorted_set_repr(obj: set):
     """
     I want sets to appear sorted when initialized in unit tests.
@@ -808,7 +811,7 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
         logger.debug("Got import for %s this_gloabl=%s", func_name, this_global)
     return is_variable
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     Given a function, returns two sets:
@@ -850,7 +853,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
             ]
     return result
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def count_objects(obj: typing.Any):
     """
     Given a Python object, e.g. a number, string, list, list of lists,
@@ -1039,7 +1042,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         local_all_metadata.pop(func_name)
     return local_all_metadata
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1053,7 +1056,7 @@ def generate_all_tests_and_metadata(outdir:Path,
     generate_all_tests_and_metadata_helper()
     created new entries for the 'all_metadata' dictionary because it
     called functions/methods within this very file that are also
-    decorated with @unit_test_generator_decorator!
+    decorated with @unit_test_generator_decorator(active)!
     Talk about meta-programming and meta-testing. =D
 
     Call generate_all_tests_and_metadata_helper twice
@@ -1075,7 +1078,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def update_global(obj: __builtins__, this_global:str, phase:str, state:dict):
     """
     Update and return state dictionary with new global.
@@ -1100,7 +1103,7 @@ def update_global(obj: __builtins__, this_global:str, phase:str, state:dict):
 
 
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def normalize_arg(arg:typing.Any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
@@ -1138,7 +1141,7 @@ def get_imports(path):
         for n in node.names:
             yield Import(module, n.name.split('.'), n.asname)
 '''
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def coverage_str_helper(this_list:list, non_code_lines:set)->list:
     """
     Given a 'this_list', containing numbers covered or uncovered,
@@ -1185,7 +1188,7 @@ def coverage_str_helper(this_list:list, non_code_lines:set)->list:
 
     return results_list
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def gen_coverage_list(  function_metadata:FunctionMetaData,
                         coverage_list:list,
                         func_name:str,
@@ -1242,7 +1245,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     result.append(f"\n{start2}{';'.join(uncovered_str_list)}\n{end}")
     return result
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def meta_program_function_call( this_state:dict,
                                 timeframe:str,
                                 tab:str,
@@ -1319,7 +1322,7 @@ def meta_program_function_call( this_state:dict,
         test_str_list.append(line)
     return test_str_list
 
-@unit_test_generator_decorator
+@unit_test_generator_decorator(active)
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict, func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
