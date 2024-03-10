@@ -144,7 +144,7 @@ def get_module_import_string(my_path:Path):
         if not this_type:
             return
         this_type = re.sub(r"\\", ".", this_type)
-        
+
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
 
@@ -302,7 +302,8 @@ def do_the_decorator_thing(func, *args, **kwargs):
     #args_copy = [convert_to_serializable(x) for x in args]
     args_copy = []
     class_type = None
-    if this_metadata.is_method:
+    if this_metadata.is_method and not func_name.endswith("__init__"):
+        logger.critical(f"{func_name=}")
         state['Constructor'] = args[0].repr()
 
         this_type = get_class_import_string(args[0])
@@ -1029,7 +1030,8 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         the actual .py unit test file is hard to read
         due to formatting.
         '''
-        filename = outdir.joinpath(f"{func_name}{suffix}")
+        this_func_name = re.sub(".__init__", ".constructor", func_name)
+        filename = outdir.joinpath(f"{this_func_name}{suffix}")
         with open(filename, "w") as test_io_file:
             logger.info("Dumping test metadata to %s...", str(filename))
             json.dump(function_metadata, test_io_file, cls=FunctionMetaDataEncoder)
@@ -1302,6 +1304,9 @@ def meta_program_function_call( this_state:dict,
         test_str_list.append(line)
     else:
         normal_call = f"{assignment}{call}"
+        if func_name.endswith(".__init__"):
+            #func_name = re.sub(".__init__", "", func_name)
+            normal_call = re.sub(".__init__", "", normal_call)
         test_str_list.append(normal_call)
         if not this_state['Result']:
             line = f"{tab}assert not x\n"
@@ -1317,8 +1322,12 @@ def meta_program_function_call( this_state:dict,
                 result_str = this_state['Result']
                 result_str = normalize_arg(this_state['Result'])
             assert not result_str.startswith("'\n"), "Bad juju"
-            line = f"{tab}assert x == {result_str}\n"
-            line = re.sub("<class '([^']+)'>", "\\1", line)
+            #line = f"{tab}assert x == {result_str}\n"
+            if func_name.endswith(".__init__"):
+                class_fqn = re.sub(".__init__.*$", "", call)
+                line = f"{tab}assert isinstance(x, {class_fqn})\n"
+            else:
+                line = f"{tab}assert x == {result_str}\n"
         test_str_list.append(line)
     return test_str_list
 
@@ -1522,7 +1531,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     imports += custom_imports
 
     logger.debug("func_name=%s", func_name)
-    result_file = tests_dir.joinpath(f"test_{func_name.replace('.','_')}.py")
+    result_file_str = f"test_{func_name}.py"#.replace('.','_')}.py"
+    result_file_str = re.sub("__init__", "constructor", result_file_str)
+    result_file = tests_dir.joinpath(result_file_str)
+
+
     #final_result = ''.join(y for y in x for x in test_str_list_def_dict.values())
     #print(final_result)
     #final_result_bytes = "".join([x for x in final_result]).encode()

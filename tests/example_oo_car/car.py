@@ -191,5 +191,5 @@ if __name__ == "__main__":
     Car.gas = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.gas)
     Car.change_steer_angle = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.change_steer_angle)
     Car.is_going_faster_than = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.is_going_faster_than)
-
+    Car.__init__ = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.__init__)
     main()
