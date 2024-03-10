@@ -3,6 +3,7 @@ from src.unit_test_generator import unit_test_generator_decorator,\
                                 generate_all_tests_and_metadata
 from pathlib import Path
 import logging
+import argparse
 
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
@@ -31,7 +32,6 @@ class Car():
         self.speed = speed
         self.steer_angle = steer_angle
 
-    @unit_test_generator_decorator
     def brake(self, rate:float, duration:int=1):
         """
         Apply the brake pedal at some negative "rate"
@@ -44,7 +44,6 @@ class Car():
             raise ValueError("Duration (s) must be positive.")
         self.speed = max(0, self.speed+rate*duration)
 
-    @unit_test_generator_decorator
     def gas(self, rate:float, duration:int=1):
         """
         Apply the gas pedal at some positive "rate"
@@ -58,7 +57,6 @@ class Car():
         self.speed = max(0, self.speed+rate*duration)
         return self.speed
 
-    @unit_test_generator_decorator
     def change_steer_angle(self, angle:int):
         """
         Add this new steer angle (could be a negative value)
@@ -92,7 +90,7 @@ class Car():
     def repr(self):
         return f"Car(\"{self.color}\", {self.speed}, {self.steer_angle})"
 
-    @unit_test_generator_decorator
+
     def is_going_faster_than(self, other_car):
         """
         Return True if this car (self) has a higher value
@@ -174,4 +172,24 @@ def main():
     generate_all_tests_and_metadata(Path('.'), Path('.'))
 
 if __name__ == "__main__":
+    # Create the parser and add argument(s)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--disable-unit-test-generation", "-d",
+                        action="store_true",
+                        help="Set this flag to deactivate unit test generation for this code")
+    args = parser.parse_args()
+    print(f"{args=}")
+
+    # The code below applies the CLI arg above to selectively enable/disable
+    # automatic unit test generation (Could not use the syntactic sugar method
+    # of applying decorators as the user's input isn't parsed until now.)
+    # Alternatively, move the argument parsing to the very top of this file.
+    # NOTE:
+    # Decorating all functions programmatically is left as an exercise to the reader:
+    # Hint: https://stackoverflow.com/questions/3467526/
+    Car.brake = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.brake)
+    Car.gas = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.gas)
+    Car.change_steer_angle = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.change_steer_angle)
+    Car.is_going_faster_than = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.is_going_faster_than)
+
     main()
