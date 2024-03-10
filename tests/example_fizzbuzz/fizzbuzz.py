@@ -3,6 +3,7 @@ from src.unit_test_generator import unit_test_generator_decorator,\
                                 generate_all_tests_and_metadata
 from pathlib import Path
 import logging
+import argparse
 
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
@@ -11,7 +12,6 @@ unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 mode = 'fizzbuzz'
 
-@unit_test_generator_decorator
 def fizzbuzz(number: int):
     """
     An intentionally sub-optimal
@@ -69,4 +69,21 @@ def main():
 
 
 if __name__ == "__main__":
+    # Create the parser and add argument(s)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--disable-unit-test-generation", "-d",
+                        action="store_true",
+                        help="Set this flag to deactivate unit test generation for this code")
+    args = parser.parse_args()
+    print(f"{args=}")
+
+    # The code below applies the CLI arg above to selectively enable/disable
+    # automatic unit test generation (Could not use the syntactic sugar method
+    # of applying decorators as the user's input isn't parsed until now.)
+    # Alternatively, move the argument parsing to the very top of this file.
+    # NOTE:
+    # Decorating all functions programmatically is left as an exercise to the reader:
+    # Hint: https://stackoverflow.com/questions/3467526/
+    fizzbuzz = unit_test_generator_decorator(not args.disable_unit_test_generation)(fizzbuzz)
+
     main()
