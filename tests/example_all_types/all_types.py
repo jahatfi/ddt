@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
 generate_unit_tests_toggle = True
 
-#@unit_test_generator_decorator(generate_unit_tests_toggle)
+@unit_test_generator_decorator(generate_unit_tests_toggle)
 def get_item_at_index(iterable, index: int):
     """
     Used to test unit_test_generator_decorator with
@@ -20,7 +20,7 @@ def get_item_at_index(iterable, index: int):
 
     """
     if not iterable:
-        raise ValueError(f"iterable cannot be empty!")
+        raise ValueError("iterable cannot be empty!")
     if index >= len(iterable):
         raise ValueError(f"index must be in range [0, {len(iterable)-1}], was {index}")
     elif  index < 0:
@@ -28,7 +28,7 @@ def get_item_at_index(iterable, index: int):
 
     return iterable[index]
 
-#@unit_test_generator_decorator(generate_unit_tests_toggle)
+@unit_test_generator_decorator(generate_unit_tests_toggle)
 def get_key_to_set_with_highest_value(dictionary:dict):
     """
     Used to test unit_test_generator_decorator with
