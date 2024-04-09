@@ -10,9 +10,8 @@ fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)
 logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
-generate_unit_tests_toggle = True
 
-@unit_test_generator_decorator(generate_unit_tests_toggle)
+@unit_test_generator_decorator(sample_count=6, keep_subsets=True)
 def get_item_at_index(iterable, index: int):
     """
     Used to test unit_test_generator_decorator with
@@ -28,7 +27,7 @@ def get_item_at_index(iterable, index: int):
 
     return iterable[index]
 
-@unit_test_generator_decorator(generate_unit_tests_toggle)
+#@unit_test_generator_decorator(sample_count=4)
 def get_key_to_set_with_highest_value(dictionary:dict):
     """
     Used to test unit_test_generator_decorator with
@@ -55,7 +54,6 @@ def get_key_to_set_with_highest_value(dictionary:dict):
     return best_key
 
 def main():
-    print(f"{generate_unit_tests_toggle=}")
     # Begin ad hoc tests
     # Test get_item_at_index
     iterables = [
@@ -63,9 +61,10 @@ def main():
                     tuple([x for x in range(5,15)]),
                     [-1,-2,-3,-4],
                     "a test string",
+                    "a test string",
                     #set([])
                 ]
-    indices = [3,50,3,-5,3]
+    indices = [3,50,0,-5,-5]
     for iterable, index in zip(iterables, indices):
         logger.info(f"{index=} {iterable=}")
         try:
@@ -104,7 +103,7 @@ if __name__ == "__main__":
     # NOTE:
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
-    get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value)
-    get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index)
+    #get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value)
+    #get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index)
 
     main()
