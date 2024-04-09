@@ -741,7 +741,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     pct_covered = round(pct_covered, 4)
     delta = len(this_coverage-this_metadata.unified_test_coverage)
 
-    if hashed_input not in hashed_inputs:
+    if hashed_input in hashed_inputs:
+        
         all_metadata[func_name] = this_metadata
         logger.critical("Identical input from previous; skipping.")
         if caught_exception:
@@ -753,7 +754,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         if caught_exception:
             raise caught_exception
         return result
-
+    hashed_inputs.add(hashed_inputs)
     pct_improvement = delta / len(this_metadata.lines)
     pct_improvement = round(100*pct_improvement, 4)
 
