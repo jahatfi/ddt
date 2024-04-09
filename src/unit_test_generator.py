@@ -522,7 +522,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     When main() completes, main() writes out the coverage results to one file
     per decorated function.
     """
-    global all_metadata, timestamps
+    global all_metadata, hashed_inputs
     caught_exception = None
     if 'kwargs' in kwargs:
         kwargs = kwargs['kwargs']
@@ -673,17 +673,28 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         these_types = get_all_types("3", func.__globals__[this_global])
         this_metadata.types_in_use |= these_types
 
+    hashed_input = None
+
+    if kwargs:
+        state['Before']['kwargs'] = kwargs
+
+    try:
+        hashed_input = hashlib.new('sha256')
+        hashed_input.update(str(state['Before']).encode())
+        hashed_input = hashed_input.hexdigest()
+        logger.critical(hashed_input)
+    except Exception as e:
+        logger.critical(e)
+
     start_time = None
     end_time = None
     cov_report_ = None
-    timestamp = None
     result = None
     data_file = f"coverage_{func_name}_{time.perf_counter()}"
     cov = coverage.Coverage(data_file)
     with cov.collect():
         try:
             if kwargs:
-                state['Before']['kwargs'] = kwargs
                 start_time = time.perf_counter()
                 result = func(*args, **kwargs)
             else:
@@ -702,9 +713,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
     cov_report_ = json.loads(stdout_lines[0])
-    timestamp = f"{func_name}_{time.time_ns()}"#cov_report_['meta']['timestamp']
+    #timestamp = f"{func_name}_{time.time_ns()}"#cov_report_['meta']['timestamp']
     if caught_exception:
-        logger.debug("caught_exception=%s @ %s result=%s", caught_exception, timestamp, result)
+        logger.debug("caught_exception=%s @ %s result=%s", caught_exception, hashed_input, result)
 
     result_type = str(type(result))
     parsed_type = re.match("<class '([^']+)'>", result_type)
@@ -712,8 +723,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         result_type = parsed_type.groups()[0]
 
     this_metadata.types_in_use |= get_all_types("4", result)
-    assert timestamp not in timestamps
-    this_metadata.result_types[timestamp] = result_type
+    this_metadata.result_types[hashed_input] = result_type
     #timestamps.add(timestamps)
 
     # There is only one file in cov_report_['files']
@@ -731,9 +741,15 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     pct_covered = round(pct_covered, 4)
     delta = len(this_coverage-this_metadata.unified_test_coverage)
 
+    if hashed_input not in hashed_inputs:
+        all_metadata[func_name] = this_metadata
+        logger.critical("Identical input from previous; skipping.")
+        if caught_exception:
+            raise caught_exception
+        return result
     if delta == 0 and not keep_subsets:
         all_metadata[func_name] = this_metadata
-        logger.debug("No new coverage decorating %s; but not skipping.", func_name)
+        logger.info("No new coverage decorating %s and not keeping subsets; skipping.", func_name)
         if caught_exception:
             raise caught_exception
         return result
@@ -777,7 +793,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             #logger.critical(f"Undecorating {func_name}".center(80, '-'))
             return result
 
-    logger.debug("%s coverage @%s is not a subset", func_name, timestamp)
+    logger.debug("%s coverage input=%s is not a subset", func_name, hashed_input)
 
     if caught_exception:
         logger.debug("caught_exception=%s", caught_exception)
@@ -812,15 +828,15 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     # TODO remove these assserts and the timestamps set
     assert set(sorted_coverage) & set(this_metadata.lines)
     state["Coverage"] = sorted_coverage
-    assert timestamp not in timestamps
-    timestamps.add(timestamp)
+    assert hashed_input not in hashed_inputs
+    hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
     # TODO remove this deepcopy
-    this_metadata.coverage_io[timestamp] = copy.deepcopy(state)
-    this_metadata.coverage_cost[timestamp] = round(end_time - start_time, 3)
-    this_metadata.test_coverage[timestamp] = this_coverage
+    this_metadata.coverage_io[hashed_input] = copy.deepcopy(state)
+    this_metadata.coverage_cost[hashed_input] = round(end_time - start_time, 3)
+    this_metadata.test_coverage[hashed_input] = this_coverage
     # TODO Remove this assert
-    assert timestamp.startswith(func_name)
+    #assert hashed_input.startswith(func_name)
     #print("Cost")
     #pp.pprint(coverage_cost)
 
@@ -835,7 +851,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
 
 all_metadata = defaultdict(FunctionMetaData)
-timestamps = set()
+hashed_inputs = set()
 
 class Capturing(list):
     '''
