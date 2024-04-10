@@ -1,30 +1,32 @@
-import re
-import os
-import sys
-import json
 import copy
-import time
-import types
 import hashlib
 import inspect
-import traceback
-import pprint
+import json
 import logging
-import coverage
+import os
+import pprint
+import random
+import re
 import subprocess
-import pandas as pd
-
-from dis import dis
-from io import StringIO
-from functools import wraps
-# NOTE: WindowsPath is in fact required if running on Windows!
-from pathlib import Path, WindowsPath
-from json import JSONEncoder
+import sys
+import time
+import traceback
+import types
+import typing
 from collections import defaultdict
+from collections.abc import Callable
+from dis import dis
+from functools import wraps
+from io import StringIO
+from json import JSONEncoder
+
+# NOTE: WindowsPath is in fact required if running on Windows!
+from pathlib import Path, WindowsPath  # noqa: F401
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from collections.abc import Callable
-import typing
+
+import coverage
+import pandas as pd
 
 pp = pprint.PrettyPrinter(indent=3)
 
@@ -49,8 +51,205 @@ def fullname(o:object):
     if module is None or module == str.__class__.__module__:
         return o.__class__.__name__
     return module + '.' + o.__class__.__name__
+class Jsonable:
+    def toJSON(self):
+        return self.__dict__
 
-def unit_test_generator_decorator(active:bool):
+class JsonableEncoder(json.JSONEncoder):
+    def default(self, obj):
+        logger.debug("obj=%s", obj)
+        if isinstance(obj, set):
+            return sorted(list(obj))
+        #if isinstance(obj, type):
+        #    return
+        return super().default(obj)
+
+# https://pynative.com/make-python-class-json-serializable/
+class FunctionMetaDataEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, set):
+            return sorted(list(o))
+        elif isinstance(o, MappingProxyType):
+            pass
+        else:
+            try:
+                return o.__dict__
+            except AttributeError:
+                pass
+
+def _default(obj):
+    if isinstance(obj, set):
+        return sorted(list(obj))
+    try:
+        iterable = iter(obj)
+    except TypeError as e:
+        raise  e
+    else:
+        return list(iterable)
+    #return json.JSONEncoder.default(obj)
+
+class FunctionMetaData(Jsonable):
+    """
+    Class to track metadata when testing functions and methods
+    """
+    def __init__(   self,
+                    name:str,
+                    lines:list,
+                    is_method:bool,
+                    global_vars_read_from:set,
+                    global_vars_written_to:set,
+                    source_file:Path,
+                    coverage_cost:dict = {},
+                    coverage_io:dict = {},
+                    coverage_percentage:float=0.0,
+                    result_types:dict = {},
+                    test_coverage:dict = {},
+                    types_in_use:set = set(),
+                    unified_test_coverage:set = None,
+                    needs_pytest:bool = False
+                ):
+        # These properties are always provided
+        self.name = name
+        self.lines = lines
+        self.is_method = is_method
+        self.global_vars_read_from = global_vars_read_from
+        self.global_vars_written_to = global_vars_written_to
+        self.source_file = source_file
+
+        # These properties are not provided unless this class
+        # is being constructed as part of a unit test
+        self.coverage_cost = {} if not coverage_cost else coverage_cost
+        self.coverage_io = {} if not coverage_io else coverage_io
+        self.coverage_percentage = coverage_percentage
+        self.result_types = {} if not result_types else result_types
+        self.test_coverage = {} if not test_coverage else test_coverage
+        self.types_in_use = set() if not types_in_use else types_in_use
+        # Change in style simply to keep line length below 80 characters
+        if unified_test_coverage is None:
+            self.unified_test_coverage = set()
+        else:
+            self.unified_test_coverage = unified_test_coverage
+        self.needs_pytest = needs_pytest
+
+        #self.exceptions = exceptions
+        # This last property is created programmatically
+        self.non_code_lines:set = self.return_non_code_lines()
+
+    def percent_covered(self, precision:int=2):
+        """
+        Compute and return percent of covered lines,
+        rounded to 'precision' digits.
+        """
+        self.unified_test_coverage = set(self.lines) & self.unified_test_coverage
+        pct = len(self.unified_test_coverage)/len(self.lines)
+        pct = round(100*pct, precision)
+        return pct
+
+    def get_all_uncovered_line_str(self):
+        """
+        Return a string representing the uncovered lines
+        All those lines not covered by ANY of the tests
+        """
+        uncovered = set(self.lines)
+        for _, record in self.coverage_io.items():
+            uncovered -= set(record["Coverage"])
+        logger.debug("uncovered=%s self.non_code_lines=%s", uncovered, self.non_code_lines)
+        if uncovered:
+            result = coverage_str_helper(list(uncovered), self.non_code_lines)
+        else:
+            result = uncovered
+        logger.debug("result=%s", result)
+        return result
+
+
+    def __str__(self):
+        return f"{self.name}:\n{self.lines=}\n"
+
+    def return_non_code_lines(self):
+        first_source_line_num = self.lines[0]
+        last_source_line_num = self.lines[-1]
+        range_source_line_nums =   set([x for x in range(first_source_line_num,
+                                                        last_source_line_num+1)
+                                        ])
+
+        non_code_lines = range_source_line_nums - set(self.lines)
+        return non_code_lines
+
+    def repr(self)->str:
+        result = [f"FunctionMetaData(\"{self.name}\""]
+        result.append(self.lines.__repr__())
+        result.append(self.is_method.__repr__())
+        result.append(self.global_vars_read_from.__repr__())
+        result.append(self.global_vars_written_to.__repr__())
+        result.append(self.source_file.__repr__())
+        result.append(self.coverage_cost.__repr__())
+        result.append(self.coverage_io.__repr__())
+        result.append(self.coverage_percentage.__repr__())
+        result.append(self.result_types.__repr__())
+        result.append(self.test_coverage.__repr__())
+        result.append(self.types_in_use.__repr__())
+        result.append(self.unified_test_coverage.__repr__())
+        result.append(self.needs_pytest.__repr__())
+        result.append(')')
+        logger.debug("result=%s", result)
+        return ','.join(result)
+
+    def __repr__(self) -> str:
+        return self.repr()
+
+    def purge_record(self, timestamp):
+        # TODO add a "update_types_in_use" method
+        # Convert types_in_use to a dict {timestamp:set(types_per_timestamp)}
+
+        update_fields = [
+            self.coverage_cost,
+            self.coverage_io,
+            self.result_types,
+            self.test_coverage
+        ]
+        for field in update_fields:
+            try:
+                field.pop(timestamp)
+            except KeyError as e:
+                # TODO: Fix the root cause of this bug
+                logger.error("Failed to pop key: %s", e)
+        # TODO call self.update_types_in_use here
+
+    def default(self):
+        return _default()
+
+    # https://stackoverflow.com/questions/3768895
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=4)
+
+
+def unit_test_generator_decorator(percent_coverage: int=None,
+                                  sample_count:int=None,
+                                  keep_subsets: bool=False):
+    """
+    Decorate a function F by recording inputs and outputs during execution such
+    that a call to generate_all_tests_and_metadata() can use those recorded
+    inputs and outputs to programmatically generate unit tests for F.
+    This adds a lot of time and computation in overhead.
+
+    NOTE: For complex functions the Law of Diminishing Returns likely
+    applies, meaning that more and more executions of a function will likely
+    be required to cover marginally more lines/branches.  Hence, once ~80%
+    code coverage is hit it may be desirable to cease logging of inputs and
+    outs to reduce overhead.
+
+    The caller MUST specify exactly one of the following metrics to
+    determine when, if at all, to cease the logging of inputs/outputs and
+    reduce the overhead (but no longer achieve new code coverage in the
+    subsequently created unit test):
+    1. percent_coverage: 80 is a recommended starting value for
+    complex functions, but 100 may be achievable for trivial functions.
+    Any value over 100 will record ALL executions.
+    2. sample_count: Record the inputs and output of N unique calls to this
+    function, then stop recording them.
+    3. If neither of the above are specified, the decorator will NOT be applied.
+    """
     def actual_decorator(func:Callable):
         """
         Any function wrapped with this decorator will have
@@ -75,8 +274,23 @@ def unit_test_generator_decorator(active:bool):
         """
         @wraps(func)
         def unit_test_generator_decorator_inner(*args, **kwargs):
-            if not active:
-                return func(*args, **kwargs)
+            """
+            Immediately return function results if:
+            1. no stop parameter is specified.
+            2. func is being called in a cycle, e.g. A->B->A.
+            Get or create the metadata for this class.  Immediately return
+            function results if desired coverage/samples already met, else
+            apply the decorator to func.
+            """
+            func_name = str(func).split()[1]
+            if percent_coverage is None and sample_count is None:
+                # The user MUST specify at least one of least values
+                # Don't want to incur the overhead if they don't specify either
+                #logger.error("Neither percent_coverage nor sample_count specified for %s; skip decorator",
+                #            func_name)
+                result = func(*args, **kwargs)
+                return result
+
             global recursion_depth_per_decoratee
             if "pytest" in sys.modules:
                 logger.debug("pytest is loaded; don't decorate when under a test")
@@ -86,6 +300,9 @@ def unit_test_generator_decorator(active:bool):
             function_calls = None
             function_calls = defaultdict(int)
 
+            # The code blocks below (before the call to do_the_decorator_thing)
+            # prevent application of this decorator in cyclical calls, e.g.
+            # A -> B -> A # Does not apply to decorator in 2nd call to A
             for f in inspect.stack()[::-1]:
                 F = inspect.getframeinfo(f[0])
                 function_calls[F.function] += 1
@@ -99,10 +316,63 @@ def unit_test_generator_decorator(active:bool):
                     logger.critical(e)
                     raise e
             try:
-                return do_the_decorator_thing(func, *args, **kwargs)
+                # At this point we know we aren't in a function call graph
+                # cycle.  Gather some more info to determine if we want to
+                # apply the decorator
+                if not func_name:
+                    logger.warning("func_name is Falsey; skip decorator")
+                    result = func(*args, **kwargs)
+                    return result
+                this_metadata = None
+                source_file = Path(func.__code__.co_filename).absolute()
+
+                # If this is the first time this func has been called,
+                # disassemble it to get the lines and global variables
+                if func_name not in all_metadata:
+                    # Using single var names ('x', 'y') to keep lines short
+                    (x, y, z) = return_function_line_numbers_and_accessed_globals(func)
+
+                    this_metadata = FunctionMetaData(   name=func_name,
+                                                        lines=x,
+                                                        is_method='.' in func_name,
+                                                        global_vars_read_from=y,
+                                                        global_vars_written_to=z,
+                                                        source_file=source_file
+                                                    )
+                    logger.debug("%s has source line #s: %d-%d",
+                                 func_name, min(x), max(x))
+
+                else:
+                    this_metadata = all_metadata[func_name]
+
+                # Check if this decorator should be applied based on the
+                # provided percent_coverage or sample_count variables
+                if percent_coverage and percent_coverage <= this_metadata.percent_covered(0):
+                    # Desired percent coverage already achieved: skip
+                    logger.info("%d coverage for %s already achieved: skip decorator",
+                                percent_coverage, func_name)
+
+                    result = func(*args, **kwargs)
+                    return result
+
+                elif sample_count and sample_count <= len(this_metadata.coverage_io):
+                    # Desired number of samples already achieved: skip
+                    logger.info("%d samples for %s already collected: skip decorator",
+                                sample_count, func_name)
+                    logger.info(this_metadata.coverage_io)
+                    result = func(*args, **kwargs)
+                    return result
+
+                # percent_coverage or saple_count properly specified, but
+                # desired coverage/samples not yet achieved
+                # so apply the decorator
+                logger.info("Decorate %s", func_name)
+                return do_the_decorator_thing(func, func_name, this_metadata,
+                                              source_file, keep_subsets,
+                                              *args, **kwargs)
             except Exception as e:
-                logger.warning("e=%s", e, exc_info=True)
-                raise e
+                logger.warning("e=%s", e)
+                #raise e
         return unit_test_generator_decorator_inner
     return actual_decorator
 
@@ -201,7 +471,7 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def sorted_set_repr(obj: set):
     """
     I want sets to appear sorted when initialized in unit tests.
@@ -217,7 +487,7 @@ def sorted_set_repr(obj: set):
     return repr(obj_set_code)
 
 # TODO Import any modules here for whom 'repr' doesn't work
-from pandas import DataFrame
+from pandas import DataFrame  # noqa: E402
 
 pp = pprint.PrettyPrinter(indent=3)
 
@@ -229,7 +499,10 @@ logger.setLevel(logging.CRITICAL)
 # this value as a percent, e.g. 80 = 80% coverage
 coverage_cutoff = 60
 
-def do_the_decorator_thing(func, *args, **kwargs):
+def do_the_decorator_thing(func: Callable, func_name:str,
+                           this_metadata:FunctionMetaData, source_file: str,
+                           keep_subsets: bool=False,
+                             *args, **kwargs):
     """
     Any function wrapped with this decorator will have
     its execution coverage saved as though under a unit test.
@@ -251,13 +524,11 @@ def do_the_decorator_thing(func, *args, **kwargs):
     When main() completes, main() writes out the coverage results to one file
     per decorated function.
     """
-    global all_metadata, timestamps
-    this_metadata = None
+    global all_metadata, hashed_inputs
     caught_exception = None
     if 'kwargs' in kwargs:
         kwargs = kwargs['kwargs']
 
-    func_name = str(func).split()[1]
     #logger.critical(f"Decorating {func_name}".center(80, '-'))
 
     '''
@@ -269,31 +540,12 @@ def do_the_decorator_thing(func, *args, **kwargs):
         return x
     '''
 
+
     if "pytest" in sys.modules:
         logger.debug("pytest is loaded; don't decorate when under a test")
         x = func(*args, **kwargs)
         #logger.critical(f"Undecorating {func_name}".center(80, '-'))
         return x
-
-    source_file = Path(func.__code__.co_filename).absolute()
-
-    # If this is the first time this func has been called, disassemble
-    # it to get the lines and global variables
-    if func_name and func_name not in all_metadata:
-        # Using single var names ('x', 'y') to keep lines short
-        (x, y, z) = return_function_line_numbers_and_accessed_globals(func)
-
-        this_metadata = FunctionMetaData(   name=func_name,
-                                            lines=x,
-                                            is_method='.' in func_name,
-                                            global_vars_read_from=y,
-                                            global_vars_written_to=z,
-                                            source_file=source_file
-                                        )
-        logger.debug("%s has source line #s: %d-%d", func_name, min(x), max(x))
-
-    elif func_name in all_metadata:
-        this_metadata = all_metadata.pop(func_name)
 
     state = {   "Before":{'globals':dict()},
                 "After":{'globals':dict()},
@@ -371,7 +623,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
                 try:
                     class_repr = arg.repr()
 
-                except AttributeError as e:
+                except AttributeError:
                     class_repr = arg.__repr__()
                 #logger.debug(f"Got class!: {class_repr}")
                 try:
@@ -423,10 +675,35 @@ def do_the_decorator_thing(func, *args, **kwargs):
         these_types = get_all_types("3", func.__globals__[this_global])
         this_metadata.types_in_use |= these_types
 
+    hashed_input = None
+
+    if kwargs:
+        state['Before']['kwargs'] = kwargs
+
+    try:
+        hashed_input = hashlib.new('sha256')
+        hashed_input.update(str(state['Before']).encode())
+        hashed_input = hashed_input.hexdigest()
+    except Exception as e:
+        logger.critical(e)
+
+    if hashed_input in hashed_inputs:
+        # If this input has already been captured, there's no need to
+        # run it again with coverage, just run it and immediately return
+        # the result/raise the exception as applicable.
+        try:
+            if kwargs:
+                result = func(*args, **kwargs)
+            else:
+                start_time = time.perf_counter()
+                result = func(*args)
+            return result
+        except Exception as e:
+            raise e
+
     start_time = None
     end_time = None
     cov_report_ = None
-    timestamp = None
     result = None
     data_file = f"coverage_{func_name}_{time.perf_counter()}"
     cov = coverage.Coverage(data_file)
@@ -452,9 +729,9 @@ def do_the_decorator_thing(func, *args, **kwargs):
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
     cov_report_ = json.loads(stdout_lines[0])
-    timestamp = f"{func_name}_{time.time_ns()}"#cov_report_['meta']['timestamp']
+    #hashed_input = f"{func_name}_{time.time_ns()}"#cov_report_['meta']['timestamp']
     if caught_exception:
-        logger.debug("caught_exception=%s @ %s result=%s", caught_exception, timestamp, result)
+        logger.debug("caught_exception=%s @ %s result=%s", caught_exception, hashed_input, result)
 
     result_type = str(type(result))
     parsed_type = re.match("<class '([^']+)'>", result_type)
@@ -462,8 +739,8 @@ def do_the_decorator_thing(func, *args, **kwargs):
         result_type = parsed_type.groups()[0]
 
     this_metadata.types_in_use |= get_all_types("4", result)
-    assert timestamp not in timestamps
-    this_metadata.result_types[timestamp] = result_type
+    #assert hashed_input not in hashed_inputs, "ALREADY"
+    this_metadata.result_types[hashed_input] = result_type
     #timestamps.add(timestamps)
 
     # There is only one file in cov_report_['files']
@@ -481,9 +758,9 @@ def do_the_decorator_thing(func, *args, **kwargs):
     pct_covered = round(pct_covered, 4)
     delta = len(this_coverage-this_metadata.unified_test_coverage)
 
-    if delta == 0:
+    if delta == 0 and not keep_subsets:
         all_metadata[func_name] = this_metadata
-        logger.debug("No new coverage decorating %s; skipping.", func_name)
+        logger.debug("No new coverage decorating %s; but not skipping.", func_name)
         if caught_exception:
             raise caught_exception
         return result
@@ -505,7 +782,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
     for key in key_list:
         prev_coverage = this_metadata.test_coverage[key]
         # Discard this test if it covered a subset of a previous test
-        if this_coverage.issubset(prev_coverage):
+        if this_coverage.issubset(prev_coverage) and not keep_subsets:
             logger.debug("%s: discarding current test.", source_file)
             is_subset = True
             break
@@ -527,7 +804,7 @@ def do_the_decorator_thing(func, *args, **kwargs):
             #logger.critical(f"Undecorating {func_name}".center(80, '-'))
             return result
 
-    logger.debug("%s coverage @%s is not a subset", func_name, timestamp)
+    logger.debug("%s coverage @%s is not a subset", func_name, hashed_input)
 
     if caught_exception:
         logger.debug("caught_exception=%s", caught_exception)
@@ -556,21 +833,20 @@ def do_the_decorator_thing(func, *args, **kwargs):
     this_metadata.unified_test_coverage |= this_coverage
     percent_covered = this_metadata.percent_covered(2)
 
-    logger.debug("Achieved %s% coverage %s for %s", percent_covered, func_name)
+    logger.debug("Achieved %.2f%% coverage for %s", percent_covered, func_name)
     sorted_coverage = sorted(list(this_coverage))
     logger.debug("sorted_coverage=%s", sorted_coverage)
     # TODO remove these assserts and the timestamps set
     assert set(sorted_coverage) & set(this_metadata.lines)
     state["Coverage"] = sorted_coverage
-    assert not timestamp in timestamps
-    timestamps.add(timestamp)
+    assert hashed_input not in hashed_inputs
+    hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
     # TODO remove this deepcopy
-    this_metadata.coverage_io[timestamp] = copy.deepcopy(state)
-    this_metadata.coverage_cost[timestamp] = round(end_time - start_time, 3)
-    this_metadata.test_coverage[timestamp] = this_coverage
-    # TODO Remove this assert
-    assert timestamp.startswith(func_name)
+    this_metadata.coverage_io[hashed_input] = copy.deepcopy(state)
+    this_metadata.coverage_cost[hashed_input] = round(end_time - start_time, 3)
+    this_metadata.test_coverage[hashed_input] = this_coverage
+
     #print("Cost")
     #pp.pprint(coverage_cost)
 
@@ -582,180 +858,10 @@ def do_the_decorator_thing(func, *args, **kwargs):
     all_metadata[func_name] = this_metadata
     return result
 
-class Jsonable:
-    def toJSON(self):
-        return self.__dict__
 
-class JsonableEncoder(json.JSONEncoder):
-    def default(self, obj):
-        logger.debug("obj=%s", obj)
-        if isinstance(obj, set):
-            return sorted(list(obj))
-        #if isinstance(obj, type):
-        #    return
-        return super().default(obj)
-
-class FunctionMetaData(Jsonable):
-    """
-    Class to track metadata when testing functions and methods
-    """
-    def __init__(   self,
-                    name:str,
-                    lines:list,
-                    is_method:bool,
-                    global_vars_read_from:set,
-                    global_vars_written_to:set,
-                    source_file:Path,
-                    coverage_cost:dict = {},
-                    coverage_io:dict = {},
-                    coverage_percentage:float=0.0,
-                    result_types:dict = {},
-                    test_coverage:dict = {},
-                    types_in_use:set = set(),
-                    unified_test_coverage:set = None,
-                    needs_pytest:bool = False
-                ):
-        # These properties are always provided
-        self.name = name
-        self.lines = lines
-        self.is_method = is_method
-        self.global_vars_read_from = global_vars_read_from
-        self.global_vars_written_to = global_vars_written_to
-        self.source_file = source_file
-
-        # These properties are not provided unless this class
-        # is being constructed as part of a unit test
-        self.coverage_cost = {} if not coverage_cost else coverage_cost
-        self.coverage_io = {} if not coverage_io else coverage_io
-        self.coverage_percentage = coverage_percentage
-        self.result_types = {} if not result_types else result_types
-        self.test_coverage = {} if not test_coverage else test_coverage
-        self.types_in_use = set() if not types_in_use else types_in_use
-        # Change in style simply to keep line length below 80 characters
-        if unified_test_coverage == None:
-            self.unified_test_coverage = set()
-        else:
-            self.unified_test_coverage = unified_test_coverage
-        self.needs_pytest = needs_pytest
-
-        #self.exceptions = exceptions
-        # This last property is created programmatically
-        self.non_code_lines:set = self.return_non_code_lines()
-
-    def percent_covered(self, precision:int=2):
-        """
-        Compute and return percent of covered lines,
-        rounded to 'precision' digits.
-        """
-        self.unified_test_coverage = set(self.lines) & self.unified_test_coverage
-        pct = len(self.unified_test_coverage)/len(self.lines)
-        pct = round(100*pct, precision)
-        return pct
-
-    def get_all_uncovered_line_str(self):
-        """
-        Return a string representing the uncovered lines
-        All those lines not covered by ANY of the tests
-        """
-        uncovered = set(self.lines)
-        for _, record in self.coverage_io.items():
-            uncovered -= set(record["Coverage"])
-        logger.debug("uncovered=%s self.non_code_lines=%s", uncovered, self.non_code_lines)
-        if uncovered:
-            result = coverage_str_helper(list(uncovered), self.non_code_lines)
-        else:
-            result = uncovered
-        logger.debug("result=%s", result)
-        return result
-
-
-    def __str__(self):
-        return f"{self.name}:\n{self.lines=}\n"
-
-    def return_non_code_lines(self):
-        first_source_line_num = self.lines[0]
-        last_source_line_num = self.lines[-1]
-        range_source_line_nums =   set([x for x in range(first_source_line_num,
-                                                        last_source_line_num+1)
-                                        ])
-
-        non_code_lines = range_source_line_nums - set(self.lines)
-        return non_code_lines
-
-    def repr(self)->str:
-        result = [f"FunctionMetaData(\"{self.name}\""]
-        result.append(self.lines.__repr__())
-        result.append(self.is_method.__repr__())
-        result.append(self.global_vars_read_from.__repr__())
-        result.append(self.global_vars_written_to.__repr__())
-        result.append(self.source_file.__repr__())
-        result.append(self.coverage_cost.__repr__())
-        result.append(self.coverage_io.__repr__())
-        result.append(self.coverage_percentage.__repr__())
-        result.append(self.result_types.__repr__())
-        result.append(self.test_coverage.__repr__())
-        result.append(self.types_in_use.__repr__())
-        result.append(self.unified_test_coverage.__repr__())
-        result.append(self.needs_pytest.__repr__())
-        result.append(')')
-        logger.debug("result=%s", result)
-        return ','.join(result)
-
-    def __repr__(self) -> str:
-        return self.repr()
-
-    def purge_record(self, timestamp):
-        # TODO add a "update_types_in_use" method
-        # Convert types_in_use to a dict {timestamp:set(types_per_timestamp)}
-
-        update_fields = [
-            self.coverage_cost,
-            self.coverage_io,
-            self.result_types,
-            self.test_coverage
-        ]
-        for field in update_fields:
-            try:
-                field.pop(timestamp)
-            except KeyError as e:
-                # TODO: Fix the root cause of this bug
-                logger.error("Failed to pop key: %s", e)
-        # TODO call self.update_types_in_use here
-
-    def default(self):
-        return _default()
-
-    # https://stackoverflow.com/questions/3768895
-    def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)
-
-# https://pynative.com/make-python-class-json-serializable/
-class FunctionMetaDataEncoder(JSONEncoder):
-    def default(self, o):
-        if isinstance(o, set):
-            return sorted(list(o))
-        elif isinstance(o, MappingProxyType):
-            pass
-        else:
-            try:
-                return o.__dict__
-            except AttributeError:
-                pass
-
-def _default(obj):
-    if isinstance(obj, set):
-        return sorted(list(obj))
-    try:
-        iterable = iter(obj)
-    except TypeError as e:
-        raise  e
-    else:
-        return list(iterable)
-    return json.JSONEncoder.default(obj)
 
 all_metadata = defaultdict(FunctionMetaData)
-timestamps = set()
+hashed_inputs = set()
 
 class Capturing(list):
     '''
@@ -812,12 +918,13 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
         logger.debug("Got import for %s this_gloabl=%s", func_name, this_global)
     return is_variable
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
-    Given a function, returns two sets:
+    Given a function, returns three sets:
     1. a set of the line numbers of this function's source code
-    2. all global vars accessed by the provided function
+    2. all global vars read by the provided function
+    3. all global vars written to by the provided function
     """
     try:
         f = f.__wrapped__
@@ -832,7 +939,6 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     disassembled_function = dis_(f)
     result = []
     for line in disassembled_function.splitlines():
-        #line_number = re.match(r"^([\d]+)", line)
         # There's sometimes 1 leading space
         # TODO: Determine if there's ever more than one leading space
         # preceding a line number
@@ -854,7 +960,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
             ]
     return result
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def count_objects(obj: typing.Any):
     """
     Given a Python object, e.g. a number, string, list, list of lists,
@@ -1044,7 +1150,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         local_all_metadata.pop(func_name)
     return local_all_metadata
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1058,7 +1164,7 @@ def generate_all_tests_and_metadata(outdir:Path,
     generate_all_tests_and_metadata_helper()
     created new entries for the 'all_metadata' dictionary because it
     called functions/methods within this very file that are also
-    decorated with @unit_test_generator_decorator(active)!
+    decorated with @unit_test_generator_decorator!
     Talk about meta-programming and meta-testing. =D
 
     Call generate_all_tests_and_metadata_helper twice
@@ -1080,7 +1186,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def update_global(obj: __builtins__, this_global:str, phase:str, state:dict):
     """
     Update and return state dictionary with new global.
@@ -1105,7 +1211,7 @@ def update_global(obj: __builtins__, this_global:str, phase:str, state:dict):
 
 
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def normalize_arg(arg:typing.Any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
@@ -1143,7 +1249,7 @@ def get_imports(path):
         for n in node.names:
             yield Import(module, n.name.split('.'), n.asname)
 '''
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def coverage_str_helper(this_list:list, non_code_lines:set)->list:
     """
     Given a 'this_list', containing numbers covered or uncovered,
@@ -1190,7 +1296,7 @@ def coverage_str_helper(this_list:list, non_code_lines:set)->list:
 
     return results_list
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def gen_coverage_list(  function_metadata:FunctionMetaData,
                         coverage_list:list,
                         func_name:str,
@@ -1216,7 +1322,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     logger.debug("func_name=%s", func_name)
     if logger.level >= logging.DEBUG:
         msg = pp.pformat(function_metadata.lines)
-        logger.debug("lines=\n%s", msg)
+        logger.debug("lines=%s", msg)
 
     percent_covered = 100*len(coverage_list)/len(function_metadata.lines)
     #percent_covered = 100*percent_covered
@@ -1247,7 +1353,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     result.append(f"\n{start2}{';'.join(uncovered_str_list)}\n{end}")
     return result
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def meta_program_function_call( this_state:dict,
                                 timeframe:str,
                                 tab:str,
@@ -1318,7 +1424,6 @@ def meta_program_function_call( this_state:dict,
                 x = this_state['Result'].replace("'", "\\'").replace('"', '\\"')
                 result_str = f"\'{x}\'"
             else:
-                logger.debug("Not string")
                 result_str = this_state['Result']
                 result_str = normalize_arg(this_state['Result'])
             assert not result_str.startswith("'\n"), "Bad juju"
@@ -1331,7 +1436,7 @@ def meta_program_function_call( this_state:dict,
         test_str_list.append(line)
     return test_str_list
 
-@unit_test_generator_decorator(active)
+@unit_test_generator_decorator()
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict, func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
