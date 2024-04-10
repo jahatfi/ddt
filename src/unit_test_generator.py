@@ -739,7 +739,6 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         result_type = parsed_type.groups()[0]
 
     this_metadata.types_in_use |= get_all_types("4", result)
-    if hashed_input in hashed_inputs:
     #assert hashed_input not in hashed_inputs, "ALREADY"
     this_metadata.result_types[hashed_input] = result_type
     #timestamps.add(timestamps)
@@ -940,7 +939,6 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     disassembled_function = dis_(f)
     result = []
     for line in disassembled_function.splitlines():
-        #line_number = re.match(r"^([\d]+)", line)
         # There's sometimes 1 leading space
         # TODO: Determine if there's ever more than one leading space
         # preceding a line number
