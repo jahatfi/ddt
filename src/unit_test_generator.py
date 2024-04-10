@@ -740,7 +740,6 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     this_metadata.types_in_use |= get_all_types("4", result)
     if hashed_input in hashed_inputs:
-        logger.critical("DUPILCATE")
     #assert hashed_input not in hashed_inputs, "ALREADY"
     this_metadata.result_types[hashed_input] = result_type
     #timestamps.add(timestamps)
