@@ -1,30 +1,32 @@
-import re
-import os
-import sys
-import json
 import copy
-import time
-import types
 import hashlib
 import inspect
-import traceback
-import pprint
+import json
 import logging
-import coverage
+import os
+import pprint
+import random
+import re
 import subprocess
-import pandas as pd
-
+import sys
+import time
+import traceback
+import types
+import typing
+from collections import defaultdict
+from collections.abc import Callable
 from dis import dis
-from io import StringIO
 from functools import wraps
+from io import StringIO
+from json import JSONEncoder
+
 # NOTE: WindowsPath is in fact required if running on Windows!
 from pathlib import Path, WindowsPath  # noqa: F401
-from json import JSONEncoder
-from collections import defaultdict
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from collections.abc import Callable
-import typing
+
+import coverage
+import pandas as pd
 
 pp = pprint.PrettyPrinter(indent=3)
 
@@ -682,9 +684,22 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         hashed_input = hashlib.new('sha256')
         hashed_input.update(str(state['Before']).encode())
         hashed_input = hashed_input.hexdigest()
-        logger.critical(hashed_input)
     except Exception as e:
         logger.critical(e)
+
+    if hashed_input in hashed_inputs:
+        # If this input has already been captured, there's no need to
+        # run it again with coverage, just run it and immediately return
+        # the result/raise the exception as applicable.
+        try:
+            if kwargs:
+                result = func(*args, **kwargs)
+            else:
+                start_time = time.perf_counter()
+                result = func(*args)
+            return result
+        except Exception as e:
+            raise e
 
     start_time = None
     end_time = None
