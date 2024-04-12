@@ -1,4 +1,4 @@
-from tests.example_all_types import all_types
+import all_types
 import pytest
 
 
