@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
 
-@unit_test_generator_decorator(sample_count=6, keep_subsets=True)
+@unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def get_item_at_index(iterable, index: int):
     """
     Used to test unit_test_generator_decorator with
