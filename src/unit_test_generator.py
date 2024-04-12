@@ -18,6 +18,7 @@ from dis import dis
 from functools import wraps
 from io import StringIO
 from json import JSONEncoder
+from dataclasses import dataclass
 
 # NOTE: WindowsPath is in fact required if running on Windows!
 from pathlib import Path, WindowsPath  # noqa: F401
@@ -1141,7 +1142,11 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         filename = outdir.joinpath(f"{this_func_name}{suffix}")
         with open(filename, "w", encoding="utf-8") as test_io_file:
             logger.info("Dumping test metadata to %s...", str(filename))
-            json.dump(function_metadata, test_io_file, cls=FunctionMetaDataEncoder)
+            json.dump(function_metadata,
+                      test_io_file,
+                      cls=FunctionMetaDataEncoder,
+                      indent=3
+                      )
 
         auto_generate_tests(local_all_metadata[func_name],
                             test_suite,
