@@ -228,8 +228,8 @@ class FunctionMetaData(Jsonable):
             sort_keys=True, indent=4)
 
 
-def unit_test_generator_decorator(percent_coverage: int=None,
-                                  sample_count: int=None,
+def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
+                                  sample_count: Optional[int]=0,
                                   keep_subsets: bool=False):
     """
     Decorate a function F by recording inputs and outputs during execution such
@@ -287,7 +287,7 @@ def unit_test_generator_decorator(percent_coverage: int=None,
             apply the decorator to func.
             """
             func_name = str(func).split()[1]
-            if percent_coverage is None and sample_count is None:
+            if percent_coverage == 0 and sample_count == 0:
                 # The user MUST specify at least one of least values
                 # Don't want to incur the overhead if they don't specify either
                 #logger.error("Neither percent_coverage nor sample_count specified for %s; skip decorator",
@@ -394,7 +394,7 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
     '''
     return f"DataFrame.from_dict({df.to_dict()})"
 
-pd.DataFrame.__repr__ = _pandas_df_repr
+pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign]
 
 def get_module_import_string(my_path:Path)->str:
     """
@@ -437,10 +437,10 @@ def get_class_import_string(arg:typing.Any):
     keep_file = None
     this_type = ""
     for file in files:
-        file = Path(file)
-        if my_path.is_relative_to(file):
-            keep_file = file
-            this_type = f"{os.path.relpath(file, my_path)}"
+        file_path = Path(file)
+        if my_path.is_relative_to(file_path):
+            keep_file = file_path
+            this_type = f"{os.path.relpath(file_path, my_path)}"
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
@@ -552,12 +552,12 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         #logger.critical(f"Undecorating {func_name}".center(80, '-'))
         return x
 
-    state = {   "Before":{'globals':dict()},
+    state: dict[str, dict[str, dict]] = {   "Before":{'globals':dict()},
                 "After":{'globals':dict()},
             }
 
     #args_copy = [convert_to_serializable(x) for x in args]
-    args_copy = []
+    args_copy:list[str] = []
     class_type = None
     if this_metadata.is_method and not func_name.endswith("__init__"):
         logger.critical("%s", func_name)
@@ -574,17 +574,17 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         if this_metadata.is_method and arg_i == 0:
             continue
         if callable(arg) and  inspect.isfunction(arg) and "." in arg.__qualname__ and arg.__qualname__[0].isupper():
-            newest_import = f"{arg.__module__}.{arg.__qualname__}".split('.')
-            newest_import = '.'.join(newest_import[:-1])
+            newest_import_list = f"{arg.__module__}.{arg.__qualname__}".split('.')
+            newest_import = '.'.join(newest_import_list[:-1])
             args_copy.append(arg.__qualname__)
             try:
                 # Reset the class type, as this newes_import will be used
                 # instead
                 class_type = None
                 if arg.__module__ == "__main__":
-                    file_name = re.search(r"([\w]+).py", str(arg.__code__))
-                    if file_name:
-                        file_name = file_name.groups()[0]
+                    file_name_match = re.search(r"([\w]+).py", str(arg.__code__))
+                    if file_name_match:
+                        file_name = str(file_name_match.groups()[0])
                         newest_import = re.sub("__main__", file_name, newest_import)
                     else:
                         logger.critical("NO FILENAME FOUND!: %s", re.escape(str(arg.__code__)))
@@ -603,9 +603,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                 new_types_in_use |= get_all_types("1.1", v, False)
         if callable(arg):
             if arg.__module__ == "__main__":
-                file_name = re.search(r"([\w]+).py", str(arg.__code__))
-                if file_name:
-                    file_name = file_name.groups()[0]
+                file_name_match = re.search(r"([\w]+).py", str(arg.__code__))
+                if file_name_match:
+                    file_name = file_name_match.groups()[0]
                     logger.debug("%s.%s",file_name, arg.__name__)
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
@@ -680,15 +680,15 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         these_types = get_all_types("3", func.__globals__[this_global])
         this_metadata.types_in_use |= these_types
 
-    hashed_input = None
+    hashed_input = ""
 
     if kwargs:
         state['Before']['kwargs'] = kwargs
 
     try:
-        hashed_input = hashlib.new('sha256')
-        hashed_input.update(str(state['Before']).encode())
-        hashed_input = hashed_input.hexdigest()
+        hashed_input_hash = hashlib.new('sha256')
+        hashed_input_hash.update(str(state['Before']).encode())
+        hashed_input = hashed_input_hash.hexdigest()
     except Exception as e:
         logger.critical(e)
 
@@ -706,8 +706,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         except Exception as e:
             raise e
 
-    start_time = None
-    end_time = None
+    start_time = 0.0
+    end_time = 0.0
     cov_report_ = None
     result = None
     data_file = f"coverage_{func_name}_{time.perf_counter()}"
@@ -864,8 +864,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
 
 
-all_metadata = defaultdict(FunctionMetaData)
-hashed_inputs = set()
+all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData)
+hashed_inputs:set[str] = set() # method-assign
 
 class Capturing(list):
     '''
@@ -1021,12 +1021,12 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
             # 1. Redundant, the line below is duplicated elsewhere
             # 2. Perhaps not complete, I may need the (partial)
             #    path to the python file, not such the file itself
-            file_name = re.search(r"([\w]+).py", str(obj.__code__))
-            if file_name:
-                file_name = file_name.groups()[0]
-            if file_name:
+            file_name_match = re.search(r"([\w]+).py", str(obj.__code__))
+            if file_name_match:
+                file_name = file_name_match.groups()[0]
+            if file_name_match:
                 if import_modules:
-                    file_name = file_name.groups()[0]
+                    file_name = file_name_match.groups()[0]
                     logger.debug("Adding %s.%s", file_name, obj.__name__)
                     return set([f"{file_name}.{obj.__name__}"])
                 logger.debug("I NEED just THE MODULE: %s", str(file_name))
@@ -1047,9 +1047,9 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
             logger.debug("%s type_str=%s < I need this non-callable module!", loc, type_str)
         else:
             logger.debug("%s type_str=%s < I need this non-callable FQDN!", loc, type_str)
-            parsed_type = re.match("<class '([^']+)'>", type_str)
-            if parsed_type:
-                parsed_type = parsed_type.groups()[0]
+            parsed_type_match = re.match("<class '([^']+)'>", type_str)
+            if parsed_type_match:
+                parsed_type = parsed_type_match.groups()[0]
                 if parsed_type and parsed_type.startswith("__main__"):
                     ext_module_file = inspect.getfile(obj.__class__)
                     logger.info(ext_module_file)
@@ -1091,7 +1091,7 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
 
 
 def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
-                                            func_names:list,
+                                            func_names:list[str],
                                             outdir:Path,
                                             tests_dir:Path,
                                             suffix:Path=Path(".json")):
@@ -1128,7 +1128,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         if purged:
             for _, cov in function_metadata.test_coverage.items():
                 function_metadata.unified_test_coverage |= set(cov)
-            function_metadata.percent_covered = function_metadata.percent_covered(2)
+            #function_metadata.percent_covered = function_metadata.percent_covered(2)
 
         test_suite = function_metadata.coverage_io
         '''
@@ -1188,7 +1188,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     suffix)
 
 @unit_test_generator_decorator()
-def update_global(obj: __builtins__, this_global:str, phase:str, state:dict):
+def update_global(obj, this_global:str, phase:str, state:dict):
     """
     Update and return state dictionary with new global.
     """
@@ -1307,11 +1307,11 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     percent_covered = 100*len(coverage_list)/len(function_metadata.lines)
     #percent_covered = 100*percent_covered
     coverage_str_list = []
-    start = []
-    start.append(f"{tab}# Coverage: {percent_covered:.2f}% of function lines ")
-    start.append(f"[{first_source_line_num}-{last_source_line_num}]\n")
-    start.append(f"{tab}# Covered Lines: ")
-    start = ''.join(start)
+    start_list = []
+    start_list.append(f"{tab}# Coverage: {percent_covered:.2f}% of function lines ")
+    start_list.append(f"[{first_source_line_num}-{last_source_line_num}]\n")
+    start_list.append(f"{tab}# Covered Lines: ")
+    start = ''.join(start_list)
     uncovered_str_list = []
     start2 = f"{tab}# Lines not covered: "
     # Create the uncovered list now for use laster in this function
@@ -1377,7 +1377,7 @@ def meta_program_function_call( this_state:dict,
 
     if 'Exception' in this_state:
         e_type = this_state['Exception']['Type']
-        e_type =  re.search("<class '([^']+)'", e_type).groups()[0]
+        e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
         e_str = this_state['Exception']['message']
         # Any special chars, e.g. an empty list: [] in the e_str will break
         # the pytest.raise() parser, so use re.escape()
@@ -1453,9 +1453,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     # The variable below will help us keep track of this.
     needs_monkeypatch = False
     package = Path(source_file).stem
-    initial_import = get_module_import_string(source_file).split(".")
-    initial_import_prefix = ".".join(initial_import[:-1])
-    initial_import_suffix = initial_import[-1]
+    initial_import_list = get_module_import_string(source_file).split(".")
+    initial_import_prefix = ".".join(initial_import_list[:-1])
+    initial_import_suffix = initial_import_list[-1]
     if initial_import_prefix:
         initial_import = f"from {initial_import_prefix} import {initial_import_suffix}\n"
     elif initial_import_suffix:
