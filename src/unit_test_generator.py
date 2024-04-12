@@ -1,4 +1,5 @@
 import copy
+import dataclasses
 import hashlib
 import inspect
 import json
@@ -24,7 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path, WindowsPath  # noqa: F401
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from typing import Optional
+from typing import Optional, List
 
 import coverage
 import pandas as pd
@@ -89,6 +90,21 @@ def _default(obj):
         return list(iterable)
     #return json.JSONEncoder.default(obj)
 
+
+@dataclass
+class CoverageInfo:
+    """
+    Holds all data gathered from recording/hooking a function/method call
+    """
+    args: list[str] = dataclasses.field(default_factory=list)
+    kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+    globals_before: dict = dataclasses.field(default_factory=dict)
+    globals_after: dict = dataclasses.field(default_factory=dict)
+    result: str  = ""
+    coverage: list[int] = dataclasses.field(default_factory=list)
+    exception_type: str = ""
+    exception_message: str = ""
+    constructor: str = ""
 class FunctionMetaData(Jsonable):
     """
     Class to track metadata when testing functions and methods
@@ -150,7 +166,7 @@ class FunctionMetaData(Jsonable):
         """
         uncovered = set(self.lines)
         for _, record in self.coverage_io.items():
-            uncovered -= set(record["Coverage"])
+            uncovered -= set(record.coverage)
         logger.debug("uncovered=%s self.non_code_lines=%s", uncovered, self.non_code_lines)
         if uncovered:
             result = coverage_str_helper(list(uncovered), self.non_code_lines)
@@ -395,7 +411,7 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
     '''
     return f"DataFrame.from_dict({df.to_dict()})"
 
-pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign]
+pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign, assignment]
 
 def get_module_import_string(my_path:Path)->str:
     """
@@ -411,7 +427,8 @@ def get_module_import_string(my_path:Path)->str:
         file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
-            logger.debug("os.path.relpath(file, my_path, )=%s", os.path.relpath(file, my_path, ))
+            logger.debug("os.path.relpath(file, my_path, )=%s", 
+                         os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
@@ -553,16 +570,14 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         #logger.critical(f"Undecorating {func_name}".center(80, '-'))
         return x
 
-    state: dict[str, dict[str, dict]] = {   "Before":{'globals':dict()},
-                "After":{'globals':dict()},
-            }
+    this_coverage_info: CoverageInfo = CoverageInfo()
 
     #args_copy = [convert_to_serializable(x) for x in args]
     args_copy:list[str] = []
     class_type = None
     if this_metadata.is_method and not func_name.endswith("__init__"):
         logger.critical("%s", func_name)
-        state['Constructor'] = args[0].repr()
+        this_coverage_info.constructor = args[0].repr()
 
         this_type = get_class_import_string(args[0])
         class_type = copy.deepcopy(this_type)
@@ -662,13 +677,13 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         this_metadata.types_in_use.add(class_type)
     this_metadata.types_in_use |= new_types_in_use
 
-    state['Before']['args'] = args_copy
+    this_coverage_info.args = args_copy
 
     phase = "Before"
     # Record the values of any global variables READ BY this function
     for this_global in this_metadata.global_vars_read_from:
         obj = func.__globals__[this_global]
-        state = update_global(obj, this_global, phase, state)
+        this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
         these_types = get_all_types("2", func.__globals__[this_global])
         this_metadata.types_in_use |= these_types
     # Also record globals variables WRITTEN TO by the function, as we may
@@ -677,22 +692,23 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     # (E.g. if the function appends to a previously populated list)
     for this_global in this_metadata.global_vars_written_to:
         obj = func.__globals__[this_global]
-        state = update_global(obj, this_global, phase, state)
+        this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
         these_types = get_all_types("3", func.__globals__[this_global])
         this_metadata.types_in_use |= these_types
 
     hashed_input = ""
 
     if kwargs:
-        state['Before']['kwargs'] = kwargs
+        this_coverage_info.kwargs = kwargs
 
     try:
         hashed_input_hash = hashlib.new('sha256')
-        hashed_input_hash.update(str(state['Before']).encode())
+        hashed_input_hash.update(str(this_coverage_info.globals_before).encode())
+        hashed_input_hash.update(str(this_coverage_info.args).encode())
+        hashed_input_hash.update(str(this_coverage_info.kwargs).encode())
         hashed_input = hashed_input_hash.hexdigest()
     except Exception as e:
         logger.critical(e)
-
     if hashed_input in hashed_inputs:
         # If this input has already been captured, there's no need to
         # run it again with coverage, just run it and immediately return
@@ -716,7 +732,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     with cov.collect():
         try:
             if kwargs:
-                state['Before']['kwargs'] = kwargs
+                this_coverage_info.kwargs = kwargs
                 start_time = time.perf_counter()
                 result = func(*args, **kwargs)
             else:
@@ -813,25 +829,24 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     if caught_exception:
         logger.debug("caught_exception=%s", caught_exception)
-        state['Exception'] = {}
-        state['Exception']['Type'] = str(type(caught_exception))
-        state['Exception']['message'] = str(caught_exception)
+        this_coverage_info.exception_type = str(type(caught_exception))
+        this_coverage_info.exception_message = str(caught_exception)
         this_metadata.needs_pytest = True
 
     if isinstance(result, DataFrame):
-        state['Result'] = f"pd.DataFrame.from_dict({result.to_dict()})"
+        this_coverage_info.result = f"pd.DataFrame.from_dict({result.to_dict()})"
     elif isinstance(result, str):
-        state['Result'] = result
+        this_coverage_info.result = result
     else:
         if isinstance(result, set) and result:
-            state['Result'] = sorted_set_repr(result)
+            this_coverage_info.result = sorted_set_repr(result)
         else:
-            state['Result'] = repr(result)
+            this_coverage_info.result = repr(result)
 
     phase = "After"
     for this_global in this_metadata.global_vars_written_to:
         obj = func.__globals__[this_global]
-        state = update_global(obj, this_global, phase, state)
+        this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
         these_types = get_all_types("5", func.__globals__[this_global])
         this_metadata.types_in_use |= these_types
 
@@ -843,12 +858,12 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     logger.debug("sorted_coverage=%s", sorted_coverage)
     # TODO remove these assserts and the hash_keys set
     assert set(sorted_coverage) & set(this_metadata.lines)
-    state["Coverage"] = sorted_coverage
+    this_coverage_info.coverage = sorted_coverage
     assert hashed_input not in hashed_inputs
     hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
     # TODO remove this deepcopy
-    this_metadata.coverage_io[hashed_input] = copy.deepcopy(state)
+    this_metadata.coverage_io[hashed_input] = copy.deepcopy(this_coverage_info)
     this_metadata.coverage_cost[hashed_input] = round(end_time - start_time, 3)
     this_metadata.test_coverage[hashed_input] = this_coverage
 
@@ -865,7 +880,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
 
 
-all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData)
+all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData) # type: ignore[arg-type]
 hashed_inputs:set[str] = set() # method-assign
 
 class Capturing(list):
@@ -932,7 +947,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     3. all global vars written to by the provided function
     """
     try:
-        f = f.__wrapped__
+        f = f.__wrapped__ # type: ignore [attr-defined]
     except AttributeError:
         pass
     line_numbers = []
@@ -1121,7 +1136,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
 
         # TODO The below below is likely unnecessary now
         for hash_key in coverage_io_keys:
-            if not set(function_metadata.coverage_io[hash_key]['Coverage']) & set(function_metadata.lines):
+            if not set(function_metadata.coverage_io[hash_key].coverage) & set(function_metadata.lines):
                 purged += 1
                 function_metadata.purge_record(hash_key)
                 function_metadata.unified_test_coverage = set()
@@ -1193,7 +1208,8 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     suffix)
 
 @unit_test_generator_decorator()
-def update_global(obj, this_global:str, phase:str, state:dict):
+def update_global(obj, this_global:str, 
+                  phase:str,this_coverage_info:CoverageInfo)->CoverageInfo:
     """
     Update and return state dictionary with new global.
     """
@@ -1205,14 +1221,14 @@ def update_global(obj, this_global:str, phase:str, state:dict):
     #if this_global == "g_function_params_write_locs":
         #logger.critical(f"{this_global=}\n{obj=}")
     if this_entry.startswith("<"):
-        return state
+        return this_coverage_info
     #print(f"{this_global}={this_entry}")
 
-    if isinstance(obj, dict) and this_entry != "{}":
-        state[phase]['globals'][this_global] = this_entry
-    else:
-        state[phase]['globals'][this_global] = this_entry
-    return state
+    if phase == "Before":
+        this_coverage_info.globals_before[this_global] = this_entry
+    elif phase == 'After':
+        this_coverage_info.globals_after[this_global] = this_entry
+    return this_coverage_info
 
 
 
@@ -1339,8 +1355,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     return result
 
 @unit_test_generator_decorator()
-def meta_program_function_call( this_state:dict,
-                                timeframe:str,
+def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
                                 func_name:str,
@@ -1356,18 +1371,18 @@ def meta_program_function_call( this_state:dict,
 
     # Handle the case that decoratee is a
     # class method by constructing the class
-    if "Constructor" in this_state:
+    if this_state.constructor:
         func_name=func_name.split('.')[1]
         class_var_name = "this_class"
         is_method = True # Marginally faster than this string compare?
-        line = f"{tab}{class_var_name} = {this_state['Constructor']}\n"
+        line = f"{tab}{class_var_name} = {this_state.constructor}\n"
         test_str_list.append(line)
 
     kwargs_str = ''
     # TODO: Test this block below
-    if 'kwargs' in this_state[timeframe]:
+    if this_state.kwargs:
         # Creating "line" variable to condense line width
-        line = f"{tab}kwargs = {this_state[timeframe]['kwargs']}\n"
+        line = f"{tab}kwargs = {this_state.kwargs}\n"
         test_str_list.append(line)
         kwargs_str = ", kwargs=kwargs)"
         #line = f"{tab}x = {package}.{func_name}(*args, kwargs=kwargs)\n"
@@ -1380,10 +1395,10 @@ def meta_program_function_call( this_state:dict,
     else:
         call = f"{package}.{func_name}(*args{kwargs_str})\n"
 
-    if 'Exception' in this_state:
-        e_type = this_state['Exception']['Type']
+    if this_state.exception_type:
+        e_type = this_state.exception_type
         e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
-        e_str = this_state['Exception']['message']
+        e_str = this_state.exception_message
         # Any special chars, e.g. an empty list: [] in the e_str will break
         # the pytest.raise() parser, so use re.escape()
         e_str = re.escape(e_str)
@@ -1399,18 +1414,18 @@ def meta_program_function_call( this_state:dict,
             #func_name = re.sub(".__init__", "", func_name)
             normal_call = re.sub(".__init__", "", normal_call)
         test_str_list.append(normal_call)
-        if not this_state['Result']:
+        if not this_state.result:
             line = f"{tab}assert not x\n"
         else:
             result_str = ""
             logger.debug("func_name=%s", func_name)
             if result_type == "str":
                 logger.debug("String: %s", this_state)
-                x = this_state['Result'].replace("'", "\\'").replace('"', '\\"')
+                x = this_state.result.replace("'", "\\'").replace('"', '\\"')
                 result_str = f"\'{x}\'"
             else:
-                result_str = this_state['Result']
-                result_str = normalize_arg(this_state['Result'])
+                result_str = this_state.result
+                result_str = normalize_arg(this_state.result)
             assert not result_str.startswith("'\n"), "Bad juju"
             #line = f"{tab}assert x == {result_str}\n"
             if func_name.endswith(".__init__"):
@@ -1452,7 +1467,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 ]
         header += lines
 
-    test_str_list_def_dict = defaultdict(int)
+    test_str_list_def_dict:typing.DefaultDict[int, List[str]] = defaultdict(int) # type: ignore [arg-type]
     # Only functions/methods that accessed global
     # variables will need to be patched
     # The variable below will help us keep track of this.
@@ -1474,7 +1489,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                          f"{tab}monkeypatch = MonkeyPatch()\n"]
         monkey_patches = []
         coverage_list = gen_coverage_list(  function_metadata,
-                                            state[hash_key]["Coverage"],
+                                            state[hash_key].coverage,
                                             func_name,
                                             tab)
         # Due to some complexity of self-testing (e.g. bugs I can't yet squash)
@@ -1483,14 +1498,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             continue
         coverage_str = ''.join(coverage_list)
         test_str_list.append(coverage_str)
-        #test_str_list += f'{tab}# Coverage: {state[hash_key]["Coverage"]}\n'
+        #test_str_list += f'{tab}# Coverage: {state[hash_key].coverage}\n'
 
         #print(f"{state[hash_key].keys()}")
-        timeframe = "Before"
-        item = "globals"
-        for k in sorted(state[hash_key][timeframe][item]):
+        for k in sorted(state[hash_key].globals_before):
             needs_monkeypatch = True
-            v = state[hash_key][timeframe][item][k]
+            v = state[hash_key][k]
             v = normalize_arg(v)
             test_str_list.append(f"{tab}{k} = {v}\n")
             line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k})\n'
@@ -1504,7 +1517,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
         # Remove the 'self' argument from the arg list if this
         # decoratee is a class method (as opposed to a regular function)
-        for arg in state[hash_key][timeframe]['args']:
+        for arg in state[hash_key].args:
             # TODO If an arg is a class, construct it
             #if not isinstance(arg, str):
             #    unpacked_args.append(f"{arg}")
@@ -1516,16 +1529,13 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
         this_result_type = function_metadata.result_types[hash_key]
         test_str_list += meta_program_function_call(state[hash_key],
-                                                        timeframe,
                                                         tab,
                                                         package,
                                                         func_name,
                                                         this_result_type)
-        timeframe = "After"
-        item = "globals"
         dict_get = ".__dict__.get"
-        for k in sorted(state[hash_key][timeframe][item]):
-            v = state[hash_key][timeframe][item][k]
+        for k in sorted(state[hash_key].globals_after):
+            v = state[hash_key].globals_after[k]
             v = normalize_arg(v)
 
             if v in ['None', '[]', '{}']:
