@@ -7,6 +7,18 @@ import pytest
 # ['14']
 def test_get_item_at_index_0():
     # Coverage: 50.00% of function lines [14-28]
+    # Covered Lines: 21;23;25;28
+    # Lines not covered: 14-20;22;24;26-27
+    # Note: Any lines not mentioned are comments or whitespace
+    args = []
+    args.append("The quick red fox jumped over the lazy brown dog")
+    args.append(3)
+    x = all_types.get_item_at_index(*args)
+    assert x == " "
+
+
+def test_get_item_at_index_1():
+    # Coverage: 50.00% of function lines [14-28]
     # Covered Lines: 21;23;25-26
     # Lines not covered: 14-20;22;24;28
     # Note: Any lines not mentioned are comments or whitespace
@@ -17,18 +29,6 @@ def test_get_item_at_index_0():
         ValueError, match=r"index\ must\ be\ in\ range\ \[0,\ 12\],\ was\ \-5"
     ):
         all_types.get_item_at_index(*args)
-
-
-def test_get_item_at_index_1():
-    # Coverage: 50.00% of function lines [14-28]
-    # Covered Lines: 21;23;25;28
-    # Lines not covered: 14-20;22;24;26-27
-    # Note: Any lines not mentioned are comments or whitespace
-    args = []
-    args.append([-1, -2, -3, -4])
-    args.append(0)
-    x = all_types.get_item_at_index(*args)
-    assert x == -1
 
 
 def test_get_item_at_index_2():
@@ -51,7 +51,7 @@ def test_get_item_at_index_3():
     # Lines not covered: 14-20;22;24;26-27
     # Note: Any lines not mentioned are comments or whitespace
     args = []
-    args.append("The quick red fox jumped over the lazy brown dog")
-    args.append(3)
+    args.append([-1, -2, -3, -4])
+    args.append(0)
     x = all_types.get_item_at_index(*args)
-    assert x == " "
+    assert x == -1

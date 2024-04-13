@@ -1,0 +1,62 @@
+{
+   "name": "Car.__init__",
+   "lines": [
+      25,
+      31,
+      32,
+      33
+   ],
+   "is_method": true,
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "source_file": null,
+   "coverage_cost": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": 0.001
+   },
+   "coverage_io": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": {
+         "args": [
+            "\"Red\"",
+            "10",
+            "0"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "None",
+         "coverage": [
+            31,
+            32,
+            33
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      }
+   },
+   "coverage_percentage": 75.0,
+   "result_types": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": "NoneType"
+   },
+   "test_coverage": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": [
+         31,
+         32,
+         33
+      ]
+   },
+   "types_in_use": [],
+   "unified_test_coverage": [
+      31,
+      32,
+      33
+   ],
+   "needs_pytest": false,
+   "non_code_lines": [
+      26,
+      27,
+      28,
+      29,
+      30
+   ]
+}
