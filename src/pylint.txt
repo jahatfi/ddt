@@ -47,7 +47,6 @@ unit_test_generator.py:572:0: R0915: Too many statements (209/50) (too-many-stat
 unit_test_generator.py:944:8: W0201: Attribute '_stdout' defined outside __init__ (attribute-defined-outside-init)
 unit_test_generator.py:945:21: W0201: Attribute '_stringio' defined outside __init__ (attribute-defined-outside-init)
 unit_test_generator.py:1073:0: R0914: Too many local variables (18/15) (too-many-locals)
-unit_test_generator.py:1084:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
 unit_test_generator.py:1073:0: R0911: Too many return statements (7/6) (too-many-return-statements)
 unit_test_generator.py:1073:0: R0912: Too many branches (23/12) (too-many-branches)
 unit_test_generator.py:1073:0: R0915: Too many statements (56/50) (too-many-statements)
@@ -66,5 +65,5 @@ unit_test_generator.py:1493:0: R0912: Too many branches (34/12) (too-many-branch
 unit_test_generator.py:1493:0: R0915: Too many statements (125/50) (too-many-statements)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.25/10 (previous run: 9.25/10, +0.00)
+Your code has been rated at 9.26/10 (previous run: 9.25/10, +0.01)
 

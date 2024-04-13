@@ -1105,7 +1105,7 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
             logger.debug("No filename parsed, use the FQDN: %s",
                          obj.__module__)
             return set([f"{obj.__module__}.{obj.__name__}"])
-        elif import_modules:
+        if import_modules:
             logger.debug("%s %s missing __code__ < I need this module!", loc, obj)
         else:
             logger.debug("%s type_str=%s < I need this FQDN!", loc, type_str)
