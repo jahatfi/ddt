@@ -116,13 +116,13 @@ class FunctionMetaData(Jsonable):
                     global_vars_read_from:set,
                     global_vars_written_to:set,
                     source_file:Path,
-                    coverage_cost:dict = {},
-                    coverage_io:dict = {},
+                    coverage_cost:Optional[dict] = None,
+                    coverage_io:Optional[dict] = None,
                     coverage_percentage:float=0.0,
-                    result_types:dict = {},
-                    test_coverage:dict = {},
-                    types_in_use:set = set(),
-                    unified_test_coverage:set = set(),
+                    result_types:Optional[dict] = None,
+                    test_coverage:Optional[dict] = None,
+                    types_in_use:Optional[set] = None,
+                    unified_test_coverage:Optional[set] = None,
                     needs_pytest:bool = False
                 ):
         # These properties are always provided
@@ -135,14 +135,17 @@ class FunctionMetaData(Jsonable):
 
         # These properties are not provided unless this class
         # is being constructed as part of a unit test
-        self.coverage_cost = {} if not coverage_cost else coverage_cost
-        self.coverage_io = {} if not coverage_io else coverage_io
+        self.coverage_cost = {} if coverage_cost is None else coverage_cost
+        self.coverage_io = {} if coverage_io is None else coverage_io
         self.coverage_percentage = coverage_percentage
-        self.result_types = {} if not result_types else result_types
-        self.test_coverage = {} if not test_coverage else test_coverage
-        self.types_in_use = set() if not types_in_use else types_in_use
+        self.result_types = {} if result_types is None else result_types
+        self.test_coverage = {} if test_coverage is None else test_coverage
+        self.types_in_use = set() if types_in_use is None else types_in_use
         # Change in style simply to keep line length below 80 characters
-        self.unified_test_coverage = set() if unified_test_coverage == set() else unified_test_coverage
+        if unified_test_coverage is None:
+            self.unified_test_coverage = set()  
+        else:
+            self.unified_test_coverage = unified_test_coverage
         self.needs_pytest = needs_pytest
 
         #self.exceptions = exceptions
@@ -167,7 +170,8 @@ class FunctionMetaData(Jsonable):
         uncovered = set(self.lines)
         for _, record in self.coverage_io.items():
             uncovered -= set(record.coverage)
-        logger.debug("uncovered=%s self.non_code_lines=%s", uncovered, self.non_code_lines)
+        logger.debug("uncovered=%s self.non_code_lines=%s", 
+                     uncovered, self.non_code_lines)
         if uncovered:
             result = coverage_str_helper(list(uncovered), self.non_code_lines)
         else:
@@ -327,10 +331,12 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
             for f in inspect.stack()[::-1]:
                 this_frame = inspect.getframeinfo(f[0])
                 function_calls[this_frame.function] += 1
-            if func.__name__ not in recursion_depth_per_decoratee:
-                recursion_depth_per_decoratee[func.__name__] = max(function_calls.values())
 
-            elif 1 < max(function_calls.values()) >= recursion_depth_per_decoratee[func.__name__]:
+            max_func_call_vals = max(function_calls.values())
+            if func_name not in recursion_depth_per_decoratee:
+                recursion_depth_per_decoratee[func_name] = max_func_call_vals
+
+            elif 1 < max_func_call_vals >= recursion_depth_per_decoratee[func_name]:
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
@@ -589,7 +595,10 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         # in the argument list
         if this_metadata.is_method and arg_i == 0:
             continue
-        if callable(arg) and  inspect.isfunction(arg) and "." in arg.__qualname__ and arg.__qualname__[0].isupper():
+        if (    
+                callable(arg) and inspect.isfunction(arg) and
+                "." in arg.__qualname__ and arg.__qualname__[0].isupper()
+            ):
             newest_import_list = f"{arg.__module__}.{arg.__qualname__}".split('.')
             newest_import = '.'.join(newest_import_list[:-1])
             args_copy.append(arg.__qualname__)
@@ -603,7 +612,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                         file_name = str(file_name_match.groups()[0])
                         newest_import = re.sub("__main__", file_name, newest_import)
                     else:
-                        logger.critical("NO FILENAME FOUND!: %s", re.escape(str(arg.__code__)))
+                        logger.critical("NO FILENAME FOUND!: %s", 
+                                        re.escape(str(arg.__code__)))
                 new_types_in_use.add(newest_import)
 
 
@@ -1503,7 +1513,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         #print(f"{state[hash_key].keys()}")
         for k in sorted(state[hash_key].globals_before):
             needs_monkeypatch = True
-            v = state[hash_key][k]
+            v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
             test_str_list.append(f"{tab}{k} = {v}\n")
             line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k})\n'
@@ -1620,7 +1630,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     imports += custom_imports
 
     logger.debug("func_name=%s", func_name)
-    result_file_str = f"test_{func_name}.py"#.replace('.','_')}.py"
+    result_file_str = f"test_{func_name}".replace('.','_') + ".py"
     result_file_str = re.sub("__init__", "constructor", result_file_str)
     result_file = tests_dir.joinpath(result_file_str)
 
