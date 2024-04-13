@@ -236,19 +236,19 @@ class FunctionMetaData(Jsonable):
         the object in Python.
         """
         result = [f"FunctionMetaData(\"{self.name}\""]
-        result.append(self.lines.__repr__())
-        result.append(self.is_method.__repr__())
-        result.append(self.global_vars_read_from.__repr__())
-        result.append(self.global_vars_written_to.__repr__())
-        result.append(self.source_file.__repr__())
-        result.append(self.coverage_cost.__repr__())
-        result.append(self.coverage_io.__repr__())
-        result.append(self.coverage_percentage.__repr__())
-        result.append(self.result_types.__repr__())
-        result.append(self.test_coverage.__repr__())
-        result.append(self.types_in_use.__repr__())
-        result.append(self.unified_test_coverage.__repr__())
-        result.append(self.needs_pytest.__repr__())
+        result.append(repr(self.lines))
+        result.append(repr(self.is_method))
+        result.append(repr(self.global_vars_read_from))
+        result.append(repr(self.global_vars_written_to))
+        result.append(repr(self.source_file))
+        result.append(repr(self.coverage_cost))
+        result.append(repr(self.coverage_io))
+        result.append(repr(self.coverage_percentage))
+        result.append(repr(self.result_types))
+        result.append(repr(self.test_coverage))
+        result.append(repr(self.types_in_use))
+        result.append(repr(self.unified_test_coverage))
+        result.append(repr(self.needs_pytest))
         result.append(')')
         logger.debug("result=%s", result)
         return ','.join(result)
@@ -693,12 +693,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             # Answer by user moar10
             if bool(re.match(r"<class[^\.]+\.", type_str)) and\
                 type(arg).__module__ != "__builtin__":
-                try:
-                    class_repr = arg.repr()
-
-                except AttributeError:
-                    class_repr = arg.__repr__()
-                #logger.debug(f"Got class!: {class_repr}")
+                class_repr = repr(arg)
                 try:
                     logger.info(class_repr)
                     eval(class_repr)
@@ -1207,12 +1202,10 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
                 function_metadata.unified_test_coverage |= set(cov)
 
         test_suite = function_metadata.coverage_io
-        '''
-        The json file is optional and unused but makes for
-        friendly reading of the inputs to the unit test if
-        the actual .py unit test file is hard to read
-        due to formatting.
-        '''
+        # The json file is optional and unused but makes for
+        # friendly reading of the inputs to the unit test if
+        # the actual .py unit test file is hard to read
+        # due to formatting.
         this_func_name = re.sub(".__init__", ".constructor", func_name)
         filename = outdir.joinpath(f"{this_func_name}{suffix}")
         with open(filename, "w", encoding="utf-8") as test_io_file:
