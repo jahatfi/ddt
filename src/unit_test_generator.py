@@ -546,7 +546,7 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(percent_coverage=50, sample_count=1)
 def sorted_set_repr(obj: set):
     """
     I want sets to appear sorted when initialized in unit tests.
@@ -988,7 +988,7 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
         logger.debug("Got import for %s this_gloabl=%s", func_name, this_global)
     return is_variable
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     Given a function, returns three sets:
@@ -1030,7 +1030,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
             ]
     return result
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def count_objects(obj: typing.Any):
     """
     Given a Python object, e.g. a number, string, list, list of lists,
@@ -1224,7 +1224,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         local_all_metadata.pop(func_name)
     return local_all_metadata
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1260,7 +1260,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def update_global(obj, this_global:str,
                   phase:str,this_coverage_info:CoverageInfo)->CoverageInfo:
     """
@@ -1286,7 +1286,7 @@ def update_global(obj, this_global:str,
 
 
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def normalize_arg(arg:typing.Any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
@@ -1303,7 +1303,7 @@ def normalize_arg(arg:typing.Any):
         arg = arg[1:-1]
     return arg
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def coverage_str_helper(this_list:list, non_code_lines:set)->list:
     """
     Given a 'this_list', containing numbers covered or uncovered,
@@ -1350,7 +1350,7 @@ def coverage_str_helper(this_list:list, non_code_lines:set)->list:
 
     return results_list
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def gen_coverage_list(  function_metadata:FunctionMetaData,
                         coverage_list:list,
                         func_name:str,
@@ -1407,7 +1407,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     result.append(f"\n{start2}{';'.join(uncovered_str_list)}\n{end}")
     return result
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
@@ -1489,7 +1489,7 @@ def meta_program_function_call( this_state:CoverageInfo,
         test_str_list.append(line)
     return test_str_list
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict, func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
