@@ -1,6 +1,6 @@
 """
-Defines a decorator and helper functions that together 
-can create unit tests for decorated functions by hooking the 
+Defines a decorator and helper functions that together
+can create unit tests for decorated functions by hooking the
 decorated function during execution.
 
 Any function wrapped with this decorator will have
@@ -37,20 +37,24 @@ import types
 import typing
 from collections import defaultdict
 from collections.abc import Callable
+from dataclasses import dataclass
 from dis import dis
 from functools import wraps
 from io import StringIO
 from json import JSONEncoder
-from dataclasses import dataclass
 
 # NOTE: WindowsPath is in fact required if running on Windows!
 from pathlib import Path, WindowsPath  # noqa: F401 # pylint: disable=unused-import
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from typing import Optional, List
+from typing import List, Optional
 
 import coverage
 import pandas as pd
+from pandas import DataFrame
+
+# TODO Import any modules here for whom 'repr' doesn't work,
+# Then redefine the repr function (see further below, search "repr")
 
 pp = pprint.PrettyPrinter(indent=3)
 
@@ -219,7 +223,11 @@ class FunctionMetaData(Jsonable):
     def __str__(self):
         return f"{self.name}:\n{self.lines=}\n"
 
-    def return_non_code_lines(self):
+    def return_non_code_lines(self)->set:
+        """
+        Return a set of the line numbers of this function that are NOT
+        code, e.g. whitespace or comments.
+        """
         first_source_line_num = self.lines[0]
         last_source_line_num = self.lines[-1]
         range_source_line_nums =   set([x for x in range(first_source_line_num,
@@ -335,7 +343,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
         union of coverage of all previous executions.
 
         This wrapper will
-        deactivate when desired coverage is achieved, 
+        deactivate when desired coverage is achieved,
         and simply return the results of the function, ceasing to
         track any further coverage and removing the overhead involved in such
         monitoring.
@@ -561,8 +569,6 @@ def sorted_set_repr(obj: set):
     # The objects in this line of code appear in sorted order
     return repr(obj_set_code)
 
-# TODO Import any modules here for whom 'repr' doesn't work
-from pandas import DataFrame  # noqa: E402
 
 pp = pprint.PrettyPrinter(indent=3)
 
@@ -601,15 +607,13 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     #logger.critical(f"Decorating {func_name}".center(80, '-'))
 
-    '''
-    if func_name in all_metadata and\
-        all_metadata[func_name].coverage_percentage >= coverage_cutoff:
-        logger.debug(f"Hit >={coverage_cutoff=} in {func_name}; skip it.")
-        x = func(*args, **kwargs)
-        #logger.critical(f"Undecorating {func_name}".center(80, '-'))
-        return x
-    '''
 
+    #if func_name in all_metadata and\
+    #    all_metadata[func_name].coverage_percentage >= coverage_cutoff:
+    #    logger.debug(f"Hit >={coverage_cutoff=} in {func_name}; skip it.")
+    #    x = func(*args, **kwargs)
+    #    #logger.critical(f"Undecorating {func_name}".center(80, '-'))
+    #    return x
 
     if "pytest" in sys.modules:
         logger.debug("pytest is loaded; don't decorate when under a test")
@@ -664,10 +668,11 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                 sys.exit(2)
             continue
 
-        new_types_in_use |= get_all_types("1", arg, False)
+        new_types_in_use |= get_all_types("1", arg, False, 0, func_name)
         if hasattr(arg, "__dict__"):
+            logger.critical("Adding types for function %s for arg %s", func_name, arg)
             for v in arg.__dict__.values():
-                new_types_in_use |= get_all_types("1.1", v, False)
+                new_types_in_use |= get_all_types("1.1", v, False, 0, func_name)
         if callable(arg):
             if arg.__module__ == "__main__":
                 file_name_match = re.search(r"([\w]+).py", str(arg.__code__))
@@ -723,8 +728,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     if class_type:
         this_metadata.types_in_use.add(class_type)
-    this_metadata.types_in_use |= new_types_in_use
 
+    this_metadata.types_in_use |= new_types_in_use
     this_coverage_info.args = args_copy
 
     phase = "Before"
@@ -732,7 +737,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     for this_global in this_metadata.global_vars_read_from:
         obj = func.__globals__[this_global]
         this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
-        these_types = get_all_types("2", func.__globals__[this_global])
+        these_types = get_all_types("2", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
     # Also record globals variables WRITTEN TO by the function, as we may
     # need to know their values in order to assert the "After"
@@ -741,7 +746,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     for this_global in this_metadata.global_vars_written_to:
         obj = func.__globals__[this_global]
         this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
-        these_types = get_all_types("3", func.__globals__[this_global])
+        these_types = get_all_types("3", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
 
     hashed_input = ""
@@ -808,7 +813,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     if parsed_type:
         result_type = parsed_type.groups()[0]
 
-    this_metadata.types_in_use |= get_all_types("4", result)
+    this_metadata.types_in_use |= get_all_types("4", result, True, 0, func_name)
     #assert hashed_input not in hashed_inputs, "ALREADY"
     this_metadata.result_types[hashed_input] = result_type
     #hash_keys.add(hash_keys)
@@ -898,7 +903,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         obj = func.__globals__[this_global]
         this_coverage_info = update_global(obj, this_global,
                                            phase, this_coverage_info)
-        these_types = get_all_types("5", func.__globals__[this_global])
+        these_types = get_all_types("5", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
 
     this_metadata.unified_test_coverage |= this_coverage
@@ -985,7 +990,7 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
         is_variable = True
     elif this_global in function_globals and \
     isinstance(function_globals[this_global], types.ModuleType):
-        logger.debug("Got import for %s this_gloabl=%s", func_name, this_global)
+        logger.debug("Got import for %s this_global=%s", func_name, this_global)
     return is_variable
 
 @unit_test_generator_decorator(sample_count=1)
@@ -1005,7 +1010,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     global_vars_read_from = set()
     global_vars_written_to = set()
     dis_ = capture(dis)
-    logger.debug("f=%s type(f)=%s", f, type(f))
+    logger.debug("f=%s type(f)=%s", f.__name__, type(f))
     disassembled_function = dis_(f)
     result = []
     for line in disassembled_function.splitlines():
@@ -1070,16 +1075,34 @@ def count_objects(obj: typing.Any):
             count += 1
     return count
 
-def get_all_types(loc: str, obj, import_modules:bool=True)->set:
+def get_all_types(loc: str,
+                  obj,
+                  import_modules:bool=True,
+                  recursion_depth:int=0,
+                  decoratee:str="n/a")->set:
     """
     Return the set of all types contained in this object,
     It might be a list of sets so return {"list", "set"}
     """
+    # If primitive type, add an immediately return
+    if not obj:
+        return set()
+    parsed_type_match = re.match("<class '([^']+)'>", str(type(obj)))
+    if parsed_type_match:
+        result_type = parsed_type_match.groups()[0]
+        if result_type in ['int', 'bool', 'str', 'float']:
+            return set()
+
+
+    if recursion_depth > 2:
+        return set()
     all_types = set()
     type_str = str(type(obj))
-    type_list =  ['str', 'int', 'list', 'set', 'dictionry', 'dict']
-    if not any(x in type_str for x in type_list):
-        logger.debug("%s type_str=%s", loc, type_str)
+
+    parsed_type_match = re.match("<class '([^']+)'>", type_str)
+    if parsed_type_match:
+        parsed_type = parsed_type_match.groups()[0]
+
     if callable(obj):
         if hasattr(obj, "__code__"):
             logger.debug("%s %s.%s as callable",
@@ -1113,14 +1136,44 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
 
     elif "." in type_str:
         if import_modules:
-            logger.debug("%s type_str=%s < I need this non-callable module!",
-                         loc, type_str)
+            logger.debug("%s type_str=%s for %s; adding %s (recursion_depth=%d)",
+                         loc, type_str, decoratee, parsed_type, recursion_depth)
+            all_types.add(parsed_type)
+            # Add all non-builtin sub-types of object
+            # If obj is a composite object (e.g. a class) comprised of any
+            # non-built in objects (e.g. other classes), I need to add
+            # all subtypes recursively.
+            if hasattr(obj, "__dict__"):
+                for k,v in obj.__dict__.items():
+                    if isinstance(obj.__dict__[k], dict):
+                        #logger.debug("Adding %s:%s from composite dict",
+                        #             k, type(obj.__dict__[k]))
+                        for v2 in obj.__dict__[k].values():
+                            #all_types.add(type(k))
+                            all_types |= get_all_types("6",
+                                                       v2,
+                                                       import_modules,
+                                                       recursion_depth+1,
+                                                       decoratee)
+
+                    if isinstance(obj.__dict__[k], (set, list, tuple)):
+                        #logger.debug("Adding %s:%s from composite",
+                        #             k, type(obj.__dict__[k]))
+                        for v2 in obj.__dict__[k]:
+                            #all_types.add(type(k))
+                            all_types |= get_all_types("6",
+                                                       v2,
+                                                       import_modules,
+                                                       recursion_depth+1,
+                                                       decoratee)
+
+                return all_types
+            logger.debug("WHAT TO DO? %s type_str=%s for %s; adding %s",
+                         loc, type_str, decoratee, parsed_type)
         else:
-            logger.debug("%s type_str=%s < I need this non-callable FQDN!",
-                         loc, type_str)
-            parsed_type_match = re.match("<class '([^']+)'>", type_str)
+            logger.debug("%s type_str=%s for %s (recursion_depth=%d)!",
+                         loc, type_str, decoratee, recursion_depth)
             if parsed_type_match:
-                parsed_type = parsed_type_match.groups()[0]
                 if parsed_type and parsed_type.startswith("__main__"):
                     ext_module_file = inspect.getfile(obj.__class__)
                     logger.info(ext_module_file)
@@ -1131,22 +1184,26 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
                         fqn = re.sub("__main__", ext_module_file, parsed_type)
                         logger.info(fqn)
                         return set([fqn])
-
-                return set([parsed_type])
+                logger.info(parsed_type)
+                all_types.add(parsed_type)
+                return all_types
 
     if isinstance(obj, dict):
-        for v in obj.values():
-            #all_types.add(type(k))
-            all_types |= get_all_types("6", v, import_modules)
+        for vi, v in enumerate(obj.values()):
+            all_types |= get_all_types("6", v, import_modules, recursion_depth+1, decoratee)
+
+    elif inspect.isclass(obj):
+        logger.critical("%s is a class", obj)
+        return all_types
 
     # Now handle all other iterables aside from dictionaries
     # Non-iterables will throw a TypeError but that's perfectly ok
     elif not isinstance(obj, str):
         try:
             for obj_i in obj:
-                all_types |= get_all_types("7", obj_i, import_modules)
-        except TypeError:
-            pass
+                all_types |= get_all_types("7", obj_i, import_modules, recursion_depth+1, decoratee)
+        except TypeError as e:
+            logger.critical(e)
 
     result = set()
     for this_type in all_types:
@@ -1155,6 +1212,8 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
             result_type = parsed_type.groups()[0]
             logger.debug("Adding %s", result_type)
             result.add(result_type)
+        else:
+            result.add(this_type)
 
     if result:
         logger.debug("result=%s", result)
@@ -1502,7 +1561,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     """
     imports = []
     was_executed = False
-    # TODO Add to the import list any specific modules for
+    # NOTE: Add to the import list any specific modules for
     # which repr doesn't work, e.g.
     # imports.append(import pandas as pd\n")
 
@@ -1641,8 +1700,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         imports.append("from _pytest.monkeypatch import MonkeyPatch\n")
 
     custom_imports = []
-    logger.debug("func_name=%s\nfunction_metadata.types_in_use=%s",
-                 func_name, function_metadata.types_in_use)
+
     for this_type in function_metadata.types_in_use:
         continue_flag = False
         for other_type in function_metadata.types_in_use:
@@ -1684,22 +1742,20 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     #logger.critical(final_result)
 
     if "pytest" in sys.modules:
-        """
-        Return hash of resulting string here,
-        this is used when self-testing auto_generate_tests with
-        unit_test_generator_decorator
-        """
+        # Return hash of resulting string here,
+        # this is used when self-testing auto_generate_tests with
+        # unit_test_generator_decorator
         h = hashlib.new('sha256')
         h.update(str(sorted(test_str_list_def_dict.items())).encode())
         return h.digest().hex()
         #return str(sorted(test_str_list_def_dict.items()))#final_result_bytes
 
     with open(result_file, "w", encoding="utf-8") as st:
-        for list in [imports, header]:
-            if list:
-                st.writelines(list)
-        for list in test_str_list_def_dict.values():
-            st.writelines(list)
+        for item in [imports, header]:
+            if item:
+                st.writelines(item)
+        for item in test_str_list_def_dict.values():
+            st.writelines(item)
 
     logger.info("Wrote to %s", result_file)
 

@@ -1,4 +1,4 @@
-import divide_ints
+from tests.example_procedural_division import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 
