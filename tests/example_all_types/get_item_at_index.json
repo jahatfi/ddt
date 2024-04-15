@@ -15,116 +15,108 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_cost": {
-      "de9929d055bd4d9ff4ba84234b653f284137288f3a6dbf3c4ca7ce86f6378701": 0.002,
-      "b1f6eee2b7112784c59aa8122bb606949e1b3d3981c19da60fd023b6d58b0207": 0.001,
-      "81432ce1c1867292d0804c0ea9dc69cf8caf9530cc5676fe06a1f0122b8ba282": 0.001,
-      "3bd420588dc278576340ab8ec0826b411497546141889f2ba7b37d287577686d": 0.001
+      "1edeba54a64658dddb0ff23a35c06b12b5a92ff815a4fa728a18b112ca3f5a8a": 0.002,
+      "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": 0.001,
+      "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": 0.001,
+      "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": 0.001
    },
    "coverage_io": {
-      "de9929d055bd4d9ff4ba84234b653f284137288f3a6dbf3c4ca7ce86f6378701": {
-         "Before": {
-            "globals": {},
-            "args": [
-               "\"The quick red fox jumped over the lazy brown dog\"",
-               "3"
-            ]
-         },
-         "After": {
-            "globals": {}
-         },
-         "Result": " ",
-         "Coverage": [
+      "1edeba54a64658dddb0ff23a35c06b12b5a92ff815a4fa728a18b112ca3f5a8a": {
+         "args": [
+            "\"The quick red fox jumped over the lazy brown dog\"",
+            "3"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": " ",
+         "coverage": [
             21,
             23,
             25,
             28
-         ]
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
       },
-      "b1f6eee2b7112784c59aa8122bb606949e1b3d3981c19da60fd023b6d58b0207": {
-         "Before": {
-            "globals": {},
-            "args": [
-               "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
-               "50"
-            ]
-         },
-         "After": {
-            "globals": {}
-         },
-         "Exception": {
-            "Type": "<class 'ValueError'>",
-            "message": "index must be in range [0, 9], was 50"
-         },
-         "Result": "None",
-         "Coverage": [
+      "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": {
+         "args": [
+            "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
+            "50"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "None",
+         "coverage": [
             21,
             23,
             24
-         ]
+         ],
+         "exception_type": "<class 'ValueError'>",
+         "exception_message": "index must be in range [0, 9], was 50",
+         "constructor": ""
       },
-      "81432ce1c1867292d0804c0ea9dc69cf8caf9530cc5676fe06a1f0122b8ba282": {
-         "Before": {
-            "globals": {},
-            "args": [
-               "[-1, -2, -3, -4]",
-               "0"
-            ]
-         },
-         "After": {
-            "globals": {}
-         },
-         "Result": "-1",
-         "Coverage": [
+      "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": {
+         "args": [
+            "[-1, -2, -3, -4]",
+            "0"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "-1",
+         "coverage": [
             21,
             23,
             25,
             28
-         ]
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
       },
-      "3bd420588dc278576340ab8ec0826b411497546141889f2ba7b37d287577686d": {
-         "Before": {
-            "globals": {},
-            "args": [
-               "\"a test string\"",
-               "-5"
-            ]
-         },
-         "After": {
-            "globals": {}
-         },
-         "Exception": {
-            "Type": "<class 'ValueError'>",
-            "message": "index must be in range [0, 12], was -5"
-         },
-         "Result": "None",
-         "Coverage": [
+      "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": {
+         "args": [
+            "\"a test string\"",
+            "-5"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "None",
+         "coverage": [
             21,
             23,
             25,
             26
-         ]
+         ],
+         "exception_type": "<class 'ValueError'>",
+         "exception_message": "index must be in range [0, 12], was -5",
+         "constructor": ""
       }
    },
    "coverage_percentage": 75.0,
    "result_types": {
-      "de9929d055bd4d9ff4ba84234b653f284137288f3a6dbf3c4ca7ce86f6378701": "str",
-      "b1f6eee2b7112784c59aa8122bb606949e1b3d3981c19da60fd023b6d58b0207": "NoneType",
-      "81432ce1c1867292d0804c0ea9dc69cf8caf9530cc5676fe06a1f0122b8ba282": "int",
-      "3bd420588dc278576340ab8ec0826b411497546141889f2ba7b37d287577686d": "NoneType"
+      "1edeba54a64658dddb0ff23a35c06b12b5a92ff815a4fa728a18b112ca3f5a8a": "str",
+      "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": "NoneType",
+      "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": "int",
+      "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": "NoneType"
    },
    "test_coverage": {
-      "b1f6eee2b7112784c59aa8122bb606949e1b3d3981c19da60fd023b6d58b0207": [
+      "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": [
          21,
          23,
          24
       ],
-      "81432ce1c1867292d0804c0ea9dc69cf8caf9530cc5676fe06a1f0122b8ba282": [
+      "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": [
          21,
          23,
          25,
          28
       ],
-      "3bd420588dc278576340ab8ec0826b411497546141889f2ba7b37d287577686d": [
+      "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": [
          21,
          23,
          25,

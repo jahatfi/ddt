@@ -1,3 +1,25 @@
+"""
+Defines a decorator and helper functions that together
+can create unit tests for decorated functions by hooking the
+decorated function during execution.
+
+Any function wrapped with this decorator will have
+its execution coverage saved as though under a unit test.
+Additionally, all the following will be saved:
+1. All accessed global variables (both read from and written to)
+2. The arguments to the function, both args and kwargs
+3. The result of the function
+
+Execution coverage (set of line numbers executed) of
+each invocation will be tracked and aggregated to the
+union of coverage of all previous executions.
+
+This wrapper will
+deactivate and simply return the results of the function, once
+desired coverage is achieved, ceasing to
+track any further coverage and removing the overhead involved in such
+monitoring.
+"""
 import copy
 import dataclasses
 import hashlib
@@ -15,33 +37,31 @@ import types
 import typing
 from collections import defaultdict
 from collections.abc import Callable
+from dataclasses import dataclass
 from dis import dis
 from functools import wraps
 from io import StringIO
 from json import JSONEncoder
-from dataclasses import dataclass
 
 # NOTE: WindowsPath is in fact required if running on Windows!
-from pathlib import Path, WindowsPath  # noqa: F401
+from pathlib import Path, WindowsPath  # noqa: F401 # pylint: disable=unused-import
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from typing import Optional, List
+from typing import List, Optional
 
 import coverage
 import pandas as pd
+from pandas import DataFrame
+
+# TODO Import any modules here for whom 'repr' doesn't work,
+# Then redefine the repr function (see further below, search "repr")
 
 pp = pprint.PrettyPrinter(indent=3)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-# Set this value to disable the
-# unit_test_generator_decorator once coverage hits
-# this value as a percent, e.g. 80 = 80% coverage
-coverage_cutoff = 100
-recursion_depth_per_decoratee = defaultdict(int)
-
-active = False
+recursion_depth_per_decoratee: dict[str, int] = defaultdict(int)
 
 def fullname(o:object):
     """
@@ -54,11 +74,24 @@ def fullname(o:object):
         return o.__class__.__name__
     return module + '.' + o.__class__.__name__
 class Jsonable:
-    def toJSON(self):
+    """
+    Classes that inherit from this one inherit the toJSON(),
+    easily creating a string representation of the class.
+    """
+    def toJSON(self): # pylint: disable=invalid-name
+        """
+        Return this class representated as its runtime dictionary
+        """
         return self.__dict__
 
 class JsonableEncoder(json.JSONEncoder):
+    """
+    Unclear how if at all this is used
+    """
     def default(self, obj):
+        """
+        Unclear how if at all this is used
+        """
         logger.debug("obj=%s", obj)
         if isinstance(obj, set):
             return sorted(list(obj))
@@ -68,10 +101,14 @@ class JsonableEncoder(json.JSONEncoder):
 
 # https://pynative.com/make-python-class-json-serializable/
 class FunctionMetaDataEncoder(JSONEncoder):
+    """
+    Helper class to encode the FunctionMetaData class as a string by
+    returning this object as a dictionary if possible
+    """
     def default(self, o):
         if isinstance(o, set):
             return sorted(list(o))
-        elif isinstance(o, MappingProxyType):
+        if isinstance(o, MappingProxyType):
             pass
         else:
             try:
@@ -80,14 +117,17 @@ class FunctionMetaDataEncoder(JSONEncoder):
                 pass
 
 def _default(obj):
+    """
+    Helper class to encode the FunctionMetaData class as a string by
+    returning this object as a dictionary if possible
+    """
     if isinstance(obj, set):
         return sorted(list(obj))
     try:
         iterable = iter(obj)
     except TypeError as e:
         raise  e
-    else:
-        return list(iterable)
+    return list(iterable)
     #return json.JSONEncoder.default(obj)
 
 
@@ -116,13 +156,13 @@ class FunctionMetaData(Jsonable):
                     global_vars_read_from:set,
                     global_vars_written_to:set,
                     source_file:Path,
-                    coverage_cost:dict = {},
-                    coverage_io:dict = {},
+                    coverage_cost:Optional[dict] = None,
+                    coverage_io:Optional[dict] = None,
                     coverage_percentage:float=0.0,
-                    result_types:dict = {},
-                    test_coverage:dict = {},
-                    types_in_use:set = set(),
-                    unified_test_coverage:set = set(),
+                    result_types:Optional[dict] = None,
+                    test_coverage:Optional[dict] = None,
+                    types_in_use:Optional[set] = None,
+                    unified_test_coverage:Optional[set] = None,
                     needs_pytest:bool = False
                 ):
         # These properties are always provided
@@ -135,14 +175,17 @@ class FunctionMetaData(Jsonable):
 
         # These properties are not provided unless this class
         # is being constructed as part of a unit test
-        self.coverage_cost = {} if not coverage_cost else coverage_cost
-        self.coverage_io = {} if not coverage_io else coverage_io
+        self.coverage_cost = {} if coverage_cost is None else coverage_cost
+        self.coverage_io = {} if coverage_io is None else coverage_io
         self.coverage_percentage = coverage_percentage
-        self.result_types = {} if not result_types else result_types
-        self.test_coverage = {} if not test_coverage else test_coverage
-        self.types_in_use = set() if not types_in_use else types_in_use
+        self.result_types = {} if result_types is None else result_types
+        self.test_coverage = {} if test_coverage is None else test_coverage
+        self.types_in_use = set() if types_in_use is None else types_in_use
         # Change in style simply to keep line length below 80 characters
-        self.unified_test_coverage = set() if unified_test_coverage == set() else unified_test_coverage
+        if unified_test_coverage is None:
+            self.unified_test_coverage = set()
+        else:
+            self.unified_test_coverage = unified_test_coverage
         self.needs_pytest = needs_pytest
 
         #self.exceptions = exceptions
@@ -167,7 +210,8 @@ class FunctionMetaData(Jsonable):
         uncovered = set(self.lines)
         for _, record in self.coverage_io.items():
             uncovered -= set(record.coverage)
-        logger.debug("uncovered=%s self.non_code_lines=%s", uncovered, self.non_code_lines)
+        logger.debug("uncovered=%s self.non_code_lines=%s",
+                     uncovered, self.non_code_lines)
         if uncovered:
             result = coverage_str_helper(list(uncovered), self.non_code_lines)
         else:
@@ -179,7 +223,11 @@ class FunctionMetaData(Jsonable):
     def __str__(self):
         return f"{self.name}:\n{self.lines=}\n"
 
-    def return_non_code_lines(self):
+    def return_non_code_lines(self)->set:
+        """
+        Return a set of the line numbers of this function that are NOT
+        code, e.g. whitespace or comments.
+        """
         first_source_line_num = self.lines[0]
         last_source_line_num = self.lines[-1]
         range_source_line_nums =   set([x for x in range(first_source_line_num,
@@ -190,25 +238,35 @@ class FunctionMetaData(Jsonable):
         return non_code_lines
 
     def repr(self)->str:
+        """
+        This function represents FunctionMetaData as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
         result = [f"FunctionMetaData(\"{self.name}\""]
-        result.append(self.lines.__repr__())
-        result.append(self.is_method.__repr__())
-        result.append(self.global_vars_read_from.__repr__())
-        result.append(self.global_vars_written_to.__repr__())
-        result.append(self.source_file.__repr__())
-        result.append(self.coverage_cost.__repr__())
-        result.append(self.coverage_io.__repr__())
-        result.append(self.coverage_percentage.__repr__())
-        result.append(self.result_types.__repr__())
-        result.append(self.test_coverage.__repr__())
-        result.append(self.types_in_use.__repr__())
-        result.append(self.unified_test_coverage.__repr__())
-        result.append(self.needs_pytest.__repr__())
+        result.append(repr(self.lines))
+        result.append(repr(self.is_method))
+        result.append(repr(self.global_vars_read_from))
+        result.append(repr(self.global_vars_written_to))
+        result.append(repr(self.source_file))
+        result.append(repr(self.coverage_cost))
+        result.append(repr(self.coverage_io))
+        result.append(repr(self.coverage_percentage))
+        result.append(repr(self.result_types))
+        result.append(repr(self.test_coverage))
+        result.append(repr(self.types_in_use))
+        result.append(repr(self.unified_test_coverage))
+        result.append(repr(self.needs_pytest))
         result.append(')')
         logger.debug("result=%s", result)
         return ','.join(result)
 
     def __repr__(self) -> str:
+        """
+        This function represents FunctionMetaData as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
         return self.repr()
 
     def purge_record(self, hash_key):
@@ -284,9 +342,9 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
         each invocation will be tracked and aggregated to the
         union of coverage of all previous executions.
 
-        When the coverage percent (as measured by $lines_executed/$lines_in_file)
-        meets or exceeds coverage_cutoff, this wrapper will
-        deactivate and simply return the results of the function, ceasing to
+        This wrapper will
+        deactivate when desired coverage is achieved,
+        and simply return the results of the function, ceasing to
         track any further coverage and removing the overhead involved in such
         monitoring.
 
@@ -307,8 +365,8 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
             if percent_coverage == 0 and sample_count == 0:
                 # The user MUST specify at least one of least values
                 # Don't want to incur the overhead if they don't specify either
-                #logger.error("Neither percent_coverage nor sample_count specified for %s; skip decorator",
-                #            func_name)
+                logger.debug("percent_coverage & sample_count == 0 %s; skip decorator",
+                             func_name)
                 result = func(*args, **kwargs)
                 return result
 
@@ -327,10 +385,12 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
             for f in inspect.stack()[::-1]:
                 this_frame = inspect.getframeinfo(f[0])
                 function_calls[this_frame.function] += 1
-            if func.__name__ not in recursion_depth_per_decoratee:
-                recursion_depth_per_decoratee[func.__name__] = max(function_calls.values())
 
-            elif 1 < max(function_calls.values()) >= recursion_depth_per_decoratee[func.__name__]:
+            max_func_call_vals = max(function_calls.values())
+            if func_name not in recursion_depth_per_decoratee:
+                recursion_depth_per_decoratee[func_name] = max_func_call_vals
+
+            elif 1 < max_func_call_vals >= recursion_depth_per_decoratee[func_name]:
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
@@ -427,7 +487,7 @@ def get_module_import_string(my_path:Path)->str:
         file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
-            logger.debug("os.path.relpath(file, my_path, )=%s", 
+            logger.debug("os.path.relpath(file, my_path, )=%s",
                          os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
     if keep_file:
@@ -462,7 +522,7 @@ def get_class_import_string(arg:typing.Any):
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
-        this_type = re.sub(".py$", "", my_path_str) + "." + arg.__class__.__qualname__
+        this_type = f'{re.sub(".py$", "", my_path_str)}.{arg.__class__.__qualname__}'
         this_type = re.sub(r"\\", ".", this_type)
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
@@ -494,7 +554,7 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(percent_coverage=50, sample_count=1)
 def sorted_set_repr(obj: set):
     """
     I want sets to appear sorted when initialized in unit tests.
@@ -509,18 +569,11 @@ def sorted_set_repr(obj: set):
     # The objects in this line of code appear in sorted order
     return repr(obj_set_code)
 
-# TODO Import any modules here for whom 'repr' doesn't work
-from pandas import DataFrame  # noqa: E402
 
 pp = pprint.PrettyPrinter(indent=3)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.CRITICAL)
-
-# Set this value to disable the
-# unit_test_generator_decorator once coverage hits
-# this value as a percent, e.g. 80 = 80% coverage
-coverage_cutoff = 60
 
 def do_the_decorator_thing(func: Callable, func_name:str,
                            this_metadata:FunctionMetaData, source_file: str,
@@ -538,9 +591,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     each invocation will be tracked and aggregated to the
     union of coverage of all previous executions.
 
-    When the coverage percent (as measured by $lines_executed/$lines_in_file)
-    meets or exceeds coverage_cutoff, this wrapper will
-    deactivate and simply return the results of the function, ceasing to
+    This wrapper will
+    deactivate and simply return the results of the function, once
+    desired coverage is achieved, ceasing to
     track any further coverage and removing the overhead involved in such
     monitoring.
 
@@ -554,15 +607,13 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     #logger.critical(f"Decorating {func_name}".center(80, '-'))
 
-    '''
-    if func_name in all_metadata and\
-        all_metadata[func_name].coverage_percentage >= coverage_cutoff:
-        logger.debug(f"Hit >={coverage_cutoff=} in {func_name}; skip it.")
-        x = func(*args, **kwargs)
-        #logger.critical(f"Undecorating {func_name}".center(80, '-'))
-        return x
-    '''
 
+    #if func_name in all_metadata and\
+    #    all_metadata[func_name].coverage_percentage >= coverage_cutoff:
+    #    logger.debug(f"Hit >={coverage_cutoff=} in {func_name}; skip it.")
+    #    x = func(*args, **kwargs)
+    #    #logger.critical(f"Undecorating {func_name}".center(80, '-'))
+    #    return x
 
     if "pytest" in sys.modules:
         logger.debug("pytest is loaded; don't decorate when under a test")
@@ -589,7 +640,10 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         # in the argument list
         if this_metadata.is_method and arg_i == 0:
             continue
-        if callable(arg) and  inspect.isfunction(arg) and "." in arg.__qualname__ and arg.__qualname__[0].isupper():
+        if (
+                callable(arg) and inspect.isfunction(arg) and
+                "." in arg.__qualname__ and arg.__qualname__[0].isupper()
+            ):
             newest_import_list = f"{arg.__module__}.{arg.__qualname__}".split('.')
             newest_import = '.'.join(newest_import_list[:-1])
             args_copy.append(arg.__qualname__)
@@ -603,7 +657,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                         file_name = str(file_name_match.groups()[0])
                         newest_import = re.sub("__main__", file_name, newest_import)
                     else:
-                        logger.critical("NO FILENAME FOUND!: %s", re.escape(str(arg.__code__)))
+                        logger.critical("NO FILENAME FOUND!: %s",
+                                        re.escape(str(arg.__code__)))
                 new_types_in_use.add(newest_import)
 
 
@@ -613,10 +668,11 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                 sys.exit(2)
             continue
 
-        new_types_in_use |= get_all_types("1", arg, False)
+        new_types_in_use |= get_all_types("1", arg, False, 0, func_name)
         if hasattr(arg, "__dict__"):
+            logger.critical("Adding types for function %s for arg %s", func_name, arg)
             for v in arg.__dict__.values():
-                new_types_in_use |= get_all_types("1.1", v, False)
+                new_types_in_use |= get_all_types("1.1", v, False, 0, func_name)
         if callable(arg):
             if arg.__module__ == "__main__":
                 file_name_match = re.search(r"([\w]+).py", str(arg.__code__))
@@ -625,7 +681,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                     logger.debug("%s.%s",file_name, arg.__name__)
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
-                    logger.critical("NO FILENAME FOUND!: %s", re.escape(str(arg.__code__)))
+                    logger.critical("NO FILENAME FOUND!: %s",
+                                    re.escape(str(arg.__code__)))
             else:
                 args_copy.append(arg.__qualname__)
 
@@ -641,19 +698,15 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             # Answer by user moar10
             if bool(re.match(r"<class[^\.]+\.", type_str)) and\
                 type(arg).__module__ != "__builtin__":
-                try:
-                    class_repr = arg.repr()
-
-                except AttributeError:
-                    class_repr = arg.__repr__()
-                #logger.debug(f"Got class!: {class_repr}")
+                class_repr = repr(arg)
                 try:
                     logger.info(class_repr)
                     eval(class_repr)
                     args_copy.append(class_repr)
                 except SyntaxError as e:
                     # skip on error
-                    logger.debug("Got %s %s decorating %s repr'ing arg=%s:\ne=%s", type(e), class_repr, func_name, arg, e)
+                    logger.debug("Got %s %s decorating %s repr'ing arg=%s:\ne=%s",
+                                 type(e), class_repr, func_name, arg, e)
                     x = func(*args, **kwargs)
                     all_metadata[func_name] = this_metadata
                     return x
@@ -675,8 +728,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     if class_type:
         this_metadata.types_in_use.add(class_type)
-    this_metadata.types_in_use |= new_types_in_use
 
+    this_metadata.types_in_use |= new_types_in_use
     this_coverage_info.args = args_copy
 
     phase = "Before"
@@ -684,7 +737,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     for this_global in this_metadata.global_vars_read_from:
         obj = func.__globals__[this_global]
         this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
-        these_types = get_all_types("2", func.__globals__[this_global])
+        these_types = get_all_types("2", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
     # Also record globals variables WRITTEN TO by the function, as we may
     # need to know their values in order to assert the "After"
@@ -693,7 +746,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     for this_global in this_metadata.global_vars_written_to:
         obj = func.__globals__[this_global]
         this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
-        these_types = get_all_types("3", func.__globals__[this_global])
+        these_types = get_all_types("3", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
 
     hashed_input = ""
@@ -751,16 +804,16 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
     cov_report_ = json.loads(stdout_lines[0])
-    #hashed_input = f"{func_name}_{time.time_ns()}"#cov_report_['meta']['hash_key']
     if caught_exception:
-        logger.debug("caught_exception=%s @ %s result=%s", caught_exception, hashed_input, result)
+        logger.debug("caught_exception=%s @ %s result=%s",
+                     caught_exception, hashed_input, result)
 
     result_type = str(type(result))
     parsed_type = re.match("<class '([^']+)'>", result_type)
     if parsed_type:
         result_type = parsed_type.groups()[0]
 
-    this_metadata.types_in_use |= get_all_types("4", result)
+    this_metadata.types_in_use |= get_all_types("4", result, True, 0, func_name)
     #assert hashed_input not in hashed_inputs, "ALREADY"
     this_metadata.result_types[hashed_input] = result_type
     #hash_keys.add(hash_keys)
@@ -782,7 +835,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     if delta == 0 and not keep_subsets:
         all_metadata[func_name] = this_metadata
-        logger.debug("No new coverage decorating %s; but not skipping.", func_name)
+        logger.debug("No new coverage decorating %s; but not skipping.",
+                     func_name)
         if caught_exception:
             raise caught_exception
         return result
@@ -821,7 +875,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         all_metadata[func_name] = this_metadata
         if caught_exception:
             raise caught_exception
-        logger.debug("%s coverage is a subset this_metadata.coverage_percentage=%s", func_name, this_metadata.coverage_percentage)
+        logger.debug("%s coverage is a subset this_metadata.coverage_percentage=%s",
+                     func_name, this_metadata.coverage_percentage)
         #logger.critical(f"Undecorating {func_name}".center(80, '-'))
         return result
 
@@ -846,8 +901,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     phase = "After"
     for this_global in this_metadata.global_vars_written_to:
         obj = func.__globals__[this_global]
-        this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
-        these_types = get_all_types("5", func.__globals__[this_global])
+        this_coverage_info = update_global(obj, this_global,
+                                           phase, this_coverage_info)
+        these_types = get_all_types("5", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
 
     this_metadata.unified_test_coverage |= this_coverage
@@ -880,7 +936,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
 
 
-all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData) # type: ignore[arg-type]
+all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData) # type: ignore[arg-type] # pylint: disable=line-too-long
 hashed_inputs:set[str] = set() # method-assign
 
 class Capturing(list):
@@ -931,14 +987,13 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
     # TODO: Find a better way to do this than a str compare!
     if this_global in function_globals and \
         str(type(function_globals[this_global])) not in undesired_types:
-        #logger.debug(f"Adding {this_global}, {type(function_globals[this_global])=}")
         is_variable = True
     elif this_global in function_globals and \
     isinstance(function_globals[this_global], types.ModuleType):
-        logger.debug("Got import for %s this_gloabl=%s", func_name, this_global)
+        logger.debug("Got import for %s this_global=%s", func_name, this_global)
     return is_variable
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     Given a function, returns three sets:
@@ -955,7 +1010,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     global_vars_read_from = set()
     global_vars_written_to = set()
     dis_ = capture(dis)
-    logger.debug("f=%s type(f)=%s", f, type(f))
+    logger.debug("f=%s type(f)=%s", f.__name__, type(f))
     disassembled_function = dis_(f)
     result = []
     for line in disassembled_function.splitlines():
@@ -980,7 +1035,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
             ]
     return result
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def count_objects(obj: typing.Any):
     """
     Given a Python object, e.g. a number, string, list, list of lists,
@@ -1020,19 +1075,38 @@ def count_objects(obj: typing.Any):
             count += 1
     return count
 
-def get_all_types(loc: str, obj, import_modules:bool=True)->set:
+def get_all_types(loc: str,
+                  obj,
+                  import_modules:bool=True,
+                  recursion_depth:int=0,
+                  decoratee:str="n/a")->set:
     """
     Return the set of all types contained in this object,
     It might be a list of sets so return {"list", "set"}
     """
+    # If primitive type, add an immediately return
+    if not obj:
+        return set()
+    parsed_type_match = re.match("<class '([^']+)'>", str(type(obj)))
+    if parsed_type_match:
+        result_type = parsed_type_match.groups()[0]
+        if result_type in ['int', 'bool', 'str', 'float']:
+            return set()
+
+
+    if recursion_depth > 2:
+        return set()
     all_types = set()
     type_str = str(type(obj))
-    type_list =  ['str', 'int', 'list', 'set', 'dictionry', 'dict']
-    if not any(x in type_str for x in type_list):
-        logger.debug("%s type_str=%s", loc, type_str)
+
+    parsed_type_match = re.match("<class '([^']+)'>", type_str)
+    if parsed_type_match:
+        parsed_type = parsed_type_match.groups()[0]
+
     if callable(obj):
         if hasattr(obj, "__code__"):
-            logger.debug("%s %s.%s as callable", loc, obj.__module__, obj.__name__)
+            logger.debug("%s %s.%s as callable",
+                         loc, obj.__module__, obj.__name__)
             # TODO: This is
             # 1. Redundant, the line below is duplicated elsewhere
             # 2. Perhaps not complete, I may need the (partial)
@@ -1048,11 +1122,13 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
                 logger.debug("I NEED just THE MODULE: %s", str(file_name))
                 return set([str(file_name)])
             if import_modules:
-                logger.debug("No filename parsed, use the module: %s", obj.__module__)
+                logger.debug("No filename parsed, use the module: %s",
+                             obj.__module__)
                 return set([obj.__module__])
-            logger.debug("No filename parsed, use the FQDN: %s", obj.__module__)
+            logger.debug("No filename parsed, use the FQDN: %s",
+                         obj.__module__)
             return set([f"{obj.__module__}.{obj.__name__}"])
-        elif import_modules:
+        if import_modules:
             logger.debug("%s %s missing __code__ < I need this module!", loc, obj)
         else:
             logger.debug("%s type_str=%s < I need this FQDN!", loc, type_str)
@@ -1060,12 +1136,44 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
 
     elif "." in type_str:
         if import_modules:
-            logger.debug("%s type_str=%s < I need this non-callable module!", loc, type_str)
+            logger.debug("%s type_str=%s for %s; adding %s (recursion_depth=%d)",
+                         loc, type_str, decoratee, parsed_type, recursion_depth)
+            all_types.add(parsed_type)
+            # Add all non-builtin sub-types of object
+            # If obj is a composite object (e.g. a class) comprised of any
+            # non-built in objects (e.g. other classes), I need to add
+            # all subtypes recursively.
+            if hasattr(obj, "__dict__"):
+                for k,v in obj.__dict__.items():
+                    if isinstance(obj.__dict__[k], dict):
+                        #logger.debug("Adding %s:%s from composite dict",
+                        #             k, type(obj.__dict__[k]))
+                        for v2 in obj.__dict__[k].values():
+                            #all_types.add(type(k))
+                            all_types |= get_all_types("6",
+                                                       v2,
+                                                       import_modules,
+                                                       recursion_depth+1,
+                                                       decoratee)
+
+                    if isinstance(obj.__dict__[k], (set, list, tuple)):
+                        #logger.debug("Adding %s:%s from composite",
+                        #             k, type(obj.__dict__[k]))
+                        for v2 in obj.__dict__[k]:
+                            #all_types.add(type(k))
+                            all_types |= get_all_types("6",
+                                                       v2,
+                                                       import_modules,
+                                                       recursion_depth+1,
+                                                       decoratee)
+
+                return all_types
+            logger.debug("WHAT TO DO? %s type_str=%s for %s; adding %s",
+                         loc, type_str, decoratee, parsed_type)
         else:
-            logger.debug("%s type_str=%s < I need this non-callable FQDN!", loc, type_str)
-            parsed_type_match = re.match("<class '([^']+)'>", type_str)
+            logger.debug("%s type_str=%s for %s (recursion_depth=%d)!",
+                         loc, type_str, decoratee, recursion_depth)
             if parsed_type_match:
-                parsed_type = parsed_type_match.groups()[0]
                 if parsed_type and parsed_type.startswith("__main__"):
                     ext_module_file = inspect.getfile(obj.__class__)
                     logger.info(ext_module_file)
@@ -1076,22 +1184,26 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
                         fqn = re.sub("__main__", ext_module_file, parsed_type)
                         logger.info(fqn)
                         return set([fqn])
-
-                return set([parsed_type])
+                logger.info(parsed_type)
+                all_types.add(parsed_type)
+                return all_types
 
     if isinstance(obj, dict):
-        for v in obj.values():
-            #all_types.add(type(k))
-            all_types |= get_all_types("6", v, import_modules)
+        for vi, v in enumerate(obj.values()):
+            all_types |= get_all_types("6", v, import_modules, recursion_depth+1, decoratee)
+
+    elif inspect.isclass(obj):
+        logger.critical("%s is a class", obj)
+        return all_types
 
     # Now handle all other iterables aside from dictionaries
     # Non-iterables will throw a TypeError but that's perfectly ok
     elif not isinstance(obj, str):
         try:
             for obj_i in obj:
-                all_types |= get_all_types("7", obj_i, import_modules)
-        except TypeError:
-            pass
+                all_types |= get_all_types("7", obj_i, import_modules, recursion_depth+1, decoratee)
+        except TypeError as e:
+            logger.critical(e)
 
     result = set()
     for this_type in all_types:
@@ -1100,6 +1212,8 @@ def get_all_types(loc: str, obj, import_modules:bool=True)->set:
             result_type = parsed_type.groups()[0]
             logger.debug("Adding %s", result_type)
             result.add(result_type)
+        else:
+            result.add(this_type)
 
     if result:
         logger.debug("result=%s", result)
@@ -1136,7 +1250,8 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
 
         # TODO The below below is likely unnecessary now
         for hash_key in coverage_io_keys:
-            if not set(function_metadata.coverage_io[hash_key].coverage) & set(function_metadata.lines):
+            this_coverage = function_metadata.coverage_io[hash_key].coverage
+            if not set(this_coverage) & set(function_metadata.lines):
                 purged += 1
                 function_metadata.purge_record(hash_key)
                 function_metadata.unified_test_coverage = set()
@@ -1144,15 +1259,12 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         if purged:
             for _, cov in function_metadata.test_coverage.items():
                 function_metadata.unified_test_coverage |= set(cov)
-            #function_metadata.percent_covered = function_metadata.percent_covered(2)
 
         test_suite = function_metadata.coverage_io
-        '''
-        The json file is optional and unused but makes for
-        friendly reading of the inputs to the unit test if
-        the actual .py unit test file is hard to read
-        due to formatting.
-        '''
+        # The json file is optional and unused but makes for
+        # friendly reading of the inputs to the unit test if
+        # the actual .py unit test file is hard to read
+        # due to formatting.
         this_func_name = re.sub(".__init__", ".constructor", func_name)
         filename = outdir.joinpath(f"{this_func_name}{suffix}")
         with open(filename, "w", encoding="utf-8") as test_io_file:
@@ -1171,7 +1283,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         local_all_metadata.pop(func_name)
     return local_all_metadata
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1207,8 +1319,8 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator()
-def update_global(obj, this_global:str, 
+@unit_test_generator_decorator(sample_count=1)
+def update_global(obj, this_global:str,
                   phase:str,this_coverage_info:CoverageInfo)->CoverageInfo:
     """
     Update and return state dictionary with new global.
@@ -1233,7 +1345,7 @@ def update_global(obj, this_global:str,
 
 
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def normalize_arg(arg:typing.Any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
@@ -1250,7 +1362,7 @@ def normalize_arg(arg:typing.Any):
         arg = arg[1:-1]
     return arg
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def coverage_str_helper(this_list:list, non_code_lines:set)->list:
     """
     Given a 'this_list', containing numbers covered or uncovered,
@@ -1297,7 +1409,7 @@ def coverage_str_helper(this_list:list, non_code_lines:set)->list:
 
     return results_list
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def gen_coverage_list(  function_metadata:FunctionMetaData,
                         coverage_list:list,
                         func_name:str,
@@ -1354,7 +1466,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     result.append(f"\n{start2}{';'.join(uncovered_str_list)}\n{end}")
     return result
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
@@ -1436,7 +1548,7 @@ def meta_program_function_call( this_state:CoverageInfo,
         test_str_list.append(line)
     return test_str_list
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict, func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
@@ -1449,11 +1561,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     """
     imports = []
     was_executed = False
-    # TODO Add to the import list any specific modules for
+    # NOTE: Add to the import list any specific modules for
     # which repr doesn't work, e.g.
     # imports.append(import pandas as pd\n")
 
     tab = " "*indent_size
+    raise_ex_msg = f"{tab}raise Exception('{func_name} was never executed')"
     header = []
     pct = function_metadata.coverage_percentage
     #assert pct <= 100, "Bad math"
@@ -1467,7 +1580,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 ]
         header += lines
 
-    test_str_list_def_dict:typing.DefaultDict[int, List[str]] = defaultdict(int) # type: ignore [arg-type]
+    test_str_list_def_dict:typing.DefaultDict[int, List[str]] = defaultdict(int) # type: ignore [arg-type] # pylint: disable=line-too-long
     # Only functions/methods that accessed global
     # variables will need to be patched
     # The variable below will help us keep track of this.
@@ -1483,7 +1596,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     else:
         initial_import = ""
 
-    item = "globals"
     for hash_key_index, hash_key in enumerate(sorted(state)):
         test_str_list = [f"def test_{func_name.replace('.','_')}_{hash_key_index}():\n",
                          f"{tab}monkeypatch = MonkeyPatch()\n"]
@@ -1503,7 +1615,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         #print(f"{state[hash_key].keys()}")
         for k in sorted(state[hash_key].globals_before):
             needs_monkeypatch = True
-            v = state[hash_key][k]
+            v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
             test_str_list.append(f"{tab}{k} = {v}\n")
             line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k})\n'
@@ -1554,10 +1666,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             test_str_list.append(line)
             needs_monkeypatch = True
 
-
-
         # What if a global variable is written to but not read from?
-        # handle that here, otherwise I'd have to put this code in the loop above
+        # handle that here,
+        # otherwise I'd have to put this code in the loop above
         if not needs_monkeypatch:
             test_str_list[1] = ""
 
@@ -1569,7 +1680,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             # If this function was never executed, its coverage is 0%
             # Raise an exception to alert the user
             # Note that we don't need any imports at all
-            test_str_list.append(f"{tab}raise Exception('Empty test - this function was never executed')")
+            test_str_list.append(raise_ex_msg)
 
         if test_str_list:
             test_str_list_def_dict[hash_key_index] = test_str_list
@@ -1589,7 +1700,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         imports.append("from _pytest.monkeypatch import MonkeyPatch\n")
 
     custom_imports = []
-    logger.debug("func_name=%s\nfunction_metadata.types_in_use=%s", func_name, function_metadata.types_in_use)
+
     for this_type in function_metadata.types_in_use:
         continue_flag = False
         for other_type in function_metadata.types_in_use:
@@ -1620,7 +1731,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     imports += custom_imports
 
     logger.debug("func_name=%s", func_name)
-    result_file_str = f"test_{func_name}.py"#.replace('.','_')}.py"
+    result_file_str = f"test_{func_name}".replace('.','_') + ".py"
     result_file_str = re.sub("__init__", "constructor", result_file_str)
     result_file = tests_dir.joinpath(result_file_str)
 
@@ -1631,22 +1742,20 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     #logger.critical(final_result)
 
     if "pytest" in sys.modules:
-        """
-        Return hash of resulting string here,
-        this is used when self-testing auto_generate_tests with
-        unit_test_generator_decorator
-        """
+        # Return hash of resulting string here,
+        # this is used when self-testing auto_generate_tests with
+        # unit_test_generator_decorator
         h = hashlib.new('sha256')
         h.update(str(sorted(test_str_list_def_dict.items())).encode())
         return h.digest().hex()
         #return str(sorted(test_str_list_def_dict.items()))#final_result_bytes
 
     with open(result_file, "w", encoding="utf-8") as st:
-        for list in [imports, header]:
-            if list:
-                st.writelines(list)
-        for list in test_str_list_def_dict.values():
-            st.writelines(list)
+        for item in [imports, header]:
+            if item:
+                st.writelines(item)
+        for item in test_str_list_def_dict.values():
+            st.writelines(item)
 
     logger.info("Wrote to %s", result_file)
 

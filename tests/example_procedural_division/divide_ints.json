@@ -1,0 +1,80 @@
+{
+   "name": "divide_ints",
+   "lines": [
+      17,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+   ],
+   "is_method": false,
+   "global_vars_read_from": [
+      "error_code",
+      "logger"
+   ],
+   "global_vars_written_to": [
+      "error_code"
+   ],
+   "source_file": null,
+   "coverage_cost": {
+      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": 0.002
+   },
+   "coverage_io": {
+      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": {
+         "args": [
+            "6",
+            "2"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "error_code": "0"
+         },
+         "globals_after": {
+            "error_code": "0"
+         },
+         "result": "6/2=3.0",
+         "coverage": [
+            19,
+            20,
+            23,
+            26,
+            29
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      }
+   },
+   "coverage_percentage": 41.67,
+   "result_types": {
+      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": "str"
+   },
+   "test_coverage": {
+      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": [
+         19,
+         20,
+         23,
+         26,
+         29
+      ]
+   },
+   "types_in_use": [],
+   "unified_test_coverage": [
+      19,
+      20,
+      23,
+      26,
+      29
+   ],
+   "needs_pytest": false,
+   "non_code_lines": [
+      18
+   ]
+}
