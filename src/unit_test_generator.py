@@ -145,6 +145,34 @@ class CoverageInfo:
     exception_type: str = ""
     exception_message: str = ""
     constructor: str = ""
+
+    def repr(self):
+        """
+        This function represents  CoverageInfo as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
+        result = [" CoverageInfo("]
+        result.append(repr(self.args))
+        result.append(repr(self.kwargs))
+        result.append(repr(self.globals_before))
+        result.append(repr(self.globals_after))
+        result.append(repr(self.result))
+        result.append(repr(self.coverage))
+        result.append(repr(self.exception_type))
+        result.append(repr(self.exception_message))
+        result.append(repr(self.constructor).replace('"', "\""))
+        result.append(')')
+        logger.debug("result=%s", result)
+        return ','.join(result)
+
+    def __repr__(self) -> str:
+        """
+        This function represents FunctionMetaData as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
+        return self.repr()
 class FunctionMetaData(Jsonable):
     """
     Class to track metadata when testing functions and methods
