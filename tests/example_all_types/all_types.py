@@ -1,10 +1,13 @@
-from src import unit_test_generator
-from src.unit_test_generator import unit_test_generator_decorator,\
-                                generate_all_tests_and_metadata
-from pathlib import Path
-import logging
 import argparse
+import logging
+import os
+from pathlib import Path
 
+from src import unit_test_generator
+from src.unit_test_generator import (
+    generate_all_tests_and_metadata,
+    unit_test_generator_decorator,
+)
 
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
@@ -77,7 +80,6 @@ def main():
         3: set([20, 40, 80]),
         -1: set([x*x for x in range(10)]),
     }
-
     logger.info(f"{get_key_to_set_with_highest_value(my_dict)=}")
 
     """
@@ -88,14 +90,38 @@ def main():
     generate_all_tests_and_metadata(Path('.'), Path('.'))
 
 if __name__ == "__main__":
+
+    log_levels = {
+        'critical': logging.CRITICAL,
+        'error': logging.ERROR,
+        'warn': logging.WARNING,
+        'warning': logging.WARNING,
+        'info': logging.INFO,
+        'debug': logging.DEBUG
+    }
     # Create the parser and add argument(s)
     parser = argparse.ArgumentParser()
+    parser.add_argument('--log-level',
+                        "-l",
+                        help='log level',
+                        type=str,
+                        choices=log_levels.keys(),
+                        default='info')
     parser.add_argument("--disable-unit-test-generation", "-d",
                         action="store_true",
                         help="Set this flag to deactivate unit test generation for this code")
     args = parser.parse_args()
-    print(f"{args=}")
+    logger.setLevel(log_levels[args.log_level])
+    logger.info("args=%s", args)
 
+    this_file = Path(__file__).absolute()
+    for file in this_file.parent.rglob("*"):
+        if file.suffix in (".py", ".json") and file.absolute() != this_file:
+            logger.info("%s != %s", file.absolute(), this_file)
+            logger.info("Deleting %s to ensure clean start", this_file)
+            os.remove(file)
+
+    logger.info(f"{__file__}")
     # The code below applies the CLI arg above to selectively enable/disable
     # automatic unit test generation (Could not use the syntactic sugar method
     # of applying decorators as the user's input isn't parsed until now.)
@@ -105,5 +131,6 @@ if __name__ == "__main__":
     # Hint: https://stackoverflow.com/questions/3467526/
     #get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value)
     #get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index)
+
 
     main()
