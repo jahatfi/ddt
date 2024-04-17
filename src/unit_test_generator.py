@@ -271,7 +271,7 @@ class FunctionMetaData(Jsonable):
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [f"FunctionMetaData(name=\"{self.name}\""]
+        result = [f"FunctionMetaData(name=\'{self.name}\'"]
         result.append(" lines="+repr(self.lines))
         result.append(" is_method="+repr(self.is_method))
         result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
@@ -732,13 +732,16 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                     eval(class_repr)
                     args_copy.append(class_repr)
                 except SyntaxError as e:
-                    # skip on error
-                    logger.error("Got %s trying to create class from string: '%s' decorating %s repr'ing arg=%s:\ne=%s",
-                                 type(e), class_repr, func_name, arg, e)
-                    logger.error(arg.__repr__)
-                    x = func(*args, **kwargs)
-                    all_metadata[func_name] = this_metadata
-                    return x
+                    try:
+                        class_repr = arg.repr()
+                    except SyntaxError as e:
+                        # skip on error
+                        logger.error("Got %s trying to create class from string: '%s' decorating %s repr'ing arg=%s:\ne=%s\n%s",
+                                    type(e), class_repr, func_name, arg, e, arg.repr())
+                        logger.error(arg.__repr__)
+                        x = func(*args, **kwargs)
+                        all_metadata[func_name] = this_metadata
+                        return x
                 except NameError as e:
                     # What's going on here?
                     # This argument (arg) is a class, but that class hasn't
@@ -1578,6 +1581,8 @@ def meta_program_function_call( this_state:CoverageInfo,
             if func_name.endswith(".__init__"):
                 class_fqn = re.sub(".__init__.*$", "", call)
                 line = f"{tab}assert isinstance(x, {class_fqn})\n"
+            elif result_str in ["None", "True", "False"]:
+                line = f"{tab}assert x is {result_str}\n"
             else:
                 line = f"{tab}assert x == {result_str}\n"
         test_str_list.append(line)
