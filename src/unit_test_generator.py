@@ -109,11 +109,13 @@ class FunctionMetaDataEncoder(JSONEncoder):
         if isinstance(o, set):
             return sorted(list(o))
         if isinstance(o, MappingProxyType):
+            logger.warning("Skipping encoding of %s, it's a Mapping ProxyType", o)
             pass
         else:
             try:
                 return o.__dict__
-            except AttributeError:
+            except AttributeError as e:
+                logger.error("%s for %s", e, o)
                 pass
 
 def _default(obj):
@@ -152,17 +154,15 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [" CoverageInfo("]
-        result.append(repr(self.args))
-        result.append(repr(self.kwargs))
-        result.append(repr(self.globals_before))
-        result.append(repr(self.globals_after))
-        result.append(repr(self.result))
-        result.append(repr(self.coverage))
-        result.append(repr(self.exception_type))
-        result.append(repr(self.exception_message))
-        result.append(repr(self.constructor).replace('"', "\""))
-        result.append(')')
+        result = [" CoverageInfo(args="+repr(self.args)]
+        result.append(" kwargs="+repr(self.kwargs))
+        result.append(" globals_before="+repr(self.globals_before))
+        result.append(" globals_after="+repr(self.globals_after))
+        result.append(" result="+repr(self.result))
+        result.append(" coverage="+repr(self.coverage))
+        result.append(" exception_type"+repr(self.exception_type))
+        result.append(" exception_message="+repr(self.exception_message))
+        result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
         logger.debug("result=%s", result)
         return ','.join(result)
 
@@ -271,20 +271,20 @@ class FunctionMetaData(Jsonable):
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [f"FunctionMetaData(\"{self.name}\""]
-        result.append(repr(self.lines))
-        result.append(repr(self.is_method))
-        result.append(repr(self.global_vars_read_from))
-        result.append(repr(self.global_vars_written_to))
-        result.append(repr(self.source_file))
-        result.append(repr(self.coverage_cost))
-        result.append(repr(self.coverage_io))
-        result.append(repr(self.coverage_percentage))
-        result.append(repr(self.result_types))
-        result.append(repr(self.test_coverage))
-        result.append(repr(self.types_in_use))
-        result.append(repr(self.unified_test_coverage))
-        result.append(repr(self.needs_pytest))
+        result = [f"FunctionMetaData(name=\"{self.name}\""]
+        result.append(" lines="+repr(self.lines))
+        result.append(" is_method="+repr(self.is_method))
+        result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
+        result.append(" global_vars_written_to="+repr(self.global_vars_written_to))
+        result.append(" source_file="+repr(self.source_file))
+        result.append(" coverage_cost="+repr(self.coverage_cost))
+        result.append(" coverage_io="+repr(self.coverage_io))
+        result.append(" coverage_percentag="+repr(self.coverage_percentage))
+        result.append(" result_types="+repr(self.result_types))
+        result.append(" test_coverage="+repr(self.test_coverage))
+        result.append(" types_in_use="+repr(self.types_in_use))
+        result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
+        result.append(" needs_pytest="+repr(self.needs_pytest))
         result.append(')')
         logger.debug("result=%s", result)
         return ','.join(result)
@@ -655,7 +655,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     args_copy:list[str] = []
     class_type = None
     if this_metadata.is_method and not func_name.endswith("__init__"):
-        logger.critical("%s", func_name)
+        logger.info("Found non-constructor method: %s", func_name)
         this_coverage_info.constructor = args[0].repr()
 
         this_type = get_class_import_string(args[0])
@@ -698,7 +698,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
         new_types_in_use |= get_all_types("1", arg, False, 0, func_name)
         if hasattr(arg, "__dict__"):
-            logger.critical("Adding types for function %s for arg %s", func_name, arg)
+            logger.info("Adding types for function %s for arg %s", func_name, arg)
             for v in arg.__dict__.values():
                 new_types_in_use |= get_all_types("1.1", v, False, 0, func_name)
         if callable(arg):
@@ -733,8 +733,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                     args_copy.append(class_repr)
                 except SyntaxError as e:
                     # skip on error
-                    logger.debug("Got %s %s decorating %s repr'ing arg=%s:\ne=%s",
+                    logger.error("Got %s trying to create class from string: '%s' decorating %s repr'ing arg=%s:\ne=%s",
                                  type(e), class_repr, func_name, arg, e)
+                    logger.error(arg.__repr__)
                     x = func(*args, **kwargs)
                     all_metadata[func_name] = this_metadata
                     return x
@@ -1021,7 +1022,7 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
         logger.debug("Got import for %s this_global=%s", func_name, this_global)
     return is_variable
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     Given a function, returns three sets:
@@ -1029,10 +1030,15 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     2. all global vars read by the provided function
     3. all global vars written to by the provided function
     """
+    if hasattr(f, "__wrapped__"):
+        f = f.__wrapped__
+    """
     try:
         f = f.__wrapped__ # type: ignore [attr-defined]
-    except AttributeError:
+    except AttributeError as e:
+        logger.error("Got %s for %s", e, f) 
         pass
+    """
     line_numbers = []
 
     global_vars_read_from = set()
@@ -1063,7 +1069,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
             ]
     return result
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def count_objects(obj: typing.Any):
     """
     Given a Python object, e.g. a number, string, list, list of lists,
@@ -1264,7 +1270,8 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
 
     I do claim this is self-testing code after all!
     """
-
+    
+    pp.pprint(local_all_metadata)
     for func_name in func_names:
         logger.debug("func_name=%s", func_name)
         function_metadata:FunctionMetaData = copy.deepcopy(local_all_metadata[func_name])
@@ -1311,7 +1318,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         local_all_metadata.pop(func_name)
     return local_all_metadata
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1347,7 +1354,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def update_global(obj, this_global:str,
                   phase:str,this_coverage_info:CoverageInfo)->CoverageInfo:
     """
@@ -1373,7 +1380,7 @@ def update_global(obj, this_global:str,
 
 
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def normalize_arg(arg:typing.Any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
@@ -1390,7 +1397,7 @@ def normalize_arg(arg:typing.Any):
         arg = arg[1:-1]
     return arg
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def coverage_str_helper(this_list:list, non_code_lines:set)->list:
     """
     Given a 'this_list', containing numbers covered or uncovered,
@@ -1494,7 +1501,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     result.append(f"\n{start2}{';'.join(uncovered_str_list)}\n{end}")
     return result
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
@@ -1576,7 +1583,7 @@ def meta_program_function_call( this_state:CoverageInfo,
         test_str_list.append(line)
     return test_str_list
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator()
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict, func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
