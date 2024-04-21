@@ -12,7 +12,7 @@ from src.unit_test_generator import (
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.WARNING)
+unit_test_generator.logger.setLevel(logging.INFO)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
@@ -146,7 +146,7 @@ def first_test():
             ...
             car.change_steer_angle(c_angle)
         except Exception as e:
-            logger.error(f"change_steer_angle({c_angle}) raised {type(e)}")
+            logger.error("change_steer_angle(%s) raised %s", c_angle, type(e))
             logger.error(e)
 
         print(car)
@@ -156,7 +156,7 @@ def second_test():
     Create two cars and determine which one is going faster
     by using the is_going_faster_than() Car method
     """
-    print(f"Test 2.1".center(80, '-'))
+    print("Test 2.1".center(80, '-'))
     car_1 = Car("Red", 20, 0)
     car_2 = Car("White", 19, 0)
 
@@ -165,7 +165,7 @@ def second_test():
     else:
         print(f"{car_1}'s speed is less than or equal to {car_2}'s speed")
 
-    print(f"Test 2.2".center(80, '-'))
+    print("Test 2.2".center(80, '-'))
     # The invocation below will also work,
     # demonstrating that the unit_test_generator_decorator works on both
     Car.is_going_faster_than(car_1, car_2)
@@ -214,9 +214,9 @@ if __name__ == "__main__":
     # NOTE:
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
-    Car.brake = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.brake)
-    Car.gas = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.gas)
-    Car.change_steer_angle = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.change_steer_angle)
-    Car.is_going_faster_than = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.is_going_faster_than)
-    Car.__init__ = unit_test_generator_decorator(not args.disable_unit_test_generation)(Car.__init__)
+    Car.brake = unit_test_generator_decorator(sample_count=1)(Car.brake)
+    Car.gas = unit_test_generator_decorator(sample_count=1)(Car.gas)
+    Car.change_steer_angle = unit_test_generator_decorator(sample_count=1)(Car.change_steer_angle)
+    Car.is_going_faster_than = unit_test_generator_decorator(sample_count=1)(Car.is_going_faster_than)
+    Car.__init__ = unit_test_generator_decorator(sample_count=1)(Car.__init__)
     main()
