@@ -12,7 +12,7 @@ from src.unit_test_generator import (
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.INFO)
+unit_test_generator.logger.setLevel(logging.DEBUG)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
@@ -58,7 +58,7 @@ class Car():
         logger.debug(f"{rate=:<8} {duration=:<8}")
         if rate < 0:
             raise ValueError("Gas rate (m/s) must be positive.")
-        self.speed = max(0, self.speed+rate*duration)
+        self.speed = max(0.0, self.speed+rate*duration)
         return self.speed
 
     def change_steer_angle(self, angle:int):
@@ -79,6 +79,7 @@ class Car():
                                 self.MIN_ANGLE
                                 )
         return self.steer_angle
+
     def __str__(self) -> str:
         """
         Return a string representation of this Car object
@@ -124,13 +125,13 @@ def first_test():
     ]
     for i, (color, speed, angle, c_angle, c_speed, duration) in enumerate(zip(*lists)):
         print(f"Car #{i}".center(80, '-'))
-        car = Car(color, speed, angle)
-        print(car)
-        print(f"Driving {car.repr()}")
+        this_car = Car(color, speed, angle)
+        print(this_car)
+        print(f"Driving {this_car.repr()}")
         # Note the intentional bug here for the
         # sake of demonstrating the ValueError:
         try:
-            car.gas(c_speed, duration)
+            this_car.gas(c_speed, duration)
         except Exception as e:
             logger.error(f"gas({c_speed},{duration}) raised {type(e)}")
             logger.error(e)
@@ -144,12 +145,12 @@ def first_test():
         #car.change_steer_angle(c_angle)
         try:
             ...
-            car.change_steer_angle(c_angle)
+            this_car.change_steer_angle(c_angle)
         except Exception as e:
             logger.error("change_steer_angle(%s) raised %s", c_angle, type(e))
             logger.error(e)
 
-        print(car)
+        print(this_car)
 
 def second_test():
     """
