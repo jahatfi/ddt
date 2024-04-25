@@ -160,12 +160,13 @@ class CoverageInfo:
         result.append(" globals_after="+repr(self.globals_after))
         result.append(" result="+repr(self.result))
         result.append(" coverage="+repr(self.coverage))
-        result.append(" exception_type"+repr(self.exception_type))
+        result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
-        logger.debug("result=%s", result)
-        return ','.join(result)
 
+        result = ','.join(result)
+        logger.debug("result=%s", result)
+        return result
     def __repr__(self) -> str:
         """
         This function represents FunctionMetaData as a string that
@@ -284,10 +285,10 @@ class FunctionMetaData(Jsonable):
         result.append(" test_coverage="+repr(self.test_coverage))
         result.append(" types_in_use="+repr(self.types_in_use))
         result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
-        result.append(" needs_pytest="+repr(self.needs_pytest))
-        result.append(')')
-        logger.debug("result=%s", result)
-        return ','.join(result)
+        result.append(" needs_pytest="+repr(self.needs_pytest)+')')
+        result_str = ','.join(result)
+        logger.debug("result=%s", result_str)
+        return result_str
 
     def __repr__(self) -> str:
         """
@@ -582,7 +583,7 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
-@unit_test_generator_decorator(percent_coverage=50, sample_count=1)
+@unit_test_generator_decorator(percent_coverage=0, sample_count=1)
 def sorted_set_repr(obj: set):
     """
     I want sets to appear sorted when initialized in unit tests.
@@ -657,7 +658,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     if this_metadata.is_method and not func_name.endswith("__init__"):
         logger.info("Found non-constructor method: %s", func_name)
         this_coverage_info.constructor = args[0].repr()
-
+        logger.critical(args)
         this_type = get_class_import_string(args[0])
         class_type = copy.deepcopy(this_type)
 
@@ -667,6 +668,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         # Do not include the first arg of a method (it's "self")
         # in the argument list
         if this_metadata.is_method and arg_i == 0:
+            pass
+            logging.critical('skip')
             continue
         if (
                 callable(arg) and inspect.isfunction(arg) and
@@ -676,7 +679,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             newest_import = '.'.join(newest_import_list[:-1])
             args_copy.append(arg.__qualname__)
             try:
-                # Reset the class type, as this newes_import will be used
+                # Reset the class type, as this newest_import will be used
                 # instead
                 class_type = None
                 if arg.__module__ == "__main__":
@@ -702,11 +705,12 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             for v in arg.__dict__.values():
                 new_types_in_use |= get_all_types("1.1", v, False, 0, func_name)
         if callable(arg):
+            logger.critical('callable')
             if arg.__module__ == "__main__":
                 file_name_match = re.search(r"([\w]+).py", str(arg.__code__))
                 if file_name_match:
                     file_name = file_name_match.groups()[0]
-                    logger.debug("%s.%s",file_name, arg.__name__)
+                    logger.critical("%s.%s",file_name, arg.__name__)
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
                     logger.critical("NO FILENAME FOUND!: %s",
@@ -718,7 +722,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         elif not isinstance(arg, str):
             type_str = str(type(arg))
             #logger.critical(arg)
-            #logger.debug(f"{type_str} {type(arg).__module__}")
+            logger.debug(f"{type_str} {type(arg).__module__}")
 
             # Reference for line:
             # 'type(arg).__module__ != "__builtin__":'
@@ -727,13 +731,18 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             if bool(re.match(r"<class[^\.]+\.", type_str)) and\
                 type(arg).__module__ != "__builtin__":
                 class_repr = repr(arg)
+                if "object at 0x" in class_repr:
+                    class_repr = arg.repr()
                 try:
                     logger.info(class_repr)
                     eval(class_repr)
                     args_copy.append(class_repr)
+
                 except SyntaxError as e:
                     try:
+                        
                         class_repr = arg.repr()
+                        logger.error("%s, class_repr = %s",e, class_repr)
                     except SyntaxError as e:
                         # skip on error
                         logger.error("Got %s trying to create class from string: '%s' decorating %s repr'ing arg=%s:\ne=%s\n%s",
@@ -750,7 +759,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                     # can import it later; now we simply record it as one of
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
-                    logger.debug("class_repr=%s arg=%s", class_repr, arg)
+                    logger.critical("class_repr=%s arg=%s", class_repr, arg)
 
                     args_copy.append(class_repr)
             else:
@@ -763,6 +772,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     this_metadata.types_in_use |= new_types_in_use
     this_coverage_info.args = args_copy
+    logger.critical(f"{this_coverage_info.args=}")
 
     phase = "Before"
     # Record the values of any global variables READ BY this function
@@ -1025,7 +1035,7 @@ def is_global_var(this_global:str, function_globals:dict, func_name:str):
         logger.debug("Got import for %s this_global=%s", func_name, this_global)
     return is_variable
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     Given a function, returns three sets:
@@ -1039,7 +1049,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     try:
         f = f.__wrapped__ # type: ignore [attr-defined]
     except AttributeError as e:
-        logger.error("Got %s for %s", e, f) 
+        logger.error("Got %s for %s", e, f)
         pass
     """
     line_numbers = []
@@ -1072,7 +1082,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
             ]
     return result
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def count_objects(obj: typing.Any):
     """
     Given a Python object, e.g. a number, string, list, list of lists,
@@ -1273,7 +1283,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
 
     I do claim this is self-testing code after all!
     """
-    
+
     pp.pprint(local_all_metadata)
     for func_name in func_names:
         logger.debug("func_name=%s", func_name)
@@ -1321,7 +1331,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
         local_all_metadata.pop(func_name)
     return local_all_metadata
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=0)
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1357,7 +1367,7 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def update_global(obj, this_global:str,
                   phase:str,this_coverage_info:CoverageInfo)->CoverageInfo:
     """
@@ -1383,7 +1393,7 @@ def update_global(obj, this_global:str,
 
 
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def normalize_arg(arg:typing.Any):
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
@@ -1400,7 +1410,7 @@ def normalize_arg(arg:typing.Any):
         arg = arg[1:-1]
     return arg
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def coverage_str_helper(this_list:list, non_code_lines:set)->list:
     """
     Given a 'this_list', containing numbers covered or uncovered,
@@ -1447,7 +1457,7 @@ def coverage_str_helper(this_list:list, non_code_lines:set)->list:
 
     return results_list
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator(sample_count=0)
 def gen_coverage_list(  function_metadata:FunctionMetaData,
                         coverage_list:list,
                         func_name:str,
@@ -1504,7 +1514,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     result.append(f"\n{start2}{';'.join(uncovered_str_list)}\n{end}")
     return result
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=1)
 def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
@@ -1588,7 +1598,7 @@ def meta_program_function_call( this_state:CoverageInfo,
         test_str_list.append(line)
     return test_str_list
 
-@unit_test_generator_decorator()
+@unit_test_generator_decorator(sample_count=0)
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict, func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
