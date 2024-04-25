@@ -279,7 +279,7 @@ class FunctionMetaData(Jsonable):
         result.append(" source_file="+repr(self.source_file))
         result.append(" coverage_cost="+repr(self.coverage_cost))
         result.append(" coverage_io="+repr(self.coverage_io))
-        result.append(" coverage_percentag="+repr(self.coverage_percentage))
+        result.append(" coverage_percentage="+repr(self.coverage_percentage))
         result.append(" result_types="+repr(self.result_types))
         result.append(" test_coverage="+repr(self.test_coverage))
         result.append(" types_in_use="+repr(self.types_in_use))
