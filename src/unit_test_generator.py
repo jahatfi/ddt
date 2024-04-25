@@ -284,8 +284,7 @@ class FunctionMetaData(Jsonable):
         result.append(" test_coverage="+repr(self.test_coverage))
         result.append(" types_in_use="+repr(self.types_in_use))
         result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
-        result.append(" needs_pytest="+repr(self.needs_pytest))
-        result.append(')')
+        result.append(" needs_pytest="+repr(self.needs_pytest))+')'
         logger.debug("result=%s", result)
         return ','.join(result)
 
