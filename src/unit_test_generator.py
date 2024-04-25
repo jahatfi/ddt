@@ -160,7 +160,7 @@ class CoverageInfo:
         result.append(" globals_after="+repr(self.globals_after))
         result.append(" result="+repr(self.result))
         result.append(" coverage="+repr(self.coverage))
-        result.append(" exception_type"+repr(self.exception_type))
+        result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
         logger.debug("result=%s", result)
