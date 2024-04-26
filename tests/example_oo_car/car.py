@@ -9,17 +9,17 @@ from src.unit_test_generator import (
     unit_test_generator_decorator,
 )
 
-fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
+fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.DEBUG)
+unit_test_generator.logger.setLevel(logging.WARNING)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
 # unit test will be empty and will raise an exception.
 method_call_counter = 0
 
-class Car():
+class Car:
     """
     A simple class with basic methods for testing the
     unit_test_generator_decorator on class methods.
@@ -27,7 +27,7 @@ class Car():
     MAX_ANGLE = 720
     MIN_ANGLE = -720
     def __init__(   self, color: str="black",
-                    speed:int=0, steer_angle:int=0):
+                    speed:float=0.0, steer_angle:int=0):
         """
         Create a new Car class with car color,
         initial speed and steering angle
@@ -46,7 +46,7 @@ class Car():
             raise ValueError("Brake rate (m/s) must be negative.")
         if duration < 0:
             raise ValueError("Duration (s) must be positive.")
-        self.speed = max(0, self.speed+rate*duration)
+        self.speed = max(0.0, self.speed+rate*duration)
 
     def gas(self, rate:float, duration:int=1):
         """
@@ -80,7 +80,8 @@ class Car():
                                 )
         return self.steer_angle
 
-    def __str__(self) -> str:
+
+    def str(self) -> str:
         """
         Return a string representation of this Car object
         Create string in a list and join it to keep the
@@ -92,8 +93,18 @@ class Car():
         ]
         return ''.join(result)
 
-    def repr(self):
+    def __repr__(self):
+        """
+        Return this objective as a valid Python string that can
+        be used to recreate this object.
+        """
         return f"Car(\"{self.color}\", {self.speed}, {self.steer_angle})"
+
+    def repr(self):
+        """
+        Simply call the magic __repr__ method
+        """
+        return self.__repr__()
 
 
     def is_going_faster_than(self, other_car):
@@ -126,6 +137,9 @@ def first_test():
     for i, (color, speed, angle, c_angle, c_speed, duration) in enumerate(zip(*lists)):
         print(f"Car #{i}".center(80, '-'))
         this_car = Car(color, speed, angle)
+        if this_car is None or not this_car:
+            raise ValueError("this_car is None!")
+
         print(this_car)
         print(f"Driving {this_car.repr()}")
         # Note the intentional bug here for the

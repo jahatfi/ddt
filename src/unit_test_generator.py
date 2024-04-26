@@ -483,7 +483,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                                               *args, **kwargs)
             except Exception as e:
                 logger.warning("e=%s", e)
-                #raise e
+                raise e
         return unit_test_generator_decorator_inner
     return actual_decorator
 
@@ -668,8 +668,6 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         # Do not include the first arg of a method (it's "self")
         # in the argument list
         if this_metadata.is_method and arg_i == 0:
-            pass
-            logging.critical('skip')
             continue
         if (
                 callable(arg) and inspect.isfunction(arg) and
@@ -740,13 +738,13 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
                 except SyntaxError as e:
                     try:
-                        
+
                         class_repr = arg.repr()
-                        logger.error("%s, class_repr = %s",e, class_repr)
-                    except SyntaxError as e:
+                        logger.debug("%s, class_repr = %s", e, class_repr)
+                    except AttributeError as e:
                         # skip on error
                         logger.error("Got %s trying to create class from string: '%s' decorating %s repr'ing arg=%s:\ne=%s\n%s",
-                                    type(e), class_repr, func_name, arg, e, arg.repr())
+                                    type(e), class_repr, func_name, arg, e, arg)
                         logger.error(arg.__repr__)
                         x = func(*args, **kwargs)
                         all_metadata[func_name] = this_metadata
@@ -772,7 +770,6 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     this_metadata.types_in_use |= new_types_in_use
     this_coverage_info.args = args_copy
-    logger.critical(f"{this_coverage_info.args=}")
 
     phase = "Before"
     # Record the values of any global variables READ BY this function
@@ -1368,8 +1365,10 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     suffix)
 
 @unit_test_generator_decorator(sample_count=1)
-def update_global(obj, this_global:str,
-                  phase:str,this_coverage_info:CoverageInfo)->CoverageInfo:
+def update_global(obj,
+                  this_global:str,
+                  phase:str,
+                  this_coverage_info:CoverageInfo)->CoverageInfo:
     """
     Update and return state dictionary with new global.
     """
