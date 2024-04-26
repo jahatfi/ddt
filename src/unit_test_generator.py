@@ -140,8 +140,8 @@ class CoverageInfo:
     """
     args: list[str] = dataclasses.field(default_factory=list)
     kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
-    globals_before: dict = dataclasses.field(default_factory=dict)
-    globals_after: dict = dataclasses.field(default_factory=dict)
+    globals_before: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+    globals_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     result: str  = ""
     coverage: list[int] = dataclasses.field(default_factory=list)
     exception_type: str = ""
@@ -154,7 +154,7 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [" CoverageInfo(args="+repr(self.args)]
+        result = ["CoverageInfo(args="+repr(self.args)]
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
@@ -1123,7 +1123,7 @@ def get_all_types(loc: str,
                   obj,
                   import_modules:bool=True,
                   recursion_depth:int=0,
-                  decoratee:str="n/a")->set:
+                  decoratee:str="n/a")->set[str]:
     """
     Return the set of all types contained in this object,
     It might be a list of sets so return {"list", "set"}
@@ -1140,12 +1140,12 @@ def get_all_types(loc: str,
 
     if recursion_depth > 2:
         return set()
-    all_types = set()
+    all_types: set[str] = set()
     type_str = str(type(obj))
 
     parsed_type_match = re.match("<class '([^']+)'>", type_str)
     if parsed_type_match:
-        parsed_type = parsed_type_match.groups()[0]
+        parsed_type:str = parsed_type_match.groups()[0]
 
     if callable(obj):
         if hasattr(obj, "__code__"):
@@ -1251,9 +1251,9 @@ def get_all_types(loc: str,
 
     result = set()
     for this_type in all_types:
-        parsed_type = re.match("<class '([^']+)'>", str(this_type))
-        if parsed_type:
-            result_type = parsed_type.groups()[0]
+        parsed_type_match = re.match("<class '([^']+)'>", str(this_type))
+        if parsed_type_match:
+            result_type = parsed_type_match.groups()[0]
             logger.debug("Adding %s", result_type)
             result.add(result_type)
         else:
