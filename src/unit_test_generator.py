@@ -162,11 +162,12 @@ class CoverageInfo:
         result.append(" coverage="+repr(self.coverage))
         result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
-        result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
+        result.append(" constructor="+repr(self.constructor).replace('\"', "\"")+")")
 
         result = ','.join(result)
         logger.debug("result=%s", result)
         return result
+
     def __repr__(self) -> str:
         """
         This function represents FunctionMetaData as a string that
@@ -174,6 +175,32 @@ class CoverageInfo:
         the object in Python.
         """
         return self.repr()
+
+    def __str__(self) -> str:
+        """
+        This function represents FunctionMetaData as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
+        """
+        This function represents  CoverageInfo as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
+        result = ["CoverageInfo(args="+repr(self.args)]
+        result.append(" kwargs="+repr(self.kwargs))
+        result.append(" globals_before="+repr(self.globals_before))
+        result.append(" globals_after="+repr(self.globals_after))
+        result.append(" result="+repr(self.result))
+        result.append(" coverage="+repr(self.coverage))
+        result.append(" exception_type="+repr(self.exception_type))
+        result.append(" exception_message="+repr(self.exception_message))
+        result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
+
+        result_str = ','.join(result)
+        logger.debug("result=%s", result_str)
+        return result_str
+
 class FunctionMetaData(Jsonable):
     """
     Class to track metadata when testing functions and methods
@@ -1264,11 +1291,11 @@ def get_all_types(loc: str,
     return result
 
 
-def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
+def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, typing.Any],
                                             func_names:list[str],
                                             outdir:Path,
                                             tests_dir:Path,
-                                            suffix:Path=Path(".json")):
+                                            suffix:Path=Path(".json"))->defaultdict[str, typing.Any]:
     """
     This function generates units tests for decorated functions and methods.
 
@@ -1281,7 +1308,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
     I do claim this is self-testing code after all!
     """
 
-    pp.pprint(local_all_metadata)
+    #pp.pprint(local_all_metadata)
     for func_name in func_names:
         logger.debug("func_name=%s", func_name)
         function_metadata:FunctionMetaData = copy.deepcopy(local_all_metadata[func_name])
@@ -1393,7 +1420,7 @@ def update_global(obj,
 
 
 @unit_test_generator_decorator(sample_count=1)
-def normalize_arg(arg:typing.Any):
+def normalize_arg(arg:typing.Any)->typing.Any:
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
     that by writing it to a file it becomes proper Python code.
@@ -1410,7 +1437,7 @@ def normalize_arg(arg:typing.Any):
     return arg
 
 @unit_test_generator_decorator(sample_count=1)
-def coverage_str_helper(this_list:list, non_code_lines:set)->list:
+def coverage_str_helper(this_list:list, non_code_lines:set)->list[str]:
     """
     Given a 'this_list', containing numbers covered or uncovered,
     and a set of non_code_lines (comments or whitespace),
@@ -1582,9 +1609,11 @@ def meta_program_function_call( this_state:CoverageInfo,
                 logger.debug("String: %s", this_state)
                 x = this_state.result.replace("'", "\\'").replace('"', '\\"')
                 result_str = f"\'{x}\'"
+                logger.critical(result_str)
             else:
                 result_str = this_state.result
                 result_str = normalize_arg(this_state.result)
+                logger.critical(result_str)
             assert not result_str.startswith("'\n"), "Bad juju"
             #line = f"{tab}assert x == {result_str}\n"
             if func_name.endswith(".__init__"):
@@ -1599,7 +1628,8 @@ def meta_program_function_call( this_state:CoverageInfo,
 
 @unit_test_generator_decorator(sample_count=0)
 def auto_generate_tests(function_metadata:FunctionMetaData,
-                        state:dict, func_name:str, source_file:Path,
+                        state:dict[str, CoverageInfo],
+                        func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
     """
     This is the function that can automatically create a unit
@@ -1685,6 +1715,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #else:
             #    unpacked_args.append(arg)
             test_str_list.append(f"{tab}args.append({arg})\n")
+
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 

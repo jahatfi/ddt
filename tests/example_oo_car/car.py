@@ -12,7 +12,7 @@ from src.unit_test_generator import (
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.WARNING)
+unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
@@ -135,13 +135,13 @@ def first_test():
         durations
     ]
     for i, (color, speed, angle, c_angle, c_speed, duration) in enumerate(zip(*lists)):
-        print(f"Car #{i}".center(80, '-'))
+        logger.info(f"Car #{i}".center(80, '-'))
         this_car = Car(color, speed, angle)
         if this_car is None or not this_car:
             raise ValueError("this_car is None!")
 
-        print(this_car)
-        print(f"Driving {this_car.repr()}")
+        logger.info(this_car)
+        logger.info(f"Driving {this_car.repr()}")
         # Note the intentional bug here for the
         # sake of demonstrating the ValueError:
         try:
@@ -164,23 +164,23 @@ def first_test():
             logger.error("change_steer_angle(%s) raised %s", c_angle, type(e))
             logger.error(e)
 
-        print(this_car)
+        logger.info(this_car)
 
 def second_test():
     """
     Create two cars and determine which one is going faster
     by using the is_going_faster_than() Car method
     """
-    print("Test 2.1".center(80, '-'))
+    logger.info("Test 2.1".center(80, '-'))
     car_1 = Car("Red", 20, 0)
     car_2 = Car("White", 19, 0)
 
     if car_1.is_going_faster_than(car_2):
-        print(f"{car_1} is going faster than {car_2}")
+        logger.info(f"{car_1} is going faster than {car_2}")
     else:
-        print(f"{car_1}'s speed is less than or equal to {car_2}'s speed")
+        logger.info(f"{car_1}'s speed is less than or equal to {car_2}'s speed")
 
-    print("Test 2.2".center(80, '-'))
+    logger.info("Test 2.2".center(80, '-'))
     # The invocation below will also work,
     # demonstrating that the unit_test_generator_decorator works on both
     Car.is_going_faster_than(car_1, car_2)
@@ -213,13 +213,13 @@ if __name__ == "__main__":
                         action="store_true",
                         help="Set this flag to deactivate unit test generation for this code")
     args = parser.parse_args()
-    print(f"{args=}")
+    logger.info(f"{args=}")
 
     this_file = Path(__file__).absolute()
     for file in this_file.parent.rglob("*"):
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
-            logger.info("%s != %s", file.absolute(), this_file)
-            logger.info("Deleting %s to ensure clean start", this_file)
+            logger.debug("%s != %s", file.absolute().name, this_file.name)
+            logger.info("Deleting %s to ensure clean start", this_file.name)
             os.remove(file)
 
     # The code below applies the CLI arg above to selectively enable/disable
