@@ -88,16 +88,16 @@ class JsonableEncoder(json.JSONEncoder):
     """
     Unclear how if at all this is used
     """
-    def default(self, obj):
+    def default(self, o):
         """
         Unclear how if at all this is used
         """
-        logger.debug("obj=%s", obj)
-        if isinstance(obj, set):
-            return sorted(list(obj))
+        logger.debug("obj=%s", o)
+        if isinstance(o, set):
+            return sorted(list(o))
         #if isinstance(obj, type):
         #    return
-        return super().default(obj)
+        return super().default(o)
 
 # https://pynative.com/make-python-class-json-serializable/
 class FunctionMetaDataEncoder(JSONEncoder):
@@ -110,13 +110,12 @@ class FunctionMetaDataEncoder(JSONEncoder):
             return sorted(list(o))
         if isinstance(o, MappingProxyType):
             logger.warning("Skipping encoding of %s, it's a Mapping ProxyType", o)
-            pass
         else:
             try:
                 return o.__dict__
             except AttributeError as e:
                 logger.error("%s for %s", e, o)
-                pass
+                return None
 
 def _default(obj):
     """
@@ -181,8 +180,7 @@ class CoverageInfo:
         This function represents FunctionMetaData as a string that
         is valid Python code.  This string can be used to re-create
         the object in Python.
-        """
-        """
+
         This function represents  CoverageInfo as a string that
         is valid Python code.  This string can be used to re-create
         the object in Python.
@@ -506,7 +504,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                 # so apply the decorator
                 logger.info("Decorate %s", func_name)
                 return do_the_decorator_thing(func, func_name, this_metadata,
-                                              source_file, keep_subsets,
+                                              source_file, keep_subsets=keep_subsets,
                                               *args, **kwargs)
             except Exception as e:
                 logger.warning("e=%s", e)
@@ -1011,6 +1009,10 @@ class Capturing(list):
     '''
     # Source https://stackoverflow.com/questions/16571150
     # By users kindall and Antti Haapala
+    def __init__(self):
+        self._stdout = None
+        self._stringio = None
+
     def __enter__(self):
         self._stdout = sys.stdout
         sys.stdout = self._stringio = StringIO()
@@ -1069,13 +1071,7 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     if hasattr(f, "__wrapped__"):
         f = f.__wrapped__
-    """
-    try:
-        f = f.__wrapped__ # type: ignore [attr-defined]
-    except AttributeError as e:
-        logger.error("Got %s for %s", e, f)
-        pass
-    """
+
     line_numbers = []
 
     global_vars_read_from = set()
@@ -1260,7 +1256,7 @@ def get_all_types(loc: str,
                 return all_types
 
     if isinstance(obj, dict):
-        for vi, v in enumerate(obj.values()):
+        for v in obj.values():
             all_types |= get_all_types("6", v, import_modules, recursion_depth+1, decoratee)
 
     elif inspect.isclass(obj):
