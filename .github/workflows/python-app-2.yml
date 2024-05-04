@@ -82,6 +82,7 @@ jobs:
       - name: pytest oo_car
         continue-on-error: true
         run: |
-          poetry run cd tests\\example_oo_car
+          cd tests\\example_oo_car
+          poetry run python.car
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
   
