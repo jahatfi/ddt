@@ -52,7 +52,8 @@ jobs:
         run: |
          set +e
           # stop the build if there are Python syntax errors or undefined names
-          PYLINT_RESULT=$(poetry run pylint src/unit_test_generator.py)          
+          poetry run pylint src/unit_test_generator.py
+          PYLINT_RESULT=$?
           if [ $PYLINT_RESULT -ne 0 ]; then
             echo "::error::Pylint recommends changes." && exit $PYLINT_RESULT 
           fi
