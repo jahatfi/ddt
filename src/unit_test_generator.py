@@ -110,13 +110,11 @@ class FunctionMetaDataEncoder(JSONEncoder):
             return sorted(list(o))
         if isinstance(o, MappingProxyType):
             logger.warning("Skipping encoding of %s, it's a Mapping ProxyType", o)
-            pass
         else:
             try:
                 return o.__dict__
             except AttributeError as e:
-                logger.error("%s for %s", e, o)
-                pass
+                logger.warning("%s for %s", e, o)
 
 def _default(obj):
     """
@@ -140,8 +138,8 @@ class CoverageInfo:
     """
     args: list[str] = dataclasses.field(default_factory=list)
     kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
-    globals_before: dict = dataclasses.field(default_factory=dict)
-    globals_after: dict = dataclasses.field(default_factory=dict)
+    globals_before: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+    globals_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     result: str  = ""
     coverage: list[int] = dataclasses.field(default_factory=list)
     exception_type: str = ""
@@ -154,7 +152,40 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [" CoverageInfo(args="+repr(self.args)]
+        result = ["CoverageInfo(args="+repr(self.args)]
+        result.append(" kwargs="+repr(self.kwargs))
+        result.append(" globals_before="+repr(self.globals_before))
+        result.append(" globals_after="+repr(self.globals_after))
+        result.append(" result="+repr(self.result))
+        result.append(" coverage="+repr(self.coverage))
+        result.append(" exception_type="+repr(self.exception_type))
+        result.append(" exception_message="+repr(self.exception_message))
+        result.append(" constructor="+repr(self.constructor).replace('\"', "\"")+")")
+
+        result = ','.join(result)
+        logger.debug("result=%s", result)
+        return result
+
+    def __repr__(self) -> str:
+        """
+        This function represents FunctionMetaData as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
+        return self.repr()
+
+    def __str__(self) -> str:
+        """
+        This function represents FunctionMetaData as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
+        """
+        This function represents  CoverageInfo as a string that
+        is valid Python code.  This string can be used to re-create
+        the object in Python.
+        """
+        result = ["CoverageInfo(args="+repr(self.args)]
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
@@ -164,16 +195,10 @@ class CoverageInfo:
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
 
-        result = ','.join(result)
-        logger.debug("result=%s", result)
-        return result
-    def __repr__(self) -> str:
-        """
-        This function represents FunctionMetaData as a string that
-        is valid Python code.  This string can be used to re-create
-        the object in Python.
-        """
-        return self.repr()
+        result_str = ','.join(result)
+        logger.debug("result=%s", result_str)
+        return result_str
+
 class FunctionMetaData(Jsonable):
     """
     Class to track metadata when testing functions and methods
@@ -658,7 +683,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     if this_metadata.is_method and not func_name.endswith("__init__"):
         logger.info("Found non-constructor method: %s", func_name)
         this_coverage_info.constructor = args[0].repr()
-        logger.critical(args)
+        logger.info(args)
         this_type = get_class_import_string(args[0])
         class_type = copy.deepcopy(this_type)
 
@@ -741,10 +766,10 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
                         class_repr = arg.repr()
                         logger.debug("%s, class_repr = %s", e, class_repr)
-                    except AttributeError as e:
+                    except AttributeError as e2:
                         # skip on error
                         logger.error("Got %s trying to create class from string: '%s' decorating %s repr'ing arg=%s:\ne=%s\n%s",
-                                    type(e), class_repr, func_name, arg, e, arg)
+                                    type(e2), class_repr, func_name, arg, e2, arg)
                         logger.error(arg.__repr__)
                         x = func(*args, **kwargs)
                         all_metadata[func_name] = this_metadata
@@ -763,7 +788,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             else:
                 args_copy.append(repr(arg))
         else:
-            args_copy.append("\""+re.sub(r"(?<!\\) \"", r'\\"',arg)+"\"")
+            args_copy.append("\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\"")
 
     if class_type:
         this_metadata.types_in_use.add(class_type)
@@ -1123,7 +1148,7 @@ def get_all_types(loc: str,
                   obj,
                   import_modules:bool=True,
                   recursion_depth:int=0,
-                  decoratee:str="n/a")->set:
+                  decoratee:str="n/a")->set[str]:
     """
     Return the set of all types contained in this object,
     It might be a list of sets so return {"list", "set"}
@@ -1140,12 +1165,12 @@ def get_all_types(loc: str,
 
     if recursion_depth > 2:
         return set()
-    all_types = set()
+    all_types: set[str] = set()
     type_str = str(type(obj))
 
     parsed_type_match = re.match("<class '([^']+)'>", type_str)
     if parsed_type_match:
-        parsed_type = parsed_type_match.groups()[0]
+        parsed_type:str = parsed_type_match.groups()[0]
 
     if callable(obj):
         if hasattr(obj, "__code__"):
@@ -1251,9 +1276,9 @@ def get_all_types(loc: str,
 
     result = set()
     for this_type in all_types:
-        parsed_type = re.match("<class '([^']+)'>", str(this_type))
-        if parsed_type:
-            result_type = parsed_type.groups()[0]
+        parsed_type_match = re.match("<class '([^']+)'>", str(this_type))
+        if parsed_type_match:
+            result_type = parsed_type_match.groups()[0]
             logger.debug("Adding %s", result_type)
             result.add(result_type)
         else:
@@ -1264,11 +1289,11 @@ def get_all_types(loc: str,
     return result
 
 
-def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
+def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, typing.Any],
                                             func_names:list[str],
                                             outdir:Path,
                                             tests_dir:Path,
-                                            suffix:Path=Path(".json")):
+                                            suffix:Path=Path(".json"))->defaultdict[str, typing.Any]:
     """
     This function generates units tests for decorated functions and methods.
 
@@ -1281,7 +1306,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:dict,
     I do claim this is self-testing code after all!
     """
 
-    pp.pprint(local_all_metadata)
+    #pp.pprint(local_all_metadata)
     for func_name in func_names:
         logger.debug("func_name=%s", func_name)
         function_metadata:FunctionMetaData = copy.deepcopy(local_all_metadata[func_name])
@@ -1393,7 +1418,7 @@ def update_global(obj,
 
 
 @unit_test_generator_decorator(sample_count=1)
-def normalize_arg(arg:typing.Any):
+def normalize_arg(arg:typing.Any)->typing.Any:
     """
     Convert arg to "canonical" form; i.e. convert it to a string format such
     that by writing it to a file it becomes proper Python code.
@@ -1410,7 +1435,7 @@ def normalize_arg(arg:typing.Any):
     return arg
 
 @unit_test_generator_decorator(sample_count=1)
-def coverage_str_helper(this_list:list, non_code_lines:set)->list:
+def coverage_str_helper(this_list:list, non_code_lines:set)->list[str]:
     """
     Given a 'this_list', containing numbers covered or uncovered,
     and a set of non_code_lines (comments or whitespace),
@@ -1582,9 +1607,11 @@ def meta_program_function_call( this_state:CoverageInfo,
                 logger.debug("String: %s", this_state)
                 x = this_state.result.replace("'", "\\'").replace('"', '\\"')
                 result_str = f"\'{x}\'"
+                logger.critical(result_str)
             else:
                 result_str = this_state.result
                 result_str = normalize_arg(this_state.result)
+                logger.critical(result_str)
             assert not result_str.startswith("'\n"), "Bad juju"
             #line = f"{tab}assert x == {result_str}\n"
             if func_name.endswith(".__init__"):
@@ -1599,7 +1626,8 @@ def meta_program_function_call( this_state:CoverageInfo,
 
 @unit_test_generator_decorator(sample_count=0)
 def auto_generate_tests(function_metadata:FunctionMetaData,
-                        state:dict, func_name:str, source_file:Path,
+                        state:dict[str, CoverageInfo],
+                        func_name:str, source_file:Path,
                         tests_dir:Path, indent_size:int=2):
     """
     This is the function that can automatically create a unit
@@ -1684,7 +1712,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #    unpacked_args.append(f"{arg}")
             #else:
             #    unpacked_args.append(arg)
+            if (arg[0] == "'" and arg[-1] == "'") or \
+               (arg[0] == '"' and arg[-1] == '"'):
+                arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
+            
             test_str_list.append(f"{tab}args.append({arg})\n")
+
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 
