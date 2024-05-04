@@ -1,5 +1,5 @@
-name: test
-
+name: Python application
+run-name: ${{ github.actor }} is testing out DDT 2
 on: [push]
 
 jobs:
