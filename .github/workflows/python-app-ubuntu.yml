@@ -65,7 +65,7 @@ jobs:
           poetry run mypy --version
           poetry run mypy unit_test_generator.py
           MYPY_RESULT=$?
-          if [ $MYPY_RESULT_RESULT -ne 0 ]; then
+          if [ $MYPY_RESULT -ne 0 ]; then
             echo "::notice::mypy found errors." && exit $MYPY_RESULT
           fi
   
