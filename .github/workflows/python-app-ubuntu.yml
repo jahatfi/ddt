@@ -2,9 +2,9 @@
 
 name: Lint and Test on Ubuntu
 run-name: ${{ github.actor }} is testing out DDT on Ubuntu (latest)
-on:  [push]
-  #pull_request:
-  #  branches: [ "master" ]
+on:  #[push]
+  pull_request:
+    branches: [ "master" ]
 jobs:
   test-ubuntu:
     defaults:
@@ -55,7 +55,7 @@ jobs:
           poetry run pylint src/unit_test_generator.py
           PYLINT_RESULT=$?
           if [ $PYLINT_RESULT -ne 0 ]; then
-            echo "::error::Pylint recommends changes." && exit $PYLINT_RESULT 
+            echo "::debug::Pylint recommends changes." && exit $PYLINT_RESULT 
           fi
 
       - name: Typecheck with mypy
@@ -64,7 +64,10 @@ jobs:
           cd src
           poetry run mypy --version
           poetry run mypy unit_test_generator.py
-
+          MYPY_RESULT=$?
+          if [ $MYPY_RESULT_RESULT -ne 0 ]; then
+            echo "::debug::mypy found errors." && exit $MYPY_RESULT
+          fi
   
       - name: pytest procedural_division
         # continue-on-error: true
