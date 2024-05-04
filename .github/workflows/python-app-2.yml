@@ -1,4 +1,4 @@
-name: Python application
+name: Python application 2
 run-name: ${{ github.actor }} is testing out DDT 2
 on: [push]
 
@@ -29,7 +29,11 @@ jobs:
           path: ~/.cache
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
-        run: poetry install --no-interaction --no-root
+
+        run: |
+          set PATH=%PATH%;C:\Users\runneradmin\.local\bin\poetry
+          poetry --version
+          poetry install --no-interaction --no-root
       - name: Install library
         run: poetry install --no-interaction
       - run: |
