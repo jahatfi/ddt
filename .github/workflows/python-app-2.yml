@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
 
         run: |
-          set PATH=%PATH%;C:\Users\runneradmin\.local\bin\poetry
+          set PATH=%PATH%;C:\\Users\\runneradmin\\.local\\bin\\poetry
           poetry --version
           poetry install --no-interaction --no-root
       - name: Install library
