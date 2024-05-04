@@ -1,7 +1,8 @@
 ************* Module src.unit_test_generator
 unit_test_generator.py:773:0: C0301: Line too long (128/100) (line-too-long)
 unit_test_generator.py:1298:0: C0301: Line too long (101/100) (line-too-long)
-unit_test_generator.py:1:0: C0302: Too many lines in module (1861/1000) (too-many-lines)
+unit_test_generator.py:1721:0: C0303: Trailing whitespace (trailing-whitespace)
+unit_test_generator.py:1:0: C0302: Too many lines in module (1866/1000) (too-many-lines)
 unit_test_generator.py:56:1: W0511: TODO Import any modules here for whom 'repr' doesn't work, (fixme)
 unit_test_generator.py:332:9: W0511: TODO add a "update_types_in_use" method (fixme)
 unit_test_generator.py:345:17: W0511: TODO: Fix the root cause of this bug (fixme)
@@ -32,7 +33,7 @@ unit_test_generator.py:351:15: E1120: No value for argument 'obj' in function ca
 unit_test_generator.py:429:12: W0602: Using global for 'recursion_depth_per_decoratee' but no assignment is done (global-variable-not-assigned)
 unit_test_generator.py:411:8: R0911: Too many return statements (7/6) (too-many-return-statements)
 unit_test_generator.py:554:12: W0719: Raising too general exception: Exception (broad-exception-raised)
-unit_test_generator.py:634:0: R0914: Too many local variables (51/15) (too-many-locals)
+unit_test_generator.py:634:0: R0914: Too many local variables (52/15) (too-many-locals)
 unit_test_generator.py:634:0: W1113: Keyword argument before variable positional arguments list in the definition of do_the_decorator_thing function (keyword-arg-before-vararg)
 unit_test_generator.py:659:4: W0602: Using global for 'all_metadata' but no assignment is done (global-variable-not-assigned)
 unit_test_generator.py:659:4: W0602: Using global for 'hashed_inputs' but no assignment is done (global-variable-not-assigned)
@@ -40,7 +41,6 @@ unit_test_generator.py:661:4: R1715: Consider using dict.get for getting values 
 unit_test_generator.py:721:19: W0718: Catching too general exception Exception (broad-exception-caught)
 unit_test_generator.py:750:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
 unit_test_generator.py:763:20: W0123: Use of eval (eval-used)
-unit_test_generator.py:771:20: W0621: Redefining name 'e' from outer scope (line 766) (redefined-outer-name)
 unit_test_generator.py:829:11: W0718: Catching too general exception Exception (broad-exception-caught)
 unit_test_generator.py:862:15: W0718: Catching too general exception Exception (broad-exception-caught)
 unit_test_generator.py:634:0: R0912: Too many branches (54/12) (too-many-branches)
@@ -64,9 +64,9 @@ unit_test_generator.py:1544:0: R0912: Too many branches (14/12) (too-many-branch
 unit_test_generator.py:1544:0: R0915: Too many statements (58/50) (too-many-statements)
 unit_test_generator.py:1630:0: R0913: Too many arguments (6/5) (too-many-arguments)
 unit_test_generator.py:1630:0: R0914: Too many local variables (47/15) (too-many-locals)
-unit_test_generator.py:1630:0: R0912: Too many branches (34/12) (too-many-branches)
-unit_test_generator.py:1630:0: R0915: Too many statements (123/50) (too-many-statements)
+unit_test_generator.py:1630:0: R0912: Too many branches (35/12) (too-many-branches)
+unit_test_generator.py:1630:0: R0915: Too many statements (126/50) (too-many-statements)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.28/10 (previous run: 9.32/10, -0.04)
+Your code has been rated at 9.28/10 (previous run: 9.28/10, +0.00)
 

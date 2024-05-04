@@ -110,13 +110,11 @@ class FunctionMetaDataEncoder(JSONEncoder):
             return sorted(list(o))
         if isinstance(o, MappingProxyType):
             logger.warning("Skipping encoding of %s, it's a Mapping ProxyType", o)
-            pass
         else:
             try:
                 return o.__dict__
             except AttributeError as e:
-                logger.error("%s for %s", e, o)
-                pass
+                logger.warning("%s for %s", e, o)
 
 def _default(obj):
     """
@@ -685,7 +683,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     if this_metadata.is_method and not func_name.endswith("__init__"):
         logger.info("Found non-constructor method: %s", func_name)
         this_coverage_info.constructor = args[0].repr()
-        logger.critical(args)
+        logger.info(args)
         this_type = get_class_import_string(args[0])
         class_type = copy.deepcopy(this_type)
 
@@ -1714,7 +1712,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #    unpacked_args.append(f"{arg}")
             #else:
             #    unpacked_args.append(arg)
-            logger.critical(arg)
             if (arg[0] == "'" and arg[-1] == "'") or \
                (arg[0] == '"' and arg[-1] == '"'):
                 arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
