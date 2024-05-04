@@ -1,0 +1,91 @@
+# Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Lint and Test on Windows
+run-name: ${{ github.actor }} is testing out DDT 2
+on:  [push]
+  #pull_request:
+  #  branches: [ "master" ]
+jobs:
+  lint-test-windows:
+
+    defaults:
+      run:
+        shell: bash
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+
+        run: |
+          set PATH=%PATH%;C:/Users/runneradmin/.local/bin/poetry
+          poetry --version
+          poetry install --no-interaction --no-root
+          
+      - name: Install library
+        run: poetry install --no-interaction
+      - run: |
+          source $VENV
+          pytest --version
+
+      - name: Lint with pylint
+        continue-on-error: true
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          poetry run pylint src/unit_test_generator.py
+
+      - name: Typecheck with mypy
+        continue-on-error: true
+        run: |
+          cd src
+          poetry run mypy --version
+          poetry run mypy unit_test_generator.py
+  
+      - name: pytest procedural_division
+        continue-on-error: true
+        run: |
+          cd tests/example_procedural_division
+          poetry run python divide_ints.py
+          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+  
+      - name: pytest fizzbuzz
+        continue-on-error: true
+        run: |
+          cd tests/example_fizzbuzz
+          poetry run python fizzbuzz.py
+          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+  
+      - name: pytest all_types
+        continue-on-error: true
+        run: |
+          cd tests/example_all_types
+          poetry run python all_types.py
+          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+  
+      - name: pytest oo_car
+        continue-on-error: true
+        run: |
+          cd tests/example_oo_car
+          poetry run python car.py
+          poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+  
