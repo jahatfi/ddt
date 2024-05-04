@@ -30,7 +30,7 @@ jobs:
 
       - name: Load cached venv
         id: cached-pip-wheels
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -51,14 +51,19 @@ jobs:
         continue-on-error: true
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          poetry run pylint src/unit_test_generator.py || true
+          poetry run pylint src/unit_test_generator.py
+          PYLINT_RESULT=$?
+          if [ $RESULT -ne 0 ]; then
+            echo "::error::Pylint recommends changes." && exit 1
+          fi
 
       - name: Typecheck with mypy
         continue-on-error: true
         run: |
           cd src
           poetry run mypy --version
-          poetry run mypy unit_test_generator.py || true
+          poetry run mypy unit_test_generator.py
+
   
       - name: pytest procedural_division
         # continue-on-error: true
