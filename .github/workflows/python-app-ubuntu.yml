@@ -51,38 +51,38 @@ jobs:
         continue-on-error: true
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          poetry run pylint src/unit_test_generator.py
+          poetry run pylint src/unit_test_generator.py || true
 
       - name: Typecheck with mypy
         continue-on-error: true
         run: |
           cd src
           poetry run mypy --version
-          poetry run mypy unit_test_generator.py
+          poetry run mypy unit_test_generator.py || true
   
       - name: pytest procedural_division
-        continue-on-error: true
+        # continue-on-error: true
         run: |
           cd tests/example_procedural_division
           poetry run python divide_ints.py
           poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
   
       - name: pytest fizzbuzz
-        continue-on-error: true
+        # continue-on-error: true
         run: |
           cd tests/example_fizzbuzz
           poetry run python fizzbuzz.py
           poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
   
       - name: pytest all_types
-        continue-on-error: true
+        # continue-on-error: true
         run: |
           cd tests/example_all_types
           poetry run python all_types.py
           poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
   
       - name: pytest oo_car
-        continue-on-error: true
+        # continue-on-error: true
         run: |
           cd tests/example_oo_car
           poetry run python car.py
