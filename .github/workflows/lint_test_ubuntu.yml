@@ -1,7 +1,7 @@
 # Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Lint and Test on Windows
-run-name: ${{ github.actor }} is testing out DDT 2
+name: Lint and Test on Ubuntu
+run-name: ${{ github.actor }} is testing out DDT on Ubuntu (latest)
 on:  [push]
   #pull_request:
   #  branches: [ "master" ]
