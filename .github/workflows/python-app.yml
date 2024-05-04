@@ -25,7 +25,7 @@ jobs:
         python-version: "3.11"
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip       
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Lint with pylint
       continue-on-error: true
@@ -38,6 +38,30 @@ jobs:
         cd src
         mypy --version
         mypy unit_test_generator.py
-    - name: Test with pytest      
+
+    - name: pytest procedurual_division
+      continue-on-error: true
       run: |
-        pytest src\unit_test_generator.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html        
+        cd tests\example_procedural_division
+        python divide_ints.py
+        pytest -s -v . --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+    - name: pytest fizzbuzz
+      continue-on-error: true
+      run: |
+        cd tests\example_fizzbuzz
+        python fizzbuzz.py
+        pytest -s -v . --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+    - name: pytest all_types
+      continue-on-error: true
+      run: |
+        cd tests\example_all_types
+        python all_types.py
+        pytest -s -v . --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+    - name: pytest oo_car
+      continue-on-error: true
+      run: |
+        cd tests\example_oo_car
+        pytest -s -v . --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
