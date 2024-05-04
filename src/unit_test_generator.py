@@ -768,10 +768,10 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
                         class_repr = arg.repr()
                         logger.debug("%s, class_repr = %s", e, class_repr)
-                    except AttributeError as e:
+                    except AttributeError as e2:
                         # skip on error
                         logger.error("Got %s trying to create class from string: '%s' decorating %s repr'ing arg=%s:\ne=%s\n%s",
-                                    type(e), class_repr, func_name, arg, e, arg)
+                                    type(e2), class_repr, func_name, arg, e2, arg)
                         logger.error(arg.__repr__)
                         x = func(*args, **kwargs)
                         all_metadata[func_name] = this_metadata
@@ -790,7 +790,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             else:
                 args_copy.append(repr(arg))
         else:
-            args_copy.append("\""+re.sub(r"(?<!\\) \"", r'\\"',arg)+"\"")
+            args_copy.append("\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\"")
 
     if class_type:
         this_metadata.types_in_use.add(class_type)
@@ -1714,6 +1714,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #    unpacked_args.append(f"{arg}")
             #else:
             #    unpacked_args.append(arg)
+            logger.critical(arg)
+            if (arg[0] == "'" and arg[-1] == "'") or \
+               (arg[0] == '"' and arg[-1] == '"'):
+                arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
+            
             test_str_list.append(f"{tab}args.append({arg})\n")
 
         #logger.debug("unpacked_args=%s", unpacked_args)

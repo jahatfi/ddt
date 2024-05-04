@@ -12,7 +12,7 @@ from src.unit_test_generator import (
 fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=fmt_str)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.CRITICAL)
+unit_test_generator.logger.setLevel(logging.ERROR)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
