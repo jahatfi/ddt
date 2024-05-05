@@ -74,7 +74,7 @@ def fullname(o:object):
     if module is None or module == str.__class__.__module__:
         return o.__class__.__name__
     return module + '.' + o.__class__.__name__
-class Jsonable:
+class Jsonable:  # pylint: disable=too-few-public-methods
     """
     Classes that inherit from this one inherit the toJSON(),
     easily creating a string representation of the class.
@@ -89,16 +89,16 @@ class JsonableEncoder(json.JSONEncoder):
     """
     Unclear how if at all this is used
     """
-    def default(self, obj):
+    def default(self, o):
         """
         Unclear how if at all this is used
         """
-        logger.debug("obj=%s", obj)
-        if isinstance(obj, set):
-            return sorted(list(obj))
+        logger.debug("obj=%s", o)
+        if isinstance(o, set):
+            return sorted(list(o))
         #if isinstance(obj, type):
         #    return
-        return super().default(obj)
+        return super().default(o)
 
 # https://pynative.com/make-python-class-json-serializable/
 class FunctionMetaDataEncoder(JSONEncoder):
@@ -131,8 +131,8 @@ def _default(obj):
     return list(iterable)
     #return json.JSONEncoder.default(obj)
 
-
 @dataclass
+# pylint: disable-next=too-many-instance-attributes
 class CoverageInfo:
     """
     Holds all data gathered from recording/hooking a function/method call
@@ -176,11 +176,6 @@ class CoverageInfo:
         return self.repr()
 
     def __str__(self) -> str:
-        """
-        This function represents FunctionMetaData as a string that
-        is valid Python code.  This string can be used to re-create
-        the object in Python.
-        """
         """
         This function represents  CoverageInfo as a string that
         is valid Python code.  This string can be used to re-create
@@ -287,9 +282,8 @@ class FunctionMetaData(Jsonable):
         """
         first_source_line_num = self.lines[0]
         last_source_line_num = self.lines[-1]
-        range_source_line_nums =   set([x for x in range(first_source_line_num,
-                                                        last_source_line_num+1)
-                                        ])
+        range_source_line_nums =   set(range(first_source_line_num,
+                                                        last_source_line_num+1))
 
         non_code_lines = range_source_line_nums - set(self.lines)
         return non_code_lines
@@ -343,9 +337,9 @@ class FunctionMetaData(Jsonable):
             try:
                 field.pop(hash_key)
             except KeyError as e:
-                # TODO: Fix the root cause of this bug
+                # NOTE: Fix the root cause of this bug
                 logger.error("Failed to pop key: %s", e)
-        # TODO call self.update_types_in_use here
+        # NOTE: call self.update_types_in_use here?
 
     def default(self):
         """Wrapper for _default() method"""
@@ -409,6 +403,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
         per decorated function.
         """
         @wraps(func)
+        # pylint: disable-next=too-many-return-statements
         def unit_test_generator_decorator_inner(*args, **kwargs):
             """
             Immediately return function results if:
@@ -424,9 +419,11 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                 # Don't want to incur the overhead if they don't specify either
                 logger.debug("percent_coverage & sample_count == 0 %s; skip decorator",
                              func_name)
+                # TODO try/catch/raise exception
                 result = func(*args, **kwargs)
                 return result
 
+            # pylint: disable-next=global-variable-not-assigned
             global recursion_depth_per_decoratee
             if "pytest" in sys.modules:
                 logger.debug("pytest is loaded; don't decorate when under a test")
@@ -459,6 +456,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                 # apply the decorator
                 if not func_name:
                     logger.warning("func_name is Falsey; skip decorator")
+                    # TODO try/catch/raise exception
                     result = func(*args, **kwargs)
                     return result
                 this_metadata = None
@@ -632,6 +630,7 @@ pp = pprint.PrettyPrinter(indent=3)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.CRITICAL)
 
+# pylint: disable-next=too-many-locals,too-many-statements,too-many-branches
 def do_the_decorator_thing(func: Callable, func_name:str,
                            this_metadata:FunctionMetaData, source_file: str,
                            keep_subsets: bool=False,
@@ -657,10 +656,12 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     When main() completes, main() writes out the coverage results to one file
     per decorated function.
     """
+    # pylint: disable-next=global-variable-not-assigned
     global all_metadata, hashed_inputs
     caught_exception = None
-    if 'kwargs' in kwargs:
-        kwargs = kwargs['kwargs']
+    kwargs = kwargs.get("kwargs", kwargs)
+    #if 'kwargs' in kwargs:
+    #    kwargs = kwargs['kwargs']
 
     #logger.critical(f"Decorating {func_name}".center(80, '-'))
 
@@ -748,7 +749,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         elif not isinstance(arg, str):
             type_str = str(type(arg))
             #logger.critical(arg)
-            logger.debug(f"{type_str} {type(arg).__module__}")
+            logger.debug("type_str=%s %s", type_str, type(arg).__module__)
 
             # Reference for line:
             # 'type(arg).__module__ != "__builtin__":'
@@ -1010,6 +1011,10 @@ class Capturing(list):
     '''
     Use to capture STDOUT output
     '''
+    def __init__(self):
+        self._stdout = None
+        self._stringio = None
+
     # Source https://stackoverflow.com/questions/16571150
     # By users kindall and Antti Haapala
     def __enter__(self):
@@ -1140,6 +1145,7 @@ def count_objects(obj: typing.Any):
             count += 1
     return count
 
+# pylint: disable=too-many-locals, too-many-branches,too-many-return-statements,too-many-statements
 def get_all_types(loc: str,
                   obj,
                   import_modules:bool=True,
@@ -1198,7 +1204,7 @@ def get_all_types(loc: str,
         else:
             logger.debug("%s type_str=%s < I need this FQDN!", loc, type_str)
 
-
+    # pylint: disable-next=too-many-nested-blocks
     elif "." in type_str:
         if import_modules:
             logger.debug("%s type_str=%s for %s; adding %s (recursion_depth=%d)",
@@ -1289,7 +1295,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
                                             func_names:list[str],
                                             outdir:Path,
                                             tests_dir:Path,
-                                            suffix:Path=Path(".json"))->defaultdict[str, typing.Any]:
+                                            ext:Path=Path(".json"))->defaultdict[str, typing.Any]:
     """
     This function generates units tests for decorated functions and methods.
 
@@ -1332,7 +1338,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         # the actual .py unit test file is hard to read
         # due to formatting.
         this_func_name = re.sub(".__init__", ".constructor", func_name)
-        filename = outdir.joinpath(f"{this_func_name}{suffix}")
+        filename = outdir.joinpath(f"{this_func_name}{ext}")
         with open(filename, "w", encoding="utf-8") as test_io_file:
             logger.info("Dumping test metadata to %s...", str(filename))
             json.dump(function_metadata,
@@ -1488,9 +1494,8 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     """
     first_source_line_num = function_metadata.lines[0]
     last_source_line_num = function_metadata.lines[-1]
-    range_source_line_nums =   set([x for x in range(first_source_line_num,
-                                                     last_source_line_num+1)
-                                    ])
+    range_source_line_nums = set(range( first_source_line_num,
+                                        last_source_line_num+1))
     coverage_set = set(coverage_list)
     coverage_list = sorted(list(range_source_line_nums & coverage_set))
     if not coverage_list:
@@ -1534,6 +1539,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     result.append(f"\n{start2}{';'.join(uncovered_str_list)}\n{end}")
     return result
 
+# pylint: disable=too-many-locals,too-many-branches
 @unit_test_generator_decorator(sample_count=1)
 def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
@@ -1559,14 +1565,11 @@ def meta_program_function_call( this_state:CoverageInfo,
         test_str_list.append(line)
 
     kwargs_str = ''
-    # TODO: Test this block below
     if this_state.kwargs:
         # Creating "line" variable to condense line width
         line = f"{tab}kwargs = {this_state.kwargs}\n"
         test_str_list.append(line)
         kwargs_str = ", kwargs=kwargs)"
-        #line = f"{tab}x = {package}.{func_name}(*args, kwargs=kwargs)\n"
-        #test_str_list.append(line)
 
     assignment = f"{tab}x = "
     call = ""
@@ -1619,11 +1622,15 @@ def meta_program_function_call( this_state:CoverageInfo,
         test_str_list.append(line)
     return test_str_list
 
+
 @unit_test_generator_decorator(sample_count=0)
+# pylint: disable-next=too-many-statements,too-many-locals,too-many-branches,too-many-arguments
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict[str, CoverageInfo],
-                        func_name:str, source_file:Path,
-                        tests_dir:Path, indent_size:int=2):
+                        func_name:str,
+                        source_file:Path,
+                        tests_dir:Path,
+                        indent_size:int=2)->str:
     """
     This is the function that can automatically create a unit
     test file for each decorated function.
