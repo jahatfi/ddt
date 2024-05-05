@@ -41,7 +41,7 @@ jobs:
           set PATH=%PATH%;C:\\Users\\runneradmin\\.local\\bin\\poetry
           poetry --version
           poetry install --no-interaction --no-root
-          
+
       - name: Install library
         run: poetry install --no-interaction
       - run: |
@@ -60,32 +60,31 @@ jobs:
       #    cd src
       #    poetry run mypy --version
       #    poetry run mypy unit_test_generator.py
-  
+
       - name: pytest procedural_division
         continue-on-error: true
         run: |
           cd tests\\example_procedural_division
           poetry run python divide_ints.py
           poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-  
+
       - name: pytest fizzbuzz
         continue-on-error: true
         run: |
           cd tests\\example_fizzbuzz
           poetry run python fizzbuzz.py
           poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-  
+
       - name: pytest all_types
         continue-on-error: true
         run: |
           cd tests\\example_all_types
           poetry run python all_types.py
           poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-  
+
       - name: pytest oo_car
         continue-on-error: true
         run: |
           cd tests\\example_oo_car
           poetry run python car.py
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-  
