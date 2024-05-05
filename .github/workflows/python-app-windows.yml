@@ -1,6 +1,6 @@
 # Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Lint and Test on Windows
+name: Test on Windows
 run-name: ${{ github.actor }} is testing out DDT on Windows
 on: # [push]
   pull_request:
