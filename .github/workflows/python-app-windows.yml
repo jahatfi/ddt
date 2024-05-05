@@ -1,6 +1,6 @@
 # Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Lint and Test on Windows
+name: Test on Windows
 run-name: ${{ github.actor }} is testing out DDT on Windows
 on: # [push]
   pull_request:
@@ -31,7 +31,7 @@ jobs:
 
       - name: Load cached venv
         id: cached-pip-wheels
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -48,18 +48,18 @@ jobs:
           source $VENV
           pytest --version
 
-      - name: Lint with pylint
-        continue-on-error: true
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          poetry run pylint src\\unit_test_generator.py
+      #- name: Lint with pylint
+      #  continue-on-error: true
+      #  run: |
+      #    # stop the build if there are Python syntax errors or undefined names
+      #    poetry run pylint src\\unit_test_generator.py
 
-      - name: Typecheck with mypy
-        continue-on-error: true
-        run: |
-          cd src
-          poetry run mypy --version
-          poetry run mypy unit_test_generator.py
+      #- name: Typecheck with mypy
+      #  continue-on-error: true
+      #  run: |
+      #    cd src
+      #    poetry run mypy --version
+      #    poetry run mypy unit_test_generator.py
   
       - name: pytest procedural_division
         continue-on-error: true
