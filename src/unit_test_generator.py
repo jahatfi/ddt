@@ -53,6 +53,7 @@ import coverage
 import pandas as pd
 from pandas import DataFrame
 
+# pylint: disable-next=fixme
 # TODO Import any modules here for whom 'repr' doesn't work,
 # Then redefine the repr function (see further below, search "repr")
 
@@ -199,10 +200,12 @@ class CoverageInfo:
         logger.debug("result=%s", result_str)
         return result_str
 
+# pylint: disable-next=too-many-instance-attributes
 class FunctionMetaData(Jsonable):
     """
     Class to track metadata when testing functions and methods
     """
+    # pylint: disable-next=too-many-arguments
     def __init__(   self,
                     name:str,
                     lines:list,
@@ -1067,13 +1070,6 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     """
     if hasattr(f, "__wrapped__"):
         f = f.__wrapped__
-    """
-    try:
-        f = f.__wrapped__ # type: ignore [attr-defined]
-    except AttributeError as e:
-        logger.error("Got %s for %s", e, f)
-        pass
-    """
     line_numbers = []
 
     global_vars_read_from = set()
@@ -1258,7 +1254,7 @@ def get_all_types(loc: str,
                 return all_types
 
     if isinstance(obj, dict):
-        for vi, v in enumerate(obj.values()):
+        for v in obj.values():
             all_types |= get_all_types("6", v, import_modules, recursion_depth+1, decoratee)
 
     elif inspect.isclass(obj):
@@ -1318,7 +1314,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         # but it feels hacky.
         purged = 0
 
-        # TODO The below below is likely unnecessary now
+        # TODO The code below is likely unnecessary now
         for hash_key in coverage_io_keys:
             this_coverage = function_metadata.coverage_io[hash_key].coverage
             if not set(this_coverage) & set(function_metadata.lines):
@@ -1613,7 +1609,6 @@ def meta_program_function_call( this_state:CoverageInfo,
                 result_str = normalize_arg(this_state.result)
                 logger.critical(result_str)
             assert not result_str.startswith("'\n"), "Bad juju"
-            #line = f"{tab}assert x == {result_str}\n"
             if func_name.endswith(".__init__"):
                 class_fqn = re.sub(".__init__.*$", "", call)
                 line = f"{tab}assert isinstance(x, {class_fqn})\n"
@@ -1707,15 +1702,10 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         # Remove the 'self' argument from the arg list if this
         # decoratee is a class method (as opposed to a regular function)
         for arg in state[hash_key].args:
-            # TODO If an arg is a class, construct it
-            #if not isinstance(arg, str):
-            #    unpacked_args.append(f"{arg}")
-            #else:
-            #    unpacked_args.append(arg)
             if (arg[0] == "'" and arg[-1] == "'") or \
                (arg[0] == '"' and arg[-1] == '"'):
                 arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
-            
+
             test_str_list.append(f"{tab}args.append({arg})\n")
 
         #logger.debug("unpacked_args=%s", unpacked_args)
