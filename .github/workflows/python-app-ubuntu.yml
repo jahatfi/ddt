@@ -67,7 +67,7 @@ jobs:
           poetry run mypy unit_test_generator.py
           MYPY_RESULT=$?
           if [ $MYPY_RESULT -ne 0 ]; then
-            echo "::notice::mypy found errors." && exit $PYLINT_RESULT
+            echo "::notice::mypy found errors." && exit $MYPY_RESULT
           fi
 
       - name: pytest procedural_division

@@ -48,18 +48,18 @@ jobs:
           source $VENV
           pytest --version
 
-      - name: Lint with pylint
-        continue-on-error: true
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          poetry run pylint src\\unit_test_generator.py
+      #- name: Lint with pylint
+      #  continue-on-error: true
+      #  run: |
+      #    # stop the build if there are Python syntax errors or undefined names
+      #    poetry run pylint src\\unit_test_generator.py
 
-      - name: Typecheck with mypy
-        continue-on-error: true
-        run: |
-          cd src
-          poetry run mypy --version
-          poetry run mypy unit_test_generator.py
+      #- name: Typecheck with mypy
+      #  continue-on-error: true
+      #  run: |
+      #    cd src
+      #    poetry run mypy --version
+      #    poetry run mypy unit_test_generator.py
   
       - name: pytest procedural_division
         continue-on-error: true
