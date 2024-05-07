@@ -16,6 +16,7 @@ unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 mode = 'fizzbuzz'
 
+@unit_test_generator_decorator(110,100)
 def fizzbuzz(number: int):
     """
     An intentionally sub-optimal
@@ -110,6 +111,6 @@ if __name__ == "__main__":
     # NOTE:
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
-    fizzbuzz = unit_test_generator_decorator(not args.disable_unit_test_generation)(fizzbuzz)
+    #fizzbuzz = unit_test_generator_decorator(not args.disable_unit_test_generation)(fizzbuzz)
 
     main()
