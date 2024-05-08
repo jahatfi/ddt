@@ -99,7 +99,7 @@ used by the tested function will be set before every call.
 ## Troubleshooting:
 **Problem:** Decorator not running when expected  
 **Solution:**  Check the cutoff parameter.
-It might be to low for the desired executions to be hit.
+It might be too low for the desired executions to be hit.
 Try setting it to 50 to start.
 
 
