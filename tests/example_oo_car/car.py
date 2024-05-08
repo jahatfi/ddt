@@ -1,3 +1,7 @@
+"""
+Objec-oriented test sample
+"""
+
 import argparse
 import logging
 import os
@@ -9,15 +13,15 @@ from src.unit_test_generator import (
     unit_test_generator_decorator,
 )
 
-fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
-logging.basicConfig(level=logging.INFO, format=fmt_str)
+FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
+logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.ERROR)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
 # unit test will be empty and will raise an exception.
-method_call_counter = 0
+method_call_counter = 0 # pylint: disable=invalid-name
 
 class Car:
     """
@@ -41,7 +45,7 @@ class Car:
         Apply the brake pedal at some negative "rate"
         (e.g. -N m/s for "duration" seconds)
         """
-        logger.debug(f"{rate=} {duration=}")
+        logger.debug("rate=%.2f duration=%d", rate, duration)
         if rate > 0:
             raise ValueError("Brake rate (m/s) must be negative.")
         if duration < 0:
@@ -53,9 +57,9 @@ class Car:
         Apply the gas pedal at some positive "rate"
         (e.g. +N m/s for "duration" seconds)
         """
-        global method_call_counter
+        global method_call_counter # pylint: disable=global-statement
         method_call_counter +=1
-        logger.debug(f"{rate=:<8} {duration=:<8}")
+        logger.debug("rate=%.2f duration=%d", rate, duration)
         if rate < 0:
             raise ValueError("Gas rate (m/s) must be positive.")
         self.speed = max(0.0, self.speed+rate*duration)
@@ -67,7 +71,7 @@ class Car:
         to the current steer angle, and clamp to restrict
         within the valid range.
         """
-        logger.debug(f"{angle=}")
+        logger.debug("angle=%d", angle)
         if angle > self.MAX_ANGLE or angle < self.MIN_ANGLE:
             raise AssertionError(f"{angle=:<8} out of bounds!")
 
@@ -104,6 +108,7 @@ class Car:
         """
         Simply call the magic __repr__ method
         """
+        logger.critical("YOYO")
         return self.__repr__()
 
 
@@ -141,14 +146,13 @@ def first_test():
             raise ValueError("this_car is None!")
 
         logger.info(this_car)
-        logger.info(f"Driving {this_car.repr()}")
+        logger.info("Driving %s", {this_car.repr()})
         # Note the intentional bug here for the
         # sake of demonstrating the ValueError:
         try:
             this_car.gas(c_speed, duration)
-        except Exception as e:
-            logger.error(f"gas({c_speed},{duration}) raised {type(e)}")
-            logger.error(e)
+        except ValueError as e:
+            logger.error("gas(%.2f,%d) raised %s", c_speed, duration, type(e))
         # Instead of a try/except we should do:
         '''
         if c_speed >= 0:
@@ -158,11 +162,9 @@ def first_test():
         '''
         #car.change_steer_angle(c_angle)
         try:
-            ...
             this_car.change_steer_angle(c_angle)
-        except Exception as e:
+        except AssertionError as e:
             logger.error("change_steer_angle(%s) raised %s", c_angle, type(e))
-            logger.error(e)
 
         logger.info(this_car)
 
@@ -176,9 +178,9 @@ def second_test():
     car_2 = Car("White", 19, 0)
 
     if car_1.is_going_faster_than(car_2):
-        logger.info(f"{car_1} is going faster than {car_2}")
+        logger.info("%s is going faster than %s", car_1, car_2)
     else:
-        logger.info(f"{car_1}'s speed is less than or equal to {car_2}'s speed")
+        logger.info("%s's speed is less than or equal to %s's speed", car_1, car_2)
 
     logger.info("Test 2.2".center(80, '-'))
     # The invocation below will also work,
@@ -186,6 +188,10 @@ def second_test():
     Car.is_going_faster_than(car_1, car_2)
 
 def main():
+    """
+    Call test functions for Car class, then generate test files for each
+    method.
+    """
     first_test()
     second_test()
     generate_all_tests_and_metadata(Path('.'), Path('.'))
@@ -213,7 +219,7 @@ if __name__ == "__main__":
                         action="store_true",
                         help="Set this flag to deactivate unit test generation for this code")
     args = parser.parse_args()
-    logger.info(f"{args=}")
+    logger.info("args=%s", args)
 
     this_file = Path(__file__).absolute()
     for file in this_file.parent.rglob("*"):
