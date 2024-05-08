@@ -1646,6 +1646,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     tab = " "*indent_size
     raise_ex_msg = f"{tab}raise Exception('{func_name} was never executed')"
+
     header = []
     pct = function_metadata.coverage_percentage
     #assert pct <= 100, "Bad math"
@@ -1675,9 +1676,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     else:
         initial_import = ""
 
+    docstring = f'{tab}\"\"\"\n{tab}Programmatically generated test function for {func_name}\n{tab}\"\"\"'
     for hash_key_index, hash_key in enumerate(sorted(state)):
-        test_str_list = [f"def test_{func_name.replace('.','_')}_{hash_key_index}():\n",
-                         f"{tab}monkeypatch = MonkeyPatch()\n"]
+        test_str_list = [f"def test_{func_name.lower().replace('.','_')}_{hash_key_index}():\n",
+                         f"{tab}monkeypatch = MonkeyPatch()\n",
+                         docstring]
         monkey_patches = []
         coverage_list = gen_coverage_list(  function_metadata,
                                             state[hash_key].coverage,
@@ -1810,7 +1813,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     imports += custom_imports
 
     logger.debug("func_name=%s", func_name)
-    result_file_str = f"test_{func_name}".replace('.','_') + ".py"
+    result_file_str = f"test_{func_name.lower()}".replace('.','_') + ".py"
     result_file_str = re.sub("__init__", "constructor", result_file_str)
     result_file = tests_dir.joinpath(result_file_str)
 
@@ -1829,7 +1832,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         return h.digest().hex()
         #return str(sorted(test_str_list_def_dict.items()))#final_result_bytes
 
+    docstring = f'\"\"\"\nProgrammatically generated test function for {func_name}\n\"\"\"'
     with open(result_file, "w", encoding="utf-8") as st:
+        st.write(docstring+"\n")
         for item in [imports, header]:
             if item:
                 st.writelines(item)
@@ -1853,6 +1858,20 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Re-formatted %s with black formatter", result_file)
+
+    try:
+        subprocess.run( f"ruff {result_file} --fix".split(),
+                        check=True,
+                        capture_output=True
+                        )
+    except CalledProcessError as e:
+        logger.error("Got Error running ruff linter on %s:", result_file)
+        logger.error("%s", pp.pformat(e)+"\n")
+        logger.error("%s", e.stderr.decode()+"\n")
+        if e.stdout:
+            logger.error(e.stdout.decode())
+
+    logger.info("Linted %s with ruff", result_file)
 
     # Return hash of resulting string here
     h = hashlib.new('sha256')

@@ -30,8 +30,10 @@ class Car:
     """
     MAX_ANGLE = 720
     MIN_ANGLE = -720
-    def __init__(   self, color: str="black",
-                    speed:float=0.0, steer_angle:int=0):
+    def __init__(   self,
+                    color:str="black",# pylint: disable= used-before-assignment
+                    speed:float=0.0,
+                    steer_angle:int=0):
         """
         Create a new Car class with car color,
         initial speed and steering angle
@@ -40,7 +42,7 @@ class Car:
         self.speed = speed
         self.steer_angle = steer_angle
 
-    def brake(self, rate:float, duration:int=1):
+    def brake(self, rate:float, duration:int=1)-> float:
         """
         Apply the brake pedal at some negative "rate"
         (e.g. -N m/s for "duration" seconds)
@@ -51,6 +53,7 @@ class Car:
         if duration < 0:
             raise ValueError("Duration (s) must be positive.")
         self.speed = max(0.0, self.speed+rate*duration)
+        return self.speed
 
     def gas(self, rate:float, duration:int=1):
         """
@@ -108,8 +111,7 @@ class Car:
         """
         Simply call the magic __repr__ method
         """
-        logger.critical("YOYO")
-        return self.__repr__()
+        return self.__repr__() # pylint: disable=unnecessary-dunder-call
 
 
     def is_going_faster_than(self, other_car):
@@ -154,12 +156,11 @@ def first_test():
         except ValueError as e:
             logger.error("gas(%.2f,%d) raised %s", c_speed, duration, type(e))
         # Instead of a try/except we should do:
-        '''
         if c_speed >= 0:
-            car.gas(c_speed, duration)
+            this_car.gas(c_speed, duration)
         else:
-            car.brake(c_speed, duration)
-        '''
+            this_car.brake(c_speed, duration)
+
         #car.change_steer_angle(c_angle)
         try:
             this_car.change_steer_angle(c_angle)
@@ -235,9 +236,9 @@ if __name__ == "__main__":
     # NOTE:
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
-    Car.brake = unit_test_generator_decorator(sample_count=1)(Car.brake)
-    Car.gas = unit_test_generator_decorator(sample_count=1)(Car.gas)
-    Car.change_steer_angle = unit_test_generator_decorator(sample_count=1)(Car.change_steer_angle)
-    Car.is_going_faster_than = unit_test_generator_decorator(sample_count=1)(Car.is_going_faster_than)
-    Car.__init__ = unit_test_generator_decorator(sample_count=1)(Car.__init__)
+    Car.brake = unit_test_generator_decorator(110,100)(Car.brake)
+    Car.gas = unit_test_generator_decorator(110,100)(Car.gas)
+    Car.change_steer_angle = unit_test_generator_decorator(110,100)(Car.change_steer_angle)
+    Car.is_going_faster_than = unit_test_generator_decorator(110,100)(Car.is_going_faster_than)
+    Car.__init__ = unit_test_generator_decorator(110,100)(Car.__init__)
     main()
