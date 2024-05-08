@@ -1,3 +1,6 @@
+"""
+Test case to demonstrate various Python types such as lists, dictionaries, etc.
+"""
 import argparse
 import logging
 import os
@@ -9,12 +12,12 @@ from src.unit_test_generator import (
     unit_test_generator_decorator,
 )
 
-fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
-logging.basicConfig(level=logging.INFO, format=fmt_str)
+FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
+logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
 
-mode = 'fizzbuzz'
+mode = 'fizzbuzz' # pylint: disable=invalid-name
 
 def fizzbuzz(number: int):
     """
@@ -48,14 +51,14 @@ def fizzbuzz(number: int):
         if 0 == number % 15:
             result = f"{number:<2} with {mode=} yields 'buzzfizz'"
     else:
-       result = f"Mode '{mode}' invalid for fizzbuzz()"
+        result = f"Mode '{mode}' invalid for fizzbuzz()"
     return result
 
 def main():
     """
     Begin ad hoc tests
     """
-    global mode
+    global mode # pylint: disable=global-statement
     print(fizzbuzz(6))
     print(fizzbuzz(30))
     mode = 'buzzfizz'
@@ -64,13 +67,11 @@ def main():
     mode = "a_test"
     print(fizzbuzz(6))
 
-    """
-    The generate_all_tests_and_metadata() function takes 2 Paths:
-    1. The output directory for the unit tests (.py)
-    2. The output directory for the .json files (I/O for each test)
-    """
-    generate_all_tests_and_metadata(Path('.'), Path('.'))
+    # The generate_all_tests_and_metadata() function takes 2 Paths:
+    # 1. The output directory for the unit tests (.py)
+    # 2. The output directory for the .json files (I/O for each test)
 
+    generate_all_tests_and_metadata(Path('.'), Path('.'))
 
 if __name__ == "__main__":
 
