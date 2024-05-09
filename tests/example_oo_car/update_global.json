@@ -1,0 +1,89 @@
+{
+   "name": "update_global",
+   "lines": [
+      1394,
+      1402,
+      1403,
+      1405,
+      1409,
+      1410,
+      1413,
+      1414,
+      1415,
+      1416,
+      1417
+   ],
+   "is_method": false,
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "source_file": null,
+   "coverage_cost": {
+      "77416d795a100e5fa5eb7838eb8d17a86f148c4bffd73d0581bccc54137c79c6": 0.0
+   },
+   "coverage_io": {
+      "77416d795a100e5fa5eb7838eb8d17a86f148c4bffd73d0581bccc54137c79c6": {
+         "args": [
+            "0",
+            "\"method_call_counter\"",
+            "\"Before\"",
+            "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)')"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)')",
+         "coverage": [
+            1402,
+            1405,
+            1409,
+            1413,
+            1414,
+            1417
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      }
+   },
+   "coverage_percentage": 54.55,
+   "result_types": {
+      "77416d795a100e5fa5eb7838eb8d17a86f148c4bffd73d0581bccc54137c79c6": "src.unit_test_generator.CoverageInfo"
+   },
+   "test_coverage": {
+      "77416d795a100e5fa5eb7838eb8d17a86f148c4bffd73d0581bccc54137c79c6": [
+         1402,
+         1405,
+         1409,
+         1413,
+         1414,
+         1417
+      ]
+   },
+   "types_in_use": [
+      "src.unit_test_generator.CoverageInfo"
+   ],
+   "unified_test_coverage": [
+      1402,
+      1405,
+      1409,
+      1413,
+      1414,
+      1417
+   ],
+   "needs_pytest": false,
+   "non_code_lines": [
+      1395,
+      1396,
+      1397,
+      1398,
+      1399,
+      1400,
+      1401,
+      1404,
+      1406,
+      1407,
+      1408,
+      1411,
+      1412
+   ]
+}

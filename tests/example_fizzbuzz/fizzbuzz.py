@@ -1,5 +1,6 @@
 """
-Test case to demonstrate various Python types such as lists, dictionaries, etc.
+Test case to demonstrate the DDT concept on a variant of the fizzbuzz problem.
+Includes a global variable.
 """
 import argparse
 import logging

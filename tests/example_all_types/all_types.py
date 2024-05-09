@@ -1,3 +1,7 @@
+"""
+Test case to demonstrate various Python types such as lists, dictionaries, etc.
+"""
+
 import argparse
 import logging
 import os
@@ -9,10 +13,11 @@ from src.unit_test_generator import (
     unit_test_generator_decorator,
 )
 
-fmt_str = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
-logging.basicConfig(level=logging.INFO, format=fmt_str)
+FMT_STR = "%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s"
+logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
 unit_test_generator.logger.setLevel(logging.CRITICAL)
+
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def get_item_at_index(iterable, index: int):
@@ -25,13 +30,14 @@ def get_item_at_index(iterable, index: int):
         raise ValueError("iterable cannot be empty!")
     if index >= len(iterable):
         raise ValueError(f"index must be in range [0, {len(iterable)-1}], was {index}")
-    elif  index < 0:
+    if index < 0:
         raise ValueError(f"index must be in range [0, {len(iterable)-1}], was {index}")
 
     return iterable[index]
 
-#@unit_test_generator_decorator(sample_count=4)
-def get_key_to_set_with_highest_value(dictionary:dict):
+
+# @unit_test_generator_decorator(sample_count=4)
+def get_key_to_set_with_highest_value(dictionary: dict):
     """
     Used to test unit_test_generator_decorator with
     dictionary and set arguments.
@@ -56,60 +62,69 @@ def get_key_to_set_with_highest_value(dictionary:dict):
             highest_value = this_highest_value
     return best_key
 
+
 def main():
+    """
+    Execute the functions above.
+    """
     # Begin ad hoc tests
     # Test get_item_at_index
     iterables = [
-                    "The quick red fox jumped over the lazy brown dog",
-                    tuple([x for x in range(5,15)]),
-                    [-1,-2,-3,-4],
-                    "a test string",
-                    "a test string",
-                    #set([])
-                ]
-    indices = [3,50,0,-5,-5]
+        "The quick red fox jumped over the lazy brown dog",
+        tuple(list(range(5, 15))), # pylint: disable=consider-using-generator
+        [-1, -2, -3, -4],
+        "a test string",
+        "a test string",
+        # set([])
+    ]
+    indices = [3, 50, 0, -5, -5]
     for iterable, index in zip(iterables, indices):
-        logger.info(f"{index=} {iterable=}")
+        logger.info("index=%d iterable=%s", index, iterable)
         try:
-            logger.info(f"{get_item_at_index(iterable, index)=}")
-        except Exception as e:
+            print(f"{get_item_at_index(iterable, index)=}")
+        except ValueError as e:
             logger.error(e)
 
     my_dict = {
         10: set([90, 95, 100]),
         3: set([20, 40, 80]),
-        -1: set([x*x for x in range(10)]),
+        -1: set([x * x for x in range(10)]), # pylint: disable=consider-using-set-comprehension
     }
-    logger.info(f"{get_key_to_set_with_highest_value(my_dict)=}")
+    print(f"{get_key_to_set_with_highest_value(my_dict)=}")
 
-    """
-    The generate_all_tests_and_metadata() function takes 2 Paths:
-    1. The output directory for the unit tests (.py)
-    2. The output directory for the .json files (I/O for each test)
-    """
-    generate_all_tests_and_metadata(Path('.'), Path('.'))
+
+    # The generate_all_tests_and_metadata() function takes 2 Paths:
+    # 1. The output directory for the unit tests (.py)
+    # 2. The output directory for the .json files (I/O for each test)
+
+    generate_all_tests_and_metadata(Path("."), Path("."))
+
 
 if __name__ == "__main__":
-
     log_levels = {
-        'critical': logging.CRITICAL,
-        'error': logging.ERROR,
-        'warn': logging.WARNING,
-        'warning': logging.WARNING,
-        'info': logging.INFO,
-        'debug': logging.DEBUG
+        "critical": logging.CRITICAL,
+        "error": logging.ERROR,
+        "warn": logging.WARNING,
+        "warning": logging.WARNING,
+        "info": logging.INFO,
+        "debug": logging.DEBUG,
     }
     # Create the parser and add argument(s)
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log-level',
-                        "-l",
-                        help='log level',
-                        type=str,
-                        choices=log_levels.keys(),
-                        default='info')
-    parser.add_argument("--disable-unit-test-generation", "-d",
-                        action="store_true",
-                        help="Set this flag to deactivate unit test generation for this code")
+    parser.add_argument(
+        "--log-level",
+        "-l",
+        help="log level",
+        type=str,
+        choices=log_levels.keys(),
+        default="info",
+    )
+    parser.add_argument(
+        "--disable-unit-test-generation",
+        "-d",
+        action="store_true",
+        help="Set this flag to deactivate unit test generation for this code",
+    )
     args = parser.parse_args()
     logger.setLevel(log_levels[args.log_level])
     logger.info("args=%s", args)
@@ -121,7 +136,7 @@ if __name__ == "__main__":
             logger.info("Deleting %s to ensure clean start", this_file)
             os.remove(file)
 
-    logger.info(f"{__file__}")
+    logger.info("%s", __file__)
     # The code below applies the CLI arg above to selectively enable/disable
     # automatic unit test generation (Could not use the syntactic sugar method
     # of applying decorators as the user's input isn't parsed until now.)
@@ -129,8 +144,7 @@ if __name__ == "__main__":
     # NOTE:
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
-    #get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value)
-    #get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index)
-
+    # get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value) # pylint: disable=line-too-long
+    # get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index) # pylint: disable=line-too-long
 
     main()

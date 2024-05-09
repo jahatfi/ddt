@@ -1,0 +1,89 @@
+{
+   "name": "update_global",
+   "lines": [
+      1394,
+      1402,
+      1403,
+      1405,
+      1409,
+      1410,
+      1413,
+      1414,
+      1415,
+      1416,
+      1417
+   ],
+   "is_method": false,
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "source_file": null,
+   "coverage_cost": {
+      "c2a807c8261c5494b588e0b1b6a5ddbe295874557f49e4d5533768564c4d3551": 0.001
+   },
+   "coverage_io": {
+      "c2a807c8261c5494b588e0b1b6a5ddbe295874557f49e4d5533768564c4d3551": {
+         "args": [
+            "\"fizzbuzz\"",
+            "\"mode\"",
+            "\"Before\"",
+            "CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='')"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='')",
+         "coverage": [
+            1402,
+            1405,
+            1409,
+            1413,
+            1414,
+            1417
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      }
+   },
+   "coverage_percentage": 54.55,
+   "result_types": {
+      "c2a807c8261c5494b588e0b1b6a5ddbe295874557f49e4d5533768564c4d3551": "src.unit_test_generator.CoverageInfo"
+   },
+   "test_coverage": {
+      "c2a807c8261c5494b588e0b1b6a5ddbe295874557f49e4d5533768564c4d3551": [
+         1402,
+         1405,
+         1409,
+         1413,
+         1414,
+         1417
+      ]
+   },
+   "types_in_use": [
+      "src.unit_test_generator.CoverageInfo"
+   ],
+   "unified_test_coverage": [
+      1402,
+      1405,
+      1409,
+      1413,
+      1414,
+      1417
+   ],
+   "needs_pytest": false,
+   "non_code_lines": [
+      1395,
+      1396,
+      1397,
+      1398,
+      1399,
+      1400,
+      1401,
+      1404,
+      1406,
+      1407,
+      1408,
+      1411,
+      1412
+   ]
+}
