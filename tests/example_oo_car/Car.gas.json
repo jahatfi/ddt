@@ -1,0 +1,119 @@
+{
+   "name": "Car.gas",
+   "lines": [
+      58,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+   ],
+   "is_method": true,
+   "global_vars_read_from": [
+      "logger",
+      "method_call_counter"
+   ],
+   "global_vars_written_to": [
+      "method_call_counter"
+   ],
+   "source_file": null,
+   "coverage_cost": {
+      "6654fc7d2ffc7013756631c60503a1149dc6dc4945d33933d1dac7d412ae9225": 0.001,
+      "6777dca1203ba028fe6eea29f029ed19a05e9e5da06d5afb2df4291ea4bfaa30": 0.001
+   },
+   "coverage_io": {
+      "6654fc7d2ffc7013756631c60503a1149dc6dc4945d33933d1dac7d412ae9225": {
+         "args": [
+            "-1",
+            "1"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "method_call_counter": "0"
+         },
+         "globals_after": {
+            "method_call_counter": "1"
+         },
+         "result": "None",
+         "coverage": [
+            64,
+            65,
+            66,
+            67
+         ],
+         "exception_type": "<class 'ValueError'>",
+         "exception_message": "Gas rate (m/s) must be positive.",
+         "constructor": "Car(\"Red\", 10, 0)"
+      },
+      "6777dca1203ba028fe6eea29f029ed19a05e9e5da06d5afb2df4291ea4bfaa30": {
+         "args": [
+            "2",
+            "2"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "method_call_counter": "1"
+         },
+         "globals_after": {
+            "method_call_counter": "2"
+         },
+         "result": "16",
+         "coverage": [
+            64,
+            65,
+            66,
+            68,
+            69
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "Car(\"White\", 12, -30)"
+      }
+   },
+   "coverage_percentage": 85.71,
+   "result_types": {
+      "6654fc7d2ffc7013756631c60503a1149dc6dc4945d33933d1dac7d412ae9225": "NoneType",
+      "6777dca1203ba028fe6eea29f029ed19a05e9e5da06d5afb2df4291ea4bfaa30": "int",
+      "aa3d3304208974bb89444729cda8100c7e986bd5883edafe777d4b84b8a9e192": "int",
+      "9ba9ae5b69a8e44bea55e720d9d00978d485f834209fec804c28f9caeba891e0": "int",
+      "ba0fb6ad1f74ae0070eae6d4934bdc8137fd97035f28051dd9ef7815c8fd38d3": "float",
+      "138bb8692ba4fa2ca141a18d695cabb1c0d608dde3b59e6148ef52fc6dd9fd16": "int",
+      "5db2b8a8e0a448caaafb89080547e73b08835e9caaf770545a5757c67c62533e": "int"
+   },
+   "test_coverage": {
+      "6654fc7d2ffc7013756631c60503a1149dc6dc4945d33933d1dac7d412ae9225": [
+         64,
+         65,
+         66,
+         67
+      ],
+      "6777dca1203ba028fe6eea29f029ed19a05e9e5da06d5afb2df4291ea4bfaa30": [
+         64,
+         65,
+         66,
+         68,
+         69
+      ]
+   },
+   "types_in_use": [
+      "car.Car",
+      "logging.Logger"
+   ],
+   "unified_test_coverage": [
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+   ],
+   "needs_pytest": true,
+   "non_code_lines": [
+      59,
+      60,
+      61,
+      62,
+      63
+   ]
+}

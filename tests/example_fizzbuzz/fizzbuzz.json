@@ -1,0 +1,237 @@
+{
+   "name": "fizzbuzz",
+   "lines": [
+      23,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      56,
+      57
+   ],
+   "is_method": false,
+   "global_vars_read_from": [
+      "mode"
+   ],
+   "global_vars_written_to": [],
+   "source_file": null,
+   "coverage_cost": {
+      "c463c1eceb47d3e8f19bf1b27fc7bab0cefe638121cd0da9441eeff2a0ef8311": 0.001,
+      "dffa6fb7a2b47e9f70da9f21e5e664bcea1ba432ebb22f32f615dacf78489ca6": 0.001,
+      "0cad04a04c29a08c51a87471edf53bcc6ebb00292354ff781f08f3b759520e60": 0.001,
+      "8a32d58c46313f5fb17a5fdf8621841b5bf66f0bf4ba6675c7b395648a339801": 0.001,
+      "e66e7ffe21a59ab66a43cbe7fa9d06cc70b349e5069479c51f23b5e78661cca3": 0.001
+   },
+   "coverage_io": {
+      "c463c1eceb47d3e8f19bf1b27fc7bab0cefe638121cd0da9441eeff2a0ef8311": {
+         "args": [
+            "6"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "mode": "'fizzbuzz'"
+         },
+         "globals_after": {},
+         "result": "6  with mode='fizzbuzz' yields 'fizz'",
+         "coverage": [
+            40,
+            41,
+            42,
+            43,
+            44,
+            46,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      },
+      "dffa6fb7a2b47e9f70da9f21e5e664bcea1ba432ebb22f32f615dacf78489ca6": {
+         "args": [
+            "30"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "mode": "'fizzbuzz'"
+         },
+         "globals_after": {},
+         "result": "30 with mode='fizzbuzz' yields 'fizzbuzz'",
+         "coverage": [
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      },
+      "0cad04a04c29a08c51a87471edf53bcc6ebb00292354ff781f08f3b759520e60": {
+         "args": [
+            "6"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "mode": "'buzzfizz'"
+         },
+         "globals_after": {},
+         "result": "6  with mode='buzzfizz' yields 'buzz'",
+         "coverage": [
+            40,
+            41,
+            48,
+            49,
+            50,
+            51,
+            53,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      },
+      "8a32d58c46313f5fb17a5fdf8621841b5bf66f0bf4ba6675c7b395648a339801": {
+         "args": [
+            "30"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "mode": "'buzzfizz'"
+         },
+         "globals_after": {},
+         "result": "30 with mode='buzzfizz' yields 'buzzfizz'",
+         "coverage": [
+            40,
+            41,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      },
+      "e66e7ffe21a59ab66a43cbe7fa9d06cc70b349e5069479c51f23b5e78661cca3": {
+         "args": [
+            "6"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "mode": "'a_test'"
+         },
+         "globals_after": {},
+         "result": "Mode 'a_test' invalid for fizzbuzz()",
+         "coverage": [
+            40,
+            41,
+            48,
+            56,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      }
+   },
+   "coverage_percentage": 94.44,
+   "result_types": {
+      "c463c1eceb47d3e8f19bf1b27fc7bab0cefe638121cd0da9441eeff2a0ef8311": "str",
+      "dffa6fb7a2b47e9f70da9f21e5e664bcea1ba432ebb22f32f615dacf78489ca6": "str",
+      "0cad04a04c29a08c51a87471edf53bcc6ebb00292354ff781f08f3b759520e60": "str",
+      "8a32d58c46313f5fb17a5fdf8621841b5bf66f0bf4ba6675c7b395648a339801": "str",
+      "e66e7ffe21a59ab66a43cbe7fa9d06cc70b349e5069479c51f23b5e78661cca3": "str"
+   },
+   "test_coverage": {
+      "dffa6fb7a2b47e9f70da9f21e5e664bcea1ba432ebb22f32f615dacf78489ca6": [
+         40,
+         41,
+         42,
+         43,
+         44,
+         45,
+         46,
+         47,
+         57
+      ],
+      "8a32d58c46313f5fb17a5fdf8621841b5bf66f0bf4ba6675c7b395648a339801": [
+         40,
+         41,
+         48,
+         49,
+         50,
+         51,
+         52,
+         53,
+         54,
+         57
+      ],
+      "e66e7ffe21a59ab66a43cbe7fa9d06cc70b349e5069479c51f23b5e78661cca3": [
+         40,
+         41,
+         48,
+         56,
+         57
+      ]
+   },
+   "types_in_use": [],
+   "unified_test_coverage": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      56,
+      57
+   ],
+   "needs_pytest": false,
+   "non_code_lines": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      55
+   ]
+}

@@ -1,0 +1,69 @@
+{
+   "name": "Car.__init__",
+   "lines": [
+      33,
+      41,
+      42,
+      43
+   ],
+   "is_method": true,
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "source_file": null,
+   "coverage_cost": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": 0.001
+   },
+   "coverage_io": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": {
+         "args": [
+            "\"Red\"",
+            "10",
+            "0"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "None",
+         "coverage": [
+            41,
+            42,
+            43
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": ""
+      }
+   },
+   "coverage_percentage": 75.0,
+   "result_types": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": "NoneType",
+      "1c563e184e04c90b3b944c6471448d7d21b0fecc474bd2a91968eb8732d45f75": "NoneType",
+      "809d591f01d7e83dc2031b1dea21a060250dd21be8ce9d64fcfbd933c8bd76b2": "NoneType",
+      "630423bd0dbbaef265f18691229cf5852d42c0811b34ee107daf66b05cbf30b3": "NoneType",
+      "c2bcb5dd8ce8c86b8b5cef23d1fd6df9c50a6e672cd2ae74c4b15facf0748af0": "NoneType",
+      "cdaec18e35f1b1204689dd7bf4f7eab02f98dd836c60806a68e66f530de12c5f": "NoneType"
+   },
+   "test_coverage": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": [
+         41,
+         42,
+         43
+      ]
+   },
+   "types_in_use": [],
+   "unified_test_coverage": [
+      41,
+      42,
+      43
+   ],
+   "needs_pytest": false,
+   "non_code_lines": [
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+   ]
+}
