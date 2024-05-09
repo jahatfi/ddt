@@ -236,9 +236,9 @@ if __name__ == "__main__":
     # NOTE:
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
-    Car.brake = unit_test_generator_decorator(110,100)(Car.brake)
-    Car.gas = unit_test_generator_decorator(110,100)(Car.gas)
-    Car.change_steer_angle = unit_test_generator_decorator(110,100)(Car.change_steer_angle)
-    Car.is_going_faster_than = unit_test_generator_decorator(110,100)(Car.is_going_faster_than)
-    Car.__init__ = unit_test_generator_decorator(110,100)(Car.__init__)
+    Car.brake = unit_test_generator_decorator(110, 100)(Car.brake)
+    Car.gas = unit_test_generator_decorator(110, 100)(Car.gas)
+    Car.change_steer_angle = unit_test_generator_decorator(110, 100)(Car.change_steer_angle)
+    Car.is_going_faster_than = unit_test_generator_decorator(110, 100)(Car.is_going_faster_than)
+    Car.__init__ = unit_test_generator_decorator(110, 100)(Car.__init__)
     main()
