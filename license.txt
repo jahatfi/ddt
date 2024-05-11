@@ -1,0 +1,7 @@
+/** 
+ * Copyright (C) Jamea Hatfield - All Rights Reserved
+ *
+ * Unauthorized copying of these files, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by James Hatfield, jahatfi@gmail.com, 10 May 2023
+ */
