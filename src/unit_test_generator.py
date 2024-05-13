@@ -1640,14 +1640,46 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     """
     imports = []
     was_executed = False
+    globals_before_are_constant = True
+    constant_globals_before: dict[str, typing.Any] = {}
+    constant_globals_before_key = set()
+
+    # Only functions/methods that accessed global
+    # variables will need to be patched
+    # The variable below will help us keep track of this.
+    needs_monkeypatch = False
+
     # NOTE: Add to the import list any specific modules for
     # which repr doesn't work, e.g.
     # imports.append(import pandas as pd\n")
+
+    try:
+        last_key, last_element = state.popitem()
+        if last_element.globals_before:
+            for gbk, gbv in last_element.globals_before.items():
+                if all(v.globals_before[gbk] == gbv for v in state.values()):
+                    logger.info("Constant pre-global '%s' for %s", gbk, func_name)
+                    constant_globals_before[gbk] = gbv
+                    constant_globals_before_key.add(gbk)
+                else:
+                    logger.info("Varying pre-global '%s' for %s", gbk, func_name)
+                    globals_before_are_constant = False
+        state[last_key] = last_element
+    except KeyError:
+        globals_before_are_constant = False
+
+    if globals_before_are_constant:
+        logger.info("All globals before call are constant.")
 
     tab = " "*indent_size
     raise_ex_msg = f"{tab}raise Exception('{func_name} was never executed')"
 
     header = []
+    for k, v in constant_globals_before.items():
+        # TODO Bug here; numbers fail, only strings work
+        header.append(f"{k.upper()} = {v[1:-1]}\n")
+
+
     pct = function_metadata.coverage_percentage
     #assert pct <= 100, "Bad math"
     line = f"{tab}# In sum, these tests covered {pct}% of {func_name}'s lines\n"
@@ -1661,10 +1693,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         header += lines
 
     test_str_list_def_dict:typing.DefaultDict[int, List[str]] = defaultdict(int) # type: ignore [arg-type] # pylint: disable=line-too-long
-    # Only functions/methods that accessed global
-    # variables will need to be patched
-    # The variable below will help us keep track of this.
-    needs_monkeypatch = False
+
     package = Path(source_file).stem
     initial_import_list = get_module_import_string(source_file).split(".")
     initial_import_prefix = ".".join(initial_import_list[:-1])
@@ -1676,7 +1705,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     else:
         initial_import = ""
 
-    docstring = f'{tab}\"\"\"\n{tab}Programmatically generated test function for {func_name}\n{tab}\"\"\"'
+    docstring = f'{tab}\"\"\"\n{tab}{tab}Programmatically generated test function for {func_name}\n{tab}{tab}\"\"\"'
     for hash_key_index, hash_key in enumerate(sorted(state)):
         test_str_list = [f"def test_{func_name.lower().replace('.','_')}_{hash_key_index}():\n",
                          f"{tab}monkeypatch = MonkeyPatch()\n",
@@ -1699,8 +1728,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             needs_monkeypatch = True
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
-            test_str_list.append(f"{tab}{k} = {v}\n")
-            line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k})\n'
+            if k in constant_globals_before_key:
+                line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+            else:
+                test_str_list.append(f"{tab}{k} = {v}\n")
+                line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k})\n'
             monkey_patches.append(line)
         if monkey_patches:
             test_str_list += monkey_patches

@@ -24,6 +24,6 @@ def test_return_function_line_numbers_and_accessed_globals_0():
     x = unit_test_generator.return_function_line_numbers_and_accessed_globals(*args)
     assert x == [
         [26, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42],
-        {"error_code", "logger"},
+        {"logger", "error_code"},
         {"error_code"},
     ]
