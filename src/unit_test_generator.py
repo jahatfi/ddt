@@ -1676,8 +1676,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     header = []
     for k, v in constant_globals_before.items():
-        # TODO Bug here; numbers fail, only strings work
-        header.append(f"{k.upper()} = {v[1:-1]}\n")
+        header.append(f"{k.upper()} = {v}\n")
 
 
     pct = function_metadata.coverage_percentage

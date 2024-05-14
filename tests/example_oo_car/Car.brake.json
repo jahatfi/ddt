@@ -55,8 +55,8 @@
       ]
    },
    "types_in_use": [
-      "car.Car",
-      "logging.Logger"
+      "logging.Logger",
+      "tests.example_oo_car.car.Car"
    ],
    "unified_test_coverage": [
       50,
