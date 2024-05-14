@@ -38,7 +38,8 @@
       ]
    },
    "types_in_use": [
-      "car.Car"
+      "car.Car",
+      "tests.example_oo_car.car.Car"
    ],
    "unified_test_coverage": [
       123

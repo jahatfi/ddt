@@ -36,7 +36,7 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_cost": {
-      "f9c7ceb6c81452b81751463c2c2c41af6473a8d5142d67ee26c9a7cdc8a1fe46": 0.002
+      "f9c7ceb6c81452b81751463c2c2c41af6473a8d5142d67ee26c9a7cdc8a1fe46": 0.003
    },
    "coverage_io": {
       "f9c7ceb6c81452b81751463c2c2c41af6473a8d5142d67ee26c9a7cdc8a1fe46": {

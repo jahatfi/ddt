@@ -2,12 +2,12 @@
 Programmatically generated test function for Car.gas
 """
 
-import car
+from tests.example_oo_car import car
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to Car.gas:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 85.71% of Car.gas's lines
@@ -16,8 +16,8 @@ from car import Car
 def test_car_gas_0():
     monkeypatch = MonkeyPatch()
     """
-  Programmatically generated test function for Car.gas
-  """
+    Programmatically generated test function for Car.gas
+    """
     # Coverage: 57.14% of function lines [58-69]
     # Covered Lines: 64-67
     # Lines not covered: 58-63;68-69
@@ -37,8 +37,8 @@ def test_car_gas_0():
 def test_car_gas_1():
     monkeypatch = MonkeyPatch()
     """
-  Programmatically generated test function for Car.gas
-  """
+    Programmatically generated test function for Car.gas
+    """
     # Coverage: 71.43% of function lines [58-69]
     # Covered Lines: 64-66;68-69
     # Lines not covered: 58-63;67

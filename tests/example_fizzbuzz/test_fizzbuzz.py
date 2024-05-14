@@ -2,7 +2,7 @@
 Programmatically generated test function for fizzbuzz
 """
 
-from tests.example_fizzbuzz import fizzbuzz
+import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 
@@ -12,8 +12,8 @@ from _pytest.monkeypatch import MonkeyPatch
 def test_fizzbuzz_0():
     monkeypatch = MonkeyPatch()
     """
-  Programmatically generated test function for fizzbuzz
-  """
+    Programmatically generated test function for fizzbuzz
+    """
     # Coverage: 44.44% of function lines [23-57]
     # Covered Lines: 40-41;48-51;53;57
     # Lines not covered: 23-39;42-47;52;54-56
@@ -29,8 +29,8 @@ def test_fizzbuzz_0():
 def test_fizzbuzz_1():
     monkeypatch = MonkeyPatch()
     """
-  Programmatically generated test function for fizzbuzz
-  """
+    Programmatically generated test function for fizzbuzz
+    """
     # Coverage: 55.56% of function lines [23-57]
     # Covered Lines: 40-41;48-54;57
     # Lines not covered: 23-39;42-47;56
@@ -46,8 +46,8 @@ def test_fizzbuzz_1():
 def test_fizzbuzz_2():
     monkeypatch = MonkeyPatch()
     """
-  Programmatically generated test function for fizzbuzz
-  """
+    Programmatically generated test function for fizzbuzz
+    """
     # Coverage: 38.89% of function lines [23-57]
     # Covered Lines: 40-44;46;57
     # Lines not covered: 23-39;45;47-56
@@ -63,8 +63,8 @@ def test_fizzbuzz_2():
 def test_fizzbuzz_3():
     monkeypatch = MonkeyPatch()
     """
-  Programmatically generated test function for fizzbuzz
-  """
+    Programmatically generated test function for fizzbuzz
+    """
     # Coverage: 50.00% of function lines [23-57]
     # Covered Lines: 40-47;57
     # Lines not covered: 23-39;48-56
@@ -80,8 +80,8 @@ def test_fizzbuzz_3():
 def test_fizzbuzz_4():
     monkeypatch = MonkeyPatch()
     """
-  Programmatically generated test function for fizzbuzz
-  """
+    Programmatically generated test function for fizzbuzz
+    """
     # Coverage: 27.78% of function lines [23-57]
     # Covered Lines: 40-41;48;56-57
     # Lines not covered: 23-39;42-47;49-55
