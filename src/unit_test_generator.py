@@ -147,6 +147,7 @@ class CoverageInfo:
     exception_message: str = ""
     constructor: str = ""
     cost:float = 0.0
+    result_type: str = ""
 
     def repr(self):
         """
@@ -163,7 +164,8 @@ class CoverageInfo:
         result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('\"', "\""))
-        result.append(" cost="+repr(self.cost)+")")
+        result.append(" cost="+repr(self.cost))
+        result.append(" result_type="+repr(self.result_type)+")")
 
         result = ','.join(result)
         logger.debug("result=%s", result)
@@ -878,6 +880,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     this_metadata.types_in_use |= get_all_types("4", result, True, 0, func_name)
     #assert hashed_input not in hashed_inputs, "ALREADY"
     this_metadata.result_types[hashed_input] = result_type
+    this_coverage_info.result_type = result_type
+    #if hashed_input in this_metadata.coverage_io:
+    #    this_metadata.coverage_io[hashed_input].result_type = result_type
     #hash_keys.add(hash_keys)
 
     # There is only one file in cov_report_['files']
@@ -1750,7 +1755,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 
-        this_result_type = function_metadata.result_types[hash_key]
+        #this_result_type = function_metadata.result_types[hash_key]
+        this_result_type = function_metadata.coverage_io[hash_key].result_type
         test_str_list += meta_program_function_call(state[hash_key],
                                                         tab,
                                                         package,
