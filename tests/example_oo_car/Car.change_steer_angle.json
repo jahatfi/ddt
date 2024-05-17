@@ -13,16 +13,23 @@
       84,
       88
    ],
+   "non_code_lines": [
+      72,
+      73,
+      74,
+      75,
+      76,
+      80,
+      82,
+      83,
+      87
+   ],
    "is_method": true,
    "global_vars_read_from": [
       "logger"
    ],
    "global_vars_written_to": [],
    "source_file": null,
-   "coverage_cost": {
-      "9e5729283fb4205cc004e81e18786a627d2eb0f21140111b0a77b56ac7ded037": 0.001,
-      "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": 0.001
-   },
    "coverage_io": {
       "9e5729283fb4205cc004e81e18786a627d2eb0f21140111b0a77b56ac7ded037": {
          "args": [
@@ -41,7 +48,9 @@
          ],
          "exception_type": "",
          "exception_message": "",
-         "constructor": "Car(\"Red\", 9, 0)"
+         "constructor": "Car(\"Red\", 9, 0)",
+         "cost": 0.001,
+         "result_type": "int"
       },
       "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": {
          "args": [
@@ -58,33 +67,15 @@
          ],
          "exception_type": "<class 'AssertionError'>",
          "exception_message": "angle=-1080    out of bounds!",
-         "constructor": "Car(\"Green\", 48, 90)"
+         "constructor": "Car(\"Green\", 48, 90)",
+         "cost": 0.001,
+         "result_type": "NoneType"
       }
    },
    "coverage_percentage": 54.55,
-   "result_types": {
-      "9e5729283fb4205cc004e81e18786a627d2eb0f21140111b0a77b56ac7ded037": "int",
-      "78fd5f6e8e8bd7118d1ec9602907dd07a7495e42f6814cd047a8057a96388cd7": "int",
-      "4e6967deeb4e51bab447208d79037a8bca61cdf648fb62d21885290b177313f6": "int",
-      "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": "NoneType"
-   },
-   "test_coverage": {
-      "9e5729283fb4205cc004e81e18786a627d2eb0f21140111b0a77b56ac7ded037": [
-         77,
-         78,
-         81,
-         84,
-         88
-      ],
-      "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": [
-         77,
-         78,
-         79
-      ]
-   },
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "unified_test_coverage": [
       77,
@@ -94,16 +85,5 @@
       84,
       88
    ],
-   "needs_pytest": true,
-   "non_code_lines": [
-      72,
-      73,
-      74,
-      75,
-      76,
-      80,
-      82,
-      83,
-      87
-   ]
+   "needs_pytest": true
 }

@@ -14,6 +14,13 @@
       41,
       42
    ],
+   "non_code_lines": [
+      27,
+      28,
+      29,
+      30,
+      31
+   ],
    "is_method": false,
    "global_vars_read_from": [
       "error_code",
@@ -23,9 +30,6 @@
       "error_code"
    ],
    "source_file": null,
-   "coverage_cost": {
-      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": 0.003
-   },
    "coverage_io": {
       "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": {
          "args": [
@@ -49,22 +53,12 @@
          ],
          "exception_type": "",
          "exception_message": "",
-         "constructor": ""
+         "constructor": "",
+         "cost": 0.003,
+         "result_type": "str"
       }
    },
    "coverage_percentage": 41.67,
-   "result_types": {
-      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": "str"
-   },
-   "test_coverage": {
-      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": [
-         32,
-         33,
-         36,
-         39,
-         42
-      ]
-   },
    "types_in_use": [
       "logging.Logger"
    ],
@@ -75,12 +69,5 @@
       39,
       42
    ],
-   "needs_pytest": false,
-   "non_code_lines": [
-      27,
-      28,
-      29,
-      30,
-      31
-   ]
+   "needs_pytest": false
 }

@@ -10,36 +10,20 @@
       34,
       36
    ],
+   "non_code_lines": [
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      35
+   ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
-   "coverage_cost": {
-      "1edeba54a64658dddb0ff23a35c06b12b5a92ff815a4fa728a18b112ca3f5a8a": 0.001,
-      "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": 0.001,
-      "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": 0.001,
-      "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": 0.001
-   },
    "coverage_io": {
-      "1edeba54a64658dddb0ff23a35c06b12b5a92ff815a4fa728a18b112ca3f5a8a": {
-         "args": [
-            "\"The quick red fox jumped over the lazy brown dog\"",
-            "3"
-         ],
-         "kwargs": {},
-         "globals_before": {},
-         "globals_after": {},
-         "result": " ",
-         "coverage": [
-            29,
-            31,
-            33,
-            36
-         ],
-         "exception_type": "",
-         "exception_message": "",
-         "constructor": ""
-      },
       "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": {
          "args": [
             "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
@@ -56,7 +40,9 @@
          ],
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 9], was 50",
-         "constructor": ""
+         "constructor": "",
+         "cost": 0.001,
+         "result_type": "NoneType"
       },
       "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": {
          "args": [
@@ -75,7 +61,9 @@
          ],
          "exception_type": "",
          "exception_message": "",
-         "constructor": ""
+         "constructor": "",
+         "cost": 0.001,
+         "result_type": "int"
       },
       "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": {
          "args": [
@@ -94,35 +82,12 @@
          ],
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 12], was -5",
-         "constructor": ""
+         "constructor": "",
+         "cost": 0.001,
+         "result_type": "NoneType"
       }
    },
    "coverage_percentage": 75.0,
-   "result_types": {
-      "1edeba54a64658dddb0ff23a35c06b12b5a92ff815a4fa728a18b112ca3f5a8a": "str",
-      "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": "NoneType",
-      "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": "int",
-      "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": "NoneType"
-   },
-   "test_coverage": {
-      "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": [
-         29,
-         31,
-         32
-      ],
-      "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": [
-         29,
-         31,
-         33,
-         36
-      ],
-      "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": [
-         29,
-         31,
-         33,
-         34
-      ]
-   },
    "types_in_use": [],
    "unified_test_coverage": [
       29,
@@ -132,14 +97,5 @@
       34,
       36
    ],
-   "needs_pytest": true,
-   "non_code_lines": [
-      23,
-      24,
-      25,
-      26,
-      27,
-      28,
-      35
-   ]
+   "needs_pytest": true
 }

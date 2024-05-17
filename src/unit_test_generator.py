@@ -214,14 +214,14 @@ class FunctionMetaData(Jsonable):
                     source_file:Path,
                     coverage_io:Optional[dict] = None,
                     coverage_percentage:float=0.0,
-                    result_types:Optional[dict] = None,
                     types_in_use:Optional[set] = None,
                     unified_test_coverage:Optional[set] = None,
                     needs_pytest:bool = False
                 ):
-        # These properties are always provided
+        # These properties (expect non_lines) are always provided
         self.name = name
         self.lines = lines
+        self.non_code_lines:set = self.return_non_code_lines()
         self.is_method = is_method
         self.global_vars_read_from = global_vars_read_from
         self.global_vars_written_to = global_vars_written_to
@@ -231,7 +231,6 @@ class FunctionMetaData(Jsonable):
         # is being constructed as part of a unit test
         self.coverage_io = {} if coverage_io is None else coverage_io
         self.coverage_percentage = coverage_percentage
-        self.result_types = {} if result_types is None else result_types
         self.types_in_use = set() if types_in_use is None else types_in_use
         # Change in style simply to keep line length below 80 characters
         if unified_test_coverage is None:
@@ -239,10 +238,6 @@ class FunctionMetaData(Jsonable):
         else:
             self.unified_test_coverage = unified_test_coverage
         self.needs_pytest = needs_pytest
-
-        #self.exceptions = exceptions
-        # This last property is created programmatically
-        self.non_code_lines:set = self.return_non_code_lines()
 
     def percent_covered(self, precision:int=2):
         """
@@ -302,7 +297,6 @@ class FunctionMetaData(Jsonable):
         result.append(" source_file="+repr(self.source_file))
         result.append(" coverage_io="+repr(self.coverage_io))
         result.append(" coverage_percentage="+repr(self.coverage_percentage))
-        result.append(" result_types="+repr(self.result_types))
         result.append(" types_in_use="+repr(self.types_in_use))
         result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
         result.append(" needs_pytest="+repr(self.needs_pytest)+')')
@@ -327,7 +321,6 @@ class FunctionMetaData(Jsonable):
 
         update_fields = [
             self.coverage_io,
-            self.result_types,
         ]
         for field in update_fields:
             try:
@@ -879,7 +872,6 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     this_metadata.types_in_use |= get_all_types("4", result, True, 0, func_name)
     #assert hashed_input not in hashed_inputs, "ALREADY"
-    this_metadata.result_types[hashed_input] = result_type
     this_coverage_info.result_type = result_type
     #if hashed_input in this_metadata.coverage_io:
     #    this_metadata.coverage_io[hashed_input].result_type = result_type
@@ -1755,7 +1747,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 
-        #this_result_type = function_metadata.result_types[hash_key]
         this_result_type = function_metadata.coverage_io[hash_key].result_type
         test_str_list += meta_program_function_call(state[hash_key],
                                                         tab,

@@ -14,21 +14,6 @@ def test_get_item_at_index_0():
     Programmatically generated test function for get_item_at_index
     """
     # Coverage: 50.00% of function lines [22-36]
-    # Covered Lines: 29;31;33;36
-    # Lines not covered: 22-28;30;32;34-35
-    # Note: Any lines not mentioned are comments or whitespace
-    args = []
-    args.append("The quick red fox jumped over the lazy brown dog")
-    args.append(3)
-    x = all_types.get_item_at_index(*args)
-    assert x == " "
-
-
-def test_get_item_at_index_1():
-    """
-    Programmatically generated test function for get_item_at_index
-    """
-    # Coverage: 50.00% of function lines [22-36]
     # Covered Lines: 29;31;33-34
     # Lines not covered: 22-28;30;32;36
     # Note: Any lines not mentioned are comments or whitespace
@@ -41,7 +26,7 @@ def test_get_item_at_index_1():
         all_types.get_item_at_index(*args)
 
 
-def test_get_item_at_index_2():
+def test_get_item_at_index_1():
     """
     Programmatically generated test function for get_item_at_index
     """
@@ -58,7 +43,7 @@ def test_get_item_at_index_2():
         all_types.get_item_at_index(*args)
 
 
-def test_get_item_at_index_3():
+def test_get_item_at_index_2():
     """
     Programmatically generated test function for get_item_at_index
     """
