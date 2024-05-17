@@ -1,89 +1,75 @@
 {
    "name": "update_global",
    "lines": [
-      1394,
-      1402,
-      1403,
+      1389,
+      1397,
+      1398,
+      1400,
+      1404,
       1405,
+      1408,
       1409,
       1410,
-      1413,
-      1414,
-      1415,
-      1416,
-      1417
+      1411,
+      1412
+   ],
+   "non_code_lines": [
+      1390,
+      1391,
+      1392,
+      1393,
+      1394,
+      1395,
+      1396,
+      1399,
+      1401,
+      1402,
+      1403,
+      1406,
+      1407
    ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
-   "coverage_cost": {
-      "1df8cbf6a5b6e1fba51027088ba215f0c25706c179fc78054f9ba38ca069c565": 0.001
-   },
    "coverage_io": {
-      "1df8cbf6a5b6e1fba51027088ba215f0c25706c179fc78054f9ba38ca069c565": {
+      "44f24f3426b6fe618f62301551beb9629e89fedf9a0afd6ccfa38f195442c036": {
          "args": [
             "0",
             "\"error_code\"",
             "\"Before\"",
-            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='')"
+            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='')",
+         "result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
          "coverage": [
-            1402,
-            1405,
+            1397,
+            1400,
+            1404,
+            1408,
             1409,
-            1413,
-            1414,
-            1417
+            1412
          ],
          "exception_type": "",
          "exception_message": "",
-         "constructor": ""
+         "constructor": "",
+         "cost": 0.001,
+         "result_type": "src.unit_test_generator.CoverageInfo"
       }
    },
    "coverage_percentage": 54.55,
-   "result_types": {
-      "1df8cbf6a5b6e1fba51027088ba215f0c25706c179fc78054f9ba38ca069c565": "src.unit_test_generator.CoverageInfo"
-   },
-   "test_coverage": {
-      "1df8cbf6a5b6e1fba51027088ba215f0c25706c179fc78054f9ba38ca069c565": [
-         1402,
-         1405,
-         1409,
-         1413,
-         1414,
-         1417
-      ]
-   },
    "types_in_use": [
       "src.unit_test_generator.CoverageInfo"
    ],
    "unified_test_coverage": [
-      1402,
-      1405,
-      1409,
-      1413,
-      1414,
-      1417
-   ],
-   "needs_pytest": false,
-   "non_code_lines": [
-      1395,
-      1396,
       1397,
-      1398,
-      1399,
       1400,
-      1401,
       1404,
-      1406,
-      1407,
       1408,
-      1411,
+      1409,
       1412
-   ]
+   ],
+   "needs_pytest": false
 }

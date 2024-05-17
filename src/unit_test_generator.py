@@ -146,6 +146,8 @@ class CoverageInfo:
     exception_type: str = ""
     exception_message: str = ""
     constructor: str = ""
+    cost:float = 0.0
+    result_type: str = ""
 
     def repr(self):
         """
@@ -161,7 +163,9 @@ class CoverageInfo:
         result.append(" coverage="+repr(self.coverage))
         result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
-        result.append(" constructor="+repr(self.constructor).replace('\"', "\"")+")")
+        result.append(" constructor="+repr(self.constructor).replace('\"', "\""))
+        result.append(" cost="+repr(self.cost))
+        result.append(" result_type="+repr(self.result_type)+")")
 
         result = ','.join(result)
         logger.debug("result=%s", result)
@@ -208,18 +212,16 @@ class FunctionMetaData(Jsonable):
                     global_vars_read_from:set,
                     global_vars_written_to:set,
                     source_file:Path,
-                    coverage_cost:Optional[dict] = None,
                     coverage_io:Optional[dict] = None,
                     coverage_percentage:float=0.0,
-                    result_types:Optional[dict] = None,
-                    test_coverage:Optional[dict] = None,
                     types_in_use:Optional[set] = None,
                     unified_test_coverage:Optional[set] = None,
                     needs_pytest:bool = False
                 ):
-        # These properties are always provided
+        # These properties (expect non_lines) are always provided
         self.name = name
         self.lines = lines
+        self.non_code_lines:set = self.return_non_code_lines()
         self.is_method = is_method
         self.global_vars_read_from = global_vars_read_from
         self.global_vars_written_to = global_vars_written_to
@@ -227,11 +229,8 @@ class FunctionMetaData(Jsonable):
 
         # These properties are not provided unless this class
         # is being constructed as part of a unit test
-        self.coverage_cost = {} if coverage_cost is None else coverage_cost
         self.coverage_io = {} if coverage_io is None else coverage_io
         self.coverage_percentage = coverage_percentage
-        self.result_types = {} if result_types is None else result_types
-        self.test_coverage = {} if test_coverage is None else test_coverage
         self.types_in_use = set() if types_in_use is None else types_in_use
         # Change in style simply to keep line length below 80 characters
         if unified_test_coverage is None:
@@ -239,10 +238,6 @@ class FunctionMetaData(Jsonable):
         else:
             self.unified_test_coverage = unified_test_coverage
         self.needs_pytest = needs_pytest
-
-        #self.exceptions = exceptions
-        # This last property is created programmatically
-        self.non_code_lines:set = self.return_non_code_lines()
 
     def percent_covered(self, precision:int=2):
         """
@@ -300,11 +295,8 @@ class FunctionMetaData(Jsonable):
         result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
         result.append(" global_vars_written_to="+repr(self.global_vars_written_to))
         result.append(" source_file="+repr(self.source_file))
-        result.append(" coverage_cost="+repr(self.coverage_cost))
         result.append(" coverage_io="+repr(self.coverage_io))
         result.append(" coverage_percentage="+repr(self.coverage_percentage))
-        result.append(" result_types="+repr(self.result_types))
-        result.append(" test_coverage="+repr(self.test_coverage))
         result.append(" types_in_use="+repr(self.types_in_use))
         result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
         result.append(" needs_pytest="+repr(self.needs_pytest)+')')
@@ -328,10 +320,7 @@ class FunctionMetaData(Jsonable):
         # Convert types_in_use to a dict {hash_key:set(types_per_hash_key)}
 
         update_fields = [
-            self.coverage_cost,
             self.coverage_io,
-            self.result_types,
-            self.test_coverage
         ]
         for field in update_fields:
             try:
@@ -883,7 +872,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
 
     this_metadata.types_in_use |= get_all_types("4", result, True, 0, func_name)
     #assert hashed_input not in hashed_inputs, "ALREADY"
-    this_metadata.result_types[hashed_input] = result_type
+    this_coverage_info.result_type = result_type
+    #if hashed_input in this_metadata.coverage_io:
+    #    this_metadata.coverage_io[hashed_input].result_type = result_type
     #hash_keys.add(hash_keys)
 
     # There is only one file in cov_report_['files']
@@ -921,10 +912,15 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     # minimal set cover problem
 
     # Deepcopy of keys permits modification of the dictionary in the loop
-    tmp_key_list = list(this_metadata.test_coverage.keys())
+    tmp_key_list = list(this_metadata.coverage_io.keys())
     key_list = copy.deepcopy(tmp_key_list)
     for key in key_list:
-        prev_coverage = this_metadata.test_coverage[key]
+        # The key may have been removed in a previous iteration of this loop
+        if key not in this_metadata.coverage_io:
+            continue
+        print(f"{this_metadata.coverage_io=}")
+        prev_coverage = set(this_metadata.coverage_io[key].coverage)
+        print(f"{prev_coverage=}")
         # Discard this test if it covered a subset of a previous test
         if this_coverage.issubset(prev_coverage) and not keep_subsets:
             logger.debug("%s: discarding current test.", source_file)
@@ -934,7 +930,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         # of the lines covered by this test
         if prev_coverage.issubset(this_coverage):
             logger.debug("%s removing subset coverage @ %s.", source_file, key)
-            this_metadata.test_coverage.pop(key)
+            this_metadata.coverage_io.pop(key)
 
 
     # Put another way, only keep these results IF the test coverage
@@ -988,11 +984,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     this_metadata.coverage_percentage = percent_covered
     # TODO remove this deepcopy
     this_metadata.coverage_io[hashed_input] = copy.deepcopy(this_coverage_info)
-    this_metadata.coverage_cost[hashed_input] = round(end_time - start_time, 3)
-    this_metadata.test_coverage[hashed_input] = this_coverage
+    this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 3)
 
     #print("Cost")
-    #pp.pprint(coverage_cost)
 
     if caught_exception:
         all_metadata[func_name] = this_metadata
@@ -1329,7 +1323,8 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
                 function_metadata.unified_test_coverage = set()
 
         if purged:
-            for _, cov in function_metadata.test_coverage.items():
+            for record in function_metadata.coverage_io.values():
+                cov = record['coverage']
                 function_metadata.unified_test_coverage |= set(cov)
 
         test_suite = function_metadata.coverage_io
@@ -1752,7 +1747,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 
-        this_result_type = function_metadata.result_types[hash_key]
+        this_result_type = function_metadata.coverage_io[hash_key].result_type
         test_str_list += meta_program_function_call(state[hash_key],
                                                         tab,
                                                         package,
