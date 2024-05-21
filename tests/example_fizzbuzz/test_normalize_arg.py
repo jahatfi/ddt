@@ -12,15 +12,13 @@ def test_normalize_arg_0():
     """
     Programmatically generated test function for normalize_arg
     """
+
     # Coverage: 60.00% of function lines [1417-1432]
     # Covered Lines: 1423-1425;1427;1430;1432
     # Lines not covered: 1417-1422;1426;1428-1429;1431
     # Note: Any lines not mentioned are comments or whitespace
-    args = []
-    args.append(
-        "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
-    )
-    x = unit_test_generator.normalize_arg(*args)
+    arg = "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
+    x = unit_test_generator.normalize_arg(arg)
     assert (
         x
         == "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"

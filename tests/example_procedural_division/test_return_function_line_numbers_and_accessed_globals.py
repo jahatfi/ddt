@@ -15,13 +15,13 @@ def test_return_function_line_numbers_and_accessed_globals_0():
     """
     Programmatically generated test function for return_function_line_numbers_and_accessed_globals
     """
+
     # Coverage: 81.48% of function lines [1062-1100]
     # Covered Lines: 1070;1072;1074-1080;1084-1095;1100
     # Lines not covered: 1062-1069;1071;1096-1099
     # Note: Any lines not mentioned are comments or whitespace
-    args = []
-    args.append(divide_ints.divide_ints)
-    x = unit_test_generator.return_function_line_numbers_and_accessed_globals(*args)
+    arg = divide_ints.divide_ints
+    x = unit_test_generator.return_function_line_numbers_and_accessed_globals(arg)
     assert x == [
         [26, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42],
         {"logger", "error_code"},

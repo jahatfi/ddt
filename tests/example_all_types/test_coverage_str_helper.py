@@ -9,14 +9,15 @@ from src import unit_test_generator
 
 # In sum, these tests covered 75.76% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1434', '1445', '1456', '1470-1471', '1474-1475']
+# ['1442', '1453', '1464', '1478-1479', '1482-1483']
 def test_coverage_str_helper_0():
     """
     Programmatically generated test function for coverage_str_helper
     """
-    # Coverage: 75.76% of function lines [1434-1479]
-    # Covered Lines: 1443-1444;1446-1455;1457-1459;1461-1468;1473;1479
-    # Lines not covered: 1434-1442;1445;1456;1470-1472;1474-1478
+
+    # Coverage: 75.76% of function lines [1442-1487]
+    # Covered Lines: 1451-1452;1454-1463;1465-1467;1469-1476;1481;1487
+    # Lines not covered: 1442-1450;1453;1464;1478-1480;1482-1486
     # Note: Any lines not mentioned are comments or whitespace
     args = []
     args.append([1408, 1409, 1410, 1411, 1412, 1389, 1397, 1398, 1400, 1404, 1405])

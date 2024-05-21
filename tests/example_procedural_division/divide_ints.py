@@ -104,6 +104,6 @@ if __name__ == "__main__":
     # NOTE:
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
-    divide_ints = unit_test_generator_decorator(not args.disable_unit_test_generation)(divide_ints)
+    divide_ints = unit_test_generator_decorator(percent_coverage=110)(divide_ints)
 
     main()

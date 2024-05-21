@@ -15,6 +15,7 @@ def test_update_global_0():
     """
     Programmatically generated test function for update_global
     """
+
     # Coverage: 54.55% of function lines [1389-1412]
     # Covered Lines: 1397;1400;1404;1408-1409;1412
     # Lines not covered: 1389-1396;1398-1399;1405-1407;1410-1411
