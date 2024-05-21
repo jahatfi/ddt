@@ -8,17 +8,17 @@ from src import unit_test_generator
 from src.unit_test_generator import CoverageInfo
 
 
-# In sum, these tests covered 41.18% of meta_program_function_call's lines
+# In sum, these tests covered 43.75% of meta_program_function_call's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1538', '1556-1560', '1565-1567', '1572-1579', '1584-1589', '1591-1593', '1596', '1599-1602', '1607', '1610', '1615-1618', '1625-1626']
+# ['1546', '1564-1568', '1573-1575', '1580-1585', '1590-1593', '1595-1597', '1600', '1603-1606', '1611', '1614', '1619-1622', '1629-1630']
 def test_meta_program_function_call_0():
     """
     Programmatically generated test function for meta_program_function_call
     """
 
-    # Coverage: 41.18% of function lines [1538-1632]
-    # Covered Lines: 1549-1551;1555;1562-1563;1569-1571;1582-1583;1590;1604-1605;1608-1609;1612-1614;1620-1624;1627;1630-1632
-    # Lines not covered: 1538-1548;1556-1561;1565-1568;1572-1581;1584-1589;1591-1603;1607;1610-1611;1615-1619;1625-1626;1628-1629
+    # Coverage: 43.75% of function lines [1546-1636]
+    # Covered Lines: 1557-1559;1563;1570-1571;1577-1579;1588-1589;1594;1608-1609;1612-1613;1616-1618;1624-1628;1631;1634-1636
+    # Lines not covered: 1546-1556;1564-1569;1573-1576;1580-1587;1590-1593;1595-1607;1611;1614-1615;1619-1623;1629-1630;1632-1633
     # Note: Any lines not mentioned are comments or whitespace
     args = []
     args.append(

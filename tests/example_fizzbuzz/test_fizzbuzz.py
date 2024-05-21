@@ -2,7 +2,7 @@
 Programmatically generated test function for fizzbuzz
 """
 
-from tests.example_fizzbuzz import fizzbuzz
+import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 
@@ -21,7 +21,8 @@ def test_fizzbuzz_0():
     # Note: Any lines not mentioned are comments or whitespace
     mode = "buzzfizz"
     monkeypatch.setattr(fizzbuzz, "mode", mode)
-    x = fizzbuzz.fizzbuzz(30)
+    arg = 30
+    x = fizzbuzz.fizzbuzz(arg)
     assert x == "30 with mode='buzzfizz' yields 'buzzfizz'"
 
 
@@ -37,7 +38,8 @@ def test_fizzbuzz_1():
     # Note: Any lines not mentioned are comments or whitespace
     mode = "fizzbuzz"
     monkeypatch.setattr(fizzbuzz, "mode", mode)
-    x = fizzbuzz.fizzbuzz(30)
+    arg = 30
+    x = fizzbuzz.fizzbuzz(arg)
     assert x == "30 with mode='fizzbuzz' yields 'fizzbuzz'"
 
 
@@ -53,5 +55,6 @@ def test_fizzbuzz_2():
     # Note: Any lines not mentioned are comments or whitespace
     mode = "a_test"
     monkeypatch.setattr(fizzbuzz, "mode", mode)
-    x = fizzbuzz.fizzbuzz(6)
+    arg = 6
+    x = fizzbuzz.fizzbuzz(arg)
     assert x == "Mode 'a_test' invalid for fizzbuzz()"

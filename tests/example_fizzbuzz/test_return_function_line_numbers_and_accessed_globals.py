@@ -20,9 +20,8 @@ def test_return_function_line_numbers_and_accessed_globals_0():
     # Covered Lines: 1070;1072;1074-1080;1084-1091;1095;1100
     # Lines not covered: 1062-1069;1071;1092-1094;1096-1099
     # Note: Any lines not mentioned are comments or whitespace
-    x = unit_test_generator.return_function_line_numbers_and_accessed_globals(
-        fizzbuzz.fizzbuzz
-    )
+    arg = fizzbuzz.fizzbuzz
+    x = unit_test_generator.return_function_line_numbers_and_accessed_globals(arg)
     assert x == [
         [23, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 56, 57],
         {"mode"},

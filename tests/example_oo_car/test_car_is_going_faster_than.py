@@ -20,5 +20,6 @@ def test_car_is_going_faster_than_0():
     # Lines not covered: 117-122
     # Note: Any lines not mentioned are comments or whitespace
     this_class = Car("Red", 20, 0)
-    x = this_class.is_going_faster_than(Car("White", 19, 0))
+    arg = Car("White", 19, 0)
+    x = this_class.is_going_faster_than(arg)
     assert x is True

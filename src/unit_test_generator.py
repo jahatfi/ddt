@@ -1431,6 +1431,14 @@ def normalize_arg(arg:typing.Any)->typing.Any:
         arg = arg[1:-1]
     return arg
 
+def normalize_string(arg:str)->str:
+    """
+    Return canonical representation of string
+    """
+    if (arg[0] == "'" and arg[-1] == "'") or (arg[0] == '"' and arg[-1] == '"'):
+        arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
+    return arg
+
 @unit_test_generator_decorator(sample_count=1)
 def coverage_str_helper(this_list:list, non_code_lines:set)->list[str]:
     """
@@ -1572,21 +1580,17 @@ def meta_program_function_call( this_state:CoverageInfo,
         if len(this_state.args) != 1:
             call = f"{class_var_name}.{func_name}(*args{kwargs_str})\n"
         elif len(this_state.args):
-            arg = this_state.args[0]
-            if (arg[0] == "'" and arg[-1] == "'") or \
-                (arg[0] == '"' and arg[-1] == '"'):
-                arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
-            call = f"{class_var_name}.{func_name}({arg}{kwargs_str})\n"
+            arg = normalize_string(this_state.args[0])
+            test_str_list.append(f"{tab}arg = {arg}\n")
+            call = f"{class_var_name}.{func_name}(arg{kwargs_str})\n"
 
     else:
         if len(this_state.args) != 1:
             call = f"{package}.{func_name}(*args{kwargs_str})\n"
         elif len(this_state.args):
-            arg = this_state.args[0]
-            if (arg[0] == "'" and arg[-1] == "'") or \
-                (arg[0] == '"' and arg[-1] == '"'):
-                arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
-            call = f"{package}.{func_name}({arg}{kwargs_str})\n"
+            arg = normalize_string(this_state.args[0])
+            test_str_list.append(f"{tab}arg = {arg}\n")
+            call = f"{package}.{func_name}(arg{kwargs_str})\n"
     if this_state.exception_type:
         e_type = this_state.exception_type
         e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]

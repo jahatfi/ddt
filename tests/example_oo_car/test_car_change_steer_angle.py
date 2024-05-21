@@ -21,8 +21,9 @@ def test_car_change_steer_angle_0():
     # Lines not covered: 71-76;81-88
     # Note: Any lines not mentioned are comments or whitespace
     this_class = Car("Green", 48, 90)
+    arg = -1080
     with pytest.raises(AssertionError, match=r"angle=\-1080\ \ \ \ out\ of\ bounds!"):
-        this_class.change_steer_angle(-1080)
+        this_class.change_steer_angle(arg)
 
 
 def test_car_change_steer_angle_1():
@@ -35,5 +36,6 @@ def test_car_change_steer_angle_1():
     # Lines not covered: 71-76;79-80;85-87
     # Note: Any lines not mentioned are comments or whitespace
     this_class = Car("Red", 9, 0)
-    x = this_class.change_steer_angle(30)
+    arg = 30
+    x = this_class.change_steer_angle(arg)
     assert x == 30
