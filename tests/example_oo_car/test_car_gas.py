@@ -14,10 +14,11 @@ from car import Car
 # Line(s) not covered by ANY of the tests below:
 # [58]
 def test_car_gas_0():
-    monkeypatch = MonkeyPatch()
     """
     Programmatically generated test function for Car.gas
     """
+    monkeypatch = MonkeyPatch()
+
     # Coverage: 57.14% of function lines [58-69]
     # Covered Lines: 64-67
     # Lines not covered: 58-63;68-69
@@ -35,10 +36,11 @@ def test_car_gas_0():
 
 
 def test_car_gas_1():
-    monkeypatch = MonkeyPatch()
     """
     Programmatically generated test function for Car.gas
     """
+    monkeypatch = MonkeyPatch()
+
     # Coverage: 71.43% of function lines [58-69]
     # Covered Lines: 64-66;68-69
     # Lines not covered: 58-63;67

@@ -13,6 +13,7 @@ def test_get_item_at_index_0():
     """
     Programmatically generated test function for get_item_at_index
     """
+
     # Coverage: 50.00% of function lines [22-36]
     # Covered Lines: 29;31;33-34
     # Lines not covered: 22-28;30;32;36
@@ -30,6 +31,7 @@ def test_get_item_at_index_1():
     """
     Programmatically generated test function for get_item_at_index
     """
+
     # Coverage: 37.50% of function lines [22-36]
     # Covered Lines: 29;31-32
     # Lines not covered: 22-28;30;33-36
@@ -47,6 +49,7 @@ def test_get_item_at_index_2():
     """
     Programmatically generated test function for get_item_at_index
     """
+
     # Coverage: 50.00% of function lines [22-36]
     # Covered Lines: 29;31;33;36
     # Lines not covered: 22-28;30;32;34-35

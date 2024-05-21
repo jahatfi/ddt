@@ -14,6 +14,7 @@ def test_car_brake_0():
     """
     Programmatically generated test function for Car.brake
     """
+
     # Coverage: 62.50% of function lines [45-56]
     # Covered Lines: 50-51;53;55-56
     # Lines not covered: 45-49;52;54

@@ -12,6 +12,7 @@ def test_car___init___0():
     """
     Programmatically generated test function for Car.__init__
     """
+
     # Coverage: 75.00% of function lines [33-43]
     # Covered Lines: 41-43
     # Lines not covered: 33-40

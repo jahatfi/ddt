@@ -2,7 +2,7 @@
 Programmatically generated test function for divide_ints
 """
 
-import divide_ints
+from tests.example_procedural_division import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
@@ -14,10 +14,11 @@ ERROR_CODE = 0
 # Line(s) not covered by ANY of the tests below:
 # ['34-35', '37-38', '40-41']
 def test_divide_ints_0():
-    monkeypatch = MonkeyPatch()
     """
     Programmatically generated test function for divide_ints
     """
+    monkeypatch = MonkeyPatch()
+
     # Coverage: 41.67% of function lines [26-42]
     # Covered Lines: 32-33;36;39;42
     # Lines not covered: 26-31;34-35;37-38;40-41

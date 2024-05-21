@@ -14,6 +14,7 @@ def test_coverage_str_helper_0():
     """
     Programmatically generated test function for coverage_str_helper
     """
+
     # Coverage: 66.67% of function lines [1434-1479]
     # Covered Lines: 1443-1444;1446-1455;1457-1459;1461-1465;1473;1479
     # Lines not covered: 1434-1442;1445;1456;1466-1472;1474-1478

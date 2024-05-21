@@ -1569,10 +1569,24 @@ def meta_program_function_call( this_state:CoverageInfo,
     assignment = f"{tab}x = "
     call = ""
     if is_method:
-        call = f"{class_var_name}.{func_name}(*args{kwargs_str})\n"
-    else:
-        call = f"{package}.{func_name}(*args{kwargs_str})\n"
+        if len(this_state.args) != 1:
+            call = f"{class_var_name}.{func_name}(*args{kwargs_str})\n"
+        elif len(this_state.args):
+            arg = this_state.args[0]
+            if (arg[0] == "'" and arg[-1] == "'") or \
+                (arg[0] == '"' and arg[-1] == '"'):
+                arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
+            call = f"{class_var_name}.{func_name}({arg}{kwargs_str})\n"
 
+    else:
+        if len(this_state.args) != 1:
+            call = f"{package}.{func_name}(*args{kwargs_str})\n"
+        elif len(this_state.args):
+            arg = this_state.args[0]
+            if (arg[0] == "'" and arg[-1] == "'") or \
+                (arg[0] == '"' and arg[-1] == '"'):
+                arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
+            call = f"{package}.{func_name}({arg}{kwargs_str})\n"
     if this_state.exception_type:
         e_type = this_state.exception_type
         e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
@@ -1699,11 +1713,13 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     else:
         initial_import = ""
 
-    docstring = f'{tab}\"\"\"\n{tab}{tab}Programmatically generated test function for {func_name}\n{tab}{tab}\"\"\"'
+    docstring = f'{tab}\"\"\"\n{tab}{tab}Programmatically generated test function for {func_name}\n{tab}{tab}\"\"\"\n'
     for hash_key_index, hash_key in enumerate(sorted(state)):
         test_str_list = [f"def test_{func_name.lower().replace('.','_')}_{hash_key_index}():\n",
-                         f"{tab}monkeypatch = MonkeyPatch()\n",
-                         docstring]
+                         docstring,
+                        "# Monkeypatch here"
+                        ]
+
         monkey_patches = []
         coverage_list = gen_coverage_list(  function_metadata,
                                             state[hash_key].coverage,
@@ -1720,6 +1736,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         #print(f"{state[hash_key].keys()}")
         for k in sorted(state[hash_key].globals_before):
             needs_monkeypatch = True
+            #test_str_list.append(f"{tab}monkeypatch = MonkeyPatch()\n")
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
             if k in constant_globals_before_key:
@@ -1731,18 +1748,21 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         if monkey_patches:
             test_str_list += monkey_patches
         #monkey_patches = []
-        test_str_list.append(f"{tab}args = []\n")
+
+
         is_method = function_metadata.is_method
         logger.debug("%s is method: %s", func_name, is_method)
 
         # Remove the 'self' argument from the arg list if this
         # decoratee is a class method (as opposed to a regular function)
-        for arg in state[hash_key].args:
-            if (arg[0] == "'" and arg[-1] == "'") or \
-               (arg[0] == '"' and arg[-1] == '"'):
-                arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
+        if len(state[hash_key].args) > 1:
+            test_str_list.append(f"{tab}args = []\n")
+            for arg in state[hash_key].args:
+                if (arg[0] == "'" and arg[-1] == "'") or \
+                (arg[0] == '"' and arg[-1] == '"'):
+                    arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
 
-            test_str_list.append(f"{tab}args.append({arg})\n")
+                test_str_list.append(f"{tab}args.append({arg})\n")
 
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
@@ -1778,7 +1798,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         # handle that here,
         # otherwise I'd have to put this code in the loop above
         if not needs_monkeypatch:
-            test_str_list[1] = ""
+            test_str_list[2] = ""
 
         #test_str_list += monkey_patches
         # Delete all references to "__main__", it's needless
@@ -1791,6 +1811,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             test_str_list.append(raise_ex_msg)
 
         if test_str_list:
+            if needs_monkeypatch:
+                test_str_list[2] = f"{tab}monkeypatch = MonkeyPatch()\n"
+            else:
+                test_str_list.pop(2)
+
             test_str_list_def_dict[hash_key_index] = test_str_list
             was_executed = True
 
@@ -1857,6 +1882,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         h.update(str(sorted(test_str_list_def_dict.items())).encode())
         return h.digest().hex()
         #return str(sorted(test_str_list_def_dict.items()))#final_result_bytes
+
 
     docstring = f'\"\"\"\nProgrammatically generated test function for {func_name}\n\"\"\"'
     with open(result_file, "w", encoding="utf-8") as st:
