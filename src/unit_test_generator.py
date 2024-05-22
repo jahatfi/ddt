@@ -137,6 +137,7 @@ class CoverageInfo:
     """
     Holds all data gathered from recording/hooking a function/method call
     """
+    parameter_names: list[str] = dataclasses.field(default_factory=list)
     args: list[str] = dataclasses.field(default_factory=list)
     kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_before: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
@@ -155,7 +156,8 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = ["CoverageInfo(args="+repr(self.args)]
+        result = ["CoverageInfo(parameter_names="+repr(self.parameter_names)]
+        result.append(" args="+repr(self.args))
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
@@ -669,6 +671,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         return x
 
     this_coverage_info: CoverageInfo = CoverageInfo()
+    this_coverage_info.parameter_names = inspect.getfullargspec(func)[0]
 
     #args_copy = [convert_to_serializable(x) for x in args]
     args_copy:list[str] = []

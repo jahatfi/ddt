@@ -25,6 +25,10 @@
    "source_file": null,
    "coverage_io": {
       "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": {
+         "parameter_names": [
+            "iterable",
+            "index"
+         ],
          "args": [
             "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
             "50"
@@ -45,6 +49,10 @@
          "result_type": "NoneType"
       },
       "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": {
+         "parameter_names": [
+            "iterable",
+            "index"
+         ],
          "args": [
             "[-1, -2, -3, -4]",
             "0"
@@ -66,6 +74,10 @@
          "result_type": "int"
       },
       "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": {
+         "parameter_names": [
+            "iterable",
+            "index"
+         ],
          "args": [
             "\"a test string\"",
             "-5"

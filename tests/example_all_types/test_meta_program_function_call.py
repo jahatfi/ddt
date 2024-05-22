@@ -10,58 +10,59 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 48.44% of meta_program_function_call's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1546', '1564-1568', '1573-1575', '1580-1585', '1589', '1595-1597', '1600', '1603-1606', '1611', '1614', '1619-1622', '1629-1630']
+# ['1549', '1567-1571', '1576-1578', '1583-1588', '1592', '1598-1600', '1603', '1606-1609', '1614', '1617', '1622-1625', '1632-1633']
 def test_meta_program_function_call_0():
     """
     Programmatically generated test function for meta_program_function_call
     """
 
-    # Coverage: 48.44% of function lines [1546-1636]
-    # Covered Lines: 1557-1559;1563;1570-1571;1577-1579;1588;1590-1594;1608-1609;1612-1613;1616-1618;1624-1628;1631;1634-1636
-    # Lines not covered: 1546-1556;1564-1569;1573-1576;1580-1587;1589;1595-1607;1611;1614-1615;1619-1623;1629-1630;1632-1633
+    # Coverage: 48.44% of function lines [1549-1639]
+    # Covered Lines: 1560-1562;1566;1573-1574;1580-1582;1591;1593-1597;1611-1612;1615-1616;1619-1621;1627-1631;1634;1637-1639
+    # Lines not covered: 1549-1559;1567-1572;1576-1579;1583-1590;1592;1598-1610;1614;1617-1618;1622-1626;1632-1633;1635-1636
     # Note: Any lines not mentioned are comments or whitespace
     args = []
     args.append(
         CoverageInfo(
+            parameter_names=["f"],
             args=["all_types.get_item_at_index"],
             kwargs={},
             globals_before={},
             globals_after={},
             result="[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]",
             coverage=[
-                1028,
-                1030,
                 1031,
-                1032,
                 1033,
                 1034,
+                1035,
                 1036,
                 1037,
-                1038,
                 1039,
-                1051,
-                1052,
+                1040,
+                1041,
+                1042,
                 1054,
+                1055,
                 1057,
                 1060,
-                1070,
-                1072,
-                1074,
+                1063,
+                1073,
                 1075,
-                1076,
                 1077,
                 1078,
                 1079,
                 1080,
-                1084,
-                1085,
-                1086,
+                1081,
+                1082,
+                1083,
                 1087,
                 1088,
                 1089,
+                1090,
                 1091,
-                1095,
-                1100,
+                1092,
+                1094,
+                1098,
+                1103,
             ],
             exception_type="",
             exception_message="",

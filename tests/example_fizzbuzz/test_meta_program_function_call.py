@@ -10,30 +10,31 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 43.75% of meta_program_function_call's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1546', '1564-1568', '1573-1575', '1580-1585', '1590-1593', '1595-1597', '1600', '1603-1606', '1611', '1614', '1619-1622', '1629-1630']
+# ['1549', '1567-1571', '1576-1578', '1583-1588', '1593-1596', '1598-1600', '1603', '1606-1609', '1614', '1617', '1622-1625', '1632-1633']
 def test_meta_program_function_call_0():
     """
     Programmatically generated test function for meta_program_function_call
     """
 
-    # Coverage: 43.75% of function lines [1546-1636]
-    # Covered Lines: 1557-1559;1563;1570-1571;1577-1579;1588-1589;1594;1608-1609;1612-1613;1616-1618;1624-1628;1631;1634-1636
-    # Lines not covered: 1546-1556;1564-1569;1573-1576;1580-1587;1590-1593;1595-1607;1611;1614-1615;1619-1623;1629-1630;1632-1633
+    # Coverage: 43.75% of function lines [1549-1639]
+    # Covered Lines: 1560-1562;1566;1573-1574;1580-1582;1591-1592;1597;1611-1612;1615-1616;1619-1621;1627-1631;1634;1637-1639
+    # Lines not covered: 1549-1559;1567-1572;1576-1579;1583-1590;1593-1596;1598-1610;1614;1617-1618;1622-1626;1632-1633;1635-1636
     # Note: Any lines not mentioned are comments or whitespace
     args = []
     args.append(
         CoverageInfo(
+            parameter_names=["obj", "this_global", "phase", "this_coverage_info"],
             args=[
                 '"fizzbuzz"',
                 '"mode"',
                 '"Before"',
-                "CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+                "CoverageInfo(parameter_names=['number'], args=['6'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
             ],
             kwargs={},
             globals_before={},
             globals_after={},
-            result="CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
-            coverage=[1397, 1400, 1404, 1408, 1409, 1412],
+            result="CoverageInfo(parameter_names=['number'], args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+            coverage=[1400, 1403, 1407, 1411, 1412, 1415],
             exception_type="",
             exception_message="",
             constructor="",
@@ -48,5 +49,5 @@ def test_meta_program_function_call_0():
     x = unit_test_generator.meta_program_function_call(*args)
     assert x == [
         "  x = unit_test_generator.update_global(*args)\n",
-        "  assert x == CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\n",
+        "  assert x == CoverageInfo(parameter_names=['number'], args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\n",
     ]

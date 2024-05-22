@@ -1,56 +1,62 @@
 {
    "name": "update_global",
    "lines": [
-      1389,
-      1397,
-      1398,
+      1392,
       1400,
-      1404,
-      1405,
+      1401,
+      1403,
+      1407,
       1408,
-      1409,
-      1410,
       1411,
-      1412
+      1412,
+      1413,
+      1414,
+      1415
    ],
    "non_code_lines": [
-      1390,
-      1391,
-      1392,
       1393,
       1394,
       1395,
       1396,
+      1397,
+      1398,
       1399,
-      1401,
       1402,
-      1403,
+      1404,
+      1405,
       1406,
-      1407
+      1409,
+      1410
    ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "44f24f3426b6fe618f62301551beb9629e89fedf9a0afd6ccfa38f195442c036": {
+      "bc36ca628f680fbb36fdd26441dffabc4457be05ca983c474ebfed8e47f90fa6": {
+         "parameter_names": [
+            "obj",
+            "this_global",
+            "phase",
+            "this_coverage_info"
+         ],
          "args": [
             "0",
             "\"error_code\"",
             "\"Before\"",
-            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
+            "CoverageInfo(parameter_names=['a', 'b'], args=['6', '2'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "result": "CoverageInfo(parameter_names=['a', 'b'], args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
          "coverage": [
-            1397,
             1400,
-            1404,
-            1408,
-            1409,
-            1412
+            1403,
+            1407,
+            1411,
+            1412,
+            1415
          ],
          "exception_type": "",
          "exception_message": "",
@@ -64,12 +70,12 @@
       "src.unit_test_generator.CoverageInfo"
    ],
    "unified_test_coverage": [
-      1397,
       1400,
-      1404,
-      1408,
-      1409,
-      1412
+      1403,
+      1407,
+      1411,
+      1412,
+      1415
    ],
    "needs_pytest": false
 }

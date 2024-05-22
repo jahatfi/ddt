@@ -32,6 +32,10 @@
    "source_file": null,
    "coverage_io": {
       "9e5729283fb4205cc004e81e18786a627d2eb0f21140111b0a77b56ac7ded037": {
+         "parameter_names": [
+            "self",
+            "angle"
+         ],
          "args": [
             "30"
          ],
@@ -53,6 +57,10 @@
          "result_type": "int"
       },
       "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": {
+         "parameter_names": [
+            "self",
+            "angle"
+         ],
          "args": [
             "-1080"
          ],
@@ -74,8 +82,8 @@
    },
    "coverage_percentage": 54.55,
    "types_in_use": [
-      "car.Car",
-      "logging.Logger"
+      "logging.Logger",
+      "tests.example_oo_car.car.Car"
    ],
    "unified_test_coverage": [
       77,

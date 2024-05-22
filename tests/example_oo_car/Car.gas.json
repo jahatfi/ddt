@@ -27,6 +27,11 @@
    "source_file": null,
    "coverage_io": {
       "6654fc7d2ffc7013756631c60503a1149dc6dc4945d33933d1dac7d412ae9225": {
+         "parameter_names": [
+            "self",
+            "rate",
+            "duration"
+         ],
          "args": [
             "-1",
             "1"
@@ -52,6 +57,11 @@
          "result_type": "NoneType"
       },
       "6777dca1203ba028fe6eea29f029ed19a05e9e5da06d5afb2df4291ea4bfaa30": {
+         "parameter_names": [
+            "self",
+            "rate",
+            "duration"
+         ],
          "args": [
             "2",
             "2"
@@ -80,8 +90,8 @@
    },
    "coverage_percentage": 85.71,
    "types_in_use": [
-      "car.Car",
-      "logging.Logger"
+      "logging.Logger",
+      "tests.example_oo_car.car.Car"
    ],
    "unified_test_coverage": [
       64,
