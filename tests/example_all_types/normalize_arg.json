@@ -1,24 +1,27 @@
 {
    "name": "normalize_arg",
+   "parameter_names": [
+      "arg"
+   ],
    "lines": [
-      1420,
-      1426,
+      1421,
       1427,
       1428,
       1429,
       1430,
       1431,
-      1433,
+      1432,
       1434,
-      1435
+      1435,
+      1436
    ],
    "non_code_lines": [
-      1421,
       1422,
       1423,
       1424,
       1425,
-      1432
+      1426,
+      1433
    ],
    "is_method": false,
    "global_vars_read_from": [],
@@ -26,9 +29,6 @@
    "source_file": null,
    "coverage_io": {
       "f04dcd0cb4fe73ed22150c8c892a65072f6c460c321c0ef3c96553ab9697ba06": {
-         "parameter_names": [
-            "arg"
-         ],
          "args": [
             "\"[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]\""
          ],
@@ -37,29 +37,29 @@
          "globals_after": {},
          "result": "[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]",
          "coverage": [
-            1426,
             1427,
             1428,
-            1430,
-            1433,
-            1435
+            1429,
+            1431,
+            1434,
+            1436
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001,
+         "cost": 0.002,
          "result_type": "str"
       }
    },
    "coverage_percentage": 60.0,
    "types_in_use": [],
    "unified_test_coverage": [
-      1426,
       1427,
       1428,
-      1430,
-      1433,
-      1435
+      1429,
+      1431,
+      1434,
+      1436
    ],
    "needs_pytest": false
 }

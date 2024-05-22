@@ -137,7 +137,6 @@ class CoverageInfo:
     """
     Holds all data gathered from recording/hooking a function/method call
     """
-    parameter_names: list[str] = dataclasses.field(default_factory=list)
     args: list[str] = dataclasses.field(default_factory=list)
     kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_before: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
@@ -156,8 +155,7 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = ["CoverageInfo(parameter_names="+repr(self.parameter_names)]
-        result.append(" args="+repr(self.args))
+        result = ["CoverageInfo(args="+repr(self.args)]
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
@@ -209,7 +207,8 @@ class FunctionMetaData(Jsonable):
     # pylint: disable-next=too-many-arguments
     def __init__(   self,
                     name:str,
-                    lines:list,
+                    parameter_names:List[str],
+                    lines:List[int],
                     is_method:bool,
                     global_vars_read_from:set,
                     global_vars_written_to:set,
@@ -222,6 +221,7 @@ class FunctionMetaData(Jsonable):
                 ):
         # These properties (expect non_lines) are always provided
         self.name = name
+        self.parameter_names = parameter_names
         self.lines = lines
         self.non_code_lines:set = self.return_non_code_lines()
         self.is_method = is_method
@@ -292,6 +292,7 @@ class FunctionMetaData(Jsonable):
         the object in Python.
         """
         result = [f"FunctionMetaData(name=\'{self.name}\'"]
+
         result.append(" lines="+repr(self.lines))
         result.append(" is_method="+repr(self.is_method))
         result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
@@ -460,6 +461,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                     (x, y, z) = return_function_line_numbers_and_accessed_globals(func)
 
                     this_metadata = FunctionMetaData(   name=func_name,
+                                                        parameter_names=inspect.getfullargspec(func)[0],
                                                         lines=x,
                                                         is_method='.' in func_name,
                                                         global_vars_read_from=y,
@@ -671,7 +673,6 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         return x
 
     this_coverage_info: CoverageInfo = CoverageInfo()
-    this_coverage_info.parameter_names = inspect.getfullargspec(func)[0]
 
     #args_copy = [convert_to_serializable(x) for x in args]
     args_copy:list[str] = []
@@ -1721,9 +1722,14 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         initial_import = ""
 
     docstring = f'{tab}\"\"\"\n{tab}{tab}Programmatically generated test function for {func_name}\n{tab}{tab}\"\"\"\n'
+
+
+    paramterization_list = ["@pytest.mark.parametrize(", ]
+
     for hash_key_index, hash_key in enumerate(sorted(state)):
+
         test_str_list = [f"def test_{func_name.lower().replace('.','_')}_{hash_key_index}():\n",
-                         docstring,
+                            docstring,
                         "# Monkeypatch here"
                         ]
 

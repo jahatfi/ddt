@@ -1,65 +1,65 @@
 {
    "name": "normalize_arg",
+   "parameter_names": [
+      "arg"
+   ],
    "lines": [
-      1420,
-      1426,
+      1421,
       1427,
       1428,
       1429,
       1430,
       1431,
-      1433,
+      1432,
       1434,
-      1435
+      1435,
+      1436
    ],
    "non_code_lines": [
-      1421,
       1422,
       1423,
       1424,
       1425,
-      1432
+      1426,
+      1433
    ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "2ba2e4746a878f4a4b0039beba0f722cbd71ed7f0889c20c5d87a8c9b292f512": {
-         "parameter_names": [
-            "arg"
-         ],
+      "0cdff9e93ad0dc348e7cda96b5611729e98d0ca1002940f823af8a6a79aa76b3": {
          "args": [
-            "\"CoverageInfo(parameter_names=['number'], args=['6'], kwargs={}, globals_before={'mode': \\\"'fizzbuzz'\\\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
+            "\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \\\"'fizzbuzz'\\\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(parameter_names=['number'], args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
          "coverage": [
-            1426,
             1427,
             1428,
-            1430,
-            1433,
-            1435
+            1429,
+            1431,
+            1434,
+            1436
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001,
+         "cost": 0.002,
          "result_type": "str"
       }
    },
    "coverage_percentage": 60.0,
    "types_in_use": [],
    "unified_test_coverage": [
-      1426,
       1427,
       1428,
-      1430,
-      1433,
-      1435
+      1429,
+      1431,
+      1434,
+      1436
    ],
    "needs_pytest": false
 }

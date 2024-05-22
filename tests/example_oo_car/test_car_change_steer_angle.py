@@ -5,7 +5,7 @@ Programmatically generated test function for Car.change_steer_angle
 import pytest
 
 # Now import modules specific to Car.change_steer_angle:
-from tests.example_oo_car.car import Car
+from car import Car
 
 
 # In sum, these tests covered 54.55% of Car.change_steer_angle's lines

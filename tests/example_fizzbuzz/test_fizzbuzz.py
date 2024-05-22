@@ -2,7 +2,7 @@
 Programmatically generated test function for fizzbuzz
 """
 
-import fizzbuzz
+from tests.example_fizzbuzz import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 

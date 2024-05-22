@@ -10,31 +10,30 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 43.75% of meta_program_function_call's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1549', '1567-1571', '1576-1578', '1583-1588', '1593-1596', '1598-1600', '1603', '1606-1609', '1614', '1617', '1622-1625', '1632-1633']
+# ['1550', '1568-1572', '1577-1579', '1584-1589', '1594-1597', '1599-1601', '1604', '1607-1610', '1615', '1618', '1623-1626', '1633-1634']
 def test_meta_program_function_call_0():
     """
     Programmatically generated test function for meta_program_function_call
     """
 
-    # Coverage: 43.75% of function lines [1549-1639]
-    # Covered Lines: 1560-1562;1566;1573-1574;1580-1582;1591-1592;1597;1611-1612;1615-1616;1619-1621;1627-1631;1634;1637-1639
-    # Lines not covered: 1549-1559;1567-1572;1576-1579;1583-1590;1593-1596;1598-1610;1614;1617-1618;1622-1626;1632-1633;1635-1636
+    # Coverage: 43.75% of function lines [1550-1640]
+    # Covered Lines: 1561-1563;1567;1574-1575;1581-1583;1592-1593;1598;1612-1613;1616-1617;1620-1622;1628-1632;1635;1638-1640
+    # Lines not covered: 1550-1560;1568-1573;1577-1580;1584-1591;1594-1597;1599-1611;1615;1618-1619;1623-1627;1633-1634;1636-1637
     # Note: Any lines not mentioned are comments or whitespace
     args = []
     args.append(
         CoverageInfo(
-            parameter_names=["obj", "this_global", "phase", "this_coverage_info"],
             args=[
                 "0",
                 '"method_call_counter"',
                 '"Before"',
-                "CoverageInfo(parameter_names=['self', 'rate', 'duration'], args=['-1', '1'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
+                "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
             ],
             kwargs={},
             globals_before={},
             globals_after={},
-            result="CoverageInfo(parameter_names=['self', 'rate', 'duration'], args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
-            coverage=[1400, 1403, 1407, 1411, 1412, 1415],
+            result="CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
+            coverage=[1401, 1404, 1408, 1412, 1413, 1416],
             exception_type="",
             exception_message="",
             constructor="",
@@ -49,5 +48,5 @@ def test_meta_program_function_call_0():
     x = unit_test_generator.meta_program_function_call(*args)
     assert x == [
         "  x = unit_test_generator.update_global(*args)\n",
-        "  assert x == CoverageInfo(parameter_names=['self', 'rate', 'duration'], args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')\n",
+        "  assert x == CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')\n",
     ]

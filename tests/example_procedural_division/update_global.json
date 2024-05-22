@@ -1,62 +1,62 @@
 {
    "name": "update_global",
+   "parameter_names": [
+      "obj",
+      "this_global",
+      "phase",
+      "this_coverage_info"
+   ],
    "lines": [
-      1392,
-      1400,
+      1393,
       1401,
-      1403,
-      1407,
+      1402,
+      1404,
       1408,
-      1411,
+      1409,
       1412,
       1413,
       1414,
-      1415
+      1415,
+      1416
    ],
    "non_code_lines": [
-      1393,
       1394,
       1395,
       1396,
       1397,
       1398,
       1399,
-      1402,
-      1404,
+      1400,
+      1403,
       1405,
       1406,
-      1409,
-      1410
+      1407,
+      1410,
+      1411
    ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "bc36ca628f680fbb36fdd26441dffabc4457be05ca983c474ebfed8e47f90fa6": {
-         "parameter_names": [
-            "obj",
-            "this_global",
-            "phase",
-            "this_coverage_info"
-         ],
+      "44f24f3426b6fe618f62301551beb9629e89fedf9a0afd6ccfa38f195442c036": {
          "args": [
             "0",
             "\"error_code\"",
             "\"Before\"",
-            "CoverageInfo(parameter_names=['a', 'b'], args=['6', '2'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
+            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(parameter_names=['a', 'b'], args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
          "coverage": [
-            1400,
-            1403,
-            1407,
-            1411,
+            1401,
+            1404,
+            1408,
             1412,
-            1415
+            1413,
+            1416
          ],
          "exception_type": "",
          "exception_message": "",
@@ -70,12 +70,12 @@
       "src.unit_test_generator.CoverageInfo"
    ],
    "unified_test_coverage": [
-      1400,
-      1403,
-      1407,
-      1411,
+      1401,
+      1404,
+      1408,
       1412,
-      1415
+      1413,
+      1416
    ],
    "needs_pytest": false
 }

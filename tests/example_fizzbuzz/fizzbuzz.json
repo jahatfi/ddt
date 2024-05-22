@@ -1,5 +1,8 @@
 {
    "name": "fizzbuzz",
+   "parameter_names": [
+      "number"
+   ],
    "lines": [
       23,
       40,
@@ -47,9 +50,6 @@
    "source_file": null,
    "coverage_io": {
       "dffa6fb7a2b47e9f70da9f21e5e664bcea1ba432ebb22f32f615dacf78489ca6": {
-         "parameter_names": [
-            "number"
-         ],
          "args": [
             "30"
          ],
@@ -77,9 +77,6 @@
          "result_type": "str"
       },
       "8a32d58c46313f5fb17a5fdf8621841b5bf66f0bf4ba6675c7b395648a339801": {
-         "parameter_names": [
-            "number"
-         ],
          "args": [
             "30"
          ],
@@ -108,9 +105,6 @@
          "result_type": "str"
       },
       "e66e7ffe21a59ab66a43cbe7fa9d06cc70b349e5069479c51f23b5e78661cca3": {
-         "parameter_names": [
-            "number"
-         ],
          "args": [
             "6"
          ],

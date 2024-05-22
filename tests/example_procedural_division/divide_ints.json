@@ -1,5 +1,9 @@
 {
    "name": "divide_ints",
+   "parameter_names": [
+      "a",
+      "b"
+   ],
    "lines": [
       26,
       32,
@@ -32,10 +36,6 @@
    "source_file": null,
    "coverage_io": {
       "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": {
-         "parameter_names": [
-            "a",
-            "b"
-         ],
          "args": [
             "6",
             "2"
@@ -58,14 +58,10 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.003,
+         "cost": 0.004,
          "result_type": "str"
       },
       "17969d9e9c77e947a69421dfbb10213f8ed028377d0903863268b22a6c6d0969": {
-         "parameter_names": [
-            "a",
-            "b"
-         ],
          "args": [
             "3",
             "0"
@@ -93,10 +89,6 @@
          "result_type": "NoneType"
       },
       "7896c4d85fb975f0ff1c49f32f352d103f2a508bb8bcf571fff9f4411b356b49": {
-         "parameter_names": [
-            "a",
-            "b"
-         ],
          "args": [
             "\"10\"",
             "2"
@@ -122,10 +114,6 @@
          "result_type": "NoneType"
       },
       "e3e3d930080cdfd5f06808564abb101a68ae34a394da3d82833052685683ec98": {
-         "parameter_names": [
-            "a",
-            "b"
-         ],
          "args": [
             "8",
             "[]"

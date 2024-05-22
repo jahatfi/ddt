@@ -2,7 +2,7 @@
 Programmatically generated test function for Car.__init__
 """
 
-from tests.example_oo_car import car
+import car
 
 
 # In sum, these tests covered 75.0% of Car.__init__'s lines

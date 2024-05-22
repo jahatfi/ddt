@@ -2,7 +2,7 @@
 Programmatically generated test function for divide_ints
 """
 
-import divide_ints
+from tests.example_procedural_division import divide_ints
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
