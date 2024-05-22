@@ -1552,7 +1552,8 @@ def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
                                 func_name:str,
-                                result_type:str):
+                                result_type:str,
+                                parameter_names:List[str]):
     """
     Given the provided arguments,
     return a list of valid Python code that executes the decorated
@@ -1723,16 +1724,20 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     docstring = f'{tab}\"\"\"\n{tab}{tab}Programmatically generated test function for {func_name}\n{tab}{tab}\"\"\"\n'
 
+    test_str_list = [f"def test_{func_name.lower().replace('.','_')}:\n",
+                        docstring,
+                    "# Monkeypatch here"
+                    ]
 
-    paramterization_list = ["@pytest.mark.parametrize(", ]
+    paramterization_list = ["@pytest.mark.parametrize(",
+                            f"{tab}{function_metadata.parameter_names}", 
+                            '[']
+
+    for hash_key in sorted(state):
+        paramterization_list.append(f"({state[hash_key].args}),")
+
 
     for hash_key_index, hash_key in enumerate(sorted(state)):
-
-        test_str_list = [f"def test_{func_name.lower().replace('.','_')}_{hash_key_index}():\n",
-                            docstring,
-                        "# Monkeypatch here"
-                        ]
-
         monkey_patches = []
         coverage_list = gen_coverage_list(  function_metadata,
                                             state[hash_key].coverage,
@@ -1768,6 +1773,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
         # Remove the 'self' argument from the arg list if this
         # decoratee is a class method (as opposed to a regular function)
+        '''
         if len(state[hash_key].args) > 1:
             test_str_list.append(f"{tab}args = []\n")
             for arg in state[hash_key].args:
@@ -1776,16 +1782,18 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                     arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
 
                 test_str_list.append(f"{tab}args.append({arg})\n")
-
+        '''
         #logger.debug("unpacked_args=%s", unpacked_args)
         #unpacked_args = ','.join(unpacked_args)
 
         this_result_type = function_metadata.coverage_io[hash_key].result_type
+        # TODO Update this
         test_str_list += meta_program_function_call(state[hash_key],
-                                                        tab,
-                                                        package,
-                                                        func_name,
-                                                        this_result_type)
+                                                    tab,
+                                                    package,
+                                                    func_name,
+                                                    this_result_type,
+                                                    function_metadata.parameter_names)
         dict_get = ".__dict__.get"
         for k in sorted(state[hash_key].globals_after):
             v = state[hash_key].globals_after[k]
@@ -1799,7 +1807,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 continue
 
             # Define a local variable with the
-            # same name and valueas to one being asserted
+            # same name and value as to one being asserted
             test_str_list.append(f"{tab}modified_{k} = {v}\n")
             # Now assert that that variable exists in the global namespace
             line = f'{tab}assert {package}{dict_get}(\"{k}\") == modified_{k}\n'
