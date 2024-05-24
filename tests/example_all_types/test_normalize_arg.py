@@ -8,7 +8,7 @@ from src import unit_test_generator
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1421', '1430', '1432']
+# ['1423', '1432', '1434']
 @pytest.mark.parametrize(
     "arg, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
     [
@@ -38,4 +38,7 @@ def test_normalize_arg(
     Programmatically generated test function for normalize_arg
     """
     x = unit_test_generator.normalize_arg(arg)
-    assert x == result or repr(x) == result or repr(result) == x
+    if result in ["None", "True", "False"]:
+        assert x is result
+    else:
+        assert x == result or repr(x) == result or x == repr(result)

@@ -9,11 +9,11 @@ from src import unit_test_generator
 from src.unit_test_generator import CoverageInfo
 
 
-# In sum, these tests covered 47.62% of meta_program_function_call's lines
+# In sum, these tests covered 48.0% of meta_program_function_call's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1550', '1569-1573', '1578-1580', '1585-1590', '1594', '1600-1602', '1605', '1608-1611', '1616', '1619', '1624-1627', '1634-1635']
+# ['1552', '1573-1577', '1582-1584', '1588-1593', '1597', '1604-1606', '1609', '1612-1620', '1622', '1629', '1632', '1637-1640', '1647-1649']
 @pytest.mark.parametrize(
-    "this_state,tab,package,func_name,result_type,parameter_names, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "this_state,tab,package,func_name,result_type,parameter_names,raises_ex, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
     [
         (
             CoverageInfo(
@@ -60,7 +60,7 @@ from src.unit_test_generator import CoverageInfo
                 exception_type="",
                 exception_message="",
                 constructor="",
-                cost=0.004,
+                cost=0.022,
                 result_type="list",
             ),
             "  ",
@@ -68,10 +68,11 @@ from src.unit_test_generator import CoverageInfo
             "return_function_line_numbers_and_accessed_globals",
             "list",
             ["f"],
+            False,
             "N/A",
             "N/A",
             "N/A",
-            "['  x = unit_test_generator.return_function_line_numbers_and_accessed_globals(f)\\n', '  assert x == result or repr(x) == result or repr(result) == x\\n']",
+            "['    x = unit_test_generator.return_function_line_numbers_and_accessed_globals(f)\\n', \"    if result in ['None', 'True', 'False']:\\n\", '      assert x is result\\n', '    else:\\n', '      assert x == result or repr(x) == result or x == repr(result)\\n']",
             "list",
             {},
             {},
@@ -85,6 +86,7 @@ def test_meta_program_function_call(
     func_name,
     result_type,
     parameter_names,
+    raises_ex,
     kwargs,
     exception_type,
     exception_message,
@@ -97,6 +99,9 @@ def test_meta_program_function_call(
     Programmatically generated test function for meta_program_function_call
     """
     x = unit_test_generator.meta_program_function_call(
-        this_state, tab, package, func_name, result_type, parameter_names
+        this_state, tab, package, func_name, result_type, parameter_names, raises_ex
     )
-    assert x == result or repr(x) == result or repr(result) == x
+    if result in ["None", "True", "False"]:
+        assert x is result
+    else:
+        assert x == result or repr(x) == result or x == repr(result)

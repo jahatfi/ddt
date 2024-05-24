@@ -2,8 +2,9 @@
 Programmatically generated test function for get_item_at_index
 """
 
+import re
 import pytest
-import all_types
+from tests.example_all_types import all_types
 
 
 # In sum, these tests covered 75.0% of get_item_at_index's lines
@@ -16,7 +17,7 @@ import all_types
             "a test string",
             -5,
             "N/A",
-            "<class 'ValueError'>",
+            ValueError,
             "index must be in range [0, 12], was -5",
             "None",
             "N/A",
@@ -27,7 +28,7 @@ import all_types
             (5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
             50,
             "N/A",
-            "<class 'ValueError'>",
+            ValueError,
             "index must be in range [0, 9], was 50",
             "None",
             "N/A",
@@ -51,7 +52,12 @@ def test_get_item_at_index(
     """
     Programmatically generated test function for get_item_at_index
     """
-    with pytest.raises(
-        ValueError, match=r"index\ must\ be\ in\ range\ \[0,\ 12\],\ was\ \-5"
-    ):
-        all_types.get_item_at_index(iterable, index)
+    if exception_type != "N/A":
+        with pytest.raises(exception_type, match=re.escape(exception_message)):
+            all_types.get_item_at_index(iterable, index)
+    else:
+        x = all_types.get_item_at_index(iterable, index)
+        if result in ["None", "True", "False"]:
+            assert x is result
+        else:
+            assert x == result or repr(x) == result or x == repr(result)

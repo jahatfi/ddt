@@ -41,4 +41,7 @@ def test_return_function_line_numbers_and_accessed_globals(
     Programmatically generated test function for return_function_line_numbers_and_accessed_globals
     """
     x = unit_test_generator.return_function_line_numbers_and_accessed_globals(f)
-    assert x == result or repr(x) == result or repr(result) == x
+    if result in ["None", "True", "False"]:
+        assert x is result
+    else:
+        assert x == result or repr(x) == result or x == repr(result)

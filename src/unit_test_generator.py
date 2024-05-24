@@ -1345,7 +1345,9 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
                       cls=FunctionMetaDataEncoder,
                       indent=3
                       )
-
+        if not test_suite:
+            logger.debug("No test record for %s", func_name)
+            continue
         auto_generate_tests(local_all_metadata[func_name],
                             test_suite,
                             func_name,
@@ -1553,7 +1555,8 @@ def meta_program_function_call( this_state:CoverageInfo,
                                 package,
                                 func_name:str,
                                 result_type:str,
-                                parameter_names:List[str]):
+                                parameter_names:List[str],
+                                raises_ex:bool):
     """
     Given the provided arguments,
     return a list of valid Python code that executes the decorated
@@ -1561,32 +1564,32 @@ def meta_program_function_call( this_state:CoverageInfo,
     """
     class_var_name = ""
     is_method = False
-    test_str_list = []
-
+    list_of_lines = []
+    singletons = ["None", "True", "False"]
+    indent = tab*2
     # Handle the case that decoratee is a
     # class method by constructing the class
     if this_state.constructor:
         func_name=func_name.split('.')[1]
         class_var_name = "this_class"
         is_method = True # Marginally faster than this string compare?
-        line = f"{tab}{class_var_name} = {this_state.constructor}\n"
-        test_str_list.append(line)
+        line = f"{indent}{class_var_name} = {this_state.constructor}\n"
+        list_of_lines.append(line)
 
     kwargs_str = ''
     if this_state.kwargs:
         # Creating "line" variable to condense line width
-        line = f"{tab}kwargs = {this_state.kwargs}\n"
-        test_str_list.append(line)
+        line = f"{indent}kwargs = {this_state.kwargs}\n"
+        list_of_lines.append(line)
         kwargs_str = ", kwargs=kwargs)"
 
-    assignment = f"{tab}x = "
     call = ""
     if is_method:
         if len(this_state.args) != 1:
             call = f"{class_var_name}.{func_name}({','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
             arg = normalize_string(this_state.args[0])
-            test_str_list.append(f"{tab}arg = {arg}\n")
+            list_of_lines.append(f"{indent}arg = {arg}\n")
             call = f"{class_var_name}.{func_name}({parameter_names[0]}{kwargs_str})\n"
 
     else:
@@ -1594,9 +1597,10 @@ def meta_program_function_call( this_state:CoverageInfo,
             call = f"{package}.{func_name}({','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
             arg = normalize_string(this_state.args[0])
-            #test_str_list.append(f"{tab}arg = {arg}\n")
+            #test_str_list.append(f"{indent}arg = {arg}\n")
             call = f"{package}.{func_name}({parameter_names[0]}{kwargs_str})\n"
-    if this_state.exception_type:
+
+    if raises_ex:
         e_type = this_state.exception_type
         e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
         e_str = this_state.exception_message
@@ -1605,40 +1609,57 @@ def meta_program_function_call( this_state:CoverageInfo,
         e_str = re.escape(e_str)
 
         # Source: https://docs.pytest.org/en/6.2.x/assert.html#assertraises
-        line = f'{tab}with pytest.raises({e_type}, match=r\"{e_str}\"):\n'
-        test_str_list.append(line)
-        line = f'{tab*2}{call}'
-        test_str_list.append(line)
+        line = f"{indent}if exception_type != 'N/A':\n"
+        indent += tab
+        list_of_lines.append(line)
+        line = f'{indent}with pytest.raises(exception_type, match=re.escape(exception_message)):\n'
+        indent += tab
+        list_of_lines.append(line)
+        line = f'{indent}{call}'
+        list_of_lines.append(line)
+        indent = indent[:-len(tab)]
+
+        list_of_lines.append(f"{tab*2}else:\n")
+        #indent = indent[:-len(tab)]
+
+
+    normal_call = f"{indent}x = {call}"
+    if func_name.endswith(".__init__"):
+        #func_name = re.sub(".__init__", "", func_name)
+        normal_call = re.sub(".__init__", "", normal_call)
+    list_of_lines.append(normal_call)
+    if not this_state.result:
+        line = f"{indent}assert not x\n"
     else:
-        normal_call = f"{assignment}{call}"
-        if func_name.endswith(".__init__"):
-            #func_name = re.sub(".__init__", "", func_name)
-            normal_call = re.sub(".__init__", "", normal_call)
-        test_str_list.append(normal_call)
-        if not this_state.result:
-            line = f"{tab}assert not x\n"
+        result_str = ""
+        logger.debug("func_name=%s", func_name)
+        if result_type == "str":
+            logger.debug("String: %s", this_state)
+            x = this_state.result.replace("'", "\\'").replace('"', '\\"')
+            result_str = f"\'{x}\'"
+            logger.critical(result_str)
         else:
-            result_str = ""
-            logger.debug("func_name=%s", func_name)
-            if result_type == "str":
-                logger.debug("String: %s", this_state)
-                x = this_state.result.replace("'", "\\'").replace('"', '\\"')
-                result_str = f"\'{x}\'"
-                logger.critical(result_str)
-            else:
-                result_str = this_state.result
-                result_str = normalize_arg(this_state.result)
-                logger.critical(result_str)
-            assert not result_str.startswith("'\n"), "Bad juju"
-            if func_name.endswith(".__init__"):
-                class_fqn = re.sub(".__init__.*$", "", call)
-                line = f"{tab}assert isinstance(x, {class_fqn})\n"
-            elif result_str in ["None", "True", "False"]:
-                line = f"{tab}assert x is {result_str}\n"
-            else:
-                line = f"{tab}assert x == result or repr(x) == result or repr(result) == x\n"
-        test_str_list.append(line)
-    return test_str_list
+            result_str = this_state.result
+            result_str = normalize_arg(this_state.result)
+            logger.critical(result_str)
+        assert not result_str.startswith("'\n"), "Bad juju"
+        if func_name.endswith(".__init__"):
+            class_fqn = re.sub(".__init__.*$", "", call)
+            line = f"{indent}assert isinstance(x, {class_fqn})\n"
+            list_of_lines.append(line)
+        #elif result_str in singletons:
+            #line = f"{tab}assert x is {result_str}\n"
+
+    list_of_lines.append(f"{indent}if result in {repr(singletons)}:\n")
+    indent += tab
+    list_of_lines.append(f"{indent}assert x is result\n")
+    indent = indent[:-len(tab)]
+    list_of_lines.append(f"{indent}else:\n")
+    indent += tab
+    line = f"{indent}assert x == result or repr(x) == result or x == repr(result)\n"
+    list_of_lines.append(line)
+    #test_str_list.append(f"{tab*4}assert x == result\n")
+    return list_of_lines
 
 
 @unit_test_generator_decorator(sample_count=0)
@@ -1656,7 +1677,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     to lists of strings, these lists of strings are evenutally
     written to a file, one per decorated function.
     """
-    imports = ["import pytest\n"]
+
+    imports = ["import re\n","import pytest\n"]
 
     was_executed = False
     globals_before_are_constant = True
@@ -1723,7 +1745,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     else:
         initial_import = ""
 
-    docstring = f'{tab}\"\"\"\n{tab}{tab}Programmatically generated test function for {func_name}\n{tab}{tab}\"\"\"\n'
+    docstring = f'{tab*2}\"\"\"\n{tab*2}Programmatically generated test function for {func_name}\n{tab*2}\"\"\"\n'
 
 
 
@@ -1734,18 +1756,21 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         docstring,
                     "# Monkeypatch here"
                     ]
+    raises_ex: bool = False
     for hash_key in sorted(state):
         globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()}
         globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}
-        parameterization_list.append('('+",".join([ ','.join(state[hash_key].args),
-                                                    ','.join(state[hash_key].kwargs) if state[hash_key].kwargs else '"N/A"',
-                                                    repr(state[hash_key].exception_type) if state[hash_key].exception_type else '"N/A"',
-                                                    repr(state[hash_key].exception_message) if state[hash_key].exception_message else '"N/A"',
-                                                    repr(state[hash_key].result),
-                                                    '"N/A"' if state[hash_key].result_type == "NoneType" else repr(state[hash_key].result_type),
-                                                    '{}' if not globals_before else repr(globals_before),
-                                                    '{}' if not globals_after else repr(globals_after)])+'),\n')
-        logger.critical(f"{func_name=}:{parameterization_list[-1]=}")
+        new_params = [  ','.join(state[hash_key].args),
+                        ','.join(state[hash_key].kwargs) if state[hash_key].kwargs else '"N/A"',
+                        state[hash_key].exception_type.split("'")[1] if state[hash_key].exception_type else '"N/A"',
+                        repr(state[hash_key].exception_message) if state[hash_key].exception_message else '"N/A"',
+                        repr(state[hash_key].result),
+                        '"N/A"' if state[hash_key].result_type == "NoneType" else repr(state[hash_key].result_type),
+                        '{}' if not globals_before else repr(globals_before),
+                        '{}' if not globals_after else repr(globals_after)]
+        parameterization_list.append('('+",".join(new_params)+'),\n')
+        if state[hash_key].exception_type:
+            raises_ex = True
 
     #test_str_list += parameterization_list
     for hash_key_index, hash_key in enumerate(sorted(state)):
@@ -1759,7 +1784,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #test_str_list.append(f"{tab}monkeypatch = MonkeyPatch()\n")
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
-            
+
 
             if k in constant_globals_before_key:
                 grv_str_list.append(k.upper())
@@ -1769,15 +1794,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 line = f'{tab*2}monkeypatch.setattr({package}, k, v)\n'
             monkey_patches.append(line)
 
-        #parameterization_list[-1] += repr(grv_str_list)
-        logger.critical(f"{func_name=}:{parameterization_list[-1]=}")
-
         if monkey_patches:
             test_str_list += monkey_patches
         #monkey_patches = []
 
         gwv_str_list: list[str]  = []
-        for ki, k in enumerate(sorted(state[hash_key].globals_after)):
+        for k in sorted(state[hash_key].globals_after):
             v = state[hash_key].globals_after[k]
             #this_parameterization += f"{v}, "
             gwv_str_list.append(k)
@@ -1795,11 +1817,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                                                     package,
                                                     func_name,
                                                     this_result_type,
-                                                    function_metadata.parameter_names)
+                                                    function_metadata.parameter_names,
+                                                    raises_ex)
         dict_get = ".__dict__.get"
 
-        
-        
+
+
         #parameterization_list[-1] += repr(gwv_str_list)
 
         if sorted(state[hash_key].globals_after):
