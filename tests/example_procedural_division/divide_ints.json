@@ -1,0 +1,161 @@
+{
+   "name": "divide_ints",
+   "parameter_names": [
+      "a",
+      "b"
+   ],
+   "lines": [
+      26,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42
+   ],
+   "non_code_lines": [
+      27,
+      28,
+      29,
+      30,
+      31
+   ],
+   "is_method": false,
+   "global_vars_read_from": [
+      "error_code",
+      "logger"
+   ],
+   "global_vars_written_to": [
+      "error_code"
+   ],
+   "source_file": null,
+   "coverage_io": {
+      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": {
+         "args": [
+            "6",
+            "2"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "error_code": "0"
+         },
+         "globals_after": {
+            "error_code": "0"
+         },
+         "result": "6/2=3.0",
+         "coverage": [
+            32,
+            33,
+            36,
+            39,
+            42
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.004,
+         "result_type": "str"
+      },
+      "17969d9e9c77e947a69421dfbb10213f8ed028377d0903863268b22a6c6d0969": {
+         "args": [
+            "3",
+            "0"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "error_code": "0"
+         },
+         "globals_after": {
+            "error_code": "-3"
+         },
+         "result": "None",
+         "coverage": [
+            32,
+            33,
+            36,
+            39,
+            40,
+            41
+         ],
+         "exception_type": "<class 'ValueError'>",
+         "exception_message": "ValueError: Cannot divide by zero!",
+         "constructor": "",
+         "cost": 0.002,
+         "result_type": "NoneType"
+      },
+      "7896c4d85fb975f0ff1c49f32f352d103f2a508bb8bcf571fff9f4411b356b49": {
+         "args": [
+            "\"10\"",
+            "2"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "error_code": "0"
+         },
+         "globals_after": {
+            "error_code": "-1"
+         },
+         "result": "None",
+         "coverage": [
+            32,
+            33,
+            34,
+            35
+         ],
+         "exception_type": "<class 'TypeError'>",
+         "exception_message": "TypeError: Variable a='10' is not an int!",
+         "constructor": "",
+         "cost": 0.003,
+         "result_type": "NoneType"
+      },
+      "e3e3d930080cdfd5f06808564abb101a68ae34a394da3d82833052685683ec98": {
+         "args": [
+            "8",
+            "[]"
+         ],
+         "kwargs": {},
+         "globals_before": {
+            "error_code": "0"
+         },
+         "globals_after": {
+            "error_code": "-2"
+         },
+         "result": "None",
+         "coverage": [
+            32,
+            33,
+            36,
+            37,
+            38
+         ],
+         "exception_type": "<class 'TypeError'>",
+         "exception_message": "TypeError: Variable b=[] is not an int!",
+         "constructor": "",
+         "cost": 0.002,
+         "result_type": "NoneType"
+      }
+   },
+   "coverage_percentage": 91.67,
+   "types_in_use": [
+      "logging.Logger"
+   ],
+   "unified_test_coverage": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42
+   ],
+   "needs_pytest": true
+}

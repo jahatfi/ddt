@@ -28,14 +28,14 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "0cdff9e93ad0dc348e7cda96b5611729e98d0ca1002940f823af8a6a79aa76b3": {
+      "91a7d2d67e79e79965a7e666fbbe7dade41272952d4aebe5edc80b7be0a96e31": {
          "args": [
-            "\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \\\"'fizzbuzz'\\\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
+            "\"CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
          "coverage": [
             1427,
             1428,

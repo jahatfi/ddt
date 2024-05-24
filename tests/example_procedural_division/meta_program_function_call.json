@@ -111,9 +111,9 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "a34e1285266023da9b500e7df20a054cecf3a8bdd353660b29d3f0ae7fca9aa6": {
+      "c2cab3adc49ff6263bf900cce70be48304ec551e041ed48b9d86d0a38e3a8a8c": {
          "args": [
-            "CoverageInfo(args=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\"], kwargs={}, globals_before={}, globals_after={}, result='CoverageInfo(args=[\\'6\\'], kwargs={}, globals_before={\\'mode\\': \"\\'fizzbuzz\\'\"}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'\\', cost=0.0, result_type=\\'\\')', coverage=[1401, 1404, 1408, 1412, 1413, 1416, 1442, 1443, 1444], exception_type='', exception_message='', constructor='', cost=0.003, result_type='src.unit_test_generator.CoverageInfo')",
+            "CoverageInfo(args=['0', '\"error_code\"', '\"Before\"', \"CoverageInfo(args=['6', '2'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\"], kwargs={}, globals_before={}, globals_after={}, result=\"CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\", coverage=[1401, 1404, 1408, 1412, 1413, 1416, 1442, 1444], exception_type='', exception_message='', constructor='', cost=0.001, result_type='src.unit_test_generator.CoverageInfo')",
             "\"  \"",
             "\"unit_test_generator\"",
             "\"update_global\"",
@@ -342,7 +342,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.168,
+         "cost": 0.147,
          "result_type": "list"
       }
    },

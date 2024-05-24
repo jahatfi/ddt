@@ -13,11 +13,11 @@ from src import unit_test_generator
     "arg, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
     [
         (
-            "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+            "[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]",
             "N/A",
             "N/A",
             "N/A",
-            "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+            "[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]",
             "str",
             {},
             {},

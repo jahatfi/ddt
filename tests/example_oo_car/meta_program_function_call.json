@@ -111,9 +111,9 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "a34e1285266023da9b500e7df20a054cecf3a8bdd353660b29d3f0ae7fca9aa6": {
+      "cb554fc861a8add1eb3a0adc1e8d4d380728ce0cea8d82afd4f246aef65df58f": {
          "args": [
-            "CoverageInfo(args=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\"], kwargs={}, globals_before={}, globals_after={}, result='CoverageInfo(args=[\\'6\\'], kwargs={}, globals_before={\\'mode\\': \"\\'fizzbuzz\\'\"}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'\\', cost=0.0, result_type=\\'\\')', coverage=[1401, 1404, 1408, 1412, 1413, 1416, 1442, 1443, 1444], exception_type='', exception_message='', constructor='', cost=0.003, result_type='src.unit_test_generator.CoverageInfo')",
+            "CoverageInfo(args=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0, result_type=\\'\\')'], kwargs={}, globals_before={}, globals_after={}, result='CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={\\'method_call_counter\\': \\'0\\'}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0, result_type=\\'\\')', coverage=[1401, 1404, 1408, 1412, 1413, 1416, 1442, 1444], exception_type='', exception_message='', constructor='', cost=0.001, result_type='src.unit_test_generator.CoverageInfo')",
             "\"  \"",
             "\"unit_test_generator\"",
             "\"update_global\"",
@@ -342,7 +342,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.168,
+         "cost": 0.143,
          "result_type": "list"
       }
    },

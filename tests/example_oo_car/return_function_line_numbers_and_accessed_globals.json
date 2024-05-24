@@ -53,14 +53,14 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "707bf4c61a484371efa4c4d0b9f664b862c46910e2f31deb778762e11371a3b0": {
+      "9568bc115875bd1a4b740e229383e27e8fbefec9600c57b9c490d477f35be0fe": {
          "args": [
-            "fizzbuzz.fizzbuzz"
+            "Car.__init__"
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "[[23, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 56, 57], {'mode'}, set()]",
+         "result": "[[33, 41, 42, 43], set(), set()]",
          "coverage": [
             1032,
             1034,
@@ -72,11 +72,6 @@
             1041,
             1042,
             1043,
-            1055,
-            1056,
-            1058,
-            1060,
-            1064,
             1074,
             1076,
             1078,
@@ -90,9 +85,6 @@
             1089,
             1090,
             1091,
-            1092,
-            1093,
-            1094,
             1095,
             1099,
             1104
@@ -100,13 +92,13 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.005,
+         "cost": 0.002,
          "result_type": "list"
       }
    },
-   "coverage_percentage": 70.37,
+   "coverage_percentage": 59.26,
    "types_in_use": [
-      "fizzbuzz",
+      "car.Car",
       "logging.Logger"
    ],
    "unified_test_coverage": [
@@ -123,9 +115,6 @@
       1089,
       1090,
       1091,
-      1092,
-      1093,
-      1094,
       1095,
       1099,
       1104

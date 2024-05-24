@@ -15,7 +15,7 @@ from src import unit_test_generator
     "this_list,non_code_lines, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
     [
         (
-            [1409, 1414, 1415, 1393, 1402],
+            [1408, 1409, 1412, 1413, 1414, 1415, 1416, 1393, 1401, 1402, 1404],
             {
                 1410,
                 1411,
@@ -34,7 +34,7 @@ from src import unit_test_generator
             "N/A",
             "N/A",
             "N/A",
-            "['1409', '1414-1415', '1393']",
+            "['1408-1409', '1412-1416', '1393', '1401-1402']",
             "list",
             {},
             {},

@@ -1,0 +1,49 @@
+{
+   "name": "Car.is_going_faster_than",
+   "parameter_names": [
+      "self",
+      "other_car"
+   ],
+   "lines": [
+      117,
+      123
+   ],
+   "non_code_lines": [
+      118,
+      119,
+      120,
+      121,
+      122
+   ],
+   "is_method": true,
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "source_file": null,
+   "coverage_io": {
+      "797ee52405b6b24f04cee9d62d992fd2a5592ed30653401b854ee509666247fc": {
+         "args": [
+            "Car(\"White\", 19, 0)"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "True",
+         "coverage": [
+            123
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "Car(\"Red\", 20, 0)",
+         "cost": 0.001,
+         "result_type": "bool"
+      }
+   },
+   "coverage_percentage": 50.0,
+   "types_in_use": [
+      "car.Car"
+   ],
+   "unified_test_coverage": [
+      123
+   ],
+   "needs_pytest": false
+}

@@ -16,11 +16,11 @@ from src.unit_test_generator import CoverageInfo
     "obj,this_global,phase,this_coverage_info, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
     [
         (
-            "fizzbuzz",
-            "mode",
+            0,
+            "error_code",
             "Before",
             CoverageInfo(
-                args=["6"],
+                args=["6", "2"],
                 kwargs={},
                 globals_before={},
                 globals_after={},
@@ -35,7 +35,7 @@ from src.unit_test_generator import CoverageInfo
             "N/A",
             "N/A",
             "N/A",
-            "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
             "src.unit_test_generator.CoverageInfo",
             {},
             {},

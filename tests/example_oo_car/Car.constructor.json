@@ -1,0 +1,59 @@
+{
+   "name": "Car.__init__",
+   "parameter_names": [
+      "self",
+      "color",
+      "speed",
+      "steer_angle"
+   ],
+   "lines": [
+      33,
+      41,
+      42,
+      43
+   ],
+   "non_code_lines": [
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+   ],
+   "is_method": true,
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "source_file": null,
+   "coverage_io": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": {
+         "args": [
+            "\"Red\"",
+            "10",
+            "0"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "result": "None",
+         "coverage": [
+            41,
+            42,
+            43
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.001,
+         "result_type": "NoneType"
+      }
+   },
+   "coverage_percentage": 75.0,
+   "types_in_use": [],
+   "unified_test_coverage": [
+      41,
+      42,
+      43
+   ],
+   "needs_pytest": false
+}

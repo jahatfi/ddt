@@ -111,19 +111,19 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "a34e1285266023da9b500e7df20a054cecf3a8bdd353660b29d3f0ae7fca9aa6": {
+      "2073b53d8aba5a8080c462b21f7852d3caf02d71d6798ab1839d0ed8344c3c9a": {
          "args": [
-            "CoverageInfo(args=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\"], kwargs={}, globals_before={}, globals_after={}, result='CoverageInfo(args=[\\'6\\'], kwargs={}, globals_before={\\'mode\\': \"\\'fizzbuzz\\'\"}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'\\', cost=0.0, result_type=\\'\\')', coverage=[1401, 1404, 1408, 1412, 1413, 1416, 1442, 1443, 1444], exception_type='', exception_message='', constructor='', cost=0.003, result_type='src.unit_test_generator.CoverageInfo')",
+            "CoverageInfo(args=['all_types.get_item_at_index'], kwargs={}, globals_before={}, globals_after={}, result='[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]', coverage=[1032, 1034, 1035, 1036, 1037, 1038, 1040, 1041, 1042, 1043, 1055, 1056, 1058, 1061, 1064, 1074, 1076, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1088, 1089, 1090, 1091, 1092, 1093, 1095, 1099, 1104], exception_type='', exception_message='', constructor='', cost=0.004, result_type='list')",
             "\"  \"",
             "\"unit_test_generator\"",
-            "\"update_global\"",
-            "\"src.unit_test_generator.CoverageInfo\"",
-            "['obj', 'this_global', 'phase', 'this_coverage_info']"
+            "\"return_function_line_numbers_and_accessed_globals\"",
+            "\"list\"",
+            "['f']"
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "['  x = unit_test_generator.update_global(obj,this_global,phase,this_coverage_info)\\n', '  assert x == result or repr(x) == result or repr(result) == x\\n']",
+         "result": "['  x = unit_test_generator.return_function_line_numbers_and_accessed_globals(f)\\n', '  assert x == result or repr(x) == result or repr(result) == x\\n']",
          "coverage": [
             223,
             224,
@@ -310,6 +310,8 @@
             1161,
             1162,
             1163,
+            1442,
+            1444,
             1562,
             1563,
             1564,
@@ -320,7 +322,9 @@
             1583,
             1584,
             1593,
-            1594,
+            1595,
+            1596,
+            1598,
             1599,
             1613,
             1614,
@@ -342,11 +346,11 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.168,
+         "cost": 0.151,
          "result_type": "list"
       }
    },
-   "coverage_percentage": 44.44,
+   "coverage_percentage": 47.62,
    "types_in_use": [
       "logging.Logger",
       "src.unit_test_generator.CoverageInfo"
@@ -362,7 +366,9 @@
       1583,
       1584,
       1593,
-      1594,
+      1595,
+      1596,
+      1598,
       1599,
       1613,
       1614,

@@ -3,7 +3,7 @@ Programmatically generated test function for fizzbuzz
 """
 
 import pytest
-import fizzbuzz
+from tests.example_fizzbuzz import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 
@@ -62,4 +62,4 @@ def test_fizzbuzz(
     for k, v in globals_before.items():
         monkeypatch.setattr(fizzbuzz, k, v)
     x = fizzbuzz.fizzbuzz(number)
-    assert x == result
+    assert x == result or repr(x) == result or repr(result) == x

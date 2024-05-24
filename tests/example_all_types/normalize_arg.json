@@ -28,14 +28,14 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "0cdff9e93ad0dc348e7cda96b5611729e98d0ca1002940f823af8a6a79aa76b3": {
+      "f04dcd0cb4fe73ed22150c8c892a65072f6c460c321c0ef3c96553ab9697ba06": {
          "args": [
-            "\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \\\"'fizzbuzz'\\\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
+            "\"[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "result": "[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]",
          "coverage": [
             1427,
             1428,

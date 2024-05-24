@@ -1583,7 +1583,7 @@ def meta_program_function_call( this_state:CoverageInfo,
     call = ""
     if is_method:
         if len(this_state.args) != 1:
-            call = f"{class_var_name}.{func_name}{','.join(parameter_names)}{kwargs_str})\n"
+            call = f"{class_var_name}.{func_name}({','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
             arg = normalize_string(this_state.args[0])
             test_str_list.append(f"{tab}arg = {arg}\n")
@@ -1636,7 +1636,7 @@ def meta_program_function_call( this_state:CoverageInfo,
             elif result_str in ["None", "True", "False"]:
                 line = f"{tab}assert x is {result_str}\n"
             else:
-                line = f"{tab}assert x == result\n"
+                line = f"{tab}assert x == result or repr(x) == result or repr(result) == x\n"
         test_str_list.append(line)
     return test_str_list
 
@@ -1779,7 +1779,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         gwv_str_list: list[str]  = []
         for ki, k in enumerate(sorted(state[hash_key].globals_after)):
             v = state[hash_key].globals_after[k]
-            this_parameterization += f"{v}, "
+            #this_parameterization += f"{v}, "
             gwv_str_list.append(k)
             #paramterization_list[1] += f"{k},"
             v = state[hash_key].globals_after[k]
@@ -1801,7 +1801,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         
         
         #parameterization_list[-1] += repr(gwv_str_list)
-        logger.critical(f"{func_name=}:{parameterization_list[-1]=}")
 
         if sorted(state[hash_key].globals_after):
             test_str_list.append(f"{tab}for global_var_written_to in {repr(sorted(state[hash_key].globals_after.keys()))}:\n")
