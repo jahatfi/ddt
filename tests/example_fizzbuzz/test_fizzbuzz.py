@@ -2,59 +2,64 @@
 Programmatically generated test function for fizzbuzz
 """
 
-from tests.example_fizzbuzz import fizzbuzz
+import pytest
+import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 
 # In sum, these tests covered 94.44% of fizzbuzz's lines
 # Line(s) not covered by ANY of the tests below:
 # [23]
-def test_fizzbuzz_0():
+@pytest.mark.parametrize(
+    "number, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    [
+        (
+            30,
+            "N/A",
+            "N/A",
+            "N/A",
+            "30 with mode='buzzfizz' yields 'buzzfizz'",
+            "str",
+            {"mode": "buzzfizz"},
+            {},
+        ),
+        (
+            30,
+            "N/A",
+            "N/A",
+            "N/A",
+            "30 with mode='fizzbuzz' yields 'fizzbuzz'",
+            "str",
+            {"mode": "fizzbuzz"},
+            {},
+        ),
+        (
+            6,
+            "N/A",
+            "N/A",
+            "N/A",
+            "Mode 'a_test' invalid for fizzbuzz()",
+            "str",
+            {"mode": "a_test"},
+            {},
+        ),
+    ],
+)
+def test_fizzbuzz(
+    number,
+    kwargs,
+    exception_type,
+    exception_message,
+    result,
+    return_type,
+    globals_before,
+    globals_after,
+):
     """
     Programmatically generated test function for fizzbuzz
     """
     monkeypatch = MonkeyPatch()
-
-    # Coverage: 55.56% of function lines [23-57]
-    # Covered Lines: 40-41;48-54;57
-    # Lines not covered: 23-39;42-47;56
-    # Note: Any lines not mentioned are comments or whitespace
-    mode = "buzzfizz"
-    monkeypatch.setattr(fizzbuzz, "mode", mode)
-    arg = 30
-    x = fizzbuzz.fizzbuzz(arg)
-    assert x == "30 with mode='buzzfizz' yields 'buzzfizz'"
-
-
-def test_fizzbuzz_1():
-    """
-    Programmatically generated test function for fizzbuzz
-    """
-    monkeypatch = MonkeyPatch()
-
-    # Coverage: 50.00% of function lines [23-57]
-    # Covered Lines: 40-47;57
-    # Lines not covered: 23-39;48-56
-    # Note: Any lines not mentioned are comments or whitespace
-    mode = "fizzbuzz"
-    monkeypatch.setattr(fizzbuzz, "mode", mode)
-    arg = 30
-    x = fizzbuzz.fizzbuzz(arg)
-    assert x == "30 with mode='fizzbuzz' yields 'fizzbuzz'"
-
-
-def test_fizzbuzz_2():
-    """
-    Programmatically generated test function for fizzbuzz
-    """
-    monkeypatch = MonkeyPatch()
-
-    # Coverage: 27.78% of function lines [23-57]
-    # Covered Lines: 40-41;48;56-57
-    # Lines not covered: 23-39;42-47;49-55
-    # Note: Any lines not mentioned are comments or whitespace
-    mode = "a_test"
-    monkeypatch.setattr(fizzbuzz, "mode", mode)
-    arg = 6
-    x = fizzbuzz.fizzbuzz(arg)
-    assert x == "Mode 'a_test' invalid for fizzbuzz()"
+    for k, v in globals_before.items():
+        monkeypatch.setattr(fizzbuzz, k, v)
+    x = fizzbuzz.fizzbuzz(number)
+    assert x == result

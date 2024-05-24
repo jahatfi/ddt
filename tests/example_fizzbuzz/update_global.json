@@ -56,12 +56,15 @@
             1408,
             1412,
             1413,
-            1416
+            1416,
+            1442,
+            1443,
+            1444
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001,
+         "cost": 0.003,
          "result_type": "src.unit_test_generator.CoverageInfo"
       }
    },

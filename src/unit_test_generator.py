@@ -1410,9 +1410,9 @@ def update_global(obj,
     #print(f"{this_global}={this_entry}")
 
     if phase == "Before":
-        this_coverage_info.globals_before[this_global] = this_entry
+        this_coverage_info.globals_before[this_global] = normalize_string(this_entry)
     elif phase == 'After':
-        this_coverage_info.globals_after[this_global] = this_entry
+        this_coverage_info.globals_after[this_global] = normalize_string(this_entry)
     return this_coverage_info
 
 
@@ -1431,7 +1431,7 @@ def normalize_arg(arg:typing.Any)->typing.Any:
     elif arg == "true":
         arg = "True"
     # Trim quotes so types are used rather than just the string representation
-    if isinstance(arg, str) and arg[0] == '"' and arg[-1] == '"':
+    if isinstance(arg, str) and ((arg[0] == '"' and arg[-1] == '"') or (arg[0] == "'" and arg[-1] == "'")):
         arg = arg[1:-1]
     return arg
 
@@ -1583,19 +1583,19 @@ def meta_program_function_call( this_state:CoverageInfo,
     call = ""
     if is_method:
         if len(this_state.args) != 1:
-            call = f"{class_var_name}.{func_name}(*args{kwargs_str})\n"
+            call = f"{class_var_name}.{func_name}{','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
             arg = normalize_string(this_state.args[0])
             test_str_list.append(f"{tab}arg = {arg}\n")
-            call = f"{class_var_name}.{func_name}(arg{kwargs_str})\n"
+            call = f"{class_var_name}.{func_name}({parameter_names[0]}{kwargs_str})\n"
 
     else:
         if len(this_state.args) != 1:
-            call = f"{package}.{func_name}(*args{kwargs_str})\n"
+            call = f"{package}.{func_name}({','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
             arg = normalize_string(this_state.args[0])
-            test_str_list.append(f"{tab}arg = {arg}\n")
-            call = f"{package}.{func_name}(arg{kwargs_str})\n"
+            #test_str_list.append(f"{tab}arg = {arg}\n")
+            call = f"{package}.{func_name}({parameter_names[0]}{kwargs_str})\n"
     if this_state.exception_type:
         e_type = this_state.exception_type
         e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
@@ -1636,7 +1636,7 @@ def meta_program_function_call( this_state:CoverageInfo,
             elif result_str in ["None", "True", "False"]:
                 line = f"{tab}assert x is {result_str}\n"
             else:
-                line = f"{tab}assert x == {result_str}\n"
+                line = f"{tab}assert x == result\n"
         test_str_list.append(line)
     return test_str_list
 
@@ -1656,7 +1656,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     to lists of strings, these lists of strings are evenutally
     written to a file, one per decorated function.
     """
-    imports = []
+    imports = ["import pytest\n"]
+
     was_executed = False
     globals_before_are_constant = True
     constant_globals_before: dict[str, typing.Any] = {}
@@ -1724,70 +1725,71 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     docstring = f'{tab}\"\"\"\n{tab}{tab}Programmatically generated test function for {func_name}\n{tab}{tab}\"\"\"\n'
 
-    test_str_list = [f"def test_{func_name.lower().replace('.','_')}:\n",
+
+
+    parameterization_list = ["@pytest.mark.parametrize(\n",
+                            f"\"{','.join(function_metadata.parameter_names)}, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after\",\n",
+                            '\n[']
+    test_str_list = [f"def test_{func_name.lower().replace('.','_')}({parameterization_list[1][1:-3]}):\n",
                         docstring,
                     "# Monkeypatch here"
                     ]
-
-    paramterization_list = ["@pytest.mark.parametrize(",
-                            f"{tab}{function_metadata.parameter_names}", 
-                            '[']
-
     for hash_key in sorted(state):
-        paramterization_list.append(f"({state[hash_key].args}),")
+        globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()}
+        globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}
+        parameterization_list.append('('+",".join([ ','.join(state[hash_key].args),
+                                                    ','.join(state[hash_key].kwargs) if state[hash_key].kwargs else '"N/A"',
+                                                    repr(state[hash_key].exception_type) if state[hash_key].exception_type else '"N/A"',
+                                                    repr(state[hash_key].exception_message) if state[hash_key].exception_message else '"N/A"',
+                                                    repr(state[hash_key].result),
+                                                    '"N/A"' if state[hash_key].result_type == "NoneType" else repr(state[hash_key].result_type),
+                                                    '{}' if not globals_before else repr(globals_before),
+                                                    '{}' if not globals_after else repr(globals_after)])+'),\n')
+        logger.critical(f"{func_name=}:{parameterization_list[-1]=}")
 
-
+    #test_str_list += parameterization_list
     for hash_key_index, hash_key in enumerate(sorted(state)):
+        this_parameterization =""# f"({','.join(state[hash_key].args)}"
         monkey_patches = []
-        coverage_list = gen_coverage_list(  function_metadata,
-                                            state[hash_key].coverage,
-                                            func_name,
-                                            tab)
-        # Due to some complexity of self-testing (e.g. bugs I can't yet squash)
-        # coverage_str might be empty.  That's fine, so continue
-        if not coverage_list:
-            continue
-        coverage_str = ''.join(coverage_list)
-        test_str_list.append(coverage_str)
-        #test_str_list += f'{tab}# Coverage: {state[hash_key].coverage}\n'
-
-        #print(f"{state[hash_key].keys()}")
+        if state[hash_key].globals_before:
+            monkey_patches.append(f"{tab}for k,v in globals_before.items():\n")
+        grv_str_list: list[str] = []
         for k in sorted(state[hash_key].globals_before):
             needs_monkeypatch = True
             #test_str_list.append(f"{tab}monkeypatch = MonkeyPatch()\n")
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
+            
+
             if k in constant_globals_before_key:
-                line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+                grv_str_list.append(k.upper())
+                line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
             else:
-                test_str_list.append(f"{tab}{k} = {v}\n")
-                line = f'{tab}monkeypatch.setattr({package}, \"{k}\", {k})\n'
+                grv_str_list.append(k)
+                line = f'{tab*2}monkeypatch.setattr({package}, k, v)\n'
             monkey_patches.append(line)
+
+        #parameterization_list[-1] += repr(grv_str_list)
+        logger.critical(f"{func_name=}:{parameterization_list[-1]=}")
+
         if monkey_patches:
             test_str_list += monkey_patches
         #monkey_patches = []
 
+        gwv_str_list: list[str]  = []
+        for ki, k in enumerate(sorted(state[hash_key].globals_after)):
+            v = state[hash_key].globals_after[k]
+            this_parameterization += f"{v}, "
+            gwv_str_list.append(k)
+            #paramterization_list[1] += f"{k},"
+            v = state[hash_key].globals_after[k]
+            v = normalize_arg(v)
+        test_str_list += this_parameterization
 
         is_method = function_metadata.is_method
         logger.debug("%s is method: %s", func_name, is_method)
 
-        # Remove the 'self' argument from the arg list if this
-        # decoratee is a class method (as opposed to a regular function)
-        '''
-        if len(state[hash_key].args) > 1:
-            test_str_list.append(f"{tab}args = []\n")
-            for arg in state[hash_key].args:
-                if (arg[0] == "'" and arg[-1] == "'") or \
-                (arg[0] == '"' and arg[-1] == '"'):
-                    arg = re.sub(r'(?<!^)(?<!\\)"(?!$)', r'\\"', arg)
-
-                test_str_list.append(f"{tab}args.append({arg})\n")
-        '''
-        #logger.debug("unpacked_args=%s", unpacked_args)
-        #unpacked_args = ','.join(unpacked_args)
-
         this_result_type = function_metadata.coverage_io[hash_key].result_type
-        # TODO Update this
         test_str_list += meta_program_function_call(state[hash_key],
                                                     tab,
                                                     package,
@@ -1795,31 +1797,23 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                                                     this_result_type,
                                                     function_metadata.parameter_names)
         dict_get = ".__dict__.get"
-        for k in sorted(state[hash_key].globals_after):
-            v = state[hash_key].globals_after[k]
-            v = normalize_arg(v)
 
-            if v in ['None', '[]', '{}']:
-                line = f'{tab}assert not {package}{dict_get}(\"{k}\")\n'
-                line = re.sub("<class '([^']+)'>", "\\1", line)
-                test_str_list.append(line)
-                needs_monkeypatch = True
-                continue
+        
+        
+        #parameterization_list[-1] += repr(gwv_str_list)
+        logger.critical(f"{func_name=}:{parameterization_list[-1]=}")
 
-            # Define a local variable with the
-            # same name and value as to one being asserted
-            test_str_list.append(f"{tab}modified_{k} = {v}\n")
-            # Now assert that that variable exists in the global namespace
-            line = f'{tab}assert {package}{dict_get}(\"{k}\") == modified_{k}\n'
+        if sorted(state[hash_key].globals_after):
+            test_str_list.append(f"{tab}for global_var_written_to in {repr(sorted(state[hash_key].globals_after.keys()))}:\n")
+            test_str_list.append(tab+tab+"if global_var_written_to in ['None', '[]', '{}']:\n")
+            line = f'{tab*3}assert not {package}{dict_get}(global_var_written_to)\n'
+            line = re.sub("<class '([^']+)'>", "\\1", line)
+            test_str_list.append(line)
+            test_str_list.append(tab+tab+"else:\n")
+            line = f'{tab*4}assert {package}{dict_get}(global_var_written_to) == global_var_written_to\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
             needs_monkeypatch = True
-
-        # What if a global variable is written to but not read from?
-        # handle that here,
-        # otherwise I'd have to put this code in the loop above
-        if not needs_monkeypatch:
-            test_str_list[2] = ""
 
         #test_str_list += monkey_patches
         # Delete all references to "__main__", it's needless
@@ -1839,14 +1833,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
             test_str_list_def_dict[hash_key_index] = test_str_list
             was_executed = True
-
+        break
     # End of loop over all samples
 
     if was_executed:
         imports.append(initial_import)
-
-    if function_metadata.needs_pytest:
-        imports.append("import pytest\n")
 
     # Only functions/methods that access
     # global variables will need to be patched
@@ -1904,11 +1895,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         return h.digest().hex()
         #return str(sorted(test_str_list_def_dict.items()))#final_result_bytes
 
-
+    parameterization_list[-1] += "])\n"
     docstring = f'\"\"\"\nProgrammatically generated test function for {func_name}\n\"\"\"'
     with open(result_file, "w", encoding="utf-8") as st:
         st.write(docstring+"\n")
-        for item in [imports, header]:
+        for item in [imports, header, parameterization_list]:
             if item:
                 st.writelines(item)
         for item in test_str_list_def_dict.values():
