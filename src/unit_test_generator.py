@@ -1562,6 +1562,10 @@ def meta_program_function_call( this_state:CoverageInfo,
     return a list of valid Python code that executes the decorated
     function and asserts that the result is as expected.
     """
+    try:
+        parameter_names.remove("self")
+    except ValueError:
+        pass
     class_var_name = ""
     is_method = False
     list_of_lines = []
@@ -1588,8 +1592,8 @@ def meta_program_function_call( this_state:CoverageInfo,
         if len(this_state.args) != 1:
             call = f"{class_var_name}.{func_name}({','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
-            arg = normalize_string(this_state.args[0])
-            list_of_lines.append(f"{indent}arg = {arg}\n")
+            #arg = normalize_string(this_state.args[0])
+            #list_of_lines.append(f"{indent}arg = {arg}\n")
             call = f"{class_var_name}.{func_name}({parameter_names[0]}{kwargs_str})\n"
 
     else:
@@ -1748,11 +1752,34 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     docstring = f'{tab*2}\"\"\"\n{tab*2}Programmatically generated test function for {func_name}\n{tab*2}\"\"\"\n'
 
 
+    #parameterization_list = ["@pytest.mark.parametrize(\n",
+    #                        f"\"{','.join(function_metadata.parameter_names)}, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after\",\n",
+    #                        '\n[']
+    any_exception = False
+    any_gb = False
+    any_ga = False
+    any_kwargs = False
+    parameterization_list = ["@pytest.mark.parametrize(\n"]
+    parameterization_list.append(f"\"{', '.join(function_metadata.parameter_names)}")
+    if any(v.kwargs for v in state.values()):
+        parameterization_list[1] += ", kwargs"
+        any_kwargs = True
+    if any(v.exception_type for v in state.values()):
+        parameterization_list[1] += ", exception_type, exception_message"
+        any_exception = True
+    parameterization_list[1] += ", result, return_type"
+    if any(v.globals_before for v in state.values()):
+        parameterization_list[1] += ", globals_before"
+        any_gb = True
+    if any(v.globals_after for v in state.values()):
+        parameterization_list[1] += ", globals_after"
+        any_ga = True
+    parameterization_list[1] += '\",\n['
 
-    parameterization_list = ["@pytest.mark.parametrize(\n",
-                            f"\"{','.join(function_metadata.parameter_names)}, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after\",\n",
-                            '\n[']
-    test_str_list = [f"def test_{func_name.lower().replace('.','_')}({parameterization_list[1][1:-3]}):\n",
+    if parameterization_list[1].startswith("\"self,"):
+        # Chop off leading "self," parameter
+        parameterization_list[1] = re.sub("\"self,", '"', parameterization_list[1])
+    test_str_list = [f"def test_{func_name.lower().replace('.','_')}({parameterization_list[1][1:-4]}):\n",
                         docstring,
                     "# Monkeypatch here"
                     ]
@@ -1760,14 +1787,18 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     for hash_key in sorted(state):
         globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()}
         globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}
-        new_params = [  ','.join(state[hash_key].args),
-                        ','.join(state[hash_key].kwargs) if state[hash_key].kwargs else '"N/A"',
-                        state[hash_key].exception_type.split("'")[1] if state[hash_key].exception_type else '"N/A"',
-                        repr(state[hash_key].exception_message) if state[hash_key].exception_message else '"N/A"',
-                        repr(state[hash_key].result),
-                        '"N/A"' if state[hash_key].result_type == "NoneType" else repr(state[hash_key].result_type),
-                        '{}' if not globals_before else repr(globals_before),
-                        '{}' if not globals_after else repr(globals_after)]
+        new_params = [  ','.join(state[hash_key].args)]
+        if any_kwargs:
+            new_params.append(','.join(state[hash_key].kwargs) if state[hash_key].kwargs else '"N/A"')
+        if any_exception:
+            new_params.append(state[hash_key].exception_type.split("'")[1] if state[hash_key].exception_type else '"N/A"')
+            new_params.append(repr(state[hash_key].exception_message) if state[hash_key].exception_message else '"N/A"')
+        new_params.append(repr(state[hash_key].result))
+        new_params.append('"N/A"' if state[hash_key].result_type == "NoneType" else repr(state[hash_key].result_type))
+        if any_gb:
+            new_params.append('{}' if not globals_before else repr(globals_before))
+        if any_ga:
+            new_params.append('{}' if not globals_after else repr(globals_after))
         parameterization_list.append('('+",".join(new_params)+'),\n')
         if state[hash_key].exception_type:
             raises_ex = True
