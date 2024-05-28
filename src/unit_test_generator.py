@@ -677,12 +677,17 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     #args_copy = [convert_to_serializable(x) for x in args]
     args_copy:list[str] = []
     class_type = None
-    if this_metadata.is_method and not func_name.endswith("__init__"):
-        logger.info("Found non-constructor method: %s", func_name)
-        this_coverage_info.constructor = args[0].repr()
-        logger.info(args)
-        this_type = get_class_import_string(args[0])
-        class_type = copy.deepcopy(this_type)
+    if this_metadata.is_method:
+        if not func_name.endswith("__init__"):
+            logger.info("Found non-constructor method: %s %s", func_name, args[0])
+            this_coverage_info.constructor = args[0].repr()
+            logger.info(args)
+            this_type = get_class_import_string(args[0])
+            class_type = copy.deepcopy(this_type)
+        else:
+            logger.critical("Found Constructor: %s args=%s", func_name, args[1:])
+            #this_coverage_info.constructor = f"{func_name.replace('.__init__', '')}{repr(args[1:])}"
+
 
     new_types_in_use = set()
 
@@ -779,7 +784,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                     # can import it later; now we simply record it as one of
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
-                    logger.critical("class_repr=%s arg=%s", class_repr, arg)
+                    logger.critical("%s: class_repr=%s arg=%s", func_name, class_repr, arg)
+                    this_coverage_info.constructor = copy.deepcopy(class_repr)
 
                     args_copy.append(class_repr)
             else:
@@ -1574,11 +1580,11 @@ def meta_program_function_call( this_state:CoverageInfo,
     # Handle the case that decoratee is a
     # class method by constructing the class
     if this_state.constructor:
-        func_name=func_name.split('.')[1]
-        class_var_name = "this_class"
+        #func_name=func_name.split('.')[1]
+        class_var_name = "test_class_instance"
         is_method = True # Marginally faster than this string compare?
-        line = f"{indent}{class_var_name} = {this_state.constructor}\n"
-        list_of_lines.append(line)
+        #line = f"{indent}{class_var_name} = {this_state.constructor}\n"
+        #list_of_lines.append(line)
 
     kwargs_str = ''
     if this_state.kwargs:
@@ -1590,11 +1596,11 @@ def meta_program_function_call( this_state:CoverageInfo,
     call = ""
     if is_method:
         if len(this_state.args) != 1:
-            call = f"{class_var_name}.{func_name}({','.join(parameter_names)}{kwargs_str})\n"
+            call = f"{class_var_name}.{func_name.split('.')[1]}({','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
             #arg = normalize_string(this_state.args[0])
             #list_of_lines.append(f"{indent}arg = {arg}\n")
-            call = f"{class_var_name}.{func_name}({parameter_names[0]}{kwargs_str})\n"
+            call = f"{class_var_name}.{func_name.split('.')[1]}({parameter_names[0]}{kwargs_str})\n"
 
     else:
         if len(this_state.args) != 1:
@@ -1606,7 +1612,11 @@ def meta_program_function_call( this_state:CoverageInfo,
 
     if raises_ex:
         e_type = this_state.exception_type
-        e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
+        try:
+            e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
+        except AttributeError as e:
+            logger.critical(this_state.exception_type)
+            raise e
         e_str = this_state.exception_message
         # Any special chars, e.g. an empty list: [] in the e_str will break
         # the pytest.raise() parser, so use re.escape()
@@ -1641,11 +1651,11 @@ def meta_program_function_call( this_state:CoverageInfo,
             logger.debug("String: %s", this_state)
             x = this_state.result.replace("'", "\\'").replace('"', '\\"')
             result_str = f"\'{x}\'"
-            logger.critical(result_str)
+            logger.debug(result_str)
         else:
             result_str = this_state.result
             result_str = normalize_arg(this_state.result)
-            logger.critical(result_str)
+            logger.debug(result_str)
         assert not result_str.startswith("'\n"), "Bad juju"
         if func_name.endswith(".__init__"):
             class_fqn = re.sub(".__init__.*$", "", call)
@@ -1653,15 +1663,20 @@ def meta_program_function_call( this_state:CoverageInfo,
             list_of_lines.append(line)
         #elif result_str in singletons:
             #line = f"{tab}assert x is {result_str}\n"
-
-    list_of_lines.append(f"{indent}if result in {repr(singletons)}:\n")
-    indent += tab
-    list_of_lines.append(f"{indent}assert x is result\n")
-    indent = indent[:-len(tab)]
-    list_of_lines.append(f"{indent}else:\n")
-    indent += tab
-    line = f"{indent}assert x == result or repr(x) == result or x == repr(result)\n"
-    list_of_lines.append(line)
+    if result_type and result_type != "NoneType":
+        list_of_lines.append(f"{indent}assert isinstance(x, return_type)\n")
+    if "__init__" not in func_name:
+        list_of_lines.append(f"{indent}if result in {repr(singletons)}:\n")
+        indent += tab
+        list_of_lines.append(f"{indent}assert x is result\n")
+        indent = indent[:-len(tab)]
+        list_of_lines.append(f"{indent}else:\n")
+        indent += tab
+        line = f"{indent}assert x == result or repr(x) == result or x == repr(result)\n"
+        list_of_lines.append(line)
+    else:
+        for name in parameter_names:
+            list_of_lines.append(f"{indent}assert x.{name} == {name}\n")
     #test_str_list.append(f"{tab*4}assert x == result\n")
     return list_of_lines
 
@@ -1755,12 +1770,18 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     #parameterization_list = ["@pytest.mark.parametrize(\n",
     #                        f"\"{','.join(function_metadata.parameter_names)}, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after\",\n",
     #                        '\n[']
+
+    is_method = function_metadata.is_method
+    logger.debug("%s is method: %s", func_name, is_method)
     any_exception = False
     any_gb = False
     any_ga = False
     any_kwargs = False
     parameterization_list = ["@pytest.mark.parametrize(\n"]
-    parameterization_list.append(f"\"{', '.join(function_metadata.parameter_names)}")
+    parameterization_list.append("\"")
+    if is_method and "__init__" not in func_name:
+        parameterization_list[1] += "test_class_instance, "
+    parameterization_list[1] += f"{', '.join(function_metadata.parameter_names)}"
     if any(v.kwargs for v in state.values()):
         parameterization_list[1] += ", kwargs"
         any_kwargs = True
@@ -1776,9 +1797,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         any_ga = True
     parameterization_list[1] += '\",\n['
 
-    if parameterization_list[1].startswith("\"self,"):
+    if "self" in parameterization_list[1]:
         # Chop off leading "self," parameter
-        parameterization_list[1] = re.sub("\"self,", '"', parameterization_list[1])
+        parameterization_list[1] = re.sub("self, ", '', parameterization_list[1])
     test_str_list = [f"def test_{func_name.lower().replace('.','_')}({parameterization_list[1][1:-4]}):\n",
                         docstring,
                     "# Monkeypatch here"
@@ -1787,14 +1808,17 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     for hash_key in sorted(state):
         globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()}
         globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}
-        new_params = [  ','.join(state[hash_key].args)]
+        new_params = []
+        if is_method and "__init__" not in func_name:
+            new_params.append(state[hash_key].constructor)
+        new_params.append(','.join(state[hash_key].args))
         if any_kwargs:
             new_params.append(','.join(state[hash_key].kwargs) if state[hash_key].kwargs else '"N/A"')
         if any_exception:
             new_params.append(state[hash_key].exception_type.split("'")[1] if state[hash_key].exception_type else '"N/A"')
             new_params.append(repr(state[hash_key].exception_message) if state[hash_key].exception_message else '"N/A"')
         new_params.append(repr(state[hash_key].result))
-        new_params.append('"N/A"' if state[hash_key].result_type == "NoneType" else repr(state[hash_key].result_type))
+        new_params.append('"N/A"' if state[hash_key].result_type == "NoneType" else state[hash_key].result_type.split('.')[-1])
         if any_gb:
             new_params.append('{}' if not globals_before else repr(globals_before))
         if any_ga:
@@ -1808,7 +1832,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         this_parameterization =""# f"({','.join(state[hash_key].args)}"
         monkey_patches = []
         if state[hash_key].globals_before:
-            monkey_patches.append(f"{tab}for k,v in globals_before.items():\n")
+            monkey_patches.append(f"{tab*2}for k, v in globals_before.items():\n")
         grv_str_list: list[str] = []
         for k in sorted(state[hash_key].globals_before):
             needs_monkeypatch = True
@@ -1819,10 +1843,10 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
             if k in constant_globals_before_key:
                 grv_str_list.append(k.upper())
-                line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+                line = f'{tab*3}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
             else:
                 grv_str_list.append(k)
-                line = f'{tab*2}monkeypatch.setattr({package}, k, v)\n'
+                line = f'{tab*3}monkeypatch.setattr({package}, k, v)\n'
             monkey_patches.append(line)
 
         if monkey_patches:
@@ -1839,8 +1863,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             v = normalize_arg(v)
         test_str_list += this_parameterization
 
-        is_method = function_metadata.is_method
-        logger.debug("%s is method: %s", func_name, is_method)
+
 
         this_result_type = function_metadata.coverage_io[hash_key].result_type
         test_str_list += meta_program_function_call(state[hash_key],
@@ -1880,7 +1903,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
         if test_str_list:
             if needs_monkeypatch:
-                test_str_list[2] = f"{tab}monkeypatch = MonkeyPatch()\n"
+                test_str_list[2] = f"{tab*2}monkeypatch = MonkeyPatch()\n"
             else:
                 test_str_list.pop(2)
 
