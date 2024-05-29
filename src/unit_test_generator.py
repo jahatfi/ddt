@@ -1417,10 +1417,23 @@ def update_global(obj,
         return this_coverage_info
     #print(f"{this_global}={this_entry}")
 
+    updated_entry = this_entry
+    if isinstance(obj, str):
+        logger.critical("Normalize it")
+        updated_entry = normalize_string(this_entry)
+    elif len(updated_entry) > 1:
+        logger.critical("Chop it")
+        updated_entry = this_entry[1:-1]
+    else:
+        logger.critical(f"Nope {updated_entry=} {len(updated_entry)=}")
+
     if phase == "Before":
-        this_coverage_info.globals_before[this_global] = normalize_string(this_entry)
-    elif phase == 'After':
-        this_coverage_info.globals_after[this_global] = normalize_string(this_entry)
+        this_coverage_info.globals_before[this_global] = updated_entry
+    elif phase == "After":
+        this_coverage_info.globals_after[this_global] = updated_entry
+
+    if this_global == "method_call_counter" and phase == "After":
+        logger.critical(f"{obj=} {type(obj)=} {this_coverage_info.globals_after=} {this_entry=} {updated_entry=}")
     return this_coverage_info
 
 
@@ -1880,12 +1893,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         #parameterization_list[-1] += repr(gwv_str_list)
 
         if sorted(state[hash_key].globals_after):
-            test_str_list.append(f"{tab}for global_var_written_to in {repr(sorted(state[hash_key].globals_after.keys()))}:\n")
-            test_str_list.append(tab+tab+"if global_var_written_to in ['None', '[]', '{}']:\n")
-            line = f'{tab*3}assert not {package}{dict_get}(global_var_written_to)\n'
+            test_str_list.append(f"{tab*2}for global_var_written_to in {repr(sorted(state[hash_key].globals_after.keys()))}:\n")
+            test_str_list.append(f"{tab*3}if global_var_written_to in ['None', '[]', '{{}}']:\n")
+            line = f'{tab*4}assert not {package}{dict_get}(global_var_written_to)\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
-            test_str_list.append(tab+tab+"else:\n")
+            test_str_list.append(f"{tab*2}else:\n")
             line = f'{tab*4}assert {package}{dict_get}(global_var_written_to) == global_var_written_to\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
