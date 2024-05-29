@@ -862,7 +862,9 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             logger.debug("No exception :)")
         except Exception as e:
             #this_metadata.exceptions[hash_key] = e
-            logger.debug("Caught e=%s", e)
+            logger.critical("function: '%s' Caught %s e=%s", func_name, type(e), e)
+            logger.debug("caught_exception=%s @ %s result=%s",
+                     caught_exception, hashed_input, result)
             caught_exception = e
             #raise caught_exception'
         finally:
@@ -870,11 +872,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
-    cov_report_ = json.loads(stdout_lines[0])
-    if caught_exception:
-        logger.debug("caught_exception=%s @ %s result=%s",
-                     caught_exception, hashed_input, result)
-
+    cov_report_ = json.loads(stdout_lines[0])        
     result_type = str(type(result))
     parsed_type = re.match("<class '([^']+)'>", result_type)
     if parsed_type:
@@ -907,6 +905,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         logger.debug("No new coverage decorating %s; but not skipping.",
                      func_name)
         if caught_exception:
+            logger.critical("Raising %s: %s", type(caught_exception), str(caught_exception))
             raise caught_exception
         return result
 
@@ -948,6 +947,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     if is_subset:
         all_metadata[func_name] = this_metadata
         if caught_exception:
+            logger.critical("Raising %s: %s", type(caught_exception), str(caught_exception))
             raise caught_exception
         logger.debug("%s coverage is a subset this_metadata.coverage_percentage=%s",
                      func_name, this_metadata.coverage_percentage)
@@ -957,6 +957,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     logger.debug("%s coverage @%s is not a subset", func_name, hashed_input)
 
     if caught_exception:
+        logger.critical("Caching %s: %s", str(type(caught_exception)), str(caught_exception))
         logger.debug("caught_exception=%s", caught_exception)
         this_coverage_info.exception_type = str(type(caught_exception))
         this_coverage_info.exception_message = str(caught_exception)
@@ -975,8 +976,10 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     phase = "After"
     for this_global in this_metadata.global_vars_written_to:
         obj = func.__globals__[this_global]
+        logger.critical(f"{hashed_input=} {this_coverage_info=}")
         this_coverage_info = update_global(obj, this_global,
                                            phase, this_coverage_info)
+        logger.critical(f"{hashed_input=} {this_coverage_info=}")
         these_types = get_all_types("5", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
 
@@ -1406,26 +1409,21 @@ def update_global(obj,
     """
     Update and return state dictionary with new global.
     """
+    if repr(obj).startswith("<"):
+        logger.critical("Skipping %s", obj)
+        return this_coverage_info
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
+        updated_entry = copy.deepcopy(this_entry)
     else:
-        this_entry = repr(obj)
+        updated_entry = copy.deepcopy(obj)
     # The block below is for a separate project
     #if this_global == "g_function_params_write_locs":
         #logger.critical(f"{this_global=}\n{obj=}")
-    if this_entry.startswith("<"):
-        return this_coverage_info
+
     #print(f"{this_global}={this_entry}")
 
-    updated_entry = this_entry
-    if isinstance(obj, str):
-        logger.critical("Normalize it")
-        updated_entry = normalize_string(this_entry)
-    elif len(updated_entry) > 1:
-        logger.critical("Chop it")
-        updated_entry = this_entry[1:-1]
-    else:
-        logger.critical(f"Nope {updated_entry=} {len(updated_entry)=}")
+    #updated_entry = this_entry
 
     if phase == "Before":
         this_coverage_info.globals_before[this_global] = updated_entry
@@ -1433,7 +1431,7 @@ def update_global(obj,
         this_coverage_info.globals_after[this_global] = updated_entry
 
     if this_global == "method_call_counter" and phase == "After":
-        logger.critical(f"{obj=} {type(obj)=} {this_coverage_info.globals_after=} {this_entry=} {updated_entry=}")
+        logger.critical(f"{obj=} {type(obj)=} {this_coverage_info.globals_after=} {updated_entry=}")
     return this_coverage_info
 
 
@@ -1624,16 +1622,17 @@ def meta_program_function_call( this_state:CoverageInfo,
             call = f"{package}.{func_name}({parameter_names[0]}{kwargs_str})\n"
 
     if raises_ex:
-        e_type = this_state.exception_type
-        try:
-            e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
-        except AttributeError as e:
-            logger.critical(this_state.exception_type)
-            raise e
-        e_str = this_state.exception_message
+        #e_type = this_state.exception_type
+        logger.critical(f"{this_state=} {func_name=} {raises_ex=} {this_state.exception_type=}")
+        #try:
+        #    e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
+        #except AttributeError as e:
+        #    logger.critical(this_state.exception_type)
+        #    raise e
+        #e_str = this_state.exception_message
         # Any special chars, e.g. an empty list: [] in the e_str will break
         # the pytest.raise() parser, so use re.escape()
-        e_str = re.escape(e_str)
+        #e_str = re.escape(e_str)
 
         # Source: https://docs.pytest.org/en/6.2.x/assert.html#assertraises
         line = f"{indent}if exception_type != 'N/A':\n"
@@ -1898,7 +1897,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             line = f'{tab*4}assert not {package}{dict_get}(global_var_written_to)\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
-            test_str_list.append(f"{tab*2}else:\n")
+            test_str_list.append(f"{tab*3}else:\n")
             line = f'{tab*4}assert {package}{dict_get}(global_var_written_to) == global_var_written_to\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
