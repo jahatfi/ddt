@@ -49,13 +49,13 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "dffa6fb7a2b47e9f70da9f21e5e664bcea1ba432ebb22f32f615dacf78489ca6": {
+      "2fcde918ffacbbb30ae860654c530d7850072b9a41fc16835cdc5bf0fdc3020d": {
          "args": [
             "30"
          ],
          "kwargs": {},
          "globals_before": {
-            "mode": "'fizzbuzz'"
+            "mode": "fizzbuzz"
          },
          "globals_after": {},
          "result": "30 with mode='fizzbuzz' yields 'fizzbuzz'",
@@ -76,13 +76,13 @@
          "cost": 0.001,
          "result_type": "str"
       },
-      "8a32d58c46313f5fb17a5fdf8621841b5bf66f0bf4ba6675c7b395648a339801": {
+      "332f74facbdc5888beeee5ca119926b4501c2dc9dd3ab99e811d6866bdd02840": {
          "args": [
             "30"
          ],
          "kwargs": {},
          "globals_before": {
-            "mode": "'buzzfizz'"
+            "mode": "buzzfizz"
          },
          "globals_after": {},
          "result": "30 with mode='buzzfizz' yields 'buzzfizz'",
@@ -104,13 +104,13 @@
          "cost": 0.001,
          "result_type": "str"
       },
-      "e66e7ffe21a59ab66a43cbe7fa9d06cc70b349e5069479c51f23b5e78661cca3": {
+      "458ae2906b3b144383bfba0618ff5c3ea1d2e981782eae30455d98eb608b4488": {
          "args": [
             "6"
          ],
          "kwargs": {},
          "globals_before": {
-            "mode": "'a_test'"
+            "mode": "a_test"
          },
          "globals_after": {},
          "result": "Mode 'a_test' invalid for fizzbuzz()",

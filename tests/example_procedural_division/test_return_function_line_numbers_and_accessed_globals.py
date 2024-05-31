@@ -11,34 +11,21 @@ import divide_ints
 
 # In sum, these tests covered 81.48% of return_function_line_numbers_and_accessed_globals's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1066', '1075', '1100-1102']
+# ['1074', '1083', '1108-1110']
 @pytest.mark.parametrize(
-    "f, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "f, result, return_type",
     [
         (
             divide_ints.divide_ints,
-            "N/A",
-            "N/A",
-            "N/A",
-            "[[26, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42], {'error_code', 'logger'}, {'error_code'}]",
-            "list",
-            {},
-            {},
+            "[[26, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42], {'logger', 'error_code'}, {'error_code'}]",
+            list,
         ),
     ],
 )
-def test_return_function_line_numbers_and_accessed_globals(
-    f,
-    kwargs,
-    exception_type,
-    exception_message,
-    result,
-    return_type,
-    globals_before,
-    globals_after,
-):
+def test_return_function_line_numbers_and_accessed_globals(f, result, return_type):
     """
     Programmatically generated test function for return_function_line_numbers_and_accessed_globals
     """
     x = unit_test_generator.return_function_line_numbers_and_accessed_globals(f)
-    assert x == result or repr(x) == result or repr(result) == x
+    assert isinstance(x, return_type)
+    assert x == result or repr(x) == result or x == repr(result) or x == eval(result)

@@ -4,62 +4,62 @@
       "arg"
    ],
    "lines": [
-      1421,
-      1427,
-      1428,
-      1429,
-      1430,
-      1431,
-      1432,
-      1434,
-      1435,
-      1436
+      1439,
+      1445,
+      1446,
+      1447,
+      1448,
+      1449,
+      1450,
+      1452,
+      1453,
+      1454
    ],
    "non_code_lines": [
-      1422,
-      1423,
-      1424,
-      1425,
-      1426,
-      1433
+      1440,
+      1441,
+      1442,
+      1443,
+      1444,
+      1451
    ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "0cdff9e93ad0dc348e7cda96b5611729e98d0ca1002940f823af8a6a79aa76b3": {
+      "51f558767b2ec26fa46673b7f5fcc0f124d3b414edfcf1e649c9c48cf9b730e3": {
          "args": [
-            "\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \\\"'fizzbuzz'\\\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
+            "\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
          "coverage": [
-            1427,
-            1428,
-            1429,
-            1431,
-            1434,
-            1436
+            1445,
+            1446,
+            1447,
+            1449,
+            1452,
+            1454
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.002,
+         "cost": 0.001,
          "result_type": "str"
       }
    },
    "coverage_percentage": 60.0,
    "types_in_use": [],
    "unified_test_coverage": [
-      1427,
-      1428,
-      1429,
-      1431,
-      1434,
-      1436
+      1445,
+      1446,
+      1447,
+      1449,
+      1452,
+      1454
    ],
    "needs_pytest": false
 }

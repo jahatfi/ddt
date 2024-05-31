@@ -4,45 +4,45 @@
       "arg"
    ],
    "lines": [
-      1421,
-      1427,
-      1428,
-      1429,
-      1430,
-      1431,
-      1432,
-      1434,
-      1435,
-      1436
+      1439,
+      1445,
+      1446,
+      1447,
+      1448,
+      1449,
+      1450,
+      1452,
+      1453,
+      1454
    ],
    "non_code_lines": [
-      1422,
-      1423,
-      1424,
-      1425,
-      1426,
-      1433
+      1440,
+      1441,
+      1442,
+      1443,
+      1444,
+      1451
    ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "a9d5c24ceb478c2d93adce7350c40fcccaa35af4ea204ce39b7105e70a16ad94": {
+      "1b0cf21d61840a9edd5163f677c5f5977d4c4d358fde7c936ad5ebd3796e899e": {
          "args": [
-            "\"CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\\\"Red\\\", 10, 0)', cost=0.0, result_type='')\""
+            "\"CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\\\"Red\\\", 10, 0)', cost=0.0, result_type='')\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
+         "result": "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
          "coverage": [
-            1427,
-            1428,
-            1429,
-            1431,
-            1434,
-            1436
+            1445,
+            1446,
+            1447,
+            1449,
+            1452,
+            1454
          ],
          "exception_type": "",
          "exception_message": "",
@@ -54,12 +54,12 @@
    "coverage_percentage": 60.0,
    "types_in_use": [],
    "unified_test_coverage": [
-      1427,
-      1428,
-      1429,
-      1431,
-      1434,
-      1436
+      1445,
+      1446,
+      1447,
+      1449,
+      1452,
+      1454
    ],
    "needs_pytest": false
 }

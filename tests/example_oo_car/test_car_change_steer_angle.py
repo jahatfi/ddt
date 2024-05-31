@@ -2,6 +2,7 @@
 Programmatically generated test function for Car.change_steer_angle
 """
 
+import re
 import pytest
 
 # Now import modules specific to Car.change_steer_angle:
@@ -12,36 +13,30 @@ from car import Car
 # Line(s) not covered by ANY of the tests below:
 # ['71', '85-86']
 @pytest.mark.parametrize(
-    "self,angle, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "test_class_instance, angle, exception_type, exception_message, result, return_type",
     [
         (
+            Car("Green", 48, 90),
             -1080,
-            "N/A",
-            "<class 'AssertionError'>",
+            AssertionError,
             "angle=-1080    out of bounds!",
             "None",
             "N/A",
-            {},
-            {},
         ),
-        (30, "N/A", "N/A", "N/A", "30", "int", {}, {}),
+        (Car("Red", 9, 0), 30, "N/A", "N/A", "30", int),
     ],
 )
 def test_car_change_steer_angle(
-    self,
-    angle,
-    kwargs,
-    exception_type,
-    exception_message,
-    result,
-    return_type,
-    globals_before,
-    globals_after,
+    test_class_instance, angle, exception_type, exception_message, result, return_type
 ):
     """
     Programmatically generated test function for Car.change_steer_angle
     """
-    this_class = Car("Green", 48, 90)
-    arg = -1080
-    with pytest.raises(AssertionError, match=r"angle=\-1080\ \ \ \ out\ of\ bounds!"):
-        this_class.change_steer_angle(self)
+    if exception_type != "N/A":
+        with pytest.raises(exception_type, match=re.escape(exception_message)):
+            test_class_instance.change_steer_angle(angle)
+    else:
+        x = test_class_instance.change_steer_angle(angle)
+        assert (
+            x == result or repr(x) == result or x == repr(result) or x == eval(result)
+        )

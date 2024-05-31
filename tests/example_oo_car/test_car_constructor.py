@@ -10,26 +10,17 @@ import car
 # Line(s) not covered by ANY of the tests below:
 # [33]
 @pytest.mark.parametrize(
-    "self,color,speed,steer_angle, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "color, speed, steer_angle, result, return_type",
     [
-        ("Red", 10, 0, "N/A", "N/A", "N/A", "None", "N/A", {}, {}),
+        ("Red", 10, 0, "None", "N/A"),
     ],
 )
-def test_car___init__(
-    self,
-    color,
-    speed,
-    steer_angle,
-    kwargs,
-    exception_type,
-    exception_message,
-    result,
-    return_type,
-    globals_before,
-    globals_after,
-):
+def test_car___init__(color, speed, steer_angle, result, return_type):
     """
     Programmatically generated test function for Car.__init__
     """
-    x = car.Car(self, color, speed, steer_angle)
+    x = car.Car(color, speed, steer_angle)
     assert isinstance(x, car.Car)
+    assert x.color == color
+    assert x.speed == speed
+    assert x.steer_angle == steer_angle

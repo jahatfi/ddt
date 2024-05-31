@@ -12,26 +12,15 @@ from car import Car
 # Line(s) not covered by ANY of the tests below:
 # ['45', '52']
 @pytest.mark.parametrize(
-    "self,rate,duration, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "test_class_instance, rate, duration, result, return_type",
     [
-        (-1, 1, "N/A", "N/A", "N/A", "9", "int", {}, {}),
+        (Car("Red", 10, 0), -1, 1, "9", int),
     ],
 )
-def test_car_brake(
-    self,
-    rate,
-    duration,
-    kwargs,
-    exception_type,
-    exception_message,
-    result,
-    return_type,
-    globals_before,
-    globals_after,
-):
+def test_car_brake(test_class_instance, rate, duration, result, return_type):
     """
     Programmatically generated test function for Car.brake
     """
-    this_class = Car("Red", 10, 0)
-    x = this_class.brake(self, rate, duration)
-    assert x == result or repr(x) == result or repr(result) == x
+    x = test_class_instance.brake(rate, duration)
+    assert isinstance(x, return_type)
+    assert x == result or repr(x) == result or x == repr(result) or x == eval(result)

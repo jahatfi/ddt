@@ -686,7 +686,6 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             class_type = copy.deepcopy(this_type)
         else:
             logger.critical("Found Constructor: %s args=%s", func_name, args[1:])
-            #this_coverage_info.constructor = f"{func_name.replace('.__init__', '')}{repr(args[1:])}"
 
 
     new_types_in_use = set()
@@ -785,7 +784,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
                     logger.critical("%s: class_repr=%s arg=%s", func_name, class_repr, arg)
-                    this_coverage_info.constructor = copy.deepcopy(class_repr)
+                    #this_coverage_info.constructor = copy.deepcopy(class_repr)
 
                     args_copy.append(class_repr)
             else:
@@ -1586,7 +1585,7 @@ def meta_program_function_call( this_state:CoverageInfo,
     class_var_name = ""
     is_method = False
     list_of_lines = []
-    singletons = ["None", "True", "False"]
+    singletons = [None, True, False]
     indent = tab*2
     # Handle the case that decoratee is a
     # class method by constructing the class
@@ -1678,13 +1677,13 @@ def meta_program_function_call( this_state:CoverageInfo,
     if result_type and result_type != "NoneType":
         list_of_lines.append(f"{indent}assert isinstance(x, return_type)\n")
     if "__init__" not in func_name:
-        list_of_lines.append(f"{indent}if result in {repr(singletons)}:\n")
-        indent += tab
-        list_of_lines.append(f"{indent}assert x is result\n")
-        indent = indent[:-len(tab)]
-        list_of_lines.append(f"{indent}else:\n")
-        indent += tab
-        line = f"{indent}assert x == result or repr(x) == result or x == repr(result)\n"
+        #list_of_lines.append(f"{indent}if result in {repr(singletons)}:\n")
+        #indent += tab
+        #list_of_lines.append(f"{indent}assert x is result\n")
+        #indent = indent[:-len(tab)]
+        #list_of_lines.append(f"{indent}else:\n")
+        #indent += tab
+        line = f"{indent}assert x == result or repr(x) == result or x == repr(result) or x == eval(result)\n"
         list_of_lines.append(line)
     else:
         for name in parameter_names:
@@ -1898,7 +1897,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
             test_str_list.append(f"{tab*3}else:\n")
-            line = f'{tab*4}assert {package}{dict_get}(global_var_written_to) == global_var_written_to\n'
+            line = f'{tab*4}assert {package}{dict_get}(global_var_written_to) == globals_after[global_var_written_to]\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
             needs_monkeypatch = True

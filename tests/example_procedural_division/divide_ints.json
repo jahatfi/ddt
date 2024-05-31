@@ -35,17 +35,17 @@
    ],
    "source_file": null,
    "coverage_io": {
-      "099f85c98e5dd0b822efde928fb453ffebabe30ea0694a58da9784201c1694c0": {
+      "3c3651fe9bf9ccfdd1a1aff6a70f7ed10020457da35226255464b77c65d9b9f1": {
          "args": [
             "6",
             "2"
          ],
          "kwargs": {},
          "globals_before": {
-            "error_code": "0"
+            "error_code": 0
          },
          "globals_after": {
-            "error_code": "0"
+            "error_code": 0
          },
          "result": "6/2=3.0",
          "coverage": [
@@ -61,17 +61,17 @@
          "cost": 0.004,
          "result_type": "str"
       },
-      "17969d9e9c77e947a69421dfbb10213f8ed028377d0903863268b22a6c6d0969": {
+      "8dcd244d9477f2f2ad357ec77e59f72415baec689cd405b8f6194849632f34bc": {
          "args": [
             "3",
             "0"
          ],
          "kwargs": {},
          "globals_before": {
-            "error_code": "0"
+            "error_code": 0
          },
          "globals_after": {
-            "error_code": "-3"
+            "error_code": -3
          },
          "result": "None",
          "coverage": [
@@ -85,20 +85,20 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "ValueError: Cannot divide by zero!",
          "constructor": "",
-         "cost": 0.002,
+         "cost": 0.003,
          "result_type": "NoneType"
       },
-      "7896c4d85fb975f0ff1c49f32f352d103f2a508bb8bcf571fff9f4411b356b49": {
+      "07a742d4d53ae6bf7189b38410c8560979026474279353f659adda1c5bcd46a8": {
          "args": [
             "\"10\"",
             "2"
          ],
          "kwargs": {},
          "globals_before": {
-            "error_code": "0"
+            "error_code": 0
          },
          "globals_after": {
-            "error_code": "-1"
+            "error_code": -1
          },
          "result": "None",
          "coverage": [
@@ -113,17 +113,17 @@
          "cost": 0.003,
          "result_type": "NoneType"
       },
-      "e3e3d930080cdfd5f06808564abb101a68ae34a394da3d82833052685683ec98": {
+      "2ab261f2cc5c9bd11e8c9817bea4afdfda42f0608bcff0ddd4521ae6d59cc6e8": {
          "args": [
             "8",
             "[]"
          ],
          "kwargs": {},
          "globals_before": {
-            "error_code": "0"
+            "error_code": 0
          },
          "globals_after": {
-            "error_code": "-2"
+            "error_code": -2
          },
          "result": "None",
          "coverage": [

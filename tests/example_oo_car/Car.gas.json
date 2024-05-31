@@ -31,17 +31,17 @@
    ],
    "source_file": null,
    "coverage_io": {
-      "6654fc7d2ffc7013756631c60503a1149dc6dc4945d33933d1dac7d412ae9225": {
+      "78e4f6e57c2f532c43747e020340acf548111ebba3a4dfbb9b7a12af2d0fa659": {
          "args": [
             "-1",
             "1"
          ],
          "kwargs": {},
          "globals_before": {
-            "method_call_counter": "0"
+            "method_call_counter": 0
          },
          "globals_after": {
-            "method_call_counter": "1"
+            "method_call_counter": 1
          },
          "result": "None",
          "coverage": [
@@ -53,20 +53,20 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "Gas rate (m/s) must be positive.",
          "constructor": "Car(\"Red\", 10, 0)",
-         "cost": 0.001,
+         "cost": 0.004,
          "result_type": "NoneType"
       },
-      "6777dca1203ba028fe6eea29f029ed19a05e9e5da06d5afb2df4291ea4bfaa30": {
+      "6489cc7d9835b1fc422a9e25a2d99a7374cf0a90d0450a9435df3167635e432a": {
          "args": [
             "2",
             "2"
          ],
          "kwargs": {},
          "globals_before": {
-            "method_call_counter": "1"
+            "method_call_counter": 1
          },
          "globals_after": {
-            "method_call_counter": "2"
+            "method_call_counter": 2
          },
          "result": "16",
          "coverage": [

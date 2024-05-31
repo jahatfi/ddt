@@ -16,7 +16,7 @@ from src.unit_test_generator import (
 FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.ERROR)
+unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     for file in this_file.parent.rglob("*"):
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
             logger.debug("%s != %s", file.absolute().name, this_file.name)
-            logger.info("Deleting %s to ensure clean start", this_file.name)
+            logger.info("Deleting %s to ensure clean start", file.name)
             os.remove(file)
 
     # The code below applies the CLI arg above to selectively enable/disable
@@ -239,6 +239,6 @@ if __name__ == "__main__":
     Car.brake = unit_test_generator_decorator(110, 100)(Car.brake)
     Car.gas = unit_test_generator_decorator(110, 100)(Car.gas)
     Car.change_steer_angle = unit_test_generator_decorator(110, 100)(Car.change_steer_angle)
-    Car.is_going_faster_than = unit_test_generator_decorator(110, 100)(Car.is_going_faster_than)
-    Car.__init__ = unit_test_generator_decorator(110, 100)(Car.__init__)
+    Car.is_going_faster_than = unit_test_generator_decorator(110, 110)(Car.is_going_faster_than)
+    Car.__init__ = unit_test_generator_decorator(110, 110)(Car.__init__)
     main()

@@ -12,26 +12,15 @@ from car import Car
 # Line(s) not covered by ANY of the tests below:
 # [117]
 @pytest.mark.parametrize(
-    "self,other_car, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "test_class_instance, other_car, result, return_type",
     [
-        (Car("White", 19, 0), "N/A", "N/A", "N/A", "True", "bool", {}, {}),
+        (Car("Red", 20, 0), Car("White", 19, 0), "True", bool),
     ],
 )
-def test_car_is_going_faster_than(
-    self,
-    other_car,
-    kwargs,
-    exception_type,
-    exception_message,
-    result,
-    return_type,
-    globals_before,
-    globals_after,
-):
+def test_car_is_going_faster_than(test_class_instance, other_car, result, return_type):
     """
     Programmatically generated test function for Car.is_going_faster_than
     """
-    this_class = Car("Red", 20, 0)
-    arg = Car("White", 19, 0)
-    x = this_class.is_going_faster_than(self)
-    assert x is True
+    x = test_class_instance.is_going_faster_than(other_car)
+    assert isinstance(x, return_type)
+    assert x == result or repr(x) == result or x == repr(result) or x == eval(result)
