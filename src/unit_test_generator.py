@@ -294,6 +294,7 @@ class FunctionMetaData(Jsonable):
         result = [f"FunctionMetaData(name=\'{self.name}\'"]
 
         result.append(" lines="+repr(self.lines))
+        result.append(" parameter_names="+repr(self.parameter_names))
         result.append(" is_method="+repr(self.is_method))
         result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
         result.append(" global_vars_written_to="+repr(self.global_vars_written_to))
@@ -871,7 +872,7 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
-    cov_report_ = json.loads(stdout_lines[0])        
+    cov_report_ = json.loads(stdout_lines[0])
     result_type = str(type(result))
     parsed_type = re.match("<class '([^']+)'>", result_type)
     if parsed_type:
@@ -975,10 +976,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     phase = "After"
     for this_global in this_metadata.global_vars_written_to:
         obj = func.__globals__[this_global]
-        logger.critical(f"{hashed_input=} {this_coverage_info=}")
         this_coverage_info = update_global(obj, this_global,
                                            phase, this_coverage_info)
-        logger.critical(f"{hashed_input=} {this_coverage_info=}")
         these_types = get_all_types("5", func.__globals__[this_global], True, 0, func_name)
         this_metadata.types_in_use |= these_types
 
@@ -1428,12 +1427,7 @@ def update_global(obj,
         this_coverage_info.globals_before[this_global] = updated_entry
     elif phase == "After":
         this_coverage_info.globals_after[this_global] = updated_entry
-
-    if this_global == "method_call_counter" and phase == "After":
-        logger.critical(f"{obj=} {type(obj)=} {this_coverage_info.globals_after=} {updated_entry=}")
     return this_coverage_info
-
-
 
 
 @unit_test_generator_decorator(sample_count=1)
@@ -1449,7 +1443,8 @@ def normalize_arg(arg:typing.Any)->typing.Any:
     elif arg == "true":
         arg = "True"
     # Trim quotes so types are used rather than just the string representation
-    if isinstance(arg, str) and ((arg[0] == '"' and arg[-1] == '"') or (arg[0] == "'" and arg[-1] == "'")):
+    if isinstance(arg, str) and ((arg[0] == '"' and arg[-1] == '"') or \
+                                 (arg[0] == "'" and arg[-1] == "'")):
         arg = arg[1:-1]
     return arg
 
@@ -1569,15 +1564,16 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
 def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
-                                func_name:str,
-                                result_type:str,
-                                parameter_names:List[str],
-                                raises_ex:bool):
+                                raises_ex:bool,
+                                function_metadata:FunctionMetaData)->list[str]:
     """
     Given the provided arguments,
     return a list of valid Python code that executes the decorated
     function and asserts that the result is as expected.
     """
+    result_type = this_state.result_type
+    func_name = function_metadata.name
+    parameter_names = function_metadata.parameter_names
     try:
         parameter_names.remove("self")
     except ValueError:
@@ -1585,7 +1581,7 @@ def meta_program_function_call( this_state:CoverageInfo,
     class_var_name = ""
     is_method = False
     list_of_lines = []
-    singletons = [None, True, False]
+    #singletons = [None, True, False]
     indent = tab*2
     # Handle the case that decoratee is a
     # class method by constructing the class
@@ -1616,23 +1612,9 @@ def meta_program_function_call( this_state:CoverageInfo,
         if len(this_state.args) != 1:
             call = f"{package}.{func_name}({','.join(parameter_names)}{kwargs_str})\n"
         elif len(this_state.args):
-            arg = normalize_string(this_state.args[0])
-            #test_str_list.append(f"{indent}arg = {arg}\n")
             call = f"{package}.{func_name}({parameter_names[0]}{kwargs_str})\n"
 
     if raises_ex:
-        #e_type = this_state.exception_type
-        logger.critical(f"{this_state=} {func_name=} {raises_ex=} {this_state.exception_type=}")
-        #try:
-        #    e_type =  re.search("<class '([^']+)'", e_type).groups()[0] # type: ignore[union-attr]
-        #except AttributeError as e:
-        #    logger.critical(this_state.exception_type)
-        #    raise e
-        #e_str = this_state.exception_message
-        # Any special chars, e.g. an empty list: [] in the e_str will break
-        # the pytest.raise() parser, so use re.escape()
-        #e_str = re.escape(e_str)
-
         # Source: https://docs.pytest.org/en/6.2.x/assert.html#assertraises
         line = f"{indent}if exception_type != 'N/A':\n"
         indent += tab
@@ -1777,11 +1759,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     docstring = f'{tab*2}\"\"\"\n{tab*2}Programmatically generated test function for {func_name}\n{tab*2}\"\"\"\n'
 
-
-    #parameterization_list = ["@pytest.mark.parametrize(\n",
-    #                        f"\"{','.join(function_metadata.parameter_names)}, kwargs, exception_type, exception_message, result, return_type, globals_before, globals_after\",\n",
-    #                        '\n[']
-
     is_method = function_metadata.is_method
     logger.debug("%s is method: %s", func_name, is_method)
     any_exception = False
@@ -1811,9 +1788,10 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     if "self" in parameterization_list[1]:
         # Chop off leading "self," parameter
         parameterization_list[1] = re.sub("self, ", '', parameterization_list[1])
-    test_str_list = [f"def test_{func_name.lower().replace('.','_')}({parameterization_list[1][1:-4]}):\n",
+    clean_fn: str = func_name.lower().replace('.','_')
+    test_str_list = [   f"def test_{clean_fn}({parameterization_list[1][1:-4]}):\n",
                         docstring,
-                    "# Monkeypatch here"
+                        "# Monkeypatch here"
                     ]
     raises_ex: bool = False
     for hash_key in sorted(state):
@@ -1874,34 +1852,26 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             v = normalize_arg(v)
         test_str_list += this_parameterization
 
-
-
-        this_result_type = function_metadata.coverage_io[hash_key].result_type
         test_str_list += meta_program_function_call(state[hash_key],
                                                     tab,
                                                     package,
-                                                    func_name,
-                                                    this_result_type,
-                                                    function_metadata.parameter_names,
-                                                    raises_ex)
+                                                    raises_ex,
+                                                    function_metadata)
         dict_get = ".__dict__.get"
 
-
-
-        #parameterization_list[-1] += repr(gwv_str_list)
-
         if sorted(state[hash_key].globals_after):
-            test_str_list.append(f"{tab*2}for global_var_written_to in {repr(sorted(state[hash_key].globals_after.keys()))}:\n")
-            test_str_list.append(f"{tab*3}if global_var_written_to in ['None', '[]', '{{}}']:\n")
-            line = f'{tab*4}assert not {package}{dict_get}(global_var_written_to)\n'
+            gvwt = "global_var_written_to"
+            line = f"{tab*2}for {gvwt} in {repr(sorted(state[hash_key].globals_after.keys()))}:\n"
+            test_str_list.append(line)
+            test_str_list.append(f"{tab*3}if {gvwt} in ['None', '[]', '{{}}']:\n")
+            line = f'{tab*4}assert not {package}{dict_get}({gvwt})\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
             test_str_list.append(f"{tab*3}else:\n")
-            line = f'{tab*4}assert {package}{dict_get}(global_var_written_to) == globals_after[global_var_written_to]\n'
+            line = f'{tab*4}assert {package}{dict_get}({gvwt}) == globals_after[{gvwt}]\n'
             line = re.sub("<class '([^']+)'>", "\\1", line)
             test_str_list.append(line)
             needs_monkeypatch = True
-
 
         #test_str_list += monkey_patches
         # Delete all references to "__main__", it's needless
@@ -1968,12 +1938,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     result_file_str = re.sub("__init__", "constructor", result_file_str)
     result_file = tests_dir.joinpath(result_file_str)
 
-
-    #final_result = ''.join(y for y in x for x in test_str_list_def_dict.values())
-    #print(final_result)
-    #final_result_bytes = "".join([x for x in final_result]).encode()
-    #logger.critical(final_result)
-
     if "pytest" in sys.modules:
         # Return hash of resulting string here,
         # this is used when self-testing auto_generate_tests with
@@ -1981,7 +1945,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         h = hashlib.new('sha256')
         h.update(str(sorted(test_str_list_def_dict.items())).encode())
         return h.digest().hex()
-        #return str(sorted(test_str_list_def_dict.items()))#final_result_bytes
 
     parameterization_list[-1] += "])\n"
     docstring = f'\"\"\"\nProgrammatically generated test function for {func_name}\n\"\"\"'
