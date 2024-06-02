@@ -319,10 +319,10 @@ class FunctionMetaData(Jsonable):
     def purge_record(self, hash_key):
         """
         Delete IO record with this hashed_input as key
+        NOTE: Need to add "update_types_in_use" method and convert
+        types_in_use to a dict {hash_key:set(types_per_hash_key)}
+        if this function is ever called.
         """
-        # TODO add a "update_types_in_use" method
-        # Convert types_in_use to a dict {hash_key:set(types_per_hash_key)}
-
         update_fields = [self.coverage_io]
         for field in update_fields:
             try:
@@ -629,7 +629,7 @@ logger.setLevel(logging.CRITICAL)
 
 def get_filename(arg:str):
     """
-    Returns the name of this Python module if valid, 
+    Returns the name of this Python module if valid,
     else returns the empty string.
     """
     file_name = ""
