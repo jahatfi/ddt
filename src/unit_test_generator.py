@@ -452,7 +452,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                 # cycle.  Gather some more info to determine if we want to
                 # apply the decorator
                 if not func_name:
-                    # Parsing error, skip this decorator.                    
+                    # Parsing error, skip this decorator.
                     logger.warning("func_name is Falsey; skip decorator")
                     # Since this decorator is effectively nullified now,
                     # do NOT try/catch/raise any exceptions.
@@ -496,7 +496,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                                 sample_count, func_name)
                     logger.info(this_metadata.coverage_io)
                     # Since this decorator is effectively nullified now,
-                    # do NOT try/catch/raise any exceptions.                    result = func(*args, **kwargs)
+                    # do NOT try/catch/raise any exceptions.
                     return func(*args, **kwargs)
 
                 # percent_coverage or saple_count properly specified, but
@@ -1803,12 +1803,24 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             new_params.append(state[hash_key].constructor)
         new_params.append(','.join(state[hash_key].args))
         if any_kwargs:
-            new_params.append(','.join(state[hash_key].kwargs) if state[hash_key].kwargs else '"N/A"')
+            if state[hash_key].kwargs:
+                new_params.append(','.join(state[hash_key].kwargs))
+            else:
+                new_params.append('"N/A"')
         if any_exception:
-            new_params.append(state[hash_key].exception_type.split("'")[1] if state[hash_key].exception_type else '"N/A"')
-            new_params.append(repr(state[hash_key].exception_message) if state[hash_key].exception_message else '"N/A"')
+            if state[hash_key].exception_type:
+                new_params.append(state[hash_key].exception_type.split("'")[1])
+            else:
+                new_params.append('"N/A"')
+            if state[hash_key].exception_message:
+                new_params.append(repr(state[hash_key].exception_message))
+            else:
+                new_params.append('"N/A"')
         new_params.append(repr(state[hash_key].result))
-        new_params.append('"N/A"' if state[hash_key].result_type == "NoneType" else state[hash_key].result_type.split('.')[-1])
+        if state[hash_key].result_type == "NoneType":
+            new_params.append('"N/A"')
+        else:
+            new_params.append(state[hash_key].result_type.split('.')[-1])
         if any_gb:
             new_params.append('{}' if not globals_before else repr(globals_before))
         if any_ga:
