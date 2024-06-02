@@ -336,7 +336,7 @@ class FunctionMetaData(Jsonable):
 
     def default(self):
         """Wrapper for _default() method"""
-        return _default()
+        return _default(self)
 
     # https://stackoverflow.com/questions/3768895
     def to_json(self):
@@ -629,6 +629,17 @@ pp = pprint.PrettyPrinter(indent=3)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.CRITICAL)
 
+def get_filename(arg:str):
+    """
+    Returns the name of this Python module if valid, 
+    else returns the empty string.
+    """
+    file_name = ""
+    file_name_match = re.search(r"([\w]+).py", arg)
+    if file_name_match:
+        file_name = str(file_name_match.groups()[0])
+    return file_name
+
 # pylint: disable-next=too-many-locals,too-many-statements,too-many-branches
 def do_the_decorator_thing(func: Callable, func_name:str,
                            this_metadata:FunctionMetaData, source_file: str,
@@ -711,9 +722,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
             # Reset the class type, as this newest_import will be used instead
             class_type = None
             if arg.__module__ == "__main__":
-                file_name_match = re.search(r"([\w]+).py", str(arg.__code__))
-                if file_name_match:
-                    file_name = str(file_name_match.groups()[0])
+                file_name = get_filename(str(arg.__code__))
+                if file_name:
                     newest_import = re.sub("__main__", file_name, newest_import)
                 else:
                     logger.critical("NO FILENAME FOUND!: %s",
@@ -730,9 +740,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
         if callable(arg):
             logger.critical('callable')
             if arg.__module__ == "__main__":
-                file_name_match = re.search(r"([\w]+).py", str(arg.__code__))
-                if file_name_match:
-                    file_name = file_name_match.groups()[0]
+                file_name = get_filename(str(arg.__code__))
+                if file_name:
                     logger.critical("%s.%s",file_name, arg.__name__)
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
@@ -758,6 +767,10 @@ def do_the_decorator_thing(func: Callable, func_name:str,
                     class_repr = arg.repr()
                 try:
                     logger.info(class_repr)
+                    # This eval is necessary to check if classes can in fact
+                    # be represented as strings.  If not, and this SyntaxError
+                    # is uncaught, it will break everything.
+                    # pylint: disable-next=eval-used
                     eval(class_repr)
                     args_copy.append(class_repr)
 
@@ -986,14 +999,10 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     logger.debug("Achieved %.2f%% coverage for %s", percent_covered, func_name)
     sorted_coverage = sorted(list(this_coverage))
     logger.debug("sorted_coverage=%s", sorted_coverage)
-    # TODO remove these assserts and the hash_keys set
-    assert set(sorted_coverage) & set(this_metadata.lines)
     this_coverage_info.coverage = sorted_coverage
-    assert hashed_input not in hashed_inputs
     hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
-    # TODO remove this deepcopy
-    this_metadata.coverage_io[hashed_input] = copy.deepcopy(this_coverage_info)
+    this_metadata.coverage_io[hashed_input] = this_coverage_info
     this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 3)
 
     #print("Cost")
@@ -1086,12 +1095,10 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     disassembled_function = dis_(f)
     result = []
     for line in disassembled_function.splitlines():
-        # There's sometimes 1 leading space
-        # TODO: Determine if there's ever more than one leading space
-        # preceding a line number
-        line_number = re.match(r"^[ ]{0,1}([\d]+)", line)
-        if line_number:
-            line_numbers.append(int(line_number.groups()[0]))
+        line_number_match = re.match(r"\s*([\d]+)[ >]+[\d]+ [A-Z]", line)
+        if line_number_match:
+            line_number = int(line_number_match.groups()[0])
+            line_numbers.append(line_number)
         if "LOAD_GLOBAL" in line:
             this_global = line.split("(")[1].split(")")[0]
             if is_global_var(this_global, f.__globals__, f.__name__):
@@ -1180,16 +1187,9 @@ def get_all_types(loc: str,
         if hasattr(obj, "__code__"):
             logger.debug("%s %s.%s as callable",
                          loc, obj.__module__, obj.__name__)
-            # TODO: This is
-            # 1. Redundant, the line below is duplicated elsewhere
-            # 2. Perhaps not complete, I may need the (partial)
-            #    path to the python file, not such the file itself
-            file_name_match = re.search(r"([\w]+).py", str(obj.__code__))
-            if file_name_match:
-                file_name = file_name_match.groups()[0]
-            if file_name_match:
+            file_name = get_filename(str(obj.__code__))
+            if file_name:
                 if import_modules:
-                    file_name = file_name_match.groups()[0]
                     logger.debug("Adding %s.%s", file_name, obj.__name__)
                     return set([f"{file_name}.{obj.__name__}"])
                 logger.debug("I NEED just THE MODULE: %s", str(file_name))
@@ -1250,9 +1250,9 @@ def get_all_types(loc: str,
                 if parsed_type and parsed_type.startswith("__main__"):
                     ext_module_file = inspect.getfile(obj.__class__)
                     logger.info(ext_module_file)
-                    matched = re.search(r"([\w]+).py", ext_module_file)
-                    if matched:
-                        ext_module_file = matched.groups()[0]
+                    file_name = get_filename(ext_module_file)
+                    if file_name:
+                        ext_module_file = file_name
                         logger.info(ext_module_file)
                         fqn = re.sub("__main__", ext_module_file, parsed_type)
                         logger.info(fqn)
@@ -1323,6 +1323,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         purged = 0
 
         # TODO The code below is likely unnecessary now
+        '''
         for hash_key in coverage_io_keys:
             this_coverage = function_metadata.coverage_io[hash_key].coverage
             if not set(this_coverage) & set(function_metadata.lines):
@@ -1334,6 +1335,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
             for record in function_metadata.coverage_io.values():
                 cov = record['coverage']
                 function_metadata.unified_test_coverage |= set(cov)
+        '''
 
         test_suite = function_metadata.coverage_io
         # The json file is optional and unused but makes for
