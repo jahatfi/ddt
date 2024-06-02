@@ -323,9 +323,7 @@ class FunctionMetaData(Jsonable):
         # TODO add a "update_types_in_use" method
         # Convert types_in_use to a dict {hash_key:set(types_per_hash_key)}
 
-        update_fields = [
-            self.coverage_io,
-        ]
+        update_fields = [self.coverage_io]
         for field in update_fields:
             try:
                 field.pop(hash_key)
@@ -643,8 +641,7 @@ def get_filename(arg:str):
 # pylint: disable-next=too-many-locals,too-many-statements,too-many-branches
 def do_the_decorator_thing(func: Callable, func_name:str,
                            this_metadata:FunctionMetaData, source_file: str,
-                           keep_subsets: bool=False,
-                             *args, **kwargs):
+                           keep_subsets:bool, *args, **kwargs):
     """
     Any function wrapped with this decorator will have
     its execution coverage saved as though under a unit test.
@@ -1016,8 +1013,8 @@ def do_the_decorator_thing(func: Callable, func_name:str,
     return result
 
 
-
-all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData) # type: ignore[arg-type] # pylint: disable=line-too-long
+# pylint: disable-next=line-too-long
+all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData) # type: ignore[arg-type]
 hashed_inputs:set[str] = set() # method-assign
 
 class Capturing(list):
@@ -1737,7 +1734,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         initial_import = ""
 
     book_end = f'{tab*2}\"\"\"\n'
-    docstring = f'{book_end}{tab*2}Programmatically generated test function for {func_name}\n{book_end}'
+    docstring = f'{book_end}{tab*2}'
+    docstring += f"Programmatically generated test function for {func_name}()"
+    docstring += f'\n{book_end}'
 
     is_method = function_metadata.is_method
     logger.debug("%s is method: %s", func_name, is_method)
@@ -1939,7 +1938,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         return h.digest().hex()
 
     parameterization_list[-1] += "])\n"
-    docstring = f'\"\"\"\nProgrammatically generated test function for {func_name}\n\"\"\"'
+    docstring = f'\"\"\"\nProgrammatically generated test function for {func_name}()\n\"\"\"'
     with open(result_file, "w", encoding="utf-8") as st:
         st.write(docstring+"\n")
         for item in [imports, header, parameterization_list]:
