@@ -1314,29 +1314,6 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
     for func_name in func_names:
         logger.debug("func_name=%s", func_name)
         function_metadata:FunctionMetaData = copy.deepcopy(local_all_metadata[func_name])
-        coverage_io_keys = copy.deepcopy(list(function_metadata.coverage_io.keys()))
-
-        # TODO Fix bug here where function_metadata.coverage_io dictionaries
-        # are shared for multiple functions within this file.
-        # Patched for now by making a deep copy of each in the lines above,
-        # but it feels hacky.
-        purged = 0
-
-        # TODO The code below is likely unnecessary now
-        '''
-        for hash_key in coverage_io_keys:
-            this_coverage = function_metadata.coverage_io[hash_key].coverage
-            if not set(this_coverage) & set(function_metadata.lines):
-                purged += 1
-                function_metadata.purge_record(hash_key)
-                function_metadata.unified_test_coverage = set()
-
-        if purged:
-            for record in function_metadata.coverage_io.values():
-                cov = record['coverage']
-                function_metadata.unified_test_coverage |= set(cov)
-        '''
-
         test_suite = function_metadata.coverage_io
         # The json file is optional and unused but makes for
         # friendly reading of the inputs to the unit test if
