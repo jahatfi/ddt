@@ -1,28 +1,28 @@
 """
-Programmatically generated test function for normalize_arg
+Programmatically generated test function for normalize_arg()
 """
 
 import pytest
 from src import unit_test_generator
 
 
-# In sum, these tests covered 60.0% of normalize_arg's lines
+# In sum, these tests covered 54.55% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1448', '1450', '1453']
+# ['1417', '1426', '1428', '1431-1432']
 @pytest.mark.parametrize(
-    "arg, result, return_type",
+    "arg, expected_result, expected_type",
     [
         (
-            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
-            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
             str,
         ),
     ],
 )
-def test_normalize_arg(arg, result, return_type):
+def test_normalize_arg(arg, expected_result, expected_type):
     """
-    Programmatically generated test function for normalize_arg
+    Programmatically generated test function for normalize_arg()
     """
-    x = unit_test_generator.normalize_arg(arg)
-    assert isinstance(x, return_type)
-    assert x == result or repr(x) == result or x == repr(result) or x == eval(result)
+    result = unit_test_generator.normalize_arg(arg)
+    assert isinstance(result, expected_type)
+    assert result == expected_result or result == eval(expected_result)

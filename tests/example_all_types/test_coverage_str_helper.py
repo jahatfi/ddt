@@ -1,5 +1,5 @@
 """
-Programmatically generated test function for coverage_str_helper
+Programmatically generated test function for coverage_str_helper()
 """
 
 import pytest
@@ -10,22 +10,22 @@ from src import unit_test_generator
 
 # In sum, these tests covered 75.76% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1464', '1475', '1486', '1500-1501', '1504-1505']
+# ['1443', '1454', '1465', '1479-1480', '1483-1484']
 @pytest.mark.parametrize(
-    "this_list, non_code_lines, result, return_type",
+    "this_list, non_code_lines, expected_result, expected_type",
     [
         (
-            [1074, 1083, 1102, 1104, 1105, 1106, 1108, 1109, 1110],
-            {1093, 1094, 1095, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1111, 1085},
-            "['1074', '1083', '1102', '1104-1106', '1108-1110']",
+            [1087, 1096, 1113, 1115, 1116, 1117, 1119, 1120, 1121],
+            {1088, 1089, 1090, 1091, 1092, 1093, 1094, 1122, 1098},
+            "['1087', '1096', '1113', '1115-1117', '1119-1121']",
             list,
         ),
     ],
 )
-def test_coverage_str_helper(this_list, non_code_lines, result, return_type):
+def test_coverage_str_helper(this_list, non_code_lines, expected_result, expected_type):
     """
-    Programmatically generated test function for coverage_str_helper
+    Programmatically generated test function for coverage_str_helper()
     """
-    x = unit_test_generator.coverage_str_helper(this_list, non_code_lines)
-    assert isinstance(x, return_type)
-    assert x == result or repr(x) == result or x == repr(result) or x == eval(result)
+    result = unit_test_generator.coverage_str_helper(this_list, non_code_lines)
+    assert isinstance(result, expected_type)
+    assert result == expected_result or result == eval(expected_result)

@@ -7,40 +7,37 @@
       "this_coverage_info"
    ],
    "lines": [
-      1403,
+      1386,
+      1394,
+      1395,
+      1396,
+      1397,
+      1398,
+      1399,
+      1401,
+      1410,
       1411,
       1412,
       1413,
-      1414,
-      1415,
-      1416,
-      1418,
-      1427,
-      1428,
-      1429,
-      1430,
-      1432,
-      1433,
-      1434
+      1414
    ],
    "non_code_lines": [
+      1387,
+      1388,
+      1389,
+      1390,
+      1391,
+      1392,
+      1393,
+      1400,
+      1402,
+      1403,
       1404,
       1405,
       1406,
       1407,
       1408,
-      1409,
-      1410,
-      1417,
-      1419,
-      1420,
-      1421,
-      1422,
-      1423,
-      1424,
-      1425,
-      1426,
-      1431
+      1409
    ],
    "is_method": false,
    "global_vars_read_from": [
@@ -49,46 +46,45 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "e7eb4020275ca591f55eaa7e6b6e683618baf875d85f295ca0b92ea313da2da4": {
+      "c4a3e1cd55e579656c0c7185c1d24c62fc6edb40531b00401a93301e4b8d4a01": {
          "args": [
             "\"fizzbuzz\"",
             "\"mode\"",
             "\"Before\"",
-            "CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')"
+            "CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)"
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "expected_result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+         "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
+            1394,
+            1397,
+            1401,
+            1410,
             1411,
-            1414,
-            1418,
-            1427,
-            1428,
-            1432,
-            1434
+            1414
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001,
-         "result_type": "src.unit_test_generator.CoverageInfo"
+         "cost": 0.001
       }
    },
-   "coverage_percentage": 46.67,
+   "coverage_percentage": 46.15,
    "types_in_use": [
       "logging.Logger",
       "src.unit_test_generator.CoverageInfo"
    ],
    "unified_test_coverage": [
+      1394,
+      1397,
+      1401,
+      1410,
       1411,
-      1414,
-      1418,
-      1427,
-      1428,
-      1432,
-      1434
+      1414
    ],
-   "needs_pytest": false
+   "needs_pytest": false,
+   "exceptions_raised": []
 }

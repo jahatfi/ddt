@@ -1,19 +1,19 @@
 """
-Programmatically generated test function for Car.change_steer_angle
+Programmatically generated test function for Car.change_steer_angle()
 """
 
 import re
 import pytest
 
 # Now import modules specific to Car.change_steer_angle:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 54.55% of Car.change_steer_angle's lines
 # Line(s) not covered by ANY of the tests below:
 # ['71', '85-86']
 @pytest.mark.parametrize(
-    "test_class_instance, angle, exception_type, exception_message, result, return_type",
+    "test_class_instance, angle, exception_type, exception_message, expected_result, expected_type",
     [
         (
             Car("Green", 48, 90),
@@ -27,16 +27,19 @@ from car import Car
     ],
 )
 def test_car_change_steer_angle(
-    test_class_instance, angle, exception_type, exception_message, result, return_type
+    test_class_instance,
+    angle,
+    exception_type,
+    exception_message,
+    expected_result,
+    expected_type,
 ):
     """
-    Programmatically generated test function for Car.change_steer_angle
+    Programmatically generated test function for Car.change_steer_angle()
     """
     if exception_type != "N/A":
         with pytest.raises(exception_type, match=re.escape(exception_message)):
             test_class_instance.change_steer_angle(angle)
     else:
-        x = test_class_instance.change_steer_angle(angle)
-        assert (
-            x == result or repr(x) == result or x == repr(result) or x == eval(result)
-        )
+        result = test_class_instance.change_steer_angle(angle)
+        assert result == expected_result or result == eval(expected_result)

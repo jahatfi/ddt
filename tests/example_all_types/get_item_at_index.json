@@ -36,7 +36,8 @@
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "None",
+         "expected_result": "None",
+         "expected_type": "NoneType",
          "coverage": [
             29,
             31,
@@ -45,8 +46,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 9], was 50",
          "constructor": "",
-         "cost": 0.004,
-         "result_type": "NoneType"
+         "cost": 0.002
       },
       "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": {
          "args": [
@@ -56,7 +56,8 @@
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "-1",
+         "expected_result": "-1",
+         "expected_type": "int",
          "coverage": [
             29,
             31,
@@ -66,8 +67,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001,
-         "result_type": "int"
+         "cost": 0.001
       },
       "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": {
          "args": [
@@ -77,7 +77,8 @@
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "None",
+         "expected_result": "None",
+         "expected_type": "NoneType",
          "coverage": [
             29,
             31,
@@ -87,8 +88,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 12], was -5",
          "constructor": "",
-         "cost": 0.002,
-         "result_type": "NoneType"
+         "cost": 0.001
       }
    },
    "coverage_percentage": 75.0,
@@ -101,5 +101,8 @@
       34,
       36
    ],
-   "needs_pytest": true
+   "needs_pytest": true,
+   "exceptions_raised": [
+      "<class 'ValueError'>"
+   ]
 }

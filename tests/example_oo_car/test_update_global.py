@@ -1,5 +1,5 @@
 """
-Programmatically generated test function for update_global
+Programmatically generated test function for update_global()
 """
 
 import pytest
@@ -9,11 +9,11 @@ from src import unit_test_generator
 from src.unit_test_generator import CoverageInfo
 
 
-# In sum, these tests covered 46.67% of update_global's lines
+# In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1412-1413', '1415-1416', '1429-1430', '1433']
+# ['1412-1413', '1386', '1395-1396', '1398-1399']
 @pytest.mark.parametrize(
-    "obj, this_global, phase, this_coverage_info, result, return_type",
+    "obj, this_global, phase, this_coverage_info, expected_result, expected_type",
     [
         (
             0,
@@ -24,25 +24,27 @@ from src.unit_test_generator import CoverageInfo
                 kwargs={},
                 globals_before={},
                 globals_after={},
-                result="",
+                expected_result="",
+                expected_type="",
                 coverage=[],
                 exception_type="",
                 exception_message="",
                 constructor='Car("Red", 10, 0)',
                 cost=0.0,
-                result_type="",
             ),
-            "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
+            "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
             CoverageInfo,
         ),
     ],
 )
 def test_update_global(
-    obj, this_global, phase, this_coverage_info, result, return_type
+    obj, this_global, phase, this_coverage_info, expected_result, expected_type
 ):
     """
-    Programmatically generated test function for update_global
+    Programmatically generated test function for update_global()
     """
-    x = unit_test_generator.update_global(obj, this_global, phase, this_coverage_info)
-    assert isinstance(x, return_type)
-    assert x == result or repr(x) == result or x == repr(result) or x == eval(result)
+    result = unit_test_generator.update_global(
+        obj, this_global, phase, this_coverage_info
+    )
+    assert isinstance(result, expected_type)
+    assert result == expected_result or result == eval(expected_result)

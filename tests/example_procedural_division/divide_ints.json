@@ -47,7 +47,8 @@
          "globals_after": {
             "error_code": 0
          },
-         "result": "6/2=3.0",
+         "expected_result": "6/2=3.0",
+         "expected_type": "str",
          "coverage": [
             32,
             33,
@@ -58,8 +59,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.004,
-         "result_type": "str"
+         "cost": 0.002
       },
       "8dcd244d9477f2f2ad357ec77e59f72415baec689cd405b8f6194849632f34bc": {
          "args": [
@@ -73,7 +73,8 @@
          "globals_after": {
             "error_code": -3
          },
-         "result": "None",
+         "expected_result": "None",
+         "expected_type": "NoneType",
          "coverage": [
             32,
             33,
@@ -85,8 +86,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "ValueError: Cannot divide by zero!",
          "constructor": "",
-         "cost": 0.003,
-         "result_type": "NoneType"
+         "cost": 0.001
       },
       "07a742d4d53ae6bf7189b38410c8560979026474279353f659adda1c5bcd46a8": {
          "args": [
@@ -100,7 +100,8 @@
          "globals_after": {
             "error_code": -1
          },
-         "result": "None",
+         "expected_result": "None",
+         "expected_type": "NoneType",
          "coverage": [
             32,
             33,
@@ -110,8 +111,7 @@
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable a='10' is not an int!",
          "constructor": "",
-         "cost": 0.003,
-         "result_type": "NoneType"
+         "cost": 0.001
       },
       "2ab261f2cc5c9bd11e8c9817bea4afdfda42f0608bcff0ddd4521ae6d59cc6e8": {
          "args": [
@@ -125,7 +125,8 @@
          "globals_after": {
             "error_code": -2
          },
-         "result": "None",
+         "expected_result": "None",
+         "expected_type": "NoneType",
          "coverage": [
             32,
             33,
@@ -136,8 +137,7 @@
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable b=[] is not an int!",
          "constructor": "",
-         "cost": 0.002,
-         "result_type": "NoneType"
+         "cost": 0.001
       }
    },
    "coverage_percentage": 91.67,
@@ -157,5 +157,9 @@
       41,
       42
    ],
-   "needs_pytest": true
+   "needs_pytest": true,
+   "exceptions_raised": [
+      "<class 'TypeError'>",
+      "<class 'ValueError'>"
+   ]
 }

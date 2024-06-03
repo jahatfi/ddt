@@ -1,10 +1,10 @@
 """
-Programmatically generated test function for divide_ints
+Programmatically generated test function for divide_ints()
 """
 
 import re
 import pytest
-from tests.example_procedural_division import divide_ints
+import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
@@ -16,7 +16,7 @@ ERROR_CODE = 0
 # Line(s) not covered by ANY of the tests below:
 # [26]
 @pytest.mark.parametrize(
-    "a, b, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "a, b, exception_type, exception_message, expected_result, expected_type, globals_before, globals_after",
     [
         (
             "10",
@@ -56,13 +56,13 @@ def test_divide_ints(
     b,
     exception_type,
     exception_message,
-    result,
-    return_type,
+    expected_result,
+    expected_type,
     globals_before,
     globals_after,
 ):
     """
-    Programmatically generated test function for divide_ints
+    Programmatically generated test function for divide_ints()
     """
     monkeypatch = MonkeyPatch()
     for k, v in globals_before.items():
@@ -71,10 +71,8 @@ def test_divide_ints(
         with pytest.raises(exception_type, match=re.escape(exception_message)):
             divide_ints.divide_ints(a, b)
     else:
-        x = divide_ints.divide_ints(a, b)
-        assert (
-            x == result or repr(x) == result or x == repr(result) or x == eval(result)
-        )
+        result = divide_ints.divide_ints(a, b)
+        assert result == expected_result or result == eval(expected_result)
     for global_var_written_to in ["error_code"]:
         if global_var_written_to in ["None", "[]", "{}"]:
             assert not divide_ints.__dict__.get(global_var_written_to)

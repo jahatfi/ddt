@@ -1,21 +1,21 @@
 """
-Programmatically generated test function for Car.gas
+Programmatically generated test function for Car.gas()
 """
 
 import re
 import pytest
-import car
+from tests.example_oo_car import car
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to Car.gas:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 85.71% of Car.gas's lines
 # Line(s) not covered by ANY of the tests below:
 # [58]
 @pytest.mark.parametrize(
-    "test_class_instance, rate, duration, exception_type, exception_message, result, return_type, globals_before, globals_after",
+    "test_class_instance, rate, duration, exception_type, exception_message, expected_result, expected_type, globals_before, globals_after",
     [
         (
             Car("White", 12, -30),
@@ -47,13 +47,13 @@ def test_car_gas(
     duration,
     exception_type,
     exception_message,
-    result,
-    return_type,
+    expected_result,
+    expected_type,
     globals_before,
     globals_after,
 ):
     """
-    Programmatically generated test function for Car.gas
+    Programmatically generated test function for Car.gas()
     """
     monkeypatch = MonkeyPatch()
     for k, v in globals_before.items():
@@ -62,11 +62,9 @@ def test_car_gas(
         with pytest.raises(exception_type, match=re.escape(exception_message)):
             test_class_instance.gas(rate, duration)
     else:
-        x = test_class_instance.gas(rate, duration)
-        assert isinstance(x, return_type)
-        assert (
-            x == result or repr(x) == result or x == repr(result) or x == eval(result)
-        )
+        result = test_class_instance.gas(rate, duration)
+        assert isinstance(result, expected_type)
+        assert result == expected_result or result == eval(expected_result)
     for global_var_written_to in ["method_call_counter"]:
         if global_var_written_to in ["None", "[]", "{}"]:
             assert not car.__dict__.get(global_var_written_to)

@@ -1,5 +1,5 @@
 """
-Programmatically generated test function for return_function_line_numbers_and_accessed_globals
+Programmatically generated test function for return_function_line_numbers_and_accessed_globals()
 """
 
 import pytest
@@ -9,11 +9,11 @@ from src import unit_test_generator
 import divide_ints
 
 
-# In sum, these tests covered 81.48% of return_function_line_numbers_and_accessed_globals's lines
+# In sum, these tests covered 82.14% of return_function_line_numbers_and_accessed_globals's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1074', '1083', '1108-1110']
+# ['1087', '1096', '1119-1121']
 @pytest.mark.parametrize(
-    "f, result, return_type",
+    "f, expected_result, expected_type",
     [
         (
             divide_ints.divide_ints,
@@ -22,10 +22,12 @@ import divide_ints
         ),
     ],
 )
-def test_return_function_line_numbers_and_accessed_globals(f, result, return_type):
+def test_return_function_line_numbers_and_accessed_globals(
+    f, expected_result, expected_type
+):
     """
-    Programmatically generated test function for return_function_line_numbers_and_accessed_globals
+    Programmatically generated test function for return_function_line_numbers_and_accessed_globals()
     """
-    x = unit_test_generator.return_function_line_numbers_and_accessed_globals(f)
-    assert isinstance(x, return_type)
-    assert x == result or repr(x) == result or x == repr(result) or x == eval(result)
+    result = unit_test_generator.return_function_line_numbers_and_accessed_globals(f)
+    assert isinstance(result, expected_type)
+    assert result == expected_result or result == eval(expected_result)

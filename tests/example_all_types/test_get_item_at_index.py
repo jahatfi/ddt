@@ -1,5 +1,5 @@
 """
-Programmatically generated test function for get_item_at_index
+Programmatically generated test function for get_item_at_index()
 """
 
 import re
@@ -11,7 +11,7 @@ from tests.example_all_types import all_types
 # Line(s) not covered by ANY of the tests below:
 # ['22']
 @pytest.mark.parametrize(
-    "iterable, index, exception_type, exception_message, result, return_type",
+    "iterable, index, exception_type, exception_message, expected_result, expected_type",
     [
         (
             "a test string",
@@ -33,16 +33,14 @@ from tests.example_all_types import all_types
     ],
 )
 def test_get_item_at_index(
-    iterable, index, exception_type, exception_message, result, return_type
+    iterable, index, exception_type, exception_message, expected_result, expected_type
 ):
     """
-    Programmatically generated test function for get_item_at_index
+    Programmatically generated test function for get_item_at_index()
     """
     if exception_type != "N/A":
         with pytest.raises(exception_type, match=re.escape(exception_message)):
             all_types.get_item_at_index(iterable, index)
     else:
-        x = all_types.get_item_at_index(iterable, index)
-        assert (
-            x == result or repr(x) == result or x == repr(result) or x == eval(result)
-        )
+        result = all_types.get_item_at_index(iterable, index)
+        assert result == expected_result or result == eval(expected_result)

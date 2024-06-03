@@ -4,62 +4,64 @@
       "arg"
    ],
    "lines": [
-      1439,
-      1445,
-      1446,
-      1447,
-      1448,
-      1449,
-      1450,
-      1452,
-      1453,
-      1454
+      1417,
+      1423,
+      1424,
+      1425,
+      1426,
+      1427,
+      1428,
+      1430,
+      1431,
+      1432,
+      1433
    ],
    "non_code_lines": [
-      1440,
-      1441,
-      1442,
-      1443,
-      1444,
-      1451
+      1418,
+      1419,
+      1420,
+      1421,
+      1422,
+      1429
    ],
    "is_method": false,
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "f8840e2e6522bf171d1ac036871c9e2c25491a688ffa4a0f7b9e83297fc7e801": {
+      "287f8891c805a1de42d18628d26ff77ad48a690fc4af40ebfaaefc218eadbfd3": {
          "args": [
-            "\"CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
+            "\"CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "expected_result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+         "expected_type": "str",
          "coverage": [
-            1445,
-            1446,
-            1447,
-            1449,
-            1452,
-            1454
+            1423,
+            1424,
+            1425,
+            1427,
+            1430,
+            1433
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.002,
-         "result_type": "str"
+         "cost": 0.001
       }
    },
-   "coverage_percentage": 60.0,
+   "coverage_percentage": 54.55,
    "types_in_use": [],
    "unified_test_coverage": [
-      1445,
-      1446,
-      1447,
-      1449,
-      1452,
-      1454
+      1423,
+      1424,
+      1425,
+      1427,
+      1430,
+      1433
    ],
-   "needs_pytest": false
+   "needs_pytest": false,
+   "exceptions_raised": []
 }
