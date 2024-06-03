@@ -1,27 +1,26 @@
 """
-Programmatically generated test function for Car.brake
+Programmatically generated test function for Car.brake()
 """
 
+import pytest
 
 # Now import modules specific to Car.brake:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 62.5% of Car.brake's lines
 # Line(s) not covered by ANY of the tests below:
 # ['45', '52']
-def test_car_brake_0():
+@pytest.mark.parametrize(
+    "test_class_instance, rate, duration, expected_result, expected_type",
+    [
+        (Car("Red", 10, 0), -1, 1, "9", int),
+    ],
+)
+def test_car_brake(test_class_instance, rate, duration, expected_result, expected_type):
     """
-    Programmatically generated test function for Car.brake
+    Programmatically generated test function for Car.brake()
     """
-
-    # Coverage: 62.50% of function lines [45-56]
-    # Covered Lines: 50-51;53;55-56
-    # Lines not covered: 45-49;52;54
-    # Note: Any lines not mentioned are comments or whitespace
-    args = []
-    args.append(-1)
-    args.append(1)
-    this_class = Car("Red", 10, 0)
-    x = this_class.brake(*args)
-    assert x == 9
+    result = test_class_instance.brake(rate, duration)
+    assert isinstance(result, expected_type)
+    assert result == expected_result or result == eval(expected_result)

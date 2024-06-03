@@ -1,25 +1,28 @@
 """
-Programmatically generated test function for Car.is_going_faster_than
+Programmatically generated test function for Car.is_going_faster_than()
 """
 
+import pytest
 
 # Now import modules specific to Car.is_going_faster_than:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 50.0% of Car.is_going_faster_than's lines
 # Line(s) not covered by ANY of the tests below:
 # [117]
-def test_car_is_going_faster_than_0():
+@pytest.mark.parametrize(
+    "test_class_instance, other_car, expected_result, expected_type",
+    [
+        (Car("Red", 20, 0), Car("White", 19, 0), "True", bool),
+    ],
+)
+def test_car_is_going_faster_than(
+    test_class_instance, other_car, expected_result, expected_type
+):
     """
-    Programmatically generated test function for Car.is_going_faster_than
+    Programmatically generated test function for Car.is_going_faster_than()
     """
-
-    # Coverage: 50.00% of function lines [117-123]
-    # Covered Lines: 123
-    # Lines not covered: 117-122
-    # Note: Any lines not mentioned are comments or whitespace
-    this_class = Car("Red", 20, 0)
-    arg = Car("White", 19, 0)
-    x = this_class.is_going_faster_than(arg)
-    assert x is True
+    result = test_class_instance.is_going_faster_than(other_car)
+    assert isinstance(result, expected_type)
+    assert result == expected_result or result == eval(expected_result)

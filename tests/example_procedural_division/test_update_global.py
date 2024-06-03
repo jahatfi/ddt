@@ -1,55 +1,50 @@
 """
-Programmatically generated test function for update_global
+Programmatically generated test function for update_global()
 """
 
+import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
 from src.unit_test_generator import CoverageInfo
 
 
-# In sum, these tests covered 54.55% of update_global's lines
+# In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1410-1411', '1389', '1398']
-def test_update_global_0():
+# ['1412-1413', '1386', '1395-1396', '1398-1399']
+@pytest.mark.parametrize(
+    "obj, this_global, phase, this_coverage_info, expected_result, expected_type",
+    [
+        (
+            0,
+            "error_code",
+            "Before",
+            CoverageInfo(
+                args=["6", "2"],
+                kwargs={},
+                globals_before={},
+                globals_after={},
+                expected_result="",
+                expected_type="",
+                coverage=[],
+                exception_type="",
+                exception_message="",
+                constructor="",
+                cost=0.0,
+            ),
+            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+            CoverageInfo,
+        ),
+    ],
+)
+def test_update_global(
+    obj, this_global, phase, this_coverage_info, expected_result, expected_type
+):
     """
-    Programmatically generated test function for update_global
+    Programmatically generated test function for update_global()
     """
-
-    # Coverage: 54.55% of function lines [1389-1412]
-    # Covered Lines: 1397;1400;1404;1408-1409;1412
-    # Lines not covered: 1389-1396;1398-1399;1405-1407;1410-1411
-    # Note: Any lines not mentioned are comments or whitespace
-    args = []
-    args.append(0)
-    args.append("error_code")
-    args.append("Before")
-    args.append(
-        CoverageInfo(
-            args=["6", "2"],
-            kwargs={},
-            globals_before={},
-            globals_after={},
-            result="",
-            coverage=[],
-            exception_type="",
-            exception_message="",
-            constructor="",
-            cost=0.0,
-            result_type="",
-        )
+    result = unit_test_generator.update_global(
+        obj, this_global, phase, this_coverage_info
     )
-    x = unit_test_generator.update_global(*args)
-    assert x == CoverageInfo(
-        args=["6", "2"],
-        kwargs={},
-        globals_before={"error_code": "0"},
-        globals_after={},
-        result="",
-        coverage=[],
-        exception_type="",
-        exception_message="",
-        constructor="",
-        cost=0.0,
-        result_type="",
-    )
+    assert isinstance(result, expected_type)
+    assert result == expected_result or result == eval(expected_result)

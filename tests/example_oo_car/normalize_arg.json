@@ -1,5 +1,8 @@
 {
    "name": "normalize_arg",
+   "parameter_names": [
+      "arg"
+   ],
    "lines": [
       1417,
       1423,
@@ -10,7 +13,8 @@
       1428,
       1430,
       1431,
-      1432
+      1432,
+      1433
    ],
    "non_code_lines": [
       1418,
@@ -25,30 +29,30 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "a9d5c24ceb478c2d93adce7350c40fcccaa35af4ea204ce39b7105e70a16ad94": {
+      "fb3e0d87334f0abd48fb9acbedae907f1dc95ce25e6434e1765d697df1104cc4": {
          "args": [
-            "\"CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\\\"Red\\\", 10, 0)', cost=0.0, result_type='')\""
+            "\"CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\\\"Red\\\", 10, 0)', cost=0.0)\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': '0'}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, result_type='')",
+         "expected_result": "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
+         "expected_type": "str",
          "coverage": [
             1423,
             1424,
             1425,
             1427,
             1430,
-            1432
+            1433
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.002,
-         "result_type": "str"
+         "cost": 0.001
       }
    },
-   "coverage_percentage": 60.0,
+   "coverage_percentage": 54.55,
    "types_in_use": [],
    "unified_test_coverage": [
       1423,
@@ -56,7 +60,8 @@
       1425,
       1427,
       1430,
-      1432
+      1433
    ],
-   "needs_pytest": false
+   "needs_pytest": false,
+   "exceptions_raised": []
 }

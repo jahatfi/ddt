@@ -1,9 +1,10 @@
 """
-Programmatically generated test function for divide_ints
+Programmatically generated test function for divide_ints()
 """
 
-import divide_ints
+import re
 import pytest
+import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
@@ -14,85 +15,69 @@ ERROR_CODE = 0
 # In sum, these tests covered 91.67% of divide_ints's lines
 # Line(s) not covered by ANY of the tests below:
 # [26]
-def test_divide_ints_0():
+@pytest.mark.parametrize(
+    "a, b, exception_type, exception_message, expected_result, expected_type, globals_before, globals_after",
+    [
+        (
+            "10",
+            2,
+            TypeError,
+            "TypeError: Variable a='10' is not an int!",
+            "None",
+            "N/A",
+            {"error_code": 0},
+            {"error_code": -1},
+        ),
+        (
+            8,
+            [],
+            TypeError,
+            "TypeError: Variable b=[] is not an int!",
+            "None",
+            "N/A",
+            {"error_code": 0},
+            {"error_code": -2},
+        ),
+        (6, 2, "N/A", "N/A", "6/2=3.0", str, {"error_code": 0}, {"error_code": 0}),
+        (
+            3,
+            0,
+            ValueError,
+            "ValueError: Cannot divide by zero!",
+            "None",
+            "N/A",
+            {"error_code": 0},
+            {"error_code": -3},
+        ),
+    ],
+)
+def test_divide_ints(
+    a,
+    b,
+    exception_type,
+    exception_message,
+    expected_result,
+    expected_type,
+    globals_before,
+    globals_after,
+):
     """
-    Programmatically generated test function for divide_ints
-    """
-    monkeypatch = MonkeyPatch()
-
-    # Coverage: 41.67% of function lines [26-42]
-    # Covered Lines: 32-33;36;39;42
-    # Lines not covered: 26-31;34-35;37-38;40-41
-    # Note: Any lines not mentioned are comments or whitespace
-    monkeypatch.setattr(divide_ints, "error_code", ERROR_CODE)
-    args = []
-    args.append(6)
-    args.append(2)
-    x = divide_ints.divide_ints(*args)
-    assert x == "6/2=3.0"
-    modified_error_code = 0
-    assert divide_ints.__dict__.get("error_code") == modified_error_code
-
-
-def test_divide_ints_1():
-    """
-    Programmatically generated test function for divide_ints
-    """
-    monkeypatch = MonkeyPatch()
-
-    # Coverage: 50.00% of function lines [26-42]
-    # Covered Lines: 32-33;36;39-41
-    # Lines not covered: 26-31;34-35;37-38;42
-    # Note: Any lines not mentioned are comments or whitespace
-    monkeypatch.setattr(divide_ints, "error_code", ERROR_CODE)
-    args = []
-    args.append(3)
-    args.append(0)
-    with pytest.raises(ValueError, match=r"ValueError:\ Cannot\ divide\ by\ zero!"):
-        divide_ints.divide_ints(*args)
-    modified_error_code = -3
-    assert divide_ints.__dict__.get("error_code") == modified_error_code
-
-
-def test_divide_ints_2():
-    """
-    Programmatically generated test function for divide_ints
-    """
-    monkeypatch = MonkeyPatch()
-
-    # Coverage: 33.33% of function lines [26-42]
-    # Covered Lines: 32-35
-    # Lines not covered: 26-31;36-42
-    # Note: Any lines not mentioned are comments or whitespace
-    monkeypatch.setattr(divide_ints, "error_code", ERROR_CODE)
-    args = []
-    args.append("10")
-    args.append(2)
-    with pytest.raises(
-        TypeError, match=r"TypeError:\ Variable\ a='10'\ is\ not\ an\ int!"
-    ):
-        divide_ints.divide_ints(*args)
-    modified_error_code = -1
-    assert divide_ints.__dict__.get("error_code") == modified_error_code
-
-
-def test_divide_ints_3():
-    """
-    Programmatically generated test function for divide_ints
+    Programmatically generated test function for divide_ints()
     """
     monkeypatch = MonkeyPatch()
-
-    # Coverage: 41.67% of function lines [26-42]
-    # Covered Lines: 32-33;36-38
-    # Lines not covered: 26-31;34-35;39-42
-    # Note: Any lines not mentioned are comments or whitespace
-    monkeypatch.setattr(divide_ints, "error_code", ERROR_CODE)
-    args = []
-    args.append(8)
-    args.append([])
-    with pytest.raises(
-        TypeError, match=r"TypeError:\ Variable\ b=\[\]\ is\ not\ an\ int!"
-    ):
-        divide_ints.divide_ints(*args)
-    modified_error_code = -2
-    assert divide_ints.__dict__.get("error_code") == modified_error_code
+    for k, v in globals_before.items():
+        monkeypatch.setattr(divide_ints, "error_code", ERROR_CODE)
+    if exception_type != "N/A":
+        with pytest.raises(exception_type, match=re.escape(exception_message)):
+            divide_ints.divide_ints(a, b)
+    else:
+        result = divide_ints.divide_ints(a, b)
+        assert result == expected_result or result == eval(expected_result)
+    for global_var_written_to in ["error_code"]:
+        if global_var_written_to in ["None", "[]", "{}"]:
+            assert not divide_ints.__dict__.get(global_var_written_to)
+        else:
+            assert (
+                divide_ints.__dict__.get(global_var_written_to)
+                == globals_after[global_var_written_to]
+            )

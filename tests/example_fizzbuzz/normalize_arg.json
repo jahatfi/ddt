@@ -1,5 +1,8 @@
 {
    "name": "normalize_arg",
+   "parameter_names": [
+      "arg"
+   ],
    "lines": [
       1417,
       1423,
@@ -10,7 +13,8 @@
       1428,
       1430,
       1431,
-      1432
+      1432,
+      1433
    ],
    "non_code_lines": [
       1418,
@@ -25,30 +29,30 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "0cdff9e93ad0dc348e7cda96b5611729e98d0ca1002940f823af8a6a79aa76b3": {
+      "8bc1d8f163a9e2e707eb78609e607b4a7a659e0b4e7f489567b6563ef798d793": {
          "args": [
-            "\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \\\"'fizzbuzz'\\\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')\""
+            "\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\""
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': \"'fizzbuzz'\"}, globals_after={}, result='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, result_type='')",
+         "expected_result": "CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+         "expected_type": "str",
          "coverage": [
             1423,
             1424,
             1425,
             1427,
             1430,
-            1432
+            1433
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.002,
-         "result_type": "str"
+         "cost": 0.001
       }
    },
-   "coverage_percentage": 60.0,
+   "coverage_percentage": 54.55,
    "types_in_use": [],
    "unified_test_coverage": [
       1423,
@@ -56,7 +60,8 @@
       1425,
       1427,
       1430,
-      1432
+      1433
    ],
-   "needs_pytest": false
+   "needs_pytest": false,
+   "exceptions_raised": []
 }
