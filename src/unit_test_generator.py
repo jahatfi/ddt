@@ -209,7 +209,7 @@ class FunctionMetaData(Jsonable):
     Class to track metadata when testing functions and methods
     """
     # pylint: disable-next=too-many-arguments
-    def __init__(   self,git
+    def __init__(   self,
                     name:str,
                     parameter_names:List[str],
                     lines:List[int],
