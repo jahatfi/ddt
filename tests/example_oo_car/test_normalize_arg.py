@@ -8,7 +8,7 @@ from src import unit_test_generator
 
 # In sum, these tests covered 54.55% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1417', '1426', '1428', '1431-1432']
+# ['1422', '1431', '1433', '1436-1437']
 @pytest.mark.parametrize(
     "arg, expected_result, expected_type",
     [

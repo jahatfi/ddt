@@ -11,7 +11,7 @@ import all_types
 
 # In sum, these tests covered 67.86% of return_function_line_numbers_and_accessed_globals's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1087', '1096', '1113', '1115-1117', '1119-1121']
+# ['1092', '1101', '1118', '1120-1122', '1124-1126']
 @pytest.mark.parametrize(
     "f, expected_result, expected_type",
     [
