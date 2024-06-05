@@ -6,6 +6,18 @@
    ],
    "is_method": true,
    "source_file": null,
+   "lines": [
+      79,
+      80,
+      81,
+      83,
+      86,
+      87,
+      86,
+      88,
+      86,
+      90
+   ],
    "non_code_lines": [
       82,
       84,
@@ -51,25 +63,13 @@
          "exception_type": "<class 'AssertionError'>",
          "exception_message": "angle=-1080    out of bounds!",
          "constructor": "Car(\"Green\", 48, 90)",
-         "cost": 0.002
+         "cost": 0.003
       }
    },
    "coverage_percentage": 60.0,
    "types_in_use": [
-      "car.Car",
-      "logging.Logger"
-   ],
-   "lines": [
-      79,
-      80,
-      81,
-      83,
-      86,
-      87,
-      86,
-      88,
-      86,
-      90
+      "logging.Logger",
+      "tests.example_oo_car.car.Car"
    ],
    "global_vars_read_from": [
       "logger"

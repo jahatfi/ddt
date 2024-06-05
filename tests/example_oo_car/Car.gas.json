@@ -7,6 +7,14 @@
    ],
    "is_method": true,
    "source_file": null,
+   "lines": [
+      66,
+      67,
+      68,
+      69,
+      70,
+      71
+   ],
    "non_code_lines": [],
    "coverage_io": {
       "78e4f6e57c2f532c43747e020340acf548111ebba3a4dfbb9b7a12af2d0fa659": {
@@ -32,7 +40,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "Gas rate (m/s) must be positive.",
          "constructor": "Car(\"Red\", 10, 0)",
-         "cost": 0.004
+         "cost": 0.003
       },
       "6489cc7d9835b1fc422a9e25a2d99a7374cf0a90d0450a9435df3167635e432a": {
          "args": [
@@ -63,16 +71,8 @@
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
-      "car.Car",
-      "logging.Logger"
-   ],
-   "lines": [
-      66,
-      67,
-      68,
-      69,
-      70,
-      71
+      "logging.Logger",
+      "tests.example_oo_car.car.Car"
    ],
    "global_vars_read_from": [
       "logger",

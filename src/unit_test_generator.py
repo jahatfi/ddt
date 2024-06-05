@@ -229,6 +229,7 @@ class FunctionMetaData(Jsonable):
         self.parameter_names = parameter_names
         self.is_method = is_method
         self.source_file = source_file
+        self.lines = []
         # This one is not provided, but infered later
         self.non_code_lines:set = set()
         # These properties are not provided unless this class
@@ -238,10 +239,7 @@ class FunctionMetaData(Jsonable):
         self.types_in_use = set() if types_in_use is None else types_in_use
 
         # Change in style simply to keep line length below 80 characters
-        if lines is None:
-            self.lines = []
-
-        else:
+        if lines is not None:
             self.lines = lines
             self.non_code_lines = self.return_non_code_lines()
 

@@ -5,7 +5,7 @@ Programmatically generated test function for Car.brake()
 import pytest
 
 # Now import modules specific to Car.brake:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 71.43% of Car.brake's lines

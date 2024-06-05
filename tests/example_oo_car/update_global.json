@@ -8,16 +8,30 @@
    ],
    "is_method": false,
    "source_file": null,
+   "lines": [
+      1417,
+      1418,
+      1419,
+      1420,
+      1421,
+      1422,
+      1424,
+      1433,
+      1434,
+      1435,
+      1436,
+      1437
+   ],
    "non_code_lines": [
+      1423,
       1425,
+      1426,
       1427,
       1428,
       1429,
       1430,
       1431,
-      1432,
-      1433,
-      1434
+      1432
    ],
    "coverage_io": {
       "827ce9f30381c4cf8356fd85510849bde9e1eb403ab9893a609b1ffccaaf39eb": {
@@ -33,12 +47,12 @@
          "expected_result": "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1419,
-            1422,
-            1426,
-            1435,
-            1436,
-            1439
+            1417,
+            1420,
+            1424,
+            1433,
+            1434,
+            1437
          ],
          "exception_type": "",
          "exception_message": "",
@@ -51,31 +65,17 @@
       "logging.Logger",
       "src.unit_test_generator.CoverageInfo"
    ],
-   "lines": [
-      1419,
-      1420,
-      1421,
-      1422,
-      1423,
-      1424,
-      1426,
-      1435,
-      1436,
-      1437,
-      1438,
-      1439
-   ],
    "global_vars_read_from": [
       "logger"
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1419,
-      1422,
-      1426,
-      1435,
-      1436,
-      1439
+      1417,
+      1420,
+      1424,
+      1433,
+      1434,
+      1437
    ],
    "needs_pytest": false,
    "exceptions_raised": []
