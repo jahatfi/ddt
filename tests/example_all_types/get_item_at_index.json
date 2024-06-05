@@ -4,8 +4,9 @@
       "iterable",
       "index"
    ],
+   "is_method": false,
+   "source_file": null,
    "lines": [
-      22,
       29,
       30,
       31,
@@ -15,18 +16,8 @@
       36
    ],
    "non_code_lines": [
-      23,
-      24,
-      25,
-      26,
-      27,
-      28,
       35
    ],
-   "is_method": false,
-   "global_vars_read_from": [],
-   "global_vars_written_to": [],
-   "source_file": null,
    "coverage_io": {
       "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": {
          "args": [
@@ -46,7 +37,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 9], was 50",
          "constructor": "",
-         "cost": 0.002
+         "cost": 0.004
       },
       "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": {
          "args": [
@@ -88,11 +79,13 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 12], was -5",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.003
       }
    },
-   "coverage_percentage": 75.0,
+   "coverage_percentage": 85.71,
    "types_in_use": [],
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
    "unified_test_coverage": [
       29,
       31,

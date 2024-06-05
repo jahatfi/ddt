@@ -11,9 +11,7 @@ from _pytest.monkeypatch import MonkeyPatch
 from tests.example_oo_car.car import Car
 
 
-# In sum, these tests covered 85.71% of Car.gas's lines
-# Line(s) not covered by ANY of the tests below:
-# [58]
+# In sum, these tests covered 100.0% of Car.gas's lines
 @pytest.mark.parametrize(
     "test_class_instance, rate, duration, exception_type, exception_message, expected_result, expected_type, globals_before, globals_after",
     [

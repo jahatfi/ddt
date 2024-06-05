@@ -45,7 +45,7 @@ from json import JSONEncoder
 from pathlib import Path, WindowsPath  # noqa: F401 # pylint: disable=unused-import
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from typing import List, Optional, ParamSpec, Callable, TypeVar
+from typing import List, Optional, ParamSpec, Callable, TypeVar, Set
 
 import coverage
 import pandas as pd
@@ -212,11 +212,12 @@ class FunctionMetaData(Jsonable):
     def __init__(   self,
                     name:str,
                     parameter_names:List[str],
-                    lines:List[int],
                     is_method:bool,
-                    global_vars_read_from:set,
-                    global_vars_written_to:set,
                     source_file:Path,
+                    lines:Optional[List[int]] = None,
+                    non_code_lines:Optional[List[int]] = None,
+                    global_vars_read_from:Optional[set] = None,
+                    global_vars_written_to:Optional[set] = None,
                     coverage_io:Optional[dict] = None,
                     coverage_percentage:float=0.0,
                     types_in_use:Optional[set] = None,
@@ -227,13 +228,12 @@ class FunctionMetaData(Jsonable):
         # These properties (expect non_lines) are always provided
         self.name = name
         self.parameter_names = parameter_names
-        self.lines = lines
-        self.non_code_lines:set = self.return_non_code_lines()
         self.is_method = is_method
-        self.global_vars_read_from = global_vars_read_from
-        self.global_vars_written_to = global_vars_written_to
         self.source_file = source_file
-
+        self.lines = []
+        self.non_code_lines = set() if non_code_lines is None else non_code_lines
+        # This one is not provided, but infered later
+        self.non_code_lines:set = set()
         # These properties are not provided unless this class
         # is being constructed as part of a unit test
         self.coverage_io = {} if coverage_io is None else coverage_io
@@ -241,16 +241,41 @@ class FunctionMetaData(Jsonable):
         self.types_in_use = set() if types_in_use is None else types_in_use
 
         # Change in style simply to keep line length below 80 characters
+        if lines is not None:
+            self.lines = lines
+            if not self.non_code_lines:
+                self.non_code_lines = self.return_non_code_lines()
+
+        if global_vars_read_from is None:
+            self.global_vars_read_from = set()
+        else:
+            self.global_vars_read_from = global_vars_read_from
+
+        if global_vars_written_to is None:
+            self.global_vars_written_to = set()
+        else:
+            self.global_vars_written_to = global_vars_written_to
+
         if unified_test_coverage is None:
             self.unified_test_coverage = set()
         else:
             self.unified_test_coverage = unified_test_coverage
+
         self.needs_pytest = needs_pytest
+
         if exceptions_raised is None:
             self.exceptions_raised = set()
         else:
             self.exceptions_raised = exceptions_raised
 
+    def update_lines(self, lines: List[int]):
+        """
+        Assigns the provided List of ints (line numbers) to "lines"
+        property of this class.
+        Also updates the non_code_lines
+        """
+        self.lines = lines
+        self.non_code_lines = self.return_non_code_lines()
 
     def percent_covered(self, precision:int=2):
         """
@@ -283,11 +308,13 @@ class FunctionMetaData(Jsonable):
     def __str__(self):
         return f"{self.name}:\n{self.lines=}\n"
 
-    def return_non_code_lines(self)->set:
+    def return_non_code_lines(self)->Set[int]:
         """
         Return a set of the line numbers of this function that are NOT
         code, e.g. whitespace or comments.
         """
+        if not self.lines:
+            return set()
         first_source_line_num = self.lines[0]
         last_source_line_num = self.lines[-1]
         range_source_line_nums =   set(range(first_source_line_num,
@@ -302,11 +329,11 @@ class FunctionMetaData(Jsonable):
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [f"FunctionMetaData(name=\'{self.name}\'"]
-
-        result.append(" lines="+repr(self.lines))
+        result = [f"FunctionMetaData(name=\'{self.name}\'"]        
         result.append(" parameter_names="+repr(self.parameter_names))
         result.append(" is_method="+repr(self.is_method))
+        result.append(" lines="+repr(self.lines))
+        result.append(" non_code_lines="+repr(self.non_code_lines))
         result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
         result.append(" global_vars_written_to="+repr(self.global_vars_written_to))
         result.append(" source_file="+repr(self.source_file))
@@ -438,8 +465,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 result = func(*args, **kwargs)
                 return result
 
-            function_calls = None
-            function_calls = defaultdict(int)
+            function_calls: dict[str, int] = defaultdict(int)
 
             # The code blocks below (before the call to do_the_decorator_thing)
             # prevent application of this decorator in cyclical calls, e.g.
@@ -468,25 +494,20 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                     # Since this decorator is effectively nullified now,
                     # do NOT try/catch/raise any exceptions.
                     return func(*args, **kwargs)
-                this_metadata = None
+                this_metadata: FunctionMetaData = None # type: ignore[assignment]
                 source_file = Path(func.__code__.co_filename).absolute()
 
                 # If this is the first time this func has been called,
                 # disassemble it to get the lines and global variables
                 if function_name not in all_metadata:
                     # Using single var names ('x', 'y') to keep lines short
-                    (x, y, z) = return_function_line_numbers_and_accessed_globals(func)
                     parameters = inspect.getfullargspec(func)[0]
                     this_metadata = FunctionMetaData(   name=function_name,
                                                         parameter_names=parameters,
-                                                        lines=x,
                                                         is_method='.' in function_name,
-                                                        global_vars_read_from=y,
-                                                        global_vars_written_to=z,
                                                         source_file=source_file
                                                     )
-                    logger.debug("%s has source line #s: %d-%d",
-                                 function_name, min(x), max(x))
+                    update_metadata(func, this_metadata)
 
                 else:
                     this_metadata = all_metadata[function_name]
@@ -515,7 +536,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 # so apply the decorator
                 logger.info("Decorate %s", function_name)
                 return do_the_decorator_thing(func, function_name, this_metadata,
-                                              source_file, keep_subsets,
+                                              str(source_file), keep_subsets,
                                               *args, **kwargs)
             except Exception as e:
                 logger.warning("e=%s", e)
@@ -909,8 +930,9 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     # There is only one file in cov_report_['files']
     assert len(cov_report_['files']) == 1
-    this_coverage = set(cov_report_['files'].popitem()[1]['executed_lines'])
-    assert this_coverage & set(this_metadata.lines)
+    this_coverage:Set[int] = set(cov_report_['files'].popitem()[1]['executed_lines'])
+    #assert this_coverage & set(this_metadata.lines)
+    this_coverage &= set(this_metadata.lines)
     #logger.critical("this_coverage=%s", this_coverage)
     is_subset = False
     Path.unlink(Path(data_file))
@@ -1010,7 +1032,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     percent_covered = this_metadata.percent_covered(2)
 
     logger.debug("Achieved %.2f%% coverage for %s", percent_covered, function_name)
-    sorted_coverage = sorted(list(this_coverage))
+    sorted_coverage:List[int] = sorted(list(this_coverage))
     logger.debug("sorted_coverage=%s", sorted_coverage)
     this_coverage_info.coverage = sorted_coverage
     hashed_inputs.add(hashed_input)
@@ -1090,7 +1112,7 @@ def is_global_var(this_global:str, function_globals:dict, function_name:str):
     return is_variable
 
 @unit_test_generator_decorator(sample_count=1)
-def return_function_line_numbers_and_accessed_globals(f: Callable):
+def update_metadata(f: Callable, this_metadata: FunctionMetaData):
     """
     Given a function, returns three sets:
     1. a set of the line numbers of this function's source code
@@ -1106,8 +1128,10 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
     dis_ = capture(dis)
     logger.debug("f=%s type(f)=%s", f.__name__, type(f))
     disassembled_function = dis_(f)
-    result = []
+
     for line in disassembled_function.splitlines():
+        if "faster" in f.__name__ or "gas" in f.__name__:
+            logger.critical(line)
         line_number_match = re.match(r"\s*([\d]+)[ >]+[\d]+ [A-Z]", line)
         if line_number_match:
             line_number = int(line_number_match.groups()[0])
@@ -1120,12 +1144,10 @@ def return_function_line_numbers_and_accessed_globals(f: Callable):
             this_global = line.split("(")[1].split(")")[0]
             if is_global_var(this_global, f.__globals__, f.__name__):
                 global_vars_written_to.add(this_global)
-    result = [
-                line_numbers,
-                global_vars_read_from,
-                global_vars_written_to
-            ]
-    return result
+    this_metadata.update_lines(line_numbers[1::])
+    this_metadata.global_vars_read_from = global_vars_read_from
+    this_metadata.global_vars_written_to = global_vars_written_to
+    #return this_metadata
 
 @unit_test_generator_decorator(sample_count=1)
 def count_objects(obj: typing.Any):
@@ -1519,7 +1541,8 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
         msg = pp.pformat(function_metadata.lines)
         logger.debug("lines=%s", msg)
 
-    percent_covered = 100*len(coverage_list)/len(function_metadata.lines)
+    # Subtract one for the function
+    percent_covered = 100*len(coverage_list)/(len(function_metadata.lines))
     #percent_covered = 100*percent_covered
     coverage_str_list = []
     start_list = []

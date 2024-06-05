@@ -1,0 +1,117 @@
+{
+   "name": "update_metadata",
+   "parameter_names": [
+      "f",
+      "this_metadata"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      1122,
+      1123,
+      1124,
+      1126,
+      1127,
+      1128,
+      1129,
+      1130,
+      1132,
+      1133,
+      1134,
+      1135,
+      1136,
+      1137,
+      1138,
+      1139,
+      1140,
+      1141,
+      1142,
+      1143,
+      1144,
+      1145,
+      1146,
+      1147,
+      1148,
+      1149
+   ],
+   "non_code_lines": [
+      1125,
+      1131
+   ],
+   "coverage_io": {
+      "8972f250e87e24f84d89087253702ee8e67d4a77a17506b74af8e16d9fe690d2": {
+         "args": [
+            "fizzbuzz.fizzbuzz",
+            "FunctionMetaData(name='fizzbuzz', parameter_names=['number'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_fizzbuzz/fizzbuzz.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False)"
+         ],
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "None",
+         "expected_type": "NoneType",
+         "coverage": [
+            1122,
+            1124,
+            1126,
+            1127,
+            1128,
+            1129,
+            1130,
+            1132,
+            1133,
+            1135,
+            1136,
+            1137,
+            1138,
+            1139,
+            1140,
+            1141,
+            1142,
+            1143,
+            1147,
+            1148,
+            1149
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.01
+      }
+   },
+   "coverage_percentage": 80.77,
+   "types_in_use": [
+      "fizzbuzz",
+      "logging.Logger",
+      "pathlib.WindowsPath",
+      "src.unit_test_generator.FunctionMetaData"
+   ],
+   "global_vars_read_from": [
+      "logger"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      1122,
+      1124,
+      1126,
+      1127,
+      1128,
+      1129,
+      1130,
+      1132,
+      1133,
+      1135,
+      1136,
+      1137,
+      1138,
+      1139,
+      1140,
+      1141,
+      1142,
+      1143,
+      1147,
+      1148,
+      1149
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": []
+}

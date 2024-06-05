@@ -8,9 +8,9 @@ import pytest
 from tests.example_oo_car.car import Car
 
 
-# In sum, these tests covered 62.5% of Car.brake's lines
+# In sum, these tests covered 71.43% of Car.brake's lines
 # Line(s) not covered by ANY of the tests below:
-# ['45', '52']
+# ['52']
 @pytest.mark.parametrize(
     "test_class_instance, rate, duration, expected_result, expected_type",
     [

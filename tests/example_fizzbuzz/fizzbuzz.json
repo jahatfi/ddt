@@ -3,8 +3,9 @@
    "parameter_names": [
       "number"
    ],
+   "is_method": false,
+   "source_file": null,
    "lines": [
-      23,
       40,
       41,
       42,
@@ -24,30 +25,8 @@
       57
    ],
    "non_code_lines": [
-      24,
-      25,
-      26,
-      27,
-      28,
-      29,
-      30,
-      31,
-      32,
-      33,
-      34,
-      35,
-      36,
-      37,
-      38,
-      39,
       55
    ],
-   "is_method": false,
-   "global_vars_read_from": [
-      "mode"
-   ],
-   "global_vars_written_to": [],
-   "source_file": null,
    "coverage_io": {
       "2fcde918ffacbbb30ae860654c530d7850072b9a41fc16835cdc5bf0fdc3020d": {
          "args": [
@@ -128,8 +107,12 @@
          "cost": 0.001
       }
    },
-   "coverage_percentage": 94.44,
+   "coverage_percentage": 100.0,
    "types_in_use": [],
+   "global_vars_read_from": [
+      "mode"
+   ],
+   "global_vars_written_to": [],
    "unified_test_coverage": [
       40,
       41,

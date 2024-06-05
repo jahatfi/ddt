@@ -4,7 +4,7 @@ Programmatically generated test function for divide_ints()
 
 import re
 import pytest
-import divide_ints
+from tests.example_procedural_division import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
@@ -12,9 +12,7 @@ from _pytest.monkeypatch import MonkeyPatch
 ERROR_CODE = 0
 
 
-# In sum, these tests covered 91.67% of divide_ints's lines
-# Line(s) not covered by ANY of the tests below:
-# [26]
+# In sum, these tests covered 100.0% of divide_ints's lines
 @pytest.mark.parametrize(
     "a, b, exception_type, exception_message, expected_result, expected_type, globals_before, globals_after",
     [

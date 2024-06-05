@@ -55,7 +55,9 @@ class Car:
         self.speed = max(0.0, self.speed+rate*duration)
         return self.speed
 
-    def gas(self, rate:float, duration:int=1):
+    def gas(self,
+            rate:float,
+            duration:int=1):
         """
         Apply the gas pedal at some positive "rate"
         (e.g. +N m/s for "duration" seconds)
@@ -238,7 +240,7 @@ if __name__ == "__main__":
     # Hint: https://stackoverflow.com/questions/3467526/
     Car.brake = unit_test_generator_decorator(110, 100)(Car.brake)
     Car.gas = unit_test_generator_decorator(110, 100)(Car.gas)
-    Car.change_steer_angle = unit_test_generator_decorator(110, 100)(Car.change_steer_angle)
+    Car.change_steer_angle = unit_test_generator_decorator(110, 100, True)(Car.change_steer_angle)
     Car.is_going_faster_than = unit_test_generator_decorator(110, 110)(Car.is_going_faster_than)
     Car.__init__ = unit_test_generator_decorator(110, 110)(Car.__init__)
     main()

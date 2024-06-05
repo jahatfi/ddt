@@ -6,9 +6,7 @@ import pytest
 from tests.example_oo_car import car
 
 
-# In sum, these tests covered 75.0% of Car.__init__'s lines
-# Line(s) not covered by ANY of the tests below:
-# [33]
+# In sum, these tests covered 100.0% of Car.__init__'s lines
 @pytest.mark.parametrize(
     "color, speed, steer_angle, expected_result, expected_type",
     [

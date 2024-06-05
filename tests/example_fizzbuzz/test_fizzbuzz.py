@@ -7,9 +7,7 @@ from tests.example_fizzbuzz import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 
-# In sum, these tests covered 94.44% of fizzbuzz's lines
-# Line(s) not covered by ANY of the tests below:
-# [23]
+# In sum, these tests covered 100.0% of fizzbuzz's lines
 @pytest.mark.parametrize(
     "number, expected_result, expected_type, globals_before",
     [

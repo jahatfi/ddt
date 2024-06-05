@@ -6,9 +6,9 @@ import pytest
 from src import unit_test_generator
 
 
-# In sum, these tests covered 54.55% of normalize_arg's lines
+# In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1422', '1431', '1433', '1436-1437']
+# ['1453', '1455', '1458-1459']
 @pytest.mark.parametrize(
     "arg, expected_result, expected_type",
     [
