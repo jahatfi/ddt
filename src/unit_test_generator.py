@@ -215,6 +215,7 @@ class FunctionMetaData(Jsonable):
                     is_method:bool,
                     source_file:Path,
                     lines:Optional[List[int]] = None,
+                    non_code_lines:Optional[List[int]] = None,
                     global_vars_read_from:Optional[set] = None,
                     global_vars_written_to:Optional[set] = None,
                     coverage_io:Optional[dict] = None,
@@ -230,6 +231,7 @@ class FunctionMetaData(Jsonable):
         self.is_method = is_method
         self.source_file = source_file
         self.lines = []
+        self.non_code_lines = set() if non_code_lines is None else non_code_lines
         # This one is not provided, but infered later
         self.non_code_lines:set = set()
         # These properties are not provided unless this class
@@ -241,7 +243,8 @@ class FunctionMetaData(Jsonable):
         # Change in style simply to keep line length below 80 characters
         if lines is not None:
             self.lines = lines
-            self.non_code_lines = self.return_non_code_lines()
+            if not self.non_code_lines:
+                self.non_code_lines = self.return_non_code_lines()
 
         if global_vars_read_from is None:
             self.global_vars_read_from = set()
@@ -326,11 +329,11 @@ class FunctionMetaData(Jsonable):
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [f"FunctionMetaData(name=\'{self.name}\'"]
-
-        result.append(" lines="+repr(self.lines))
+        result = [f"FunctionMetaData(name=\'{self.name}\'"]        
         result.append(" parameter_names="+repr(self.parameter_names))
         result.append(" is_method="+repr(self.is_method))
+        result.append(" lines="+repr(self.lines))
+        result.append(" non_code_lines="+repr(self.non_code_lines))
         result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
         result.append(" global_vars_written_to="+repr(self.global_vars_written_to))
         result.append(" source_file="+repr(self.source_file))

@@ -6,14 +6,14 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-import fizzbuzz
 from pathlib import WindowsPath
+import fizzbuzz
 from src.unit_test_generator import FunctionMetaData
 
 
 # In sum, these tests covered 80.77% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1121', '1132', '1142-1144']
+# ['1122', '1133', '1143-1145']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, expected_type",
     [
@@ -21,9 +21,10 @@ from src.unit_test_generator import FunctionMetaData
             fizzbuzz.fizzbuzz,
             FunctionMetaData(
                 name="fizzbuzz",
-                lines=[],
                 parameter_names=["number"],
                 is_method=False,
+                lines=[],
+                non_code_lines=set(),
                 global_vars_read_from=set(),
                 global_vars_written_to=set(),
                 source_file=WindowsPath(

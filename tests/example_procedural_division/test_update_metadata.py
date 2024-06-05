@@ -6,14 +6,14 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from src.unit_test_generator import FunctionMetaData
 import divide_ints
+from src.unit_test_generator import FunctionMetaData
 from pathlib import WindowsPath
 
 
 # In sum, these tests covered 92.31% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1121']
+# ['1122']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, expected_type",
     [
@@ -21,9 +21,10 @@ from pathlib import WindowsPath
             divide_ints.divide_ints,
             FunctionMetaData(
                 name="divide_ints",
-                lines=[],
                 parameter_names=["a", "b"],
                 is_method=False,
+                lines=[],
+                non_code_lines=set(),
                 global_vars_read_from=set(),
                 global_vars_written_to=set(),
                 source_file=WindowsPath(

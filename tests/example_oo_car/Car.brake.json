@@ -43,8 +43,8 @@
    },
    "coverage_percentage": 71.43,
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "global_vars_read_from": [
       "logger"

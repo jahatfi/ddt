@@ -6,6 +6,15 @@
    ],
    "is_method": false,
    "source_file": null,
+   "lines": [
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      36
+   ],
    "non_code_lines": [
       35
    ],
@@ -75,15 +84,6 @@
    },
    "coverage_percentage": 85.71,
    "types_in_use": [],
-   "lines": [
-      29,
-      30,
-      31,
-      32,
-      33,
-      34,
-      36
-   ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [

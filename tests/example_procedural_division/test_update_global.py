@@ -11,7 +11,7 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 50.0% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1420-1421', '1423-1424', '1437-1438']
+# ['1421-1422', '1424-1425', '1438-1439']
 @pytest.mark.parametrize(
     "obj, this_global, phase, this_coverage_info, expected_result, expected_type",
     [

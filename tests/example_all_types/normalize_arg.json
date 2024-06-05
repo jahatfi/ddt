@@ -5,8 +5,20 @@
    ],
    "is_method": false,
    "source_file": null,
+   "lines": [
+      1449,
+      1450,
+      1451,
+      1452,
+      1453,
+      1454,
+      1456,
+      1457,
+      1458,
+      1459
+   ],
    "non_code_lines": [
-      1454
+      1455
    ],
    "coverage_io": {
       "3130d8b69ad22444b65a1aa532cc84c80744eb8292024ebb29c559fe8afe5889": {
@@ -19,12 +31,12 @@
          "expected_result": "None",
          "expected_type": "str",
          "coverage": [
-            1448,
             1449,
             1450,
-            1452,
-            1455,
-            1458
+            1451,
+            1453,
+            1456,
+            1459
          ],
          "exception_type": "",
          "exception_message": "",
@@ -34,27 +46,15 @@
    },
    "coverage_percentage": 60.0,
    "types_in_use": [],
-   "lines": [
-      1448,
-      1449,
-      1450,
-      1451,
-      1452,
-      1453,
-      1455,
-      1456,
-      1457,
-      1458
-   ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1448,
       1449,
       1450,
-      1452,
-      1455,
-      1458
+      1451,
+      1453,
+      1456,
+      1459
    ],
    "needs_pytest": false,
    "exceptions_raised": []

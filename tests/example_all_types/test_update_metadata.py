@@ -13,7 +13,7 @@ import all_types
 
 # In sum, these tests covered 76.92% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1121', '1132', '1140', '1142-1144']
+# ['1122', '1133', '1141', '1143-1145']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, expected_type",
     [
@@ -21,9 +21,10 @@ import all_types
             all_types.get_item_at_index,
             FunctionMetaData(
                 name="get_item_at_index",
-                lines=[],
                 parameter_names=["iterable", "index"],
                 is_method=False,
+                lines=[],
+                non_code_lines=set(),
                 global_vars_read_from=set(),
                 global_vars_written_to=set(),
                 source_file=WindowsPath(
