@@ -8,33 +8,16 @@ from src import unit_test_generator
 # Now import modules specific to coverage_str_helper:
 
 
-# In sum, these tests covered 75.76% of coverage_str_helper's lines
+# In sum, these tests covered 71.88% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1448', '1459', '1470', '1484-1485', '1488-1489']
+# ['1487', '1498', '1503-1504', '1512-1513', '1516-1517']
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, expected_type",
     [
         (
-            [1417, 1418, 1391, 1400, 1401, 1403, 1404],
-            {
-                1408,
-                1409,
-                1410,
-                1411,
-                1412,
-                1413,
-                1414,
-                1392,
-                1393,
-                1394,
-                1395,
-                1396,
-                1397,
-                1398,
-                1405,
-                1407,
-            },
-            "['1417-1418', '1391', '1400-1401', '1403-1404']",
+            [1445, 1446, 1428, 1429, 1431, 1432],
+            {1440, 1441, 1442, 1433, 1435, 1436, 1437, 1438, 1439},
+            "['1445-1446', '1428-1429', '1431-1432']",
             list,
         ),
     ],

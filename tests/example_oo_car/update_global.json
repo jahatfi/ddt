@@ -6,45 +6,19 @@
       "phase",
       "this_coverage_info"
    ],
-   "lines": [
-      1391,
-      1399,
-      1400,
-      1401,
-      1402,
-      1403,
-      1404,
-      1406,
-      1415,
-      1416,
-      1417,
-      1418,
-      1419
-   ],
-   "non_code_lines": [
-      1392,
-      1393,
-      1394,
-      1395,
-      1396,
-      1397,
-      1398,
-      1405,
-      1407,
-      1408,
-      1409,
-      1410,
-      1411,
-      1412,
-      1413,
-      1414
-   ],
    "is_method": false,
-   "global_vars_read_from": [
-      "logger"
-   ],
-   "global_vars_written_to": [],
    "source_file": null,
+   "non_code_lines": [
+      1433,
+      1435,
+      1436,
+      1437,
+      1438,
+      1439,
+      1440,
+      1441,
+      1442
+   ],
    "coverage_io": {
       "827ce9f30381c4cf8356fd85510849bde9e1eb403ab9893a609b1ffccaaf39eb": {
          "args": [
@@ -59,31 +33,49 @@
          "expected_result": "CoverageInfo(args=['-1', '1'], kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1399,
-            1402,
-            1406,
-            1415,
-            1416,
-            1419
+            1427,
+            1430,
+            1434,
+            1443,
+            1444,
+            1447
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.002
       }
    },
-   "coverage_percentage": 46.15,
+   "coverage_percentage": 50.0,
    "types_in_use": [
       "logging.Logger",
       "src.unit_test_generator.CoverageInfo"
    ],
+   "lines": [
+      1427,
+      1428,
+      1429,
+      1430,
+      1431,
+      1432,
+      1434,
+      1443,
+      1444,
+      1445,
+      1446,
+      1447
+   ],
+   "global_vars_read_from": [
+      "logger"
+   ],
+   "global_vars_written_to": [],
    "unified_test_coverage": [
-      1399,
-      1402,
-      1406,
-      1415,
-      1416,
-      1419
+      1427,
+      1430,
+      1434,
+      1443,
+      1444,
+      1447
    ],
    "needs_pytest": false,
    "exceptions_raised": []

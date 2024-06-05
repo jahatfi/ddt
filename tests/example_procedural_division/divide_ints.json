@@ -4,36 +4,9 @@
       "a",
       "b"
    ],
-   "lines": [
-      26,
-      32,
-      33,
-      34,
-      35,
-      36,
-      37,
-      38,
-      39,
-      40,
-      41,
-      42
-   ],
-   "non_code_lines": [
-      27,
-      28,
-      29,
-      30,
-      31
-   ],
    "is_method": false,
-   "global_vars_read_from": [
-      "error_code",
-      "logger"
-   ],
-   "global_vars_written_to": [
-      "error_code"
-   ],
    "source_file": null,
+   "non_code_lines": [],
    "coverage_io": {
       "3c3651fe9bf9ccfdd1a1aff6a70f7ed10020457da35226255464b77c65d9b9f1": {
          "args": [
@@ -59,7 +32,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.002
+         "cost": 0.003
       },
       "8dcd244d9477f2f2ad357ec77e59f72415baec689cd405b8f6194849632f34bc": {
          "args": [
@@ -86,7 +59,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "ValueError: Cannot divide by zero!",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.002
       },
       "07a742d4d53ae6bf7189b38410c8560979026474279353f659adda1c5bcd46a8": {
          "args": [
@@ -111,7 +84,7 @@
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable a='10' is not an int!",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.002
       },
       "2ab261f2cc5c9bd11e8c9817bea4afdfda42f0608bcff0ddd4521ae6d59cc6e8": {
          "args": [
@@ -137,12 +110,32 @@
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable b=[] is not an int!",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.002
       }
    },
-   "coverage_percentage": 91.67,
+   "coverage_percentage": 100.0,
    "types_in_use": [
       "logging.Logger"
+   ],
+   "lines": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42
+   ],
+   "global_vars_read_from": [
+      "error_code",
+      "logger"
+   ],
+   "global_vars_written_to": [
+      "error_code"
    ],
    "unified_test_coverage": [
       32,

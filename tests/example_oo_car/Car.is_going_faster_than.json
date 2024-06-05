@@ -4,21 +4,9 @@
       "self",
       "other_car"
    ],
-   "lines": [
-      117,
-      123
-   ],
-   "non_code_lines": [
-      118,
-      119,
-      120,
-      121,
-      122
-   ],
    "is_method": true,
-   "global_vars_read_from": [],
-   "global_vars_written_to": [],
    "source_file": null,
+   "non_code_lines": [],
    "coverage_io": {
       "797ee52405b6b24f04cee9d62d992fd2a5592ed30653401b854ee509666247fc": {
          "args": [
@@ -30,7 +18,7 @@
          "expected_result": "True",
          "expected_type": "bool",
          "coverage": [
-            123
+            125
          ],
          "exception_type": "",
          "exception_message": "",
@@ -38,13 +26,17 @@
          "cost": 0.001
       }
    },
-   "coverage_percentage": 50.0,
+   "coverage_percentage": 100.0,
    "types_in_use": [
-      "car.Car",
-      "tests.example_oo_car.car.Car"
+      "car.Car"
    ],
+   "lines": [
+      125
+   ],
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
    "unified_test_coverage": [
-      123
+      125
    ],
    "needs_pytest": false,
    "exceptions_raised": []
