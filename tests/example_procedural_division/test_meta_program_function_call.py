@@ -13,7 +13,7 @@ from pathlib import WindowsPath
 
 # In sum, these tests covered 51.35% of meta_program_function_call's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1600-1601', '1608-1610', '1614-1617', '1620', '1626-1627', '1632-1640', '1642', '1649', '1652', '1657-1662', '1669-1671', '1686-1687']
+# ['1601-1602', '1609-1611', '1615-1618', '1621', '1627-1628', '1633-1641', '1643', '1650', '1653', '1658-1663', '1670-1672', '1687-1688']
 @pytest.mark.parametrize(
     "this_state, tab, package, function_metadata, expected_result, expected_type",
     [
@@ -30,7 +30,7 @@ from pathlib import WindowsPath
                 globals_after={},
                 expected_result="CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
                 expected_type="src.unit_test_generator.CoverageInfo",
-                coverage=[1420, 1423, 1427, 1436, 1437, 1440],
+                coverage=[1421, 1424, 1428, 1437, 1438, 1441],
                 exception_type="",
                 exception_message="",
                 constructor="",
@@ -43,20 +43,20 @@ from pathlib import WindowsPath
                 parameter_names=["obj", "this_global", "phase", "this_coverage_info"],
                 is_method=False,
                 lines=[
-                    1420,
                     1421,
                     1422,
                     1423,
                     1424,
                     1425,
-                    1427,
-                    1436,
+                    1426,
+                    1428,
                     1437,
                     1438,
                     1439,
                     1440,
+                    1441,
                 ],
-                non_code_lines={1426, 1428, 1429, 1430, 1431, 1432, 1433, 1434, 1435},
+                non_code_lines={1427, 1429, 1430, 1431, 1432, 1433, 1434, 1435, 1436},
                 global_vars_read_from={"logger"},
                 global_vars_written_to=set(),
                 source_file=WindowsPath(
@@ -75,7 +75,7 @@ from pathlib import WindowsPath
                         globals_after={},
                         expected_result="CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
                         expected_type="src.unit_test_generator.CoverageInfo",
-                        coverage=[1420, 1423, 1427, 1436, 1437, 1440],
+                        coverage=[1421, 1424, 1428, 1437, 1438, 1441],
                         exception_type="",
                         exception_message="",
                         constructor="",
@@ -83,8 +83,8 @@ from pathlib import WindowsPath
                     )
                 },
                 coverage_percentage=50.0,
-                types_in_use={"src.unit_test_generator.CoverageInfo", "logging.Logger"},
-                unified_test_coverage={1440, 1420, 1423, 1427, 1436, 1437},
+                types_in_use={"logging.Logger", "src.unit_test_generator.CoverageInfo"},
+                unified_test_coverage={1441, 1421, 1424, 1428, 1437, 1438},
                 needs_pytest=False,
             ),
             "['    result = unit_test_generator.update_global(obj,this_global,phase,this_coverage_info)\\n', '    assert isinstance(result, expected_type)\\n', '    assert result == expected_result or result == eval(expected_result)\\n']",

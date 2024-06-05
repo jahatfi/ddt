@@ -930,8 +930,9 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     # There is only one file in cov_report_['files']
     assert len(cov_report_['files']) == 1
-    this_coverage = set(cov_report_['files'].popitem()[1]['executed_lines'])
-    assert this_coverage & set(this_metadata.lines)
+    this_coverage:Set[int] = set(cov_report_['files'].popitem()[1]['executed_lines'])
+    #assert this_coverage & set(this_metadata.lines)
+    this_coverage &= set(this_metadata.lines)
     #logger.critical("this_coverage=%s", this_coverage)
     is_subset = False
     Path.unlink(Path(data_file))
@@ -1031,7 +1032,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     percent_covered = this_metadata.percent_covered(2)
 
     logger.debug("Achieved %.2f%% coverage for %s", percent_covered, function_name)
-    sorted_coverage = sorted(list(this_coverage))
+    sorted_coverage:List[int] = sorted(list(this_coverage))
     logger.debug("sorted_coverage=%s", sorted_coverage)
     this_coverage_info.coverage = sorted_coverage
     hashed_inputs.add(hashed_input)

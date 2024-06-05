@@ -9,29 +9,29 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1420,
       1421,
       1422,
       1423,
       1424,
       1425,
-      1427,
-      1436,
+      1426,
+      1428,
       1437,
       1438,
       1439,
-      1440
+      1440,
+      1441
    ],
    "non_code_lines": [
-      1426,
-      1428,
+      1427,
       1429,
       1430,
       1431,
       1432,
       1433,
       1434,
-      1435
+      1435,
+      1436
    ],
    "coverage_io": {
       "da43029a53540481556f16ea2f885298e81b420042c8a12d0a8e42c45a1c1cc3": {
@@ -47,12 +47,12 @@
          "expected_result": "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1420,
-            1423,
-            1427,
-            1436,
+            1421,
+            1424,
+            1428,
             1437,
-            1440
+            1438,
+            1441
          ],
          "exception_type": "",
          "exception_message": "",
@@ -70,12 +70,12 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1420,
-      1423,
-      1427,
-      1436,
+      1421,
+      1424,
+      1428,
       1437,
-      1440
+      1438,
+      1441
    ],
    "needs_pytest": false,
    "exceptions_raised": []

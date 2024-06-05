@@ -13,7 +13,7 @@ import all_types
 
 # In sum, these tests covered 76.92% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1122', '1133', '1141', '1143-1145']
+# ['1123', '1134', '1142', '1144-1146']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, expected_type",
     [
