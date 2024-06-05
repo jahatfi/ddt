@@ -109,9 +109,9 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "c40842e5316eec2a0693f0152397e807b310c6139f497b0aff5b2e32a9ef40ba": {
+      "4562b15bb2ba97f600e5fd5c289f38ebf487a5b075805e6f47790b048f3a796c": {
          "args": [
-            "CoverageInfo(args=['all_types.get_item_at_index'], kwargs={}, globals_before={}, globals_after={}, result='[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]', coverage=[1032, 1034, 1035, 1036, 1037, 1038, 1040, 1041, 1042, 1043, 1055, 1056, 1058, 1061, 1064, 1074, 1076, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1088, 1089, 1090, 1091, 1092, 1093, 1095, 1099, 1104], exception_type='', exception_message='', constructor='', cost=0.003, result_type='list')",
+            "CoverageInfo(args=['all_types.get_item_at_index'], kwargs={}, globals_before={}, globals_after={}, result='[[22, 29, 30, 31, 32, 33, 34, 36], set(), set()]', coverage=[1032, 1034, 1035, 1036, 1037, 1038, 1040, 1041, 1042, 1043, 1055, 1056, 1058, 1061, 1064, 1074, 1076, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1088, 1089, 1090, 1091, 1092, 1093, 1095, 1099, 1104], exception_type='', exception_message='', constructor='', cost=0.002, result_type='list')",
             "\"  \"",
             "\"unit_test_generator\"",
             "\"return_function_line_numbers_and_accessed_globals\"",
@@ -344,7 +344,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.135,
+         "cost": 0.082,
          "result_type": "list"
       }
    },

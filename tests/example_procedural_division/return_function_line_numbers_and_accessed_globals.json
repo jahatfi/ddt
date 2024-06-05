@@ -60,7 +60,7 @@
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "result": "[[26, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42], {'error_code', 'logger'}, {'error_code'}]",
+         "result": "[[26, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42], {'logger', 'error_code'}, {'error_code'}]",
          "coverage": [
             1032,
             1034,

@@ -109,9 +109,9 @@
    "global_vars_written_to": [],
    "source_file": null,
    "coverage_io": {
-      "9078c42f6d489ae54e5e7f956a79ec19fa7b51fcf1c356c9aa34b2e935a4e78b": {
+      "1f30102a30874c4a9373ca6a5fb061e526a4b6c1bc0613f4fd6dec38efbd32b6": {
          "args": [
-            "CoverageInfo(args=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0, result_type=\\'\\')'], kwargs={}, globals_before={}, globals_after={}, result='CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={\\'method_call_counter\\': \\'0\\'}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0, result_type=\\'\\')', coverage=[1401, 1404, 1408, 1412, 1413, 1416], exception_type='', exception_message='', constructor='', cost=0.001, result_type='src.unit_test_generator.CoverageInfo')",
+            "CoverageInfo(args=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0, result_type=\\'\\')'], kwargs={}, globals_before={}, globals_after={}, result='CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={\\'method_call_counter\\': \\'0\\'}, globals_after={}, result=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0, result_type=\\'\\')', coverage=[1401, 1404, 1408, 1412, 1413, 1416], exception_type='', exception_message='', constructor='', cost=0.0, result_type='src.unit_test_generator.CoverageInfo')",
             "\"  \"",
             "\"unit_test_generator\"",
             "\"update_global\"",
@@ -339,7 +339,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.126,
+         "cost": 0.091,
          "result_type": "list"
       }
    },

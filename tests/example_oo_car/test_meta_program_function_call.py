@@ -37,7 +37,7 @@ def test_meta_program_function_call_0():
             exception_type="",
             exception_message="",
             constructor="",
-            cost=0.001,
+            cost=0.0,
             result_type="src.unit_test_generator.CoverageInfo",
         )
     )

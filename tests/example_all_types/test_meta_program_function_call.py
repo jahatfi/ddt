@@ -66,7 +66,7 @@ def test_meta_program_function_call_0():
             exception_type="",
             exception_message="",
             constructor="",
-            cost=0.003,
+            cost=0.002,
             result_type="list",
         )
     )

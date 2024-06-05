@@ -124,7 +124,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001,
+         "cost": 0.0,
          "result_type": "str"
       }
    },
