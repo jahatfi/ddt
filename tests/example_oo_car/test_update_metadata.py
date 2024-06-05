@@ -6,14 +6,14 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from car import Car
 from src.unit_test_generator import FunctionMetaData
+from car import Car
 from pathlib import WindowsPath
 
 
-# In sum, these tests covered 72.73% of update_metadata's lines
+# In sum, these tests covered 69.23% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1152', '1121', '1134', '1140', '1146-1148', '1150-1151']
+# ['1121', '1132', '1138-1140', '1142-1144']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, expected_type",
     [

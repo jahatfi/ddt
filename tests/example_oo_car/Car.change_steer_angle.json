@@ -51,7 +51,7 @@
          "exception_type": "<class 'AssertionError'>",
          "exception_message": "angle=-1080    out of bounds!",
          "constructor": "Car(\"Green\", 48, 90)",
-         "cost": 0.003
+         "cost": 0.002
       }
    },
    "coverage_percentage": 60.0,

@@ -11,9 +11,9 @@ import divide_ints
 from pathlib import WindowsPath
 
 
-# In sum, these tests covered 90.91% of update_metadata's lines
+# In sum, these tests covered 92.31% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1121', '1134']
+# ['1121']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, expected_type",
     [
