@@ -87,7 +87,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 12], was -5",
          "constructor": "",
-         "cost": 0.0,
+         "cost": 0.001,
          "result_type": "NoneType"
       }
    },

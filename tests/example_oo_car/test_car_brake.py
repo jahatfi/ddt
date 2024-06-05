@@ -4,7 +4,7 @@ Programmatically generated test function for Car.brake
 
 
 # Now import modules specific to Car.brake:
-from tests.example_oo_car.car import Car
+from car import Car
 
 
 # In sum, these tests covered 62.5% of Car.brake's lines

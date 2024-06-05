@@ -10,15 +10,15 @@ from car import Car
 
 # In sum, these tests covered 59.26% of return_function_line_numbers_and_accessed_globals's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1066', '1075', '1092-1094', '1096-1098', '1100-1102']
+# ['1071', '1080', '1097-1099', '1101-1103', '1105-1107']
 def test_return_function_line_numbers_and_accessed_globals_0():
     """
     Programmatically generated test function for return_function_line_numbers_and_accessed_globals
     """
 
-    # Coverage: 59.26% of function lines [1066-1104]
-    # Covered Lines: 1074;1076;1078-1084;1088-1091;1095;1099;1104
-    # Lines not covered: 1066-1073;1075;1092-1094;1096-1098;1100-1103
+    # Coverage: 59.26% of function lines [1071-1109]
+    # Covered Lines: 1079;1081;1083-1089;1093-1096;1100;1104;1109
+    # Lines not covered: 1071-1078;1080;1097-1099;1101-1103;1105-1108
     # Note: Any lines not mentioned are comments or whitespace
     arg = Car.__init__
     x = unit_test_generator.return_function_line_numbers_and_accessed_globals(arg)

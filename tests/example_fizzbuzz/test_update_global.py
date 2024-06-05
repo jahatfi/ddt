@@ -10,15 +10,15 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 54.55% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1409', '1414-1415', '1393']
+# ['1414', '1419-1420', '1398']
 def test_update_global_0():
     """
     Programmatically generated test function for update_global
     """
 
-    # Coverage: 54.55% of function lines [1393-1416]
-    # Covered Lines: 1401;1404;1408;1412-1413;1416
-    # Lines not covered: 1393-1400;1402-1403;1409-1411;1414-1415
+    # Coverage: 54.55% of function lines [1398-1421]
+    # Covered Lines: 1406;1409;1413;1417-1418;1421
+    # Lines not covered: 1398-1405;1407-1408;1414-1416;1419-1420
     # Note: Any lines not mentioned are comments or whitespace
     args = []
     args.append("fizzbuzz")

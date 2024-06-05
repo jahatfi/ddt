@@ -2,7 +2,7 @@
 Programmatically generated test function for get_item_at_index
 """
 
-from tests.example_all_types import all_types
+import all_types
 import pytest
 
 

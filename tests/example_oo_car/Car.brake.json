@@ -53,8 +53,8 @@
    },
    "coverage_percentage": 62.5,
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "unified_test_coverage": [
       50,

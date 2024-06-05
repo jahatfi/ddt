@@ -47,11 +47,15 @@ from json import JSONEncoder
 from pathlib import Path, WindowsPath  # noqa: F401 # pylint: disable=unused-import
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from typing import List, Optional
+from typing import List, Optional, ParamSpec, Callable, TypeVar
 
 import coverage
 import pandas as pd
 from pandas import DataFrame
+
+Param = ParamSpec("Param")
+# pylint: disable-next=invalid-name
+RetType = TypeVar("RetType")
 
 # pylint: disable-next=fixme
 # TODO Import any modules here for whom 'repr' doesn't work,
@@ -348,7 +352,8 @@ class FunctionMetaData(Jsonable):
 
 def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
                                   sample_count: Optional[int]=0,
-                                  keep_subsets: bool=False):
+                                  keep_subsets: bool=False)->Callable[[ Callable[Param, RetType]],
+                                                                        Callable[Param, RetType]]:
     """
     Decorate a function F by recording inputs and outputs during execution such
     that a call to generate_all_tests_and_metadata() can use those recorded
@@ -372,7 +377,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
     function, then stop recording them.
     3. If neither of the above are specified, the decorator will NOT be applied.
     """
-    def actual_decorator(func:Callable):
+    def actual_decorator(func:Callable)->Callable[Param, RetType]:
         """
         Any function wrapped with this decorator will have
         its execution coverage saved as though under a unit test.
@@ -396,7 +401,7 @@ def unit_test_generator_decorator(percent_coverage: Optional[int]=0,
         """
         @wraps(func)
         # pylint: disable-next=too-many-return-statements
-        def unit_test_generator_decorator_inner(*args, **kwargs):
+        def unit_test_generator_decorator_inner(*args, **kwargs)->RetType:
             """
             Immediately return function results if:
             1. no stop parameter is specified.

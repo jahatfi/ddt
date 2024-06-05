@@ -72,14 +72,14 @@
          "exception_type": "<class 'AssertionError'>",
          "exception_message": "angle=-1080    out of bounds!",
          "constructor": "Car(\"Green\", 48, 90)",
-         "cost": 0.001,
+         "cost": 0.0,
          "result_type": "NoneType"
       }
    },
    "coverage_percentage": 54.55,
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "unified_test_coverage": [
       77,
