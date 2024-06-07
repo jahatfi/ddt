@@ -6,9 +6,9 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to meta_program_function_call:
+from src.unit_test_generator import FunctionMetaData
 from pathlib import WindowsPath
 from src.unit_test_generator import CoverageInfo
-from src.unit_test_generator import FunctionMetaData
 
 
 # In sum, these tests covered 51.35% of meta_program_function_call's lines
@@ -34,7 +34,7 @@ from src.unit_test_generator import FunctionMetaData
                 exception_type="",
                 exception_message="",
                 constructor="",
-                cost=0.002,
+                cost=0.001,
             ),
             "  ",
             "unit_test_generator",
@@ -79,7 +79,7 @@ from src.unit_test_generator import FunctionMetaData
                         exception_type="",
                         exception_message="",
                         constructor="",
-                        cost=0.002,
+                        cost=0.001,
                     )
                 },
                 coverage_percentage=50.0,

@@ -525,7 +525,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 if sample_count and sample_count <= len(this_metadata.coverage_io):
                     # Desired number of samples already achieved: skip
                     logger.info("%d samples for %s already collected: skip decorator",
-                                sample_count, function_name)
+                                len(this_metadata.coverage_io), function_name)
                     logger.info(this_metadata.coverage_io)
                     # Since this decorator is effectively nullified now,
                     # do NOT try/catch/raise any exceptions.
@@ -971,9 +971,9 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         # The key may have been removed in a previous iteration of this loop
         if key not in this_metadata.coverage_io:
             continue
-        print(f"{this_metadata.coverage_io=}")
+        #print(f"{this_metadata.coverage_io=}")
         prev_coverage = set(this_metadata.coverage_io[key].coverage)
-        print(f"{prev_coverage=}")
+        #print(f"{prev_coverage=}")
         # Discard this test if it covered a subset of a previous test
         if this_coverage.issubset(prev_coverage) and not keep_subsets:
             logger.debug("%s: discarding current test.", source_file)
@@ -981,7 +981,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             break
         # Discard all previous tests that covered a smaller subset
         # of the lines covered by this test
-        if prev_coverage.issubset(this_coverage):
+        if prev_coverage.issubset(this_coverage) and not keep_subsets:
             logger.debug("%s removing subset coverage @ %s.", source_file, key)
             this_metadata.coverage_io.pop(key)
 
@@ -1813,7 +1813,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         "# Monkeypatch here"
                     ]
     for hash_key in sorted(state):
-        globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()}
+        globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items() if k not in constant_globals_before}
         globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}
         new_params = []
         if is_method and "__init__" not in function_name:
@@ -1848,8 +1848,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     for hash_key_index, hash_key in enumerate(sorted(state)):
         this_parameterization =""# f"({','.join(state[hash_key].args)}"
         monkey_patches = []
+        monkey_patch_loop = []
         if state[hash_key].globals_before:
-            monkey_patches.append(f"{tab*2}for k, v in globals_before.items():\n")
+            monkey_patch_loop.append(f"{tab*2}for k, v in globals_before.items():\n")
         grv_str_list: list[str] = []
         for k in sorted(state[hash_key].globals_before):
             needs_monkeypatch = True
@@ -1857,17 +1858,23 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
 
-
             if k in constant_globals_before_key:
                 grv_str_list.append(k.upper())
-                line = f'{tab*3}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+                line = ""
+                if not isinstance(constant_globals_before[k], int):
+                    line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", eval({k.upper()}))\n'
+                else:
+                    line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+                monkey_patches.append(line)
             else:
                 grv_str_list.append(k)
                 line = f'{tab*3}monkeypatch.setattr({package}, k, v)\n'
-            monkey_patches.append(line)
+                monkey_patch_loop.append(line)
 
         if monkey_patches:
             test_str_list += monkey_patches
+        if len(monkey_patch_loop) > 1:
+            test_str_list += monkey_patch_loop
         #monkey_patches = []
 
         gwv_str_list: list[str]  = []

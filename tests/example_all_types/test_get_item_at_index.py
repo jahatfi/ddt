@@ -13,6 +13,7 @@ import all_types
 @pytest.mark.parametrize(
     "iterable, index, exception_type, exception_message, expected_result, expected_type",
     [
+        ("The quick red fox jumped over the lazy brown dog", 3, "N/A", "N/A", " ", str),
         (
             "a test string",
             -5,
@@ -43,4 +44,5 @@ def test_get_item_at_index(
             all_types.get_item_at_index(iterable, index)
     else:
         result = all_types.get_item_at_index(iterable, index)
+        assert isinstance(result, expected_type)
         assert result == expected_result or result == eval(expected_result)
