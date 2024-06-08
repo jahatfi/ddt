@@ -769,11 +769,11 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             for v in arg.__dict__.values():
                 new_types_in_use |= get_all_types("1.1", v, False, 0, function_name)
         if callable(arg):
-            logger.critical('callable')
+            logger.debug('callable')
             if arg.__module__ == "__main__":
                 file_name = get_filename(str(arg.__code__))
                 if file_name:
-                    logger.critical("%s.%s",file_name, arg.__name__)
+                    logger.debug("%s.%s",file_name, arg.__name__)
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
                     logger.critical("NO FILENAME FOUND!: %s",
@@ -1419,7 +1419,7 @@ def update_global(obj,
     Update and return state dictionary with new global.
     """
     if repr(obj).startswith("<"):
-        logger.critical("Skipping %s", obj)
+        logger.info("Skipping %s", obj)
         return this_coverage_info
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
@@ -1433,7 +1433,7 @@ def update_global(obj,
     #print(f"{this_global}={this_entry}")
 
     #updated_entry = this_entry
-
+    logger.critical(f"{type(updated_entry=)} {updated_entry=}")
     if phase == "Before":
         this_coverage_info.globals_before[this_global] = updated_entry
     elif phase == "After":
@@ -1725,6 +1725,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         last_key, last_element = state.popitem()
         if last_element.globals_before:
             for gbk, gbv in last_element.globals_before.items():
+                logger.critical(f"{gbk=} {type(gbk)=}")
                 if all(v.globals_before[gbk] == gbv for v in state.values()):
                     logger.info("Constant pre-global '%s' for %s", gbk, function_name)
                     constant_globals_before[gbk] = gbv
@@ -1744,7 +1745,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     header = []
     for k, v in constant_globals_before.items():
-        header.append(f"{k.upper()} = {v}\n")
+        logger.critical(f"{k=} {type(v)=}")
+        header.append(f"{k.upper()} = {normalize_string(repr(v))}\n")
 
 
     pct = function_metadata.coverage_percentage
