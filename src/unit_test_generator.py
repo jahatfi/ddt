@@ -1433,7 +1433,7 @@ def update_global(obj,
     #print(f"{this_global}={this_entry}")
 
     #updated_entry = this_entry
-    logger.critical(f"{type(updated_entry=)} {updated_entry=}")
+    logger.critical(f"{type(updated_entry)=} {updated_entry=}")
     if phase == "Before":
         this_coverage_info.globals_before[this_global] = updated_entry
     elif phase == "After":

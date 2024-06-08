@@ -16,6 +16,7 @@
       1425,
       1426,
       1428,
+      1436,
       1437,
       1438,
       1439,
@@ -30,8 +31,7 @@
       1432,
       1433,
       1434,
-      1435,
-      1436
+      1435
    ],
    "coverage_io": {
       "827ce9f30381c4cf8356fd85510849bde9e1eb403ab9893a609b1ffccaaf39eb": {
@@ -50,6 +50,7 @@
             1421,
             1424,
             1428,
+            1436,
             1437,
             1438,
             1441
@@ -57,10 +58,10 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.004
       }
    },
-   "coverage_percentage": 50.0,
+   "coverage_percentage": 53.85,
    "types_in_use": [
       "logging.Logger",
       "src.unit_test_generator.CoverageInfo"
@@ -73,6 +74,7 @@
       1421,
       1424,
       1428,
+      1436,
       1437,
       1438,
       1441

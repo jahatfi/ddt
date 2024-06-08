@@ -6,7 +6,7 @@ import re
 import pytest
 
 # Now import modules specific to Car.change_steer_angle:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 60.0% of Car.change_steer_angle's lines

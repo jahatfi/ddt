@@ -4,7 +4,7 @@ Programmatically generated test function for divide_ints()
 
 import re
 import pytest
-from tests.example_procedural_division import divide_ints
+import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:

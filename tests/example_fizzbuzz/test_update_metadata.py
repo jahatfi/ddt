@@ -6,8 +6,8 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from pathlib import WindowsPath
 from src.unit_test_generator import FunctionMetaData
+from pathlib import WindowsPath
 import fizzbuzz
 
 

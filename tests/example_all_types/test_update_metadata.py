@@ -6,8 +6,8 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-import all_types
 from pathlib import WindowsPath
+import all_types
 from src.unit_test_generator import FunctionMetaData
 
 
