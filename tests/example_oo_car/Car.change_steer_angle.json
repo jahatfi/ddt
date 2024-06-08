@@ -105,13 +105,13 @@
          "exception_type": "<class 'AssertionError'>",
          "exception_message": "angle=-1080    out of bounds!",
          "constructor": "Car(\"Green\", 48, 90)",
-         "cost": 0.002
+         "cost": 0.003
       }
    },
    "coverage_percentage": 60.0,
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "global_vars_read_from": [
       "logger"

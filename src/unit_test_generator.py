@@ -1424,6 +1424,7 @@ def update_global(obj,
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
         updated_entry = copy.deepcopy(this_entry)
+        this_global += "_sorted_set"
     else:
         updated_entry = copy.deepcopy(obj)
     # The block below is for a separate project
@@ -1433,7 +1434,6 @@ def update_global(obj,
     #print(f"{this_global}={this_entry}")
 
     #updated_entry = this_entry
-    logger.critical(f"{type(updated_entry)=} {updated_entry=}")
     if phase == "Before":
         this_coverage_info.globals_before[this_global] = updated_entry
     elif phase == "After":
@@ -1746,7 +1746,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     header = []
     for k, v in constant_globals_before.items():
         logger.critical(f"{k=} {type(v)=}")
-        header.append(f"{k.upper()} = {normalize_string(repr(v))}\n")
+        if k.endswith("_sorted_set"):
+            k = k[:-11]
+            header.append(f"{k.upper()} = {(repr(eval(v)))[1:-1]}\n")
+        else:
+            header.append(f"{k.upper()} = {repr(v)}\n")
 
 
     pct = function_metadata.coverage_percentage
@@ -1835,7 +1839,16 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 new_params.append(repr(state[hash_key].exception_message))
             else:
                 new_params.append('"N/A"')
-        new_params.append(repr(state[hash_key].expected_result))
+        expected_result = state[hash_key].expected_result
+        if isinstance(expected_result, str):
+            if expected_result.startswith('"'):
+                new_params.append(eval(expected_result))
+            elif expected_result in ['set()']:
+                new_params.append(repr(expected_result)[1:-1])
+            else:
+                new_params.append(repr(expected_result))
+        else:
+            new_params.append(repr(expected_result))
         if state[hash_key].expected_type == "NoneType":
             new_params.append('"N/A"')
         else:
@@ -1855,17 +1868,21 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             monkey_patch_loop.append(f"{tab*2}for k, v in globals_before.items():\n")
         grv_str_list: list[str] = []
         for k in sorted(state[hash_key].globals_before):
+
             needs_monkeypatch = True
             #test_str_list.append(f"{tab}monkeypatch = MonkeyPatch()\n")
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
-
+           
             if k in constant_globals_before_key:
                 grv_str_list.append(k.upper())
                 line = ""
                 if not isinstance(constant_globals_before[k], int):
-                    line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", eval({k.upper()}))\n'
+                    k = k[:-11] if k.endswith("_sorted_set") else  k
+                    line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
                 else:
+                    k = k[:-11] if k.endswith("_sorted_set") else k
+
                     line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
                 monkey_patches.append(line)
             else:

@@ -48,15 +48,15 @@
       1514
    ],
    "coverage_io": {
-      "ae9d4be434c0dcea055e52fb608ba5032068538fef625d94aa8b4e4f83ad8391": {
+      "d25e7cb0275fb4634d5344ef3a7fd662ec3db0c537918ef9886a140985773178": {
          "args": [
-            "[1440, 1422, 1423, 1425, 1426, 1439]",
-            "{1427, 1429, 1430, 1431, 1432, 1433, 1434, 1435}"
+            "[1440, 1422, 1423, 1425, 1426, 1427, 1439]",
+            "{1428, 1430, 1431, 1432, 1433, 1434, 1435, 1436}"
          ],
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "['1440', '1422-1423', '1425-1426']",
+         "expected_result": "['1440', '1422-1423', '1425-1427']",
          "expected_type": "list",
          "coverage": [
             1479,
@@ -85,7 +85,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.002
       }
    },
    "coverage_percentage": 68.75,

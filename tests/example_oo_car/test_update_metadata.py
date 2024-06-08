@@ -6,8 +6,8 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from car import Car
 from pathlib import WindowsPath
+from car import Car
 from src.unit_test_generator import FunctionMetaData
 
 

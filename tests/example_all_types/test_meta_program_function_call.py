@@ -6,9 +6,9 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to meta_program_function_call:
-from src.unit_test_generator import CoverageInfo
-from pathlib import WindowsPath
 from src.unit_test_generator import FunctionMetaData
+from pathlib import WindowsPath
+from src.unit_test_generator import CoverageInfo
 
 
 # In sum, these tests covered 50.0% of meta_program_function_call's lines
@@ -136,10 +136,10 @@ from src.unit_test_generator import FunctionMetaData
                 },
                 coverage_percentage=76.92,
                 types_in_use={
-                    "pathlib.WindowsPath",
-                    "logging.Logger",
-                    "all_types",
                     "src.unit_test_generator.FunctionMetaData",
+                    "pathlib.WindowsPath",
+                    "all_types",
+                    "logging.Logger",
                 },
                 unified_test_coverage={
                     1122,
