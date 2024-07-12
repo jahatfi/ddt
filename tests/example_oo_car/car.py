@@ -1,5 +1,5 @@
 """
-Objec-oriented test sample
+Object-oriented test sample
 """
 
 import argparse

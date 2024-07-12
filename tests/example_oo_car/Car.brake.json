@@ -38,13 +38,13 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"Red\", 10, 0)",
-         "cost": 0.002
+         "cost": 0.001
       }
    },
    "coverage_percentage": 71.43,
    "types_in_use": [
-      "car.Car",
-      "logging.Logger"
+      "logging.Logger",
+      "tests.example_oo_car.car.Car"
    ],
    "global_vars_read_from": [
       "logger"
