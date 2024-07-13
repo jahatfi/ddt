@@ -119,12 +119,12 @@
       1686
    ],
    "coverage_io": {
-      "07931fe353f31b35806b213f12e6901db0ee21afb4acd761a0209e5bdabbb2ed": {
+      "4f062bc9f99625259e4b07bb6a9e49af1aeb938150ae7e9ea7ef8e017f772345": {
          "args": [
             "CoverageInfo(args=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)'], kwargs={}, globals_before={}, globals_after={}, expected_result='CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)', expected_type='src.unit_test_generator.CoverageInfo', coverage=[1421, 1424, 1429, 1437, 1438, 1441], exception_type='', exception_message='', constructor='', cost=0.002)",
             "\"  \"",
             "\"unit_test_generator\"",
-            "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1421, 1422, 1423, 1424, 1425, 1426, 1427, 1429, 1437, 1438, 1439, 1440, 1441], non_code_lines={1428, 1430, 1431, 1432, 1433, 1434, 1435, 1436}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'827ce9f30381c4cf8356fd85510849bde9e1eb403ab9893a609b1ffccaaf39eb': CoverageInfo(args=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)'], kwargs={}, globals_before={}, globals_after={}, expected_result='CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)', expected_type='src.unit_test_generator.CoverageInfo', coverage=[1421, 1424, 1429, 1437, 1438, 1441], exception_type='', exception_message='', constructor='', cost=0.002)}, coverage_percentage=46.15, types_in_use={'src.unit_test_generator.CoverageInfo', 'logging.Logger'}, unified_test_coverage={1441, 1421, 1424, 1429, 1437, 1438}, needs_pytest=False)"
+            "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1421, 1422, 1423, 1424, 1425, 1426, 1427, 1429, 1437, 1438, 1439, 1440, 1441], non_code_lines={1428, 1430, 1431, 1432, 1433, 1434, 1435, 1436}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'827ce9f30381c4cf8356fd85510849bde9e1eb403ab9893a609b1ffccaaf39eb': CoverageInfo(args=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)'], kwargs={}, globals_before={}, globals_after={}, expected_result='CoverageInfo(args=[\\'-1\\', \\'1\\'], kwargs={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)', expected_type='src.unit_test_generator.CoverageInfo', coverage=[1421, 1424, 1429, 1437, 1438, 1441], exception_type='', exception_message='', constructor='', cost=0.002)}, coverage_percentage=46.15, types_in_use={'logging.Logger', 'src.unit_test_generator.CoverageInfo'}, unified_test_coverage={1441, 1421, 1424, 1429, 1437, 1438}, needs_pytest=False)"
          ],
          "kwargs": {},
          "globals_before": {},
@@ -174,7 +174,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.134
+         "cost": 0.135
       }
    },
    "coverage_percentage": 51.35,

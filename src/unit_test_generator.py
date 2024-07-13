@@ -733,7 +733,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             this_type = get_class_import_string(args[0])
             class_type = copy.deepcopy(this_type)
         else:
-            logger.critical("Found Constructor: %s args=%s", function_name, args[1:])
+            logger.info("Found Constructor: %s args=%s", function_name, args[1:])
 
 
     new_types_in_use = set()
@@ -825,7 +825,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
                     # can import it later; now we simply record it as one of
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
-                    logger.critical("%s: class_repr=%s arg=%s",
+                    logger.debug("%s: class_repr=%s arg=%s",
                                     function_name, class_repr, arg)
                     #this_coverage_info.constructor = copy.deepcopy(class_repr)
 
@@ -905,7 +905,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         # pylint: disable-next=broad-exception-caught
         except Exception as e:
             #this_metadata.exceptions[hash_key] = e
-            logger.critical("function: '%s' Caught %s e=%s", function_name, type(e), e)
+            logger.debug("function: '%s' Caught %s e=%s", function_name, type(e), e)
             logger.debug("caught_exception=%s @ %s result=%s",
                      caught_exception, hashed_input, result)
             caught_exception = e
@@ -949,7 +949,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         logger.debug("No new coverage decorating %s; but not skipping.",
                      function_name)
         if caught_exception:
-            logger.critical("Raising %s: %s", type(caught_exception), str(caught_exception))
+            logger.debug("Raising %s: %s", type(caught_exception), str(caught_exception))
             raise caught_exception
         return result
 
@@ -1003,7 +1003,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     if caught_exception:
         caught_exception_str = str(caught_exception)
         caught_exception_type = str(type(caught_exception))
-        logger.critical("Caching %s: %s", caught_exception_type, caught_exception_str)
+        logger.debug("Caching %s: %s", caught_exception_type, caught_exception_str)
         logger.debug("caught_exception=%s", caught_exception)
         this_coverage_info.exception_type = caught_exception_type
         this_coverage_info.exception_message = caught_exception_str
@@ -1131,7 +1131,7 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
 
     for line in disassembled_function.splitlines():
         if "faster" in f.__name__ or "gas" in f.__name__:
-            logger.critical(line)
+            logger.debug(line)
         line_number_match = re.match(r"\s*([\d]+)[ >]+[\d]+ [A-Z]", line)
         if line_number_match:
             line_number = int(line_number_match.groups()[0])
@@ -1725,7 +1725,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         last_key, last_element = state.popitem()
         if last_element.globals_before:
             for gbk, gbv in last_element.globals_before.items():
-                logger.critical(f"{gbk=} {type(gbk)=}")
+                logger.debug("gbk=%s gbv=%s", gbk, type(gbk))
                 if all(v.globals_before[gbk] == gbv for v in state.values()):
                     logger.info("Constant pre-global '%s' for %s", gbk, function_name)
                     constant_globals_before[gbk] = gbv
@@ -1745,7 +1745,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     header = []
     for k, v in constant_globals_before.items():
-        logger.critical(f"{k=} {type(v)=}")
+        logger.debug("k=%s, type(v)=%s", k, type(v))
         if k.endswith("_sorted_set"):
             k = k[:-11]
             header.append(f"{k.upper()} = {(repr(eval(v)))[1:-1]}\n")

@@ -6,9 +6,9 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
+from pathlib import WindowsPath
 from car import Car
 from src.unit_test_generator import FunctionMetaData
-from pathlib import WindowsPath
 
 
 # In sum, these tests covered 69.23% of update_metadata's lines
