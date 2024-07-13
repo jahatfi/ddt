@@ -1,0 +1,46 @@
+{
+   "name": "update_global",
+   "parameter_names": [
+      "obj",
+      "this_global",
+      "phase",
+      "this_coverage_info"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      1421,
+      1422,
+      1423,
+      1424,
+      1425,
+      1426,
+      1427,
+      1429,
+      1437,
+      1438,
+      1439,
+      1440,
+      1441
+   ],
+   "non_code_lines": [
+      1428,
+      1430,
+      1431,
+      1432,
+      1433,
+      1434,
+      1435,
+      1436
+   ],
+   "coverage_io": {},
+   "coverage_percentage": 0.0,
+   "types_in_use": [],
+   "global_vars_read_from": [
+      "logger"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [],
+   "needs_pytest": false,
+   "exceptions_raised": []
+}

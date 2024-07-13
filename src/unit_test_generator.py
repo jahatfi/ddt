@@ -45,7 +45,7 @@ from json import JSONEncoder
 from pathlib import Path, WindowsPath  # noqa: F401 # pylint: disable=unused-import
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from typing import List, Optional, ParamSpec, Callable, TypeVar, Set
+from typing import List, Optional, ParamSpec, Callable, TypeVar, Set, Tuple, Any
 
 import coverage
 import pandas as pd
@@ -140,7 +140,8 @@ class CoverageInfo:
     """
     Holds all data gathered from recording/hooking a function/method call
     """
-    args: list[str] = dataclasses.field(default_factory=list)
+    args_before: list[str] = dataclasses.field(default_factory=list)
+    args_after: list[str] = dataclasses.field(default_factory=list)
     kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_before: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
@@ -158,7 +159,8 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = ["CoverageInfo(args="+repr(self.args)]
+        result = ["CoverageInfo(args_before="+repr(self.args_before)]
+        result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
@@ -188,7 +190,8 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = ["CoverageInfo(args="+repr(self.args)]
+        result = ["CoverageInfo(args_before="+repr(self.args_before)]
+        result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
@@ -232,8 +235,6 @@ class FunctionMetaData(Jsonable):
         self.source_file = source_file
         self.lines = []
         self.non_code_lines = set() if non_code_lines is None else non_code_lines
-        # This one is not provided, but infered later
-        self.non_code_lines:set = set()
         # These properties are not provided unless this class
         # is being constructed as part of a unit test
         self.coverage_io = {} if coverage_io is None else coverage_io
@@ -329,7 +330,7 @@ class FunctionMetaData(Jsonable):
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = [f"FunctionMetaData(name=\'{self.name}\'"]        
+        result = [f"FunctionMetaData(name=\'{self.name}\'"]
         result.append(" parameter_names="+repr(self.parameter_names))
         result.append(" is_method="+repr(self.is_method))
         result.append(" lines="+repr(self.lines))
@@ -672,6 +673,128 @@ def get_filename(arg:str):
         file_name = str(file_name_match.groups()[0])
     return file_name
 
+class ArgsIteratorClass():
+    """
+    Holds all the I/O variables for args_iterator
+    """
+    def __init__(   self,
+                    args,
+                    args_copy,
+                    new_types_in_use,
+                    class_type:str,
+                    this_metadata: FunctionMetaData):
+        """
+        Holds all the I/O variables for args_iterator
+        """
+        self.args = args
+        self.args_copy = args_copy
+        self.new_types_in_use = new_types_in_use
+        self.class_type: str = class_type
+        self.this_metadata: FunctionMetaData = this_metadata
+
+def args_iterator(params: ArgsIteratorClass):
+    """
+    Parse arguments to the function provided, caching their values
+    """
+    function_name = params.this_metadata.name
+    for arg_i, arg in enumerate(params.args):
+        # Do not include the first arg of a method (it's "self")
+        # in the argument list
+        if params.this_metadata.is_method and arg_i == 0:
+            continue
+        if (
+                callable(arg) and inspect.isfunction(arg) and
+                "." in arg.__qualname__ and arg.__qualname__[0].isupper()
+            ):
+            newest_import_list = f"{arg.__module__}.{arg.__qualname__}".split('.')
+            newest_import = '.'.join(newest_import_list[:-1])
+            params.args_copy.append(arg.__qualname__)
+            # Reset the class type, as this newest_import will be used instead
+            params.class_type = ""
+            if arg.__module__ == "__main__":
+                file_name = get_filename(str(arg.__code__))
+                if file_name:
+                    newest_import = re.sub("__main__", file_name, newest_import)
+                else:
+                    logger.critical("NO FILENAME FOUND!: %s",
+                                    re.escape(str(arg.__code__)))
+            params.new_types_in_use.add(newest_import)
+
+            continue
+
+        params.new_types_in_use |= get_all_types("1", arg, False, 0, function_name)
+        if hasattr(arg, "__dict__"):
+            logger.info("Adding types for function %s for arg %s", function_name, arg)
+            for v in arg.__dict__.values():
+                params.new_types_in_use |= get_all_types("1.1", v, False, 0, function_name)
+        if callable(arg):
+            logger.debug('callable')
+            if arg.__module__ == "__main__":
+                file_name = get_filename(str(arg.__code__))
+                if file_name:
+                    logger.debug("%s.%s",file_name, arg.__name__)
+                    params.args_copy.append(f"{file_name}.{arg.__name__}")
+                else:
+                    logger.critical("NO FILENAME FOUND!: %s",
+                                    re.escape(str(arg.__code__)))
+            else:
+                params.args_copy.append(arg.__qualname__)
+
+            #sys.exit(1)
+        elif not isinstance(arg, str):
+            type_str = str(type(arg))
+            #logger.critical(arg)
+            logger.debug("type_str=%s %s", type_str, type(arg).__module__)
+
+            # Reference for line:
+            # 'type(arg).__module__ != "__builtin__":'
+            # https://stackoverflow.com/questions/46876484/
+            # Answer by user moar10
+            if bool(re.match(r"<class[^\.]+\.", type_str)) and\
+                type(arg).__module__ != "__builtin__":
+                class_repr = repr(arg)
+                if "object at 0x" in class_repr:
+                    class_repr = arg.repr()
+                try:
+                    logger.info(class_repr)
+                    # This eval is necessary to check if classes can in fact
+                    # be represented as strings.  If not, and this SyntaxError
+                    # is uncaught, it will break everything.
+                    # pylint: disable-next=eval-used
+                    eval(class_repr)
+                    params.args_copy.append(class_repr)
+
+                except SyntaxError as e:
+                    try:
+                        class_repr = arg.repr()
+                        logger.debug("%s, class_repr = %s", e, class_repr)
+                    except AttributeError as e2:
+                        # skip on error
+                        logger.error("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
+                                    class_repr, type(e2), function_name, arg, e2, arg)
+                        logger.error(arg.__repr__)
+                        all_metadata[function_name] = params.this_metadata
+                        raise e2
+
+                except NameError as e:
+                    # What's going on here?
+                    # This argument (arg) is a class, but that class hasn't
+                    # been imported, so calling "eval" on
+                    # it yielded a NameError.  No problem, assume that we
+                    # can import it later; now we simply record it as one of
+                    # the arguments to this decoratee by adding it to args_copy.
+                    logger.debug(e)
+                    logger.debug("%s: class_repr=%s arg=%s",
+                                    function_name, class_repr, arg)
+                    #this_coverage_info.constructor = copy.deepcopy(class_repr)
+
+                    params.args_copy.append(class_repr)
+            else:
+                params.args_copy.append(repr(arg))
+        else:
+            params.args_copy.append("\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\"")
+
+
 # pylint: disable-next=too-many-locals,too-many-statements,too-many-branches
 def do_the_decorator_thing(func: Callable, function_name:str,
                            this_metadata:FunctionMetaData, source_file: str,
@@ -724,7 +847,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     #args_copy = [convert_to_serializable(x) for x in args]
     args_copy:list[str] = []
-    class_type = None
+    class_type = ""
     if this_metadata.is_method:
         if not function_name.endswith("__init__"):
             logger.info("Found non-constructor method: %s %s", function_name, args[0])
@@ -735,111 +858,24 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         else:
             logger.info("Found Constructor: %s args=%s", function_name, args[1:])
 
+    args_iterator_class: ArgsIteratorClass = ArgsIteratorClass( args,
+                                                                args_copy,
+                                                                set(),
+                                                                class_type,
+                                                                this_metadata)
+    try:
+         args_iterator(args_iterator_class)
+    except AttributeError:
+        # skip on error
+        return func(*args, **kwargs)
 
-    new_types_in_use = set()
 
-    for arg_i, arg in enumerate(args):
-        # Do not include the first arg of a method (it's "self")
-        # in the argument list
-        if this_metadata.is_method and arg_i == 0:
-            continue
-        if (
-                callable(arg) and inspect.isfunction(arg) and
-                "." in arg.__qualname__ and arg.__qualname__[0].isupper()
-            ):
-            newest_import_list = f"{arg.__module__}.{arg.__qualname__}".split('.')
-            newest_import = '.'.join(newest_import_list[:-1])
-            args_copy.append(arg.__qualname__)
-            # Reset the class type, as this newest_import will be used instead
-            class_type = None
-            if arg.__module__ == "__main__":
-                file_name = get_filename(str(arg.__code__))
-                if file_name:
-                    newest_import = re.sub("__main__", file_name, newest_import)
-                else:
-                    logger.critical("NO FILENAME FOUND!: %s",
-                                    re.escape(str(arg.__code__)))
-            new_types_in_use.add(newest_import)
 
-            continue
+    if args_iterator_class.class_type:
+        this_metadata.types_in_use.add(args_iterator_class.class_type)
 
-        new_types_in_use |= get_all_types("1", arg, False, 0, function_name)
-        if hasattr(arg, "__dict__"):
-            logger.info("Adding types for function %s for arg %s", function_name, arg)
-            for v in arg.__dict__.values():
-                new_types_in_use |= get_all_types("1.1", v, False, 0, function_name)
-        if callable(arg):
-            logger.debug('callable')
-            if arg.__module__ == "__main__":
-                file_name = get_filename(str(arg.__code__))
-                if file_name:
-                    logger.debug("%s.%s",file_name, arg.__name__)
-                    args_copy.append(f"{file_name}.{arg.__name__}")
-                else:
-                    logger.critical("NO FILENAME FOUND!: %s",
-                                    re.escape(str(arg.__code__)))
-            else:
-                args_copy.append(arg.__qualname__)
-
-            #sys.exit(1)
-        elif not isinstance(arg, str):
-            type_str = str(type(arg))
-            #logger.critical(arg)
-            logger.debug("type_str=%s %s", type_str, type(arg).__module__)
-
-            # Reference for line:
-            # 'type(arg).__module__ != "__builtin__":'
-            # https://stackoverflow.com/questions/46876484/
-            # Answer by user moar10
-            if bool(re.match(r"<class[^\.]+\.", type_str)) and\
-                type(arg).__module__ != "__builtin__":
-                class_repr = repr(arg)
-                if "object at 0x" in class_repr:
-                    class_repr = arg.repr()
-                try:
-                    logger.info(class_repr)
-                    # This eval is necessary to check if classes can in fact
-                    # be represented as strings.  If not, and this SyntaxError
-                    # is uncaught, it will break everything.
-                    # pylint: disable-next=eval-used
-                    eval(class_repr)
-                    args_copy.append(class_repr)
-
-                except SyntaxError as e:
-                    try:
-                        class_repr = arg.repr()
-                        logger.debug("%s, class_repr = %s", e, class_repr)
-                    except AttributeError as e2:
-                        # skip on error
-                        logger.error("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
-                                    class_repr, type(e2), function_name, arg, e2, arg)
-                        logger.error(arg.__repr__)
-                        all_metadata[function_name] = this_metadata
-                        return func(*args, **kwargs)
-
-                except NameError as e:
-                    # What's going on here?
-                    # This argument (arg) is a class, but that class hasn't
-                    # been imported, so calling "eval" on
-                    # it yielded a NameError.  No problem, assume that we
-                    # can import it later; now we simply record it as one of
-                    # the arguments to this decoratee by adding it to args_copy.
-                    logger.debug(e)
-                    logger.debug("%s: class_repr=%s arg=%s",
-                                    function_name, class_repr, arg)
-                    #this_coverage_info.constructor = copy.deepcopy(class_repr)
-
-                    args_copy.append(class_repr)
-            else:
-                args_copy.append(repr(arg))
-        else:
-            args_copy.append("\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\"")
-
-    if class_type:
-        this_metadata.types_in_use.add(class_type)
-
-    this_metadata.types_in_use |= new_types_in_use
-    this_coverage_info.args = args_copy
+    this_metadata.types_in_use |= args_iterator_class.new_types_in_use
+    this_coverage_info.args_before = args_iterator_class.args_copy
 
     phase = "Before"
     # Record the values of any global variables READ BY this function
@@ -865,7 +901,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     hashed_input_hash = hashlib.new('sha256')
     hashed_input_hash.update(str(this_coverage_info.globals_before).encode())
-    hashed_input_hash.update(str(this_coverage_info.args).encode())
+    hashed_input_hash.update(str(this_coverage_info.args_before).encode())
     hashed_input_hash.update(str(this_coverage_info.kwargs).encode())
     hashed_input = hashed_input_hash.hexdigest()
 
@@ -1613,18 +1649,18 @@ def meta_program_function_call( this_state:CoverageInfo,
     call = ""
     if is_method:
         prefix = f"{class_var_name}.{function_name.split('.')[1]}"
-        if len(this_state.args) != 1:
+        if len(this_state.args_before) != 1:
             call = f"{prefix}({','.join(parameter_names)}{kwargs_str})\n"
-        elif len(this_state.args):
-            #arg = normalize_string(this_state.args[0])
+        elif len(this_state.args_before):
+            #arg = normalize_string(this_state.args_before[0])
             #list_of_lines.append(f"{indent}arg = {arg}\n")
             call = f"{prefix}({parameter_names[0]}{kwargs_str})\n"
 
     else:
         prefix = f"{package}.{function_name}"
-        if len(this_state.args) != 1:
+        if len(this_state.args_before) != 1:
             call = f"{prefix}({','.join(parameter_names)}{kwargs_str})\n"
-        elif len(this_state.args):
+        elif len(this_state.args_before):
             call = f"{prefix}({parameter_names[0]}{kwargs_str})\n"
 
     # If any exceptions were caught when testing this function, add this code:
@@ -1824,7 +1860,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         new_params = []
         if is_method and "__init__" not in function_name:
             new_params.append(state[hash_key].constructor)
-        new_params.append(','.join(state[hash_key].args))
+        new_params.append(','.join(state[hash_key].args_before))
         if any_kwargs:
             if state[hash_key].kwargs:
                 new_params.append(','.join(state[hash_key].kwargs))
@@ -1873,7 +1909,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             #test_str_list.append(f"{tab}monkeypatch = MonkeyPatch()\n")
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
-           
+
             if k in constant_globals_before_key:
                 grv_str_list.append(k.upper())
                 line = ""
