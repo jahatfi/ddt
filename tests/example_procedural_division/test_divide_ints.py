@@ -23,7 +23,7 @@ ERROR_CODE = 0
             "TypeError: Variable a='10' is not an int!",
             "None",
             "N/A",
-            {"error_code": 0},
+            {},
             {"error_code": -1},
         ),
         (
@@ -33,10 +33,10 @@ ERROR_CODE = 0
             "TypeError: Variable b=[] is not an int!",
             "None",
             "N/A",
-            {"error_code": 0},
+            {},
             {"error_code": -2},
         ),
-        (6, 2, "N/A", "N/A", "6/2=3.0", str, {"error_code": 0}, {"error_code": 0}),
+        (6, 2, "N/A", "N/A", "6/2=3.0", str, {}, {"error_code": 0}),
         (
             3,
             0,
@@ -44,7 +44,7 @@ ERROR_CODE = 0
             "ValueError: Cannot divide by zero!",
             "None",
             "N/A",
-            {"error_code": 0},
+            {},
             {"error_code": -3},
         ),
     ],
@@ -63,8 +63,7 @@ def test_divide_ints(
     Programmatically generated test function for divide_ints()
     """
     monkeypatch = MonkeyPatch()
-    for k, v in globals_before.items():
-        monkeypatch.setattr(divide_ints, "error_code", ERROR_CODE)
+    monkeypatch.setattr(divide_ints, "error_code", ERROR_CODE)
     if exception_type != "N/A":
         with pytest.raises(exception_type, match=re.escape(exception_message)):
             divide_ints.divide_ints(a, b)

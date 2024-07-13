@@ -45,7 +45,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.004
+         "cost": 0.002
       },
       "8dcd244d9477f2f2ad357ec77e59f72415baec689cd405b8f6194849632f34bc": {
          "args": [
@@ -123,7 +123,7 @@
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable b=[] is not an int!",
          "constructor": "",
-         "cost": 0.003
+         "cost": 0.002
       }
    },
    "coverage_percentage": 100.0,

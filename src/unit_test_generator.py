@@ -525,7 +525,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 if sample_count and sample_count <= len(this_metadata.coverage_io):
                     # Desired number of samples already achieved: skip
                     logger.info("%d samples for %s already collected: skip decorator",
-                                sample_count, function_name)
+                                len(this_metadata.coverage_io), function_name)
                     logger.info(this_metadata.coverage_io)
                     # Since this decorator is effectively nullified now,
                     # do NOT try/catch/raise any exceptions.
@@ -733,7 +733,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             this_type = get_class_import_string(args[0])
             class_type = copy.deepcopy(this_type)
         else:
-            logger.critical("Found Constructor: %s args=%s", function_name, args[1:])
+            logger.info("Found Constructor: %s args=%s", function_name, args[1:])
 
 
     new_types_in_use = set()
@@ -769,11 +769,11 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             for v in arg.__dict__.values():
                 new_types_in_use |= get_all_types("1.1", v, False, 0, function_name)
         if callable(arg):
-            logger.critical('callable')
+            logger.debug('callable')
             if arg.__module__ == "__main__":
                 file_name = get_filename(str(arg.__code__))
                 if file_name:
-                    logger.critical("%s.%s",file_name, arg.__name__)
+                    logger.debug("%s.%s",file_name, arg.__name__)
                     args_copy.append(f"{file_name}.{arg.__name__}")
                 else:
                     logger.critical("NO FILENAME FOUND!: %s",
@@ -825,7 +825,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
                     # can import it later; now we simply record it as one of
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
-                    logger.critical("%s: class_repr=%s arg=%s",
+                    logger.debug("%s: class_repr=%s arg=%s",
                                     function_name, class_repr, arg)
                     #this_coverage_info.constructor = copy.deepcopy(class_repr)
 
@@ -905,7 +905,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         # pylint: disable-next=broad-exception-caught
         except Exception as e:
             #this_metadata.exceptions[hash_key] = e
-            logger.critical("function: '%s' Caught %s e=%s", function_name, type(e), e)
+            logger.debug("function: '%s' Caught %s e=%s", function_name, type(e), e)
             logger.debug("caught_exception=%s @ %s result=%s",
                      caught_exception, hashed_input, result)
             caught_exception = e
@@ -949,7 +949,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         logger.debug("No new coverage decorating %s; but not skipping.",
                      function_name)
         if caught_exception:
-            logger.critical("Raising %s: %s", type(caught_exception), str(caught_exception))
+            logger.debug("Raising %s: %s", type(caught_exception), str(caught_exception))
             raise caught_exception
         return result
 
@@ -971,9 +971,9 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         # The key may have been removed in a previous iteration of this loop
         if key not in this_metadata.coverage_io:
             continue
-        print(f"{this_metadata.coverage_io=}")
+        #print(f"{this_metadata.coverage_io=}")
         prev_coverage = set(this_metadata.coverage_io[key].coverage)
-        print(f"{prev_coverage=}")
+        #print(f"{prev_coverage=}")
         # Discard this test if it covered a subset of a previous test
         if this_coverage.issubset(prev_coverage) and not keep_subsets:
             logger.debug("%s: discarding current test.", source_file)
@@ -981,7 +981,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             break
         # Discard all previous tests that covered a smaller subset
         # of the lines covered by this test
-        if prev_coverage.issubset(this_coverage):
+        if prev_coverage.issubset(this_coverage) and not keep_subsets:
             logger.debug("%s removing subset coverage @ %s.", source_file, key)
             this_metadata.coverage_io.pop(key)
 
@@ -1003,7 +1003,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     if caught_exception:
         caught_exception_str = str(caught_exception)
         caught_exception_type = str(type(caught_exception))
-        logger.critical("Caching %s: %s", caught_exception_type, caught_exception_str)
+        logger.debug("Caching %s: %s", caught_exception_type, caught_exception_str)
         logger.debug("caught_exception=%s", caught_exception)
         this_coverage_info.exception_type = caught_exception_type
         this_coverage_info.exception_message = caught_exception_str
@@ -1131,7 +1131,7 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
 
     for line in disassembled_function.splitlines():
         if "faster" in f.__name__ or "gas" in f.__name__:
-            logger.critical(line)
+            logger.debug(line)
         line_number_match = re.match(r"\s*([\d]+)[ >]+[\d]+ [A-Z]", line)
         if line_number_match:
             line_number = int(line_number_match.groups()[0])
@@ -1419,11 +1419,12 @@ def update_global(obj,
     Update and return state dictionary with new global.
     """
     if repr(obj).startswith("<"):
-        logger.critical("Skipping %s", obj)
+        logger.info("Skipping %s", obj)
         return this_coverage_info
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
         updated_entry = copy.deepcopy(this_entry)
+        this_global += "_sorted_set"
     else:
         updated_entry = copy.deepcopy(obj)
     # The block below is for a separate project
@@ -1433,7 +1434,6 @@ def update_global(obj,
     #print(f"{this_global}={this_entry}")
 
     #updated_entry = this_entry
-
     if phase == "Before":
         this_coverage_info.globals_before[this_global] = updated_entry
     elif phase == "After":
@@ -1725,6 +1725,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         last_key, last_element = state.popitem()
         if last_element.globals_before:
             for gbk, gbv in last_element.globals_before.items():
+                logger.debug("gbk=%s gbv=%s", gbk, type(gbk))
                 if all(v.globals_before[gbk] == gbv for v in state.values()):
                     logger.info("Constant pre-global '%s' for %s", gbk, function_name)
                     constant_globals_before[gbk] = gbv
@@ -1744,7 +1745,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     header = []
     for k, v in constant_globals_before.items():
-        header.append(f"{k.upper()} = {v}\n")
+        logger.debug("k=%s, type(v)=%s", k, type(v))
+        if k.endswith("_sorted_set"):
+            k = k[:-11]
+            header.append(f"{k.upper()} = {(repr(eval(v)))[1:-1]}\n")
+        else:
+            header.append(f"{k.upper()} = {repr(v)}\n")
 
 
     pct = function_metadata.coverage_percentage
@@ -1813,7 +1819,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         "# Monkeypatch here"
                     ]
     for hash_key in sorted(state):
-        globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()}
+        globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items() if k not in constant_globals_before}
         globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}
         new_params = []
         if is_method and "__init__" not in function_name:
@@ -1833,7 +1839,16 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 new_params.append(repr(state[hash_key].exception_message))
             else:
                 new_params.append('"N/A"')
-        new_params.append(repr(state[hash_key].expected_result))
+        expected_result = state[hash_key].expected_result
+        if isinstance(expected_result, str):
+            if expected_result.startswith('"'):
+                new_params.append(eval(expected_result))
+            elif expected_result in ['set()']:
+                new_params.append(repr(expected_result)[1:-1])
+            else:
+                new_params.append(repr(expected_result))
+        else:
+            new_params.append(repr(expected_result))
         if state[hash_key].expected_type == "NoneType":
             new_params.append('"N/A"')
         else:
@@ -1848,26 +1863,37 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     for hash_key_index, hash_key in enumerate(sorted(state)):
         this_parameterization =""# f"({','.join(state[hash_key].args)}"
         monkey_patches = []
+        monkey_patch_loop = []
         if state[hash_key].globals_before:
-            monkey_patches.append(f"{tab*2}for k, v in globals_before.items():\n")
+            monkey_patch_loop.append(f"{tab*2}for k, v in globals_before.items():\n")
         grv_str_list: list[str] = []
         for k in sorted(state[hash_key].globals_before):
+
             needs_monkeypatch = True
             #test_str_list.append(f"{tab}monkeypatch = MonkeyPatch()\n")
             v = state[hash_key].globals_before[k]
             v = normalize_arg(v)
-
-
+           
             if k in constant_globals_before_key:
                 grv_str_list.append(k.upper())
-                line = f'{tab*3}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+                line = ""
+                if not isinstance(constant_globals_before[k], int):
+                    k = k[:-11] if k.endswith("_sorted_set") else  k
+                    line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+                else:
+                    k = k[:-11] if k.endswith("_sorted_set") else k
+
+                    line = f'{tab*2}monkeypatch.setattr({package}, \"{k}\", {k.upper()})\n'
+                monkey_patches.append(line)
             else:
                 grv_str_list.append(k)
                 line = f'{tab*3}monkeypatch.setattr({package}, k, v)\n'
-            monkey_patches.append(line)
+                monkey_patch_loop.append(line)
 
         if monkey_patches:
             test_str_list += monkey_patches
+        if len(monkey_patch_loop) > 1:
+            test_str_list += monkey_patch_loop
         #monkey_patches = []
 
         gwv_str_list: list[str]  = []

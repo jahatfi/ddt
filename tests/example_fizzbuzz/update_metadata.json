@@ -75,7 +75,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.01
+         "cost": 0.005
       }
    },
    "coverage_percentage": 80.77,

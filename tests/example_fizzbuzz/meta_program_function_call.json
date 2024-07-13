@@ -119,12 +119,12 @@
       1686
    ],
    "coverage_io": {
-      "d748827be739dc2f48077461a5a32143c7d7a5145bac087aefde0ca6c14ea00e": {
+      "ed479779c091cfb44ae92ce837769760d64e1f315064a8a9c35738d6e5d217d0": {
          "args": [
-            "CoverageInfo(args=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], kwargs={}, globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1421, 1424, 1428, 1437, 1438, 1441], exception_type='', exception_message='', constructor='', cost=0.002)",
+            "CoverageInfo(args=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], kwargs={}, globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1421, 1424, 1429, 1437, 1438, 1441], exception_type='', exception_message='', constructor='', cost=0.002)",
             "\"  \"",
             "\"unit_test_generator\"",
-            "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1421, 1422, 1423, 1424, 1425, 1426, 1428, 1437, 1438, 1439, 1440, 1441], non_code_lines={1427, 1429, 1430, 1431, 1432, 1433, 1434, 1435, 1436}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'c4a3e1cd55e579656c0c7185c1d24c62fc6edb40531b00401a93301e4b8d4a01': CoverageInfo(args=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], kwargs={}, globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1421, 1424, 1428, 1437, 1438, 1441], exception_type='', exception_message='', constructor='', cost=0.002)}, coverage_percentage=50.0, types_in_use={'src.unit_test_generator.CoverageInfo', 'logging.Logger'}, unified_test_coverage={1441, 1421, 1424, 1428, 1437, 1438}, needs_pytest=False)"
+            "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1421, 1422, 1423, 1424, 1425, 1426, 1427, 1429, 1437, 1438, 1439, 1440, 1441], non_code_lines={1428, 1430, 1431, 1432, 1433, 1434, 1435, 1436}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'c4a3e1cd55e579656c0c7185c1d24c62fc6edb40531b00401a93301e4b8d4a01': CoverageInfo(args=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args=['6'], kwargs={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], kwargs={}, globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1421, 1424, 1429, 1437, 1438, 1441], exception_type='', exception_message='', constructor='', cost=0.002)}, coverage_percentage=46.15, types_in_use={'src.unit_test_generator.CoverageInfo', 'logging.Logger'}, unified_test_coverage={1441, 1421, 1424, 1429, 1437, 1438}, needs_pytest=False)"
          ],
          "kwargs": {},
          "globals_before": {},
@@ -174,7 +174,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.191
+         "cost": 0.14
       }
    },
    "coverage_percentage": 51.35,

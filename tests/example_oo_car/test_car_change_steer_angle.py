@@ -16,6 +16,7 @@ from tests.example_oo_car.car import Car
     "test_class_instance, angle, exception_type, exception_message, expected_result, expected_type",
     [
         (Car("Blue", 0.0, 30), 180, "N/A", "N/A", "210", int),
+        (Car("White", 20, -30), 90, "N/A", "N/A", "60", int),
         (
             Car("Green", 48, 90),
             -1080,
@@ -24,6 +25,7 @@ from tests.example_oo_car.car import Car
             "None",
             "N/A",
         ),
+        (Car("Red", 9, 0), 30, "N/A", "N/A", "30", int),
     ],
 )
 def test_car_change_steer_angle(

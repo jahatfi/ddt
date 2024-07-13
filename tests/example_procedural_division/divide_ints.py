@@ -93,8 +93,7 @@ if __name__ == "__main__":
     this_file = Path(__file__).absolute()
     for file in this_file.parent.rglob("*"):
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
-            logger.info("%s != %s", file.absolute(), this_file)
-            logger.info("Deleting %s to ensure clean start", this_file)
+            logger.debug("Deleting %s to ensure clean start", this_file)
             os.remove(file)
 
     # The code below applies the CLI arg above to selectively enable/disable

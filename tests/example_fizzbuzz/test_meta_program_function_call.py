@@ -6,8 +6,8 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to meta_program_function_call:
-from src.unit_test_generator import FunctionMetaData
 from src.unit_test_generator import CoverageInfo
+from src.unit_test_generator import FunctionMetaData
 from pathlib import WindowsPath
 
 
@@ -30,7 +30,7 @@ from pathlib import WindowsPath
                 globals_after={},
                 expected_result="CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
                 expected_type="src.unit_test_generator.CoverageInfo",
-                coverage=[1421, 1424, 1428, 1437, 1438, 1441],
+                coverage=[1421, 1424, 1429, 1437, 1438, 1441],
                 exception_type="",
                 exception_message="",
                 constructor="",
@@ -49,14 +49,15 @@ from pathlib import WindowsPath
                     1424,
                     1425,
                     1426,
-                    1428,
+                    1427,
+                    1429,
                     1437,
                     1438,
                     1439,
                     1440,
                     1441,
                 ],
-                non_code_lines={1427, 1429, 1430, 1431, 1432, 1433, 1434, 1435, 1436},
+                non_code_lines={1428, 1430, 1431, 1432, 1433, 1434, 1435, 1436},
                 global_vars_read_from={"logger"},
                 global_vars_written_to=set(),
                 source_file=WindowsPath(
@@ -75,16 +76,16 @@ from pathlib import WindowsPath
                         globals_after={},
                         expected_result="CoverageInfo(args=['6'], kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
                         expected_type="src.unit_test_generator.CoverageInfo",
-                        coverage=[1421, 1424, 1428, 1437, 1438, 1441],
+                        coverage=[1421, 1424, 1429, 1437, 1438, 1441],
                         exception_type="",
                         exception_message="",
                         constructor="",
                         cost=0.002,
                     )
                 },
-                coverage_percentage=50.0,
+                coverage_percentage=46.15,
                 types_in_use={"src.unit_test_generator.CoverageInfo", "logging.Logger"},
-                unified_test_coverage={1441, 1421, 1424, 1428, 1437, 1438},
+                unified_test_coverage={1441, 1421, 1424, 1429, 1437, 1438},
                 needs_pytest=False,
             ),
             "['    result = unit_test_generator.update_global(obj,this_global,phase,this_coverage_info)\\n', '    assert isinstance(result, expected_type)\\n', '    assert result == expected_result or result == eval(expected_result)\\n']",

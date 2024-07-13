@@ -15,7 +15,8 @@
       1424,
       1425,
       1426,
-      1428,
+      1427,
+      1429,
       1437,
       1438,
       1439,
@@ -23,8 +24,7 @@
       1441
    ],
    "non_code_lines": [
-      1427,
-      1429,
+      1428,
       1430,
       1431,
       1432,
@@ -49,7 +49,7 @@
          "coverage": [
             1421,
             1424,
-            1428,
+            1429,
             1437,
             1438,
             1441
@@ -60,7 +60,7 @@
          "cost": 0.002
       }
    },
-   "coverage_percentage": 50.0,
+   "coverage_percentage": 46.15,
    "types_in_use": [
       "logging.Logger",
       "src.unit_test_generator.CoverageInfo"
@@ -72,7 +72,7 @@
    "unified_test_coverage": [
       1421,
       1424,
-      1428,
+      1429,
       1437,
       1438,
       1441

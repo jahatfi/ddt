@@ -1,5 +1,5 @@
 """
-Objec-oriented test sample
+Object-oriented test sample
 """
 
 import argparse
@@ -228,7 +228,7 @@ if __name__ == "__main__":
     for file in this_file.parent.rglob("*"):
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
             logger.debug("%s != %s", file.absolute().name, this_file.name)
-            logger.info("Deleting %s to ensure clean start", file.name)
+            logger.debug("Deleting %s to ensure clean start", file.name)
             os.remove(file)
 
     # The code below applies the CLI arg above to selectively enable/disable
