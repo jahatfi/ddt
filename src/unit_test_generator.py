@@ -864,18 +864,16 @@ def do_the_decorator_thing(func: Callable, function_name:str,
                                                                 class_type,
                                                                 this_metadata)
     try:
-         args_iterator(args_iterator_class)
+        args_iterator(args_iterator_class)
     except AttributeError:
         # skip on error
         return func(*args, **kwargs)
-
-
 
     if args_iterator_class.class_type:
         this_metadata.types_in_use.add(args_iterator_class.class_type)
 
     this_metadata.types_in_use |= args_iterator_class.new_types_in_use
-    this_coverage_info.args_before = args_iterator_class.args_copy
+    this_coverage_info.args_before = copy.deepcopy(args_iterator_class.args_copy)
 
     phase = "Before"
     # Record the values of any global variables READ BY this function
@@ -1070,11 +1068,20 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     logger.debug("Achieved %.2f%% coverage for %s", percent_covered, function_name)
     sorted_coverage:List[int] = sorted(list(this_coverage))
     logger.debug("sorted_coverage=%s", sorted_coverage)
+    args_iterator(args_iterator_class)
+    this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args)
+    logger.info(f"{args_iterator_class.args_copy=}")
+    logger.info(f"{args_iterator_class.args=}")
+    #this_coverage_info.args_after = args_iterator_class.args
+
     this_coverage_info.coverage = sorted_coverage
     hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
     this_metadata.coverage_io[hashed_input] = this_coverage_info
     this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 3)
+
+
+    
 
     #print("Cost")
 
