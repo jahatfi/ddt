@@ -141,7 +141,7 @@ class CoverageInfo:
     Holds all data gathered from recording/hooking a function/method call
     """
     args_before: list[str] = dataclasses.field(default_factory=list)
-    args_after: list[str] = dataclasses.field(default_factory=list)
+    args_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_before: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
@@ -1833,6 +1833,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     any_gb = False
     any_ga = False
     any_kwargs = False
+    args_after = False
     parameterization_list = ["@pytest.mark.parametrize(\n"]
     parameterization_list.append("\"")
     if is_method and "__init__" not in function_name:
@@ -1845,6 +1846,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         parameterization_list[1] += ", exception_type, exception_message"
         any_exception = True
     parameterization_list[1] += ", expected_result, expected_type"
+    if any(v.args_after for v in state.values()):
+        parameterization_list[1] += ", args_after"
+        args_after = True
     if any(v.globals_before for v in state.values()):
         parameterization_list[1] += ", globals_before"
         any_gb = True
@@ -1882,6 +1886,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 new_params.append(repr(state[hash_key].exception_message))
             else:
                 new_params.append('"N/A"')
+        
         expected_result = state[hash_key].expected_result
         if isinstance(expected_result, str):
             if expected_result.startswith('"'):
@@ -1896,6 +1901,15 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             new_params.append('"N/A"')
         else:
             new_params.append(state[hash_key].expected_type.split('.')[-1])
+        if args_after:
+            these_aa :dict[str, typing.Any] = {}
+            for arg_name, arg_value in zip(function_metadata.parameter_names, state[hash_key].args_after):
+                if isinstance(arg_value, (int, str, float)):
+                    logger.info("Skipping '%s':'%s", arg_name, arg_value)
+                    continue
+                logger.info("Keeping '%s':'%s", arg_name, arg_value)
+                these_aa[arg_name] = arg_value
+            new_params.append(repr(these_aa))
         if any_gb:
             new_params.append('{}' if not globals_before else repr(globals_before))
         if any_ga:
