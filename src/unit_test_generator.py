@@ -34,7 +34,7 @@ import sys
 import time
 import types
 import typing
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from dataclasses import dataclass
 from dis import dis
 from functools import wraps
@@ -45,8 +45,7 @@ from json import JSONEncoder
 from pathlib import Path, WindowsPath  # noqa: F401 # pylint: disable=unused-import
 from subprocess import CalledProcessError
 from types import MappingProxyType
-from typing import Callable, List, Optional, ParamSpec, Set, TypeVar
-
+from typing import Callable, List, Optional, ParamSpec, Set, TypeVar, Any
 import coverage
 import pandas as pd
 from pandas import DataFrame
@@ -679,8 +678,6 @@ class ArgsIteratorClass():
     """
     def __init__(   self,
                     args,
-                    arg_names,
-                    args_copy,
                     new_types_in_use,
                     class_type:str,
                     this_metadata: FunctionMetaData):
@@ -688,21 +685,21 @@ class ArgsIteratorClass():
         Holds all the I/O variables for args_iterator
         """
         self.args = args
-        self.arg_names = arg_names
+        self.arg_names: List[str] = []
         self.args_addresses = {}
         for param_name, param in zip(this_metadata.parameter_names, args):
             self.args_addresses[param_name] = id(param)
-        self.args_copy = args_copy
+        self.args_copy: dict[str, Any] = OrderedDict()
         self.new_types_in_use = new_types_in_use
         self.class_type: str = class_type
         self.this_metadata: FunctionMetaData = this_metadata
 
-    def args_iterator(self):
+    def args_iterator(self, mode:str="Before"):
         """
         Parse arguments to the function provided, caching their values
         """
         function_name = self.this_metadata.name
-        for arg_i, arg in enumerate(self.args):
+        for arg_i, (arg, arg_name) in enumerate(zip(self.args, self.this_metadata.parameter_names)):
 
             #if id(arg) != params.this_metadata.parameter_names[arg_i]:
             #    logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
@@ -710,7 +707,11 @@ class ArgsIteratorClass():
             #logger.info("Keeping param #%d: %s for 'after' comparison", arg_i, arg)
             # Do not include the first arg of a method (it's "self")
             # in the argument list
+            logger.info("Arg #%d: %s", arg_i, arg_name)
             if self.this_metadata.is_method and arg_i == 0:
+                continue
+            if mode == "After" and isinstance(arg, (int, str, float)):
+                logger.info("After: Skip it!")
                 continue
             if callable(arg):
                 continue
@@ -724,14 +725,15 @@ class ArgsIteratorClass():
                         logger.critical("NO FILENAME FOUND!: %s",
                                         re.escape(str(arg.__code__)))
                 else:
-                    self.args_copy.append(arg.__qualname__)
+                    self.args_copy[arg_name] = arg.__qualname__
+
             if (
                     callable(arg) and inspect.isfunction(arg) and
                     "." in arg.__qualname__ and arg.__qualname__[0].isupper()
                 ):
                 newest_import_list = f"{arg.__module__}.{arg.__qualname__}".split('.')
                 newest_import = '.'.join(newest_import_list[:-1])
-                self.args_copy.append(arg.__qualname__)
+                self.args_copy[arg.__qualname__] = arg
                 # Reset the class type, as this newest_import will be used instead
                 self.class_type = ""
                 if arg.__module__ == "__main__":
@@ -754,7 +756,7 @@ class ArgsIteratorClass():
 
                 #sys.exit(1)
             elif isinstance(arg, str):
-                self.args_copy.append("\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\"")
+                self.args_copy[arg_name] = "\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\""
                 continue
 
             type_str = str(type(arg))
@@ -777,7 +779,7 @@ class ArgsIteratorClass():
                     # is uncaught, it will break everything.
                     # pylint: disable-next=eval-used
                     eval(class_repr)
-                    self.args_copy.append(class_repr)
+                    self.args_copy[arg_name] = class_repr
 
                 except SyntaxError as e:
                     try:
@@ -803,9 +805,9 @@ class ArgsIteratorClass():
                                     function_name, class_repr, arg)
                     #this_coverage_info.constructor = copy.deepcopy(class_repr)
 
-                    self.args_copy.append(class_repr)
+                    self.args_copy[arg_name] = class_repr
             else:
-                self.args_copy.append(repr(arg))
+                self.args_copy[arg_name] = repr(arg)
 
 
 # pylint: disable-next=too-many-locals,too-many-statements,too-many-branches
@@ -859,7 +861,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     this_coverage_info: CoverageInfo = CoverageInfo()
 
     #args_copy = [convert_to_serializable(x) for x in args]
-    args_copy:list[str] = []
     class_type = ""
     if this_metadata.is_method:
         if not function_name.endswith("__init__"):
@@ -871,15 +872,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         else:
             logger.info("Found Constructor: %s args=%s", function_name, args[1:])
     logger.info(f"{args=}")
-    cached_args = []
-    arg_names = []
-    for arg_name, arg in zip(this_metadata.parameter_names, args):
-        if not callable(arg):
-            cached_args.append(copy.deepcopy(arg))
-            arg_names.append(arg_name)
-    args_iterator_class: ArgsIteratorClass = ArgsIteratorClass( cached_args,
-                                                                arg_names,
-                                                                args_copy,
+    args_iterator_class: ArgsIteratorClass = ArgsIteratorClass( args,
                                                                 set(),
                                                                 class_type,
                                                                 this_metadata)
@@ -893,7 +886,8 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         this_metadata.types_in_use.add(args_iterator_class.class_type)
 
     this_metadata.types_in_use |= args_iterator_class.new_types_in_use
-    this_coverage_info.args_before = copy.deepcopy(args_iterator_class.args_copy)
+    this_coverage_info.args_before = copy.deepcopy([arg for arg in args_iterator_class.args_copy.values()])
+    args_iterator_class.args_copy = OrderedDict()
 
     phase = "Before"
     # Record the values of any global variables READ BY this function
@@ -1089,10 +1083,11 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     sorted_coverage:List[int] = sorted(list(this_coverage))
     logger.debug("sorted_coverage=%s", sorted_coverage)
     logger.info(f"{args_iterator_class.args=}")
+    logger.info(f"{args_iterator_class.args_copy=}")
     logger.info(f"{[hex(id(arg)) for arg in args_iterator_class.args]}")
-    logger.info("OVERWRITING ARGS")
-    args_iterator_class.args_iterator()
-    this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args)
+    logger.info("OVERWRITING ARGS to %s", function_name)
+    args_iterator_class.args_iterator("After")
+    this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args_copy)
     logger.info(f"{args_iterator_class.args_copy=}")
     logger.info(f"{args_iterator_class.args=}")
     logger.info(f"{[hex(id(arg)) for arg in args_iterator_class.args]}")
@@ -1755,7 +1750,7 @@ def meta_program_function_call( this_state:CoverageInfo,
         # TODO Why is this_state.args_after sometimes a tuple??
         if isinstance(this_state.args_after, dict) and this_state.args_after.keys():
             for arg_after in this_state.args_after.keys():
-                list_of_lines.append(f"{indent}assert args_after[\"{arg_after}\"] == {arg_after}\n")
+                list_of_lines.append(f"{indent}assert args_after[\"{arg_after}\"] == {arg_after} or {arg_after} == eval(args_after[\"{arg_after}\"])\n")
 
     else:
         for name in parameter_names:
@@ -1935,10 +1930,10 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         if args_after:
             # TODO
             these_aa :dict[str, typing.Any] = {}
-            for arg_name, arg_value in zip(function_metadata.parameter_names, state[hash_key].args_after):
-                if isinstance(arg_value, (int, str, float)):
-                    logger.info("Skipping '%s':'%s", arg_name, arg_value)
-                    continue
+            for arg_name, arg_value in state[hash_key].args_after.items():
+                #if isinstance(arg_value, (int, str, float)):
+                #    logger.info("In '%s' Skipping '%s': %s (type:%s)", function_name, arg_name, arg_value, type(arg_value))
+                #    continue
                 logger.info("Keeping '%s':'%s", arg_name, arg_value)
                 these_aa[arg_name] = arg_value
                 state[hash_key].args_after = these_aa
