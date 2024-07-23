@@ -381,6 +381,23 @@ class FunctionMetaData(Jsonable):
         """
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
+    
+    def __eq__(self, other):
+        """
+        Return True if and only if the two FunctionMetaData class are identical,
+        doesn't compare private variables.
+        """
+        if not isinstance(other, FunctionMetaData):
+            return False
+        if self.__dict__.keys() != other.__dict__.keys():
+            return False
+        for k,v  in self.__dict__.items():
+            if k.startswith("_"):
+                continue
+            if v != other.__dict__[k]:
+                return False
+        return True
+
 
 # https://stackoverflow.com/questions/47060133/python-3-type-hinting-for-decorator
 def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
@@ -713,7 +730,7 @@ class ArgsIteratorClass():
             if mode == "After" and isinstance(arg, (int, str, float)):
                 logger.info("After: Skip it!")
                 continue
-            if callable(arg):
+            if mode == "After" and callable(arg):
                 continue
                 logger.warning('%s is a callable', arg)
                 if arg.__module__ == "__main__":
@@ -1775,6 +1792,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     """
 
     imports = ["import re\n","import pytest\n"]
+    if function_name == "meta_program_function_call":
+        imports.append("from collections import OrderedDict\n")
 
     was_executed = False
     globals_before_are_constant = True
@@ -1942,6 +1961,14 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             new_params.append('{}' if not globals_before else repr(globals_before))
         if any_ga:
             new_params.append('{}' if not globals_after else repr(globals_after))
+        for pi, param in enumerate(new_params):
+            function_match = re.match("<function (\w*) at 0x[0-9a-fA-F]{,16}>", param)
+            if not(function_match):
+                continue
+            f_name = function_match.groups()[0]
+            new_params[pi] = f_name
+            #import_string: str = get_method_class_import_string(eval(f_name))
+            #imports.append(import_string)
         parameterization_list.append('('+",".join(new_params)+'),\n')
 
     #test_str_list += parameterization_list
