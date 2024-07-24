@@ -225,7 +225,9 @@ class FunctionMetaData(Jsonable):
                     types_in_use:Optional[set] = None,
                     unified_test_coverage:Optional[set] = None,
                     needs_pytest:bool = False,
-                    exceptions_raised:Optional[set] = None
+                    exceptions_raised:Optional[set] = None,
+                    callable_files: Optional[dict[str, str]] = None
+                    
                 ):
         # These properties (expect non_lines) are always provided
         self.name = name
@@ -267,6 +269,11 @@ class FunctionMetaData(Jsonable):
             self.exceptions_raised = set()
         else:
             self.exceptions_raised = exceptions_raised
+
+        if callable_files is None:
+            self.callable_files: dict[str, str] = {}
+        else:
+            self.callable_files = callable_files
 
     def update_lines(self, lines: List[int]):
         """
@@ -340,8 +347,9 @@ class FunctionMetaData(Jsonable):
         result.append(" coverage_io="+repr(self.coverage_io))
         result.append(" coverage_percentage="+repr(self.coverage_percentage))
         result.append(" types_in_use="+repr(self.types_in_use))
-        result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
-        result.append(" needs_pytest="+repr(self.needs_pytest)+')')
+        result.append(" unified_test_coverage="+repr(self.unified_test_coverage))        
+        result.append(" needs_pytest="+repr(self.needs_pytest))
+        result.append(" callable_files="+repr(self.callable_files)+')')
         result_str = ','.join(result)
         logger.debug("result=%s", result_str)
         return result_str
@@ -657,6 +665,25 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
+def convert_file_to_import(outdir:Path, my_path:Path)->str:
+    """"
+    Given a file, return it as a dotted string
+    """
+    file = str(outdir)
+    this_type = os.path.relpath(my_path, outdir)
+    this_type2 = os.path.relpath(outdir, my_path)
+    logger.info(f"   {file=}")
+    logger.info(f"{my_path=}")
+    logger.info(f"{this_type=}")
+    logger.info(f"{this_type2=}")
+    my_path_str = str(my_path)[len(str(file)):]
+    my_path_str = re.sub(r"^[\\/]", "", my_path_str)
+    this_type = re.sub(".py$", "", my_path_str)
+    this_type = re.sub(r"\\", ".", this_type)
+    # Other other OS's use forward slashes
+    this_type = re.sub(r"/", ".", this_type)
+
+    return this_type
 @unit_test_generator_decorator(percent_coverage=0, sample_count=1)
 def sorted_set_repr(obj: set):
     """
@@ -795,6 +822,7 @@ class ArgsIteratorClass():
                     # be represented as strings.  If not, and this SyntaxError
                     # is uncaught, it will break everything.
                     # pylint: disable-next=eval-used
+                    logger.info(f"{class_repr=}")
                     eval(class_repr)
                     self.args_copy[arg_name] = class_repr
 
@@ -1226,6 +1254,11 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
     this_metadata.update_lines(line_numbers[1::])
     this_metadata.global_vars_read_from = global_vars_read_from
     this_metadata.global_vars_written_to = global_vars_written_to
+    source_file = str(f.__code__).split("file ")[1].split(',')[0][1:-1]
+    try:
+        this_metadata.callable_files[f.__name__] = source_file
+    except TypeError as e:
+        logger.error(e)
     #return this_metadata
 
 @unit_test_generator_decorator(sample_count=1)
@@ -1450,7 +1483,8 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
                             test_suite,
                             function_name,
                             function_metadata.source_file,
-                            tests_dir)
+                            tests_dir,
+                            outdir)
         local_all_metadata.pop(function_name)
     return local_all_metadata
 
@@ -1782,6 +1816,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         function_name:str,
                         source_file:Path,
                         tests_dir:Path,
+                        outdir:Path,
                         indent_size:int=2)->str:
     """
     This is the function that can automatically create a unit
@@ -1790,7 +1825,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     to lists of strings, these lists of strings are evenutally
     written to a file, one per decorated function.
     """
-
+    outdir = outdir.absolute()
+    tests_dir = tests_dir.absolute()
     imports = ["import re\n","import pytest\n"]
     if function_name == "meta_program_function_call":
         imports.append("from collections import OrderedDict\n")
@@ -1961,12 +1997,22 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             new_params.append('{}' if not globals_before else repr(globals_before))
         if any_ga:
             new_params.append('{}' if not globals_after else repr(globals_after))
+
+        
         for pi, param in enumerate(new_params):
-            function_match = re.match("<function (\w*) at 0x[0-9a-fA-F]{,16}>", param)
+            function_match = re.match(r"<function (\w*) at 0x[0-9a-fA-F]{,16}>", param)
             if not(function_match):
                 continue
             f_name = function_match.groups()[0]
-            new_params[pi] = f_name
+            logger.error(f"dropping {new_params[pi]}")
+            new_params[pi] = f_name + param[function_match.span()[1]:]
+            if f_name in all_metadata:
+                logger.info(f"{f_name=} {all_metadata[f_name]=}")
+                src_file = all_metadata[f_name].callable_files[f_name]#.absolute()
+                canonical_file = convert_file_to_import(outdir, src_file)
+                logger.info(f"{canonical_file=}")
+                import_str = f"from {canonical_file} import {f_name}\n"
+                imports.append(import_str)
             #import_string: str = get_method_class_import_string(eval(f_name))
             #imports.append(import_string)
         parameterization_list.append('('+",".join(new_params)+'),\n')
