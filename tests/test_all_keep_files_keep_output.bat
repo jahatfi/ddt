@@ -17,3 +17,8 @@ cd example_oo_car
 python car.py
 pytest -s -v . 
 cd ..
+
+cd example_pass_by_assignment
+python pass_by_assignment.py
+pytest -s -v . 
+cd ..

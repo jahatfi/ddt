@@ -6,9 +6,7 @@ import argparse
 import logging
 import os
 from pathlib import Path
-from typing import TypeVar, Generic, List, Any
-
-T = TypeVar('T')
+from typing import Any, List, TypeVar
 
 from src import unit_test_generator
 from src.unit_test_generator import (
@@ -16,18 +14,31 @@ from src.unit_test_generator import (
     unit_test_generator_decorator,
 )
 
+T = TypeVar('T')
+
+
 FMT_STR = "%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s"
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.CRITICAL)
+unit_test_generator.logger.setLevel(logging.INFO)
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
-def append_list(this_list:List[any], item:any)->None:
+def append_list(this_list:List[Any], item:Any)->None:
     """
     Given a list of items of the same type T and a separate item,
     append the item to the list.  Return None.
     """
+    logger.info("APPEND %s to %s", item, this_list)
     this_list.append(item)
+
+@unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
+def overwrite_list(this_list:List[Any])->None:
+    """
+    Given a list of items of the same type T and a separate item,
+    delete the local copy.
+    """
+    this_list = [0]
+    print(this_list)
 
 def main():
     """
@@ -37,10 +48,9 @@ def main():
     # Test append_list
     my_list = [1,2,3,4]
     append_list(my_list, 6)
+    overwrite_list(my_list[::-1])
 
     generate_all_tests_and_metadata(Path("."), Path("."))
-    logger.info(f"{my_list=}")
-
 
 if __name__ == "__main__":
     log_levels = {

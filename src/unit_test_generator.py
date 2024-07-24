@@ -227,7 +227,6 @@ class FunctionMetaData(Jsonable):
                     needs_pytest:bool = False,
                     exceptions_raised:Optional[set] = None,
                     callable_files: Optional[dict[str, str]] = None
-                    
                 ):
         # These properties (expect non_lines) are always provided
         self.name = name
@@ -347,7 +346,7 @@ class FunctionMetaData(Jsonable):
         result.append(" coverage_io="+repr(self.coverage_io))
         result.append(" coverage_percentage="+repr(self.coverage_percentage))
         result.append(" types_in_use="+repr(self.types_in_use))
-        result.append(" unified_test_coverage="+repr(self.unified_test_coverage))        
+        result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
         result.append(" needs_pytest="+repr(self.needs_pytest))
         result.append(" callable_files="+repr(self.callable_files)+')')
         result_str = ','.join(result)
@@ -389,7 +388,7 @@ class FunctionMetaData(Jsonable):
         """
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
-    
+
     def __eq__(self, other):
         """
         Return True if and only if the two FunctionMetaData class are identical,
@@ -525,6 +524,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 # If this is the first time this func has been called,
                 # disassemble it to get the lines and global variables
                 if function_name not in all_metadata:
+                    logger.critical(f"{function_name} {func.__name__=} {type(func)=} not in {all_metadata.keys()}\n")
                     # Using single var names ('x', 'y') to keep lines short
                     parameters = inspect.getfullargspec(func)[0]
                     this_metadata = FunctionMetaData(   name=function_name,
@@ -665,25 +665,20 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
-def convert_file_to_import(outdir:Path, my_path:Path)->str:
+def convert_file_to_import(start:Path, my_path:str)->str:
     """"
-    Given a file, return it as a dotted string
+    Given a file, return it as a relative dotted string,
+    relative to the start location.
     """
-    file = str(outdir)
-    this_type = os.path.relpath(my_path, outdir)
-    this_type2 = os.path.relpath(outdir, my_path)
-    logger.info(f"   {file=}")
-    logger.info(f"{my_path=}")
-    logger.info(f"{this_type=}")
-    logger.info(f"{this_type2=}")
-    my_path_str = str(my_path)[len(str(file)):]
+    result = os.path.relpath(my_path, start)
+    my_path_str = my_path[len(str(start)):]
     my_path_str = re.sub(r"^[\\/]", "", my_path_str)
-    this_type = re.sub(".py$", "", my_path_str)
-    this_type = re.sub(r"\\", ".", this_type)
+    result = re.sub(".py$", "", my_path_str)
+    result = re.sub(r"\\", ".", result)
     # Other other OS's use forward slashes
-    this_type = re.sub(r"/", ".", this_type)
+    result = re.sub(r"/", ".", result)
+    return result
 
-    return this_type
 @unit_test_generator_decorator(percent_coverage=0, sample_count=1)
 def sorted_set_repr(obj: set):
     """
@@ -759,17 +754,6 @@ class ArgsIteratorClass():
                 continue
             if mode == "After" and callable(arg):
                 continue
-                logger.warning('%s is a callable', arg)
-                if arg.__module__ == "__main__":
-                    file_name = get_filename(str(arg.__code__))
-                    if file_name:
-                        logger.debug("%s.%s",file_name, arg.__name__)
-                        self.args_copy.append(f"{file_name}.{arg.__name__}")
-                    else:
-                        logger.critical("NO FILENAME FOUND!: %s",
-                                        re.escape(str(arg.__code__)))
-                else:
-                    self.args_copy[arg_name] = arg.__qualname__
 
             if (
                     callable(arg) and inspect.isfunction(arg) and
@@ -822,7 +806,6 @@ class ArgsIteratorClass():
                     # be represented as strings.  If not, and this SyntaxError
                     # is uncaught, it will break everything.
                     # pylint: disable-next=eval-used
-                    logger.info(f"{class_repr=}")
                     eval(class_repr)
                     self.args_copy[arg_name] = class_repr
 
@@ -916,7 +899,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             class_type = copy.deepcopy(this_type)
         else:
             logger.info("Found Constructor: %s args=%s", function_name, args[1:])
-    logger.info(f"{args=}")
     args_iterator_class: ArgsIteratorClass = ArgsIteratorClass( args,
                                                                 set(),
                                                                 class_type,
@@ -931,6 +913,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         this_metadata.types_in_use.add(args_iterator_class.class_type)
 
     this_metadata.types_in_use |= args_iterator_class.new_types_in_use
+    # pylint: disable-next=unnecessary-comprehension
     this_coverage_info.args_before = copy.deepcopy([arg for arg in args_iterator_class.args_copy.values()])
     args_iterator_class.args_copy = OrderedDict()
 
@@ -1127,15 +1110,10 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     logger.debug("Achieved %.2f%% coverage for %s", percent_covered, function_name)
     sorted_coverage:List[int] = sorted(list(this_coverage))
     logger.debug("sorted_coverage=%s", sorted_coverage)
-    logger.info(f"{args_iterator_class.args=}")
-    logger.info(f"{args_iterator_class.args_copy=}")
-    logger.info(f"{[hex(id(arg)) for arg in args_iterator_class.args]}")
-    logger.info("OVERWRITING ARGS to %s", function_name)
+
     args_iterator_class.args_iterator("After")
     this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args_copy)
-    logger.info(f"{args_iterator_class.args_copy=}")
-    logger.info(f"{args_iterator_class.args=}")
-    logger.info(f"{[hex(id(arg)) for arg in args_iterator_class.args]}")
+
     #this_coverage_info.args_after = args_iterator_class.args
 
     this_coverage_info.coverage = sorted_coverage
@@ -1245,12 +1223,17 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
             line_numbers.append(line_number)
         if "LOAD_GLOBAL" in line:
             this_global = line.split("(")[1].split(")")[0]
-            if is_global_var(this_global, f.__globals__, f.__name__):
+            if hasattr(f, "__globals__") and  is_global_var(this_global, f.__globals__, f.__name__):
                 global_vars_read_from.add(this_global)
+                
         elif "STORE_GLOBAL" in line:
             this_global = line.split("(")[1].split(")")[0]
-            if is_global_var(this_global, f.__globals__, f.__name__):
-                global_vars_written_to.add(this_global)
+            try:
+                if is_global_var(this_global, f.__globals__, f.__name__):
+                    global_vars_written_to.add(this_global)
+            except AttributeError as e:
+                logger.error(e)
+                print(f"ERROR2 {f.__name__}")
     this_metadata.update_lines(line_numbers[1::])
     this_metadata.global_vars_read_from = global_vars_read_from
     this_metadata.global_vars_written_to = global_vars_written_to
@@ -1797,7 +1780,6 @@ def meta_program_function_call( this_state:CoverageInfo,
         #indent += tab
         line = f"{indent}assert result == expected_result or result == eval(expected_result)\n"
         list_of_lines.append(line)
-        logger.info(f"{this_state.args_after=}")
         # TODO Why is this_state.args_after sometimes a tuple??
         if isinstance(this_state.args_after, dict) and this_state.args_after.keys():
             for arg_after in this_state.args_after.keys():
@@ -1998,19 +1980,16 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         if any_ga:
             new_params.append('{}' if not globals_after else repr(globals_after))
 
-        
+
         for pi, param in enumerate(new_params):
             function_match = re.match(r"<function (\w*) at 0x[0-9a-fA-F]{,16}>", param)
-            if not(function_match):
+            if not function_match:
                 continue
             f_name = function_match.groups()[0]
-            logger.error(f"dropping {new_params[pi]}")
             new_params[pi] = f_name + param[function_match.span()[1]:]
             if f_name in all_metadata:
-                logger.info(f"{f_name=} {all_metadata[f_name]=}")
                 src_file = all_metadata[f_name].callable_files[f_name]#.absolute()
                 canonical_file = convert_file_to_import(outdir, src_file)
-                logger.info(f"{canonical_file=}")
                 import_str = f"from {canonical_file} import {f_name}\n"
                 imports.append(import_str)
             #import_string: str = get_method_class_import_string(eval(f_name))
@@ -2136,8 +2115,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 custom_imports.append(f"from {package} import {module}\n")
         elif prefix:
             custom_imports.append(f"from {prefix} import {module}\n")
-        elif module:
-            custom_imports.append(f"import {module}\n")
+        #elif module:
+        #    custom_imports.append(f"import {module}\n")
 
     if custom_imports:
         imports.append("\n")
