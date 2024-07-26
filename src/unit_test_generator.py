@@ -137,7 +137,8 @@ def _default(obj):
 # pylint: disable-next=too-many-instance-attributes
 class CoverageInfo:
     """
-    Holds all data gathered from recording/hooking a function/method call
+    Holds all data gathered from single recording
+    of a function or class method execution
     """
     args_before: list[str] = dataclasses.field(default_factory=list)
     args_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
@@ -1225,7 +1226,7 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
             this_global = line.split("(")[1].split(")")[0]
             if hasattr(f, "__globals__") and  is_global_var(this_global, f.__globals__, f.__name__):
                 global_vars_read_from.add(this_global)
-                
+
         elif "STORE_GLOBAL" in line:
             this_global = line.split("(")[1].split(")")[0]
             try:
@@ -1934,7 +1935,11 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         new_params = []
         if is_method and "__init__" not in function_name:
             new_params.append(state[hash_key].constructor)
-        new_params.append(','.join(state[hash_key].args_before))
+        try:
+            new_params.append(','.join(state[hash_key].args_before))
+        except TypeError as e:
+            logger.error(state[hash_key])
+            raise e
         if any_kwargs:
             if state[hash_key].kwargs:
                 new_params.append(','.join(state[hash_key].kwargs))
