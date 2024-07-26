@@ -1,0 +1,50 @@
+\section{Introduction}\label{sec:introduction}
+Advocates of Test Driven Development (TDD) such a Harry Percival, 
+the author of Test-Driven Development with Python, 
+argue that software developers should follow the TDD process in 
+which they develop software by first writing tests, 
+then the bare minimum amount of code to make those tests pass, 
+before beginning the cycle anew with more tests \cite{percival2014test} page 3.   
+
+%
+He advocates both functional and unit tests, making the following distinction: 
+“functional tests test the application from the outside, from the point of view of the user.
+%
+Unit tests test the application from the inside, 
+from the point of view of the programmer” (Percival, 22)
+%
+Much later in the book Percival defines an “integration test” as 
+one that depends on and interacts with some external system (Percival 470.)  
+%
+“Integration test” is sometimes use in common vernacular in the same way that Percival uses “functional test”.  
+%
+This paper will do the same.
+%
+In the author’s experience, immature organizations (or solo developers
+on small or personal projects) often don’t adhere to the TDD approach,
+and end up writing the tests after the development of the code or 
+fail to write tests at all.
+%
+Alternatively, some teams may focus primarily on function or integration tests 
+ and opt not to develop unit tests, despite the pros (not to mention cons) of each.
+%
+This is exemplified in this StackExchange QA: https://softwareengineering.
+%
+stackexchange.com/questions/204786/do-i-need-unit-test-if-i-already-have-integration-test.
+%
+  
+
+The main pros and cons for functional versus unit tests are summarized very briefly in the short table below:
+
+Since unit tests are tedious and time consuming to develop, the body of academic work on generating them automatically is extensive, starting with classic algorithms like search and randomization based \cite{Luk22Pynguin0170} and rapidly expanding with the advent of generative AI \cite{bhatia2023unit,takerngsaksiri2024tdd,wang2024software}.  
+
+*These AI methods generate tests based on a variety of inputs, typically the code itself and some other input such as human prompts \cite{lahiri2022interactive}, natural language requirements \cite{wang2024software}, or entire projects \cite{rao2023cat}.  
+%
+In the current research this author did not discover a deterministic (i.e. non-generative AI) unit test generation paradigm that monitored live execution of the code.
+%
+Thus, this work is perhaps most similar to \cite{lahiri2022interactive}, though differs in that rather than prompt users interactively for sample inputs and outputs, it automatically detects such inputs, outputs, and changes in global state by monitoring actual execution of the code.
+%
+
+%
+
+% vim: spelllang=en_GB
