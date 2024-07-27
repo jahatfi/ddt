@@ -1253,22 +1253,34 @@
   year={2024}
 }
 
-@article{wang2024software,
-  title={Software testing with large language models: Survey, landscape, and vision},
+@ARTICLE{10440574,
   author={Wang, Junjie and Huang, Yuchao and Chen, Chunyang and Liu, Zhe and Wang, Song and Wang, Qing},
-  journal={IEEE Transactions on Software Engineering},
+  journal={IEEE Transactions on Software Engineering}, 
+  title={Software Testing With Large Language Models: Survey, Landscape, and Vision}, 
   year={2024},
-  publisher={IEEE}
-}
+  volume={50},
+  number={4},
+  pages={911-936},
+  abstract={Pre-trained large language models (LLMs) have recently emerged as a breakthrough technology in natural language processing and artificial intelligence, with the ability to handle large-scale datasets and exhibit remarkable performance across a wide range of tasks. Meanwhile, software testing is a crucial undertaking that serves as a cornerstone for ensuring the quality and reliability of software products. As the scope and complexity of software systems continue to grow, the need for more effective software testing techniques becomes increasingly urgent, making it an area ripe for innovative approaches such as the use of LLMs. This paper provides a comprehensive review of the utilization of LLMs in software testing. It analyzes 102 relevant studies that have used LLMs for software testing, from both the software testing and LLMs perspectives. The paper presents a detailed discussion of the software testing tasks for which LLMs are commonly used, among which test case preparation and program repair are the most representative. It also analyzes the commonly used LLMs, the types of prompt engineering that are employed, as well as the accompanied techniques with these LLMs. It also summarizes the key challenges and potential opportunities in this direction. This work can serve as a roadmap for future research in this area, highlighting potential avenues for exploration, and identifying gaps in our current understanding of the use of LLMs in software testing.},
+  keywords={Software testing;Task analysis;Computational modeling;Codes;Software systems;Natural language processing;Reviews;Pre-trained large language model;software testing;LLM;GPT},
+  doi={10.1109/TSE.2024.3368208},
+  ISSN={1939-3520},
+  month={April},}
 
-@inproceedings{rao2023cat,
-  title={CAT-LM training language models on aligned code and tests},
-  author={Rao, Nikitha and Jain, Kush and Alon, Uri and Le Goues, Claire and Hellendoorn, Vincent J},
-  booktitle={2023 38th IEEE/ACM International Conference on Automated Software Engineering (ASE)},
-  pages={409--420},
+
+@INPROCEEDINGS{10298372,
+  author={Rao, Nikitha and Jain, Kush and Alon, Uri and Goues, Claire Le and Hellendoorn, Vincent J.},
+  booktitle={2023 38th IEEE/ACM International Conference on Automated Software Engineering (ASE)}, 
+  title={CAT-LM Training Language Models on Aligned Code And Tests}, 
   year={2023},
-  organization={IEEE}
-}
+  volume={},
+  number={},
+  pages={409-420},
+  abstract={Testing is an integral but often neglected part of the software development process. Classical test generation tools such as EvoSuite generate behavioral test suites by optimizing for coverage, but tend to produce tests that are hard to understand. Language models trained on code can generate code that is highly similar to that written by humans, but current models are trained to generate each file separately, as is standard practice in natural language processing, and thus fail to consider the code-under-test context when producing a test file. In this work, we propose the Aligned Code And Tests Language Model (CAT-LM), a GPT-style language model with 2.7 Billion parameters, trained on a corpus of Python and Java projects. We utilize a novel pretraining signal that explicitly considers the mapping between code and test files when available. We also drastically increase the maximum sequence length of inputs to 8,192 tokens, 4x more than typical code generation models, to ensure that the code context is available to the model when generating test code. We analyze its usefulness for realistic applications, showing that sampling with filtering (e.g., by compilability, coverage) allows it to efficiently produce tests that achieve coverage similar to ones written by developers while resembling their writing style. By utilizing the code context, CAT-LM generates more valid tests than even much larger language models trained with more data (CodeGen 16B and StarCoder) and substantially outperforms a recent test-specific model (TeCo) at test completion. Overall, our work highlights the importance of incorporating software-specific insights when training language models for code and paves the way to more powerful automated test generation.},
+  keywords={Training;Codes;Runtime;Data models;Software;Test pattern generators;Standards;test generation;test completion;large language models;code-test alignment},
+  doi={10.1109/ASE56229.2023.00193},
+  ISSN={2643-1572},
+  month={Sep.},}
 
 @article{lahiri2022interactive,
   title={Interactive code generation via test-driven user-intent formalization},
@@ -1288,14 +1300,23 @@
   publisher={Wiley Online Library}
 }
 
-@article{lilis2019survey,
-  title={A survey of metaprogramming languages},
-  author={Lilis, Yannis and Savidis, Anthony},
-  journal={ACM Computing Surveys (CSUR)},
-  volume={52},
-  number={6},
-  pages={1--39},
-  year={2019},
-  publisher={ACM New York, NY, USA}
+@article{10.1145/3354584,
+author = {Lilis, Yannis and Savidis, Anthony},
+title = {A Survey of Metaprogramming Languages},
+year = {2019},
+issue_date = {November 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {52},
+number = {6},
+issn = {0360-0300},
+url = {https://doi.org/10.1145/3354584},
+doi = {10.1145/3354584},
+abstract = {Metaprogramming is the process of writing computer programs that treat programs as data, enabling them to analyze or transform existing programs or generate new ones. While the concept of metaprogramming has existed for several decades, activities focusing on metaprogramming have been increasing rapidly over the past few years, with most languages offering some metaprogramming support and the amount of metacode being developed growing exponentially. In this article, we introduce a taxonomy of metaprogramming languages and present a survey of metaprogramming languages and systems based on the taxonomy. Our classification is based on the metaprogramming model adopted by the language, the phase of the metaprogram evaluation, the metaprogram source location, and the relation between the metalanguage and the object language.},
+journal = {ACM Comput. Surv.},
+month = {oct},
+articleno = {113},
+numpages = {39},
+keywords = {reflection, multistage languages, meta-object protocols, macro systems, generative programming, aspect-oriented programming, Metaprogramming}
 }
 @Comment{jabref-meta: databaseType:bibtex;}

@@ -1,73 +1,7 @@
 \section{Evaluation}\label{sec:evaluation}
 
-We evaluated \pynguin
-by conducting a small experiment for this paper,
-using the aforementioned algorithms for test generation.
-%
-We used \numModules modules from our previous work~\cite{LKF21}
-for our evaluation
-and ran \pynguin in version~0.17.0~\cite{Luk22Pynguin0170}
-\numIterations times on each module
-and in each configuration
-to minimise the influence of randomness.
-%
-For the experiment,
-we set the timeout for test generation to \timeout.% \footnote{%
-%   We provide an artefact containing the raw data %
-%   and the evaluation scripts from %
-%   \url{https://zenodo.org/TOBEDONE}.%
-% }
-%
-In this work we only give few insights;
-%
-for a more extensive evaluation
-we refer the reader to our previous work~\cite{LKF20,LKF21},
-which not only studies the differences
-between various algorithms in greater detail
-but also investigates on the influence of type information.
-%
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.95\linewidth]{coverage-over-time}
-  \Description{A line plot showing the coverage results over time for the
-    six algorithms.
-    DynaMOSA performs best, at around \avgCoverage branches covered,
-    followed by MOSA, Whole Suite with Archive, MIO, and Whole Suite.
-    The Random algorithm yields the lowest coverage results.
-  }
-  \caption{\label{fig:coverage-over-time}Development of the coverage over time.}
-\end{figure}
-
-To gain insights on the performance of the different algorithms,
-we measured branch coverage.
-%
-\Cref{fig:coverage-over-time} shows the development
-of the mean coverage per configuration
-over the generation time of \timeout.
-%
-One can clearly see that the search-based techniques
-outperform the random algorithm.
-%
-The five search-based algorithms,
-however,
-only show small differences,
-with DynaMOSA achieving the highest
-and Whole Suite the lowest coverage values~(mean branch coverage for
-DynaMOSA\@: \avgCoverageDynaMOSA,
-MIO\@: \avgCoverageMIO,
-MOSA\@: \avgCoverageMOSA,
-Random\@: \avgCoverageRandom,
-Whole Suite\@: \avgCoverageWS,
-and for Whole Suite with archive\@: \avgCoverageWSA).
-%
-These results are in line with previous research~\cite{CAF+18,PKT18a}
-in the context of statically typed languages:
-%
-the search-based algorithms achieve a higher average coverage
-than the random algorithm.
-%
-Furthermore, DynaMOSA yields the highest coverage values.
+The decorator was evaluated informally by applying it to four test cases
+specifically designed to test it.
 %
 
 % vim: spelllang=en_GB
