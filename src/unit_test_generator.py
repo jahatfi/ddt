@@ -212,23 +212,24 @@ class FunctionMetaData(Jsonable):
     Class to track metadata when testing functions and methods
     """
     # pylint: disable-next=too-many-arguments
-    def __init__(   self,
-                    name:str,
-                    parameter_names:List[str],
-                    is_method:bool,
-                    source_file:Path,
-                    lines:Optional[List[int]] = None,
-                    non_code_lines:Optional[List[int]] = None,
-                    global_vars_read_from:Optional[set] = None,
-                    global_vars_written_to:Optional[set] = None,
-                    coverage_io:Optional[dict] = None,
-                    coverage_percentage:float=0.0,
-                    types_in_use:Optional[set] = None,
-                    unified_test_coverage:Optional[set] = None,
-                    needs_pytest:bool = False,
-                    exceptions_raised:Optional[set] = None,
-                    callable_files: Optional[dict[str, str]] = None
-                ):
+    def __init__(   
+            self,
+            name:str,
+            parameter_names:List[str],
+            is_method:bool,
+            source_file:Path,
+            lines:Optional[List[int]] = None,
+            non_code_lines:Optional[List[int]] = None,
+            global_vars_read_from:Optional[set] = None,
+            global_vars_written_to:Optional[set] = None,
+            coverage_io:Optional[dict] = None,
+            coverage_percentage:float=0.0,
+            types_in_use:Optional[set] = None,
+            unified_test_coverage:Optional[set] = None,
+            needs_pytest:bool = False,
+            exceptions_raised:Optional[set] = None,
+            callable_files: Optional[dict[str, str]] = None
+        ):
         # These properties (expect non_lines) are always provided
         self.name = name
         self.parameter_names = parameter_names
@@ -1214,8 +1215,9 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
     dis_ = capture(dis)
     logger.debug("f=%s type(f)=%s", f.__name__, type(f))
     disassembled_function = dis_(f)
-
+    print(f.__name__)
     for line in disassembled_function.splitlines():
+        print(line)
         if "faster" in f.__name__ or "gas" in f.__name__:
             logger.debug(line)
         line_number_match = re.match(r"\s*([\d]+)[ >]+[\d]+ [A-Z]", line)
@@ -1225,6 +1227,7 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
         if "LOAD_GLOBAL" in line:
             this_global = line.split("(")[1].split(")")[0]
             if hasattr(f, "__globals__") and  is_global_var(this_global, f.__globals__, f.__name__):
+                #logger.debug(f"Adding {this_global} from '{line}'")
                 global_vars_read_from.add(this_global)
 
         elif "STORE_GLOBAL" in line:

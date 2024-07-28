@@ -1,41 +1,171 @@
-\section{Test Generation with the decorator}\label{sec:approach}
+\section{Recording the Execution of a Python Function}\label{sec:approach}
+% Overview of concepts
+The author set out to record the execution of Python functions
+in such a way as to enable exact reproduction of that 
+function call at at later time.  The following components
+must be recorded in some fashion in order to do so:
+\begin{enumerate}
+  \item The function itself
+  \item The arguments to the function, including kwargs
+  \item Any relevant global state \(e.g. variables\)
+  \item Exceptions raised
+  \item Test coverage
+  \item Files/databases read from and/or written to
+  \item Data sent/received via a socket
+\end{enumerate}
 
+The last two are left for future work, but this paper demonstrates how to use 
+the initial components. The subsections that follow discuss exactly how to 
+access or determine this info and cache for subsequent creation of unit tests
+with this information.
 %%
 %% General information about The decorator
 %%
-The decorator is written in Python and requires at least Python~3.9 to run.
-%
-The decorator was developed and tested on a Windows 10 PC but in theory
-should run in *nix environments.
-%
-The author releases it under the GNU LGPL open-source licence.
-%
+\subsection{Accessing the function and its arguments}\label{sec:approach-internal-1}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Python enables trivial access to a function and 
+its arguments by another function via the concept of 
+decorator functions.
 
-\subsection{The decorator's Components}\label{sec:approach-internal}
-
-%%
-%% Reference the figure
-%%
-\Cref{fig:The decorator-components} shows the components of The decorator 
-and their interactions
-throughout the test-generation process.
-%
+Not to be confused with the decorator pattern, a Python decorator is simply a 
+function that calls another, thereby permitting the developer to place new code 
+before and/or after calling the original “decorated” function.  
+The decorator function has full access to both the decorated 
+(or "wrapped" function), \textit{f} as well as all the 
+arguments passed to \textit{f}, both args and kwargs.  In other 
+languages this kind of wrapping is often referred to as 
+“function hooking” or "function call interception" 
+ \cite{kang2018function}. Any number of decorators can be applied to a function 
+in Python, creating a figurative Russian nesting doll of
+functions calling functions, each will the ability to access the 
+arguments and functions of the function below it, and modify the 
+return value before return.
 
 % Show the decorator syntax and what it actually looks like under the hood,
 % noting that f, args, and kwargs are accessible
+A Python decorator is applied with the '@' symbol as shown below:
 
-% Next, discss the need to access global state (read/write).
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={decorator.py: A sample decorator that takes one argument.},%
+  label={lst:decorator},%
+]{examples/decorator.py}
+\newpage
+Running the code above yields:
 
-% Note that the inspect module provides thie option via dumping bytecode for f
+\lstinputlisting[%
+  language=bash,%
+  caption={Output of decorator.py},%
+  label={lst:decorator},%
+]{examples/decorator\_result.txt}
 
-% Note that we have to track test coverage manually, or at least provide a unique
-% name for the coverage database
+As demonstrated above, not only can the Python developer access the function
+via the variable \textit{f}, the developer also has full
+access to the variables passed to \textit{f}, and can make 
+arbitrary changes to the arguments in a transparent way, 
+i.e. the calling function would never know the arguments 
+were modified before being passed to the callee function.
 
-% Provide snippets of the key classes and logic if not already shown above
+In addition to access to the function and its arguments,
+developers can use decorators to insert code immediately before and after 
+the function, including leveraging arbitrary arguments (e.g.
+\textit{my\_int}) passed to the decorator itself.
 
+The author uses such a decorator to take a “before” and "after" snapshot of the arguments
+before and after the function is called.
 
+%
+\subsection{Accessing relevant global state}\label{sec:approach-internal-2}
 
+% Next, discuss the need to access global state (read/write).
+In addition to the arguments passed directly to the function, any relevant 
+global state must also be captured. "Relevant" here refers only to those 
+global values read from and/or written to by the function.
+The author's code focuses on variables (e.g. the int "c" in the example above), 
+disregarding imported modules such as textit{re, os, etc}, detecting such
+modules in a seperate parsing step.
+% Note that the dis module provides this option via dumping bytecode for f
+Access to the global values is non-trival compared to accessing the function 
+and its arguments, but still possible.  The first step is to use the \textit{dis}
+module to programmatically disassemble the decorating function.  This is only 
+required on initial execution of the decoratee as subsequent executions, if any, 
+benefit from cached results of the disassembly.
+Programmatic disassembly of \textit{add\_ints} function during execution is shown below:
 
-% vim: spelllang=en_GB
+\lstinputlisting[%
+  language=TeX,%
+  caption={Result of Programmatically Disassembling \textit{add\_ints.py}},%
+  label={lst:decorator},%
+]{examples/actual\_disassemble\_add\_ints.txt}
+
+Note the LOAD\_GLOBAL command to load the value of 'c'.  Any such global names 
+are sanity checked against the \textit{\_\_globals\_\_} attribute of the disassembled function.
+%
+If the name is found in the \textit{\_\_globals\_\_} dictionary, its name and value is saved for later reference.  Likewise, names and values written to via the STORE\_GLOBAL commands are also parsed, verified to exist in the function's extit{\_\_globals\_\_} attribute, and cached for later use if so.
+%
+Of note, the disassembly shown above differs from stand-alone disassembly of the same function in the Python interpreter (compare the listing above to the examples/disassemble\_decorator\_with\_decorators.txt file in the accompanying repository.)
+This reason for this is that during actual execution the author's code disassembles only the \textit{add\_ints} function, after the decorators have already been unwrapped.
+In contrast, disassembling the function in the static, non-executing context of
+the Python interpreter reveals the code of the applied decorators.  
+%
+For the global state read from, those values must be recorded 
+in order to monkeypatch them during the unit test programmatically 
+created by this work.
+%
+For relevant global state written to, the decorated function must also record
+the new state in order to assert that the state was correctly changed by the function.
+
+\subsection{Detecting exceptions}\label{sec:approach-internal-3}
+Detecting exceptions is perhaps the easiest of the three information capture steps.
+Any exception can of course be detected with the simple anti-pattern:
+
+\begin{lstlisting}[language=Python]
+  try:
+    # call the decorated function, e.g.
+    f(args, kwargs)
+  exception Exception as e:
+    # Save the exception type and exception message
+  \end{lstlisting}
+
+\subsection{Determing Test Coverage}\label{sec:approach-internal-4}
+As the purpose of this work is to advance the science of automated unit test 
+creation, a key component is recording test coverage.  The Python \textit{coverage}
+module provides support for just this task. However, given the non-standard
+approach of this work compared to typical testing, the author programmatically
+copied the results from the output of the coverage tool and caches it seperately, 
+opting not to use the default coverage database persistantly.
+
+\subsection{Summary of the approach}\label{sec:approach-internal-5}
+
+The author uses all the methods discussed above to take a "before" and “after” 
+snapshot of the arguments and relevant global state of each execution. 
+
+(Note that the state of the arguments must also be captured after the function 
+executes as called functions may change mutable arguments that persist upon 
+return to the caller.) The return value or exception type and exception message
+ are also captured, in addition to line test coverage. 
+ For each execution of a given function, an instance of the 
+ following class is created and the fields populated:
+
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={CoverageInfo: The class that caches all metadata associated with a single execution.},%
+  label={lst:CoverageInfo},%
+]{examples/coverage_info.py}
+
+In addition, one of each of the FunctionMetaData classes below is populated for each decorated function:
+
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={FunctionMetaData: The class that caches all metadata associated with a single function, to include all associated CoverageInfo classes},%
+  label={lst:FunctionMetaData},%
+]{examples/function\_metadata.py}
+
+% Discuss overhead and coverage
+
+% Demonstrate how the tests themselves are created with metaprogramming
+
+% vim: spelllang=en\_US
