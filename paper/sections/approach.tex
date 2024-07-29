@@ -51,7 +51,7 @@ A Python decorator is applied with the '@' symbol as shown below:
   caption={decorator.py: A sample decorator that takes one argument.},%
   label={lst:decorator},%
 ]{examples/decorator.py}
-\newpage
+
 Running the code above yields:
 
 \lstinputlisting[%
@@ -72,7 +72,10 @@ developers can use decorators to insert code immediately before and after
 the function, including leveraging arbitrary arguments (e.g.
 \textit{my\_int}) passed to the decorator itself.
 
-The author uses such a decorator to take a “before” and "after" snapshot of the arguments
+The author uses such a decorator (specifically named 
+\break
+\textit{unit\_test\_generator\_decorator} in the referenced repository) to take
+ a “before” and "after" snapshot of the arguments
 before and after the function is called.
 
 %
@@ -119,7 +122,7 @@ the new state in order to assert that the state was correctly changed by the fun
 \subsection{Detecting exceptions}\label{sec:approach-internal-3}
 Detecting exceptions is perhaps the easiest of the three information capture steps.
 Any exception can of course be detected with the simple anti-pattern:
-
+\newpage
 \begin{lstlisting}[language=Python]
   try:
     # call the decorated function, e.g.
@@ -131,9 +134,18 @@ Any exception can of course be detected with the simple anti-pattern:
 \subsection{Determing Test Coverage}\label{sec:approach-internal-4}
 As the purpose of this work is to advance the science of automated unit test 
 creation, a key component is recording test coverage.  The Python \textit{coverage}
-module provides support for just this task. However, given the non-standard
+module provides support for just this task like so:
+
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={Coverage: Calling a function and capturing the test coverage.},%
+  label={lst:Coverage},%
+]{examples/coverage.py}
+
+However, given the non-standard
 approach of this work compared to typical testing, the author programmatically
-copied the results from the output of the coverage tool and caches it seperately, 
+copied the results from the output of the coverage tool and cached it seperately, 
 opting not to use the default coverage database persistantly.
 
 \subsection{Summary of the approach}\label{sec:approach-internal-5}
@@ -164,6 +176,163 @@ In addition, one of each of the FunctionMetaData classes below is populated for 
   label={lst:FunctionMetaData},%
 ]{examples/function\_metadata.py}
 
+\section{Programmatically Tuning the Decorator}\label{sec:decorator tuning}
+
+\subsection{Selectively disabling the decorator}\label{sec:tuning-1}
+
+As the reader may imagine, the decorator described above adds significant overhead 
+the execution time of the overall test, as the function call is intercepted,
+arguments inspected, copied etc.  To mitigate this overhead the author provides 
+a variety of methods to 
+reduce this overhead by "disabling" the decorator, i.e. calling the decorated 
+function and simply returning the result without further action.
+
+The first and perhaps most obvious approach is to set a coverage threshold such 
+that the decorator is effectively disabled once a desired level of coverage 
+(e.g. 80\%) is achieved. 
+
+As a corollary, one could also define a specific number 
+of executions to capture, after which the decorator would be disabled. 
+The author supports either option by setting either the \textit{percent\_coverage} or 
+\textit{sample\_count} option to the decorator to the desired value.  Setting 
+\textit{percent\_coverage} to a value greater than 100 will capture all 
+executions of the decorated function.
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={Programmatically disabling the decorator by immediately returning the function results when desired coverage met},%
+  label={lst:ProgrammaticallyTuning},%
+]{examples/programmatictuning.py}
+
+The careful reader may wonder if the \textit{sample\_count} option may result in 
+duplicate tests cases.  This would in fact be the case, however, the author 
+addressed this by hashing the inputs (global values, args and kwargs) and 
+caching the hash in a set name \textit{hashed\_inputs}.  If a function has
+already been called with the exact same inputs, the decorator immediately returns
+the result in the same fashion as shown above, as the metadata associated with executing the decorated function
+with those inputs was already captured and recorded.  Thus, all test cases 
+generated are unique.  This represents the last mitigation
+currently in the code.  In future work the author hopes to return the cached 
+result/raise the same exception of this execution to save even more overhead.  
+
+\subsection{Selectively keeping specific test cases}\label{sec:tuning-1}
+As the same function may be executed multiple times during an ad hoc or 
+function test, the user may opt not to record every execution by determining
+ if the current execution didn’t add any new coverage. There are a few 
+ ways to do this; a few are explored below.
+ 
+ \subsubsection{Solving the Minimum Set Cover Problem}\label{sec:tuning-2}
+ \hfill\\
+If the developer caches all records initially then the Minimum Set Cover Problem
+hassin2005better \cite{hassin2005better}. is the exact algorithm required to select the minimum test cases.
+This classic NP-Hard computer science problem involves finding the smallest number
+  of sets whose union is equal to or greater than (“covers”) some universe U of elements.  
+  In this context, the coverage (set of line number executed) of each test is one set Si,
+ and the set of all line numbers of a function is the universe U to cover [9]. 
+
+\subsubsection{Check for new coverage via unified set}\label{sec:tuning-2}
+\hfill\\
+One approach is to maintain a unified set $U$ that is the union of all lines 
+covered by all recorded executions $S_0-S_n$: 
+
+\begin{equation*}
+  U = S_0 \cup S_1 ...\cup... S_n
+\end{equation*}
+then only keeping the current record $S_i$ if any currently 
+covered lines are not in the unified set:
+\begin{equation*}
+  S_i \not \subset U
+\end{equation*}
+then updating the unified set with the new coverage information like so:
+\begin{equation*}
+  U += S_i
+\end{equation*} 
+With this approach the individual coverage information $S_i$ is not maintained 
+($U$ is updated, then $S_i$ is discarded), making it impossible to drop superseded 
+coverage records over time.  
+
+\subsubsection{Individual Subset Approach}\label{sec:tuning-2}
+\hfill\\
+Alternatively, one can maintain coverage information for all previous
+ executions individually and check the current set of covered lines
+  against all previous coverage sets.  This would permit deletion of 
+  previous records that covered a subset of the current execution.  
+
+This is more effort than the previous approach but retains fewer records 
+with the same total coverage.  A simple sample of the latter approach is shown here:
+Execution #
+Coverage 
+(line #s)
+Comments
+1
+1-5
+Keep this record, since it is the first one.
+2
+1-7
+Keep this and drop record #1, as that coverage is only a subset of this coverage.
+3
+1-2
+Don’t keep this record; it is a subset of an existing record (#2)
+Table 1: Hypothetical scenario demonstrating record pruning by checking for subsets
+Unfortunately, this subset approach still leaves room for redundant tests.  Consider a new scenario:
+
+Execution #
+Coverage 
+(line #s)
+Action
+1
+1-5
+Keep this record, it’s the first one
+2
+6-10
+Keep this one, it covers new code.
+3
+5-6
+Keep this record, it’s not a subset of any previous record.
+Table 2: Hypothetical scenario demonstrating record pruning by checking for subsets
+Since the subset approach does not aggregate all  the coverage into a 
+single unified set, the record for execution \#3 would be kept, but this would 
+be redundant, as executions 1 and 2 already executed lines 5 and 6, respectively.
+
+\subsubsection{Selected Approach}\label{sec:tuning-2}
+\hfill\\
+
+The author implemented the last approach such that setting the \textit{keep\_subsets}
+options to True would not drop redundant records.  The author did not implement 
+the Minimum Set Cover problem or its weighted variants, but encourages 
+the interested reader to do so.  The author records the executing time of each 
+execution as the 'cost'. This value could be applied in a weighted 
+variant of the Minimum Set Cover problem, i.e. select the "best" test cases
+such that coverage is maximized and run time is minimized.
+   
+\section{Generating the Unit Tests via Metaprogramming}\label{sec:generating-tests}
+
+With all the metadata regarding the functions and their executions recorded, 
+the next step was to programmatically generate the unit tests with all their 
+captured test cases.
+
+The \textit{auto\_generate\_tests} function in the associated repo performs this 
+action via metaprogramming by:
+\begin{enumerate}
+  \item Buiding a list of imports
+  \item Defining global variables constant across all test cases
+  \item Converting values to valid (i.e. canonical) Python code
+  \item Building a comment indicating the level of coverage achieved
+  \item Collecting parameters to create a parameterized pytest test
+  \item Monkeypatching all non-constant relevant globals read from
+  \item Asserting result is correct
+  \item Asserting modified globals are correct
+  \item Asserting expected exceptions and their messages are correct
+\end{enumerate}
+
+To aid the developer's troubleshooting efforts, the contents of each FunctionMetaData
+class are also dumped their own .json file, one per decorated function.  This 
+file permits the developer to easily inspect the inputs, outputs, and other data
+associated with the recording without the distraction of the test code.
+
+If the function \textit{foo} is decorated with \textit{unit\_test\_decorator},
+the generated unit test code can be found in \textit{test\_foo.py}, and the 
+JSON file will be named \textit{foo.json}
 % Discuss overhead and coverage
 
 % Demonstrate how the tests themselves are created with metaprogramming

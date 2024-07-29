@@ -942,6 +942,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         this_coverage_info.kwargs = kwargs
 
     hashed_input_hash = hashlib.new('sha256')
+    # TODO Add the function file and function name
     hashed_input_hash.update(str(this_coverage_info.globals_before).encode())
     hashed_input_hash.update(str(this_coverage_info.args_before).encode())
     hashed_input_hash.update(str(this_coverage_info.kwargs).encode())
@@ -951,6 +952,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         # If this input has already been captured, there's no need to
         # run it again with coverage, just run it and immediately return
         # the result/raise the exception as applicable.
+        # TODO Return the cached result to save a lot of time!
         try:
             if kwargs:
                 result = func(*args, **kwargs)
