@@ -88,7 +88,7 @@ before and after the function is called.
 In addition to the arguments passed directly to the function, any relevant 
 global state must also be captured. "Relevant" here refers only to those 
 global values read from and/or written to by the function.
-The author's code focuses on variables (e.g. the int "c" in the example above), 
+The author's code focuses on variables (e.g. the int \textit{c} in the example above), 
 disregarding imported modules such as textit{re, os, etc}, detecting such
 modules in a seperate parsing step.
 % Note that the dis module provides this option via dumping bytecode for f
@@ -105,13 +105,22 @@ Programmatic disassembly of \textit{add\_ints} function during execution is show
   label={lst:decorator},%
 ]{examples/actual\_disassemble\_add\_ints.txt}
 
-Note the LOAD\_GLOBAL command to load the value of 'c'.  Any such global names 
-are sanity checked against the \textit{\_\_globals\_\_} attribute of the disassembled function.
+Note the LOAD\_GLOBAL command to load the value of \textit{c}.  Any such global names 
+are sanity checked against the \textit{\_\_globals\_\_} attribute of the 
+disassembled function.
 %
-If the name is found in the \textit{\_\_globals\_\_} dictionary, its name and value is saved for later reference.  Likewise, names and values written to via the STORE\_GLOBAL commands are also parsed, verified to exist in the function's extit{\_\_globals\_\_} attribute, and cached for later use if so.
+If the name is found in the \textit{\_\_globals\_\_} dictionary, its name and 
+value is saved for later reference.  Likewise, names and values written to via 
+the STORE\_GLOBAL commands are also parsed, verified to exist in the function's
+ textit{\_\_globals\_\_} attribute, and cached for later use if so.
 %
-Of note, the disassembly shown above differs from stand-alone disassembly of the same function in the Python interpreter (compare the listing above to the examples/disassemble\_decorator\_with\_decorators.txt file in the accompanying repository.)
-This reason for this is that during actual execution the author's code disassembles only the \textit{add\_ints} function, after the decorators have already been unwrapped.
+Of note, the disassembly shown above differs from stand-alone disassembly of 
+the same function in the Python interpreter (compare the listing above to the
+ examples/disassemble\_decorator\_with\_decorators.txt file in the 
+ accompanying repository.)
+This reason for this is that during actual execution the author's code
+ disassembles only the \textit{add\_ints} function, after the decorators
+  have already been unwrapped.
 In contrast, disassembling the function in the static, non-executing context of
 the Python interpreter reveals the code of the applied decorators.  
 %
@@ -175,19 +184,20 @@ In addition, one of each of the FunctionMetaData classes below is populated for 
 \lstinputlisting[%
   language=Python,%
   numbers=left,
-  caption={FunctionMetaData: The class that caches all metadata associated with a single function, to include all associated CoverageInfo classes},%
+  caption={FunctionMetaData: The class that caches all metadata associated with
+   a single function, to include all associated CoverageInfo classes},%
   label={lst:FunctionMetaData},%
 ]{examples/function\_metadata.py}
 
 \section{Programmatically Tuning the Decorator}\label{sec:decorator tuning}
 
-\subsection{Selectively disabling the decorator}\label{sec:tuning-1}
+\subsection{Selectively bypassing the decorator}\label{sec:tuning-1}
 
 As the reader may imagine, the decorator described above adds significant overhead 
 the execution time of the overall test, as the function call is intercepted,
 arguments inspected, copied etc.  To mitigate this overhead the author provides 
 a variety of methods to 
-reduce this overhead by "disabling" the decorator, i.e. calling the decorated 
+reduce this overhead by "bypassing" the decorator, i.e. calling the decorated 
 function and simply returning the result without further action.
 
 The first and perhaps most obvious approach is to set a coverage threshold such 
@@ -203,7 +213,8 @@ executions of the decorated function.
 \lstinputlisting[%
   language=Python,%
   numbers=left,
-  caption={Programmatically disabling the decorator by immediately returning the function results when desired coverage met},%
+  caption={Programmatically "bypassing" the decorator by immediately returning 
+  the function results when desired coverage met},%
   label={lst:ProgrammaticallyTuning},%
 ]{examples/programmatictuning.py}
 
@@ -212,7 +223,8 @@ duplicate tests cases.  This would in fact be the case, however, the author
 addressed this by hashing the inputs (global values, args and kwargs) and 
 caching the hash in a set name \textit{hashed\_inputs}.  If a function has
 already been called with the exact same inputs, the decorator immediately returns
-the result in the same fashion as shown above, as the metadata associated with executing the decorated function
+the result in the same fashion as shown above, as the metadata associated with
+ executing the decorated function
 with those inputs was already captured and recorded.  Thus, all test cases 
 generated are unique.  This represents the last mitigation
 currently in the code.  In future work the author hopes to return the cached 
@@ -227,11 +239,11 @@ function test, the user may opt not to record every execution by determining
  \subsubsection{Solving the Minimum Set Cover Problem}\label{sec:tuning-2}
  \hfill\\
 If the developer caches all records initially then the Minimum Set Cover Problem
-\cite{hassin2005better}. is the exact algorithm required to select the minimum test cases.
+\cite{hassin2005better} is the exact algorithm required to select the minimum test cases.
 This classic NP-Hard computer science problem involves finding the smallest number
   of sets whose union is equal to or greater than (“covers”) some universe $U$ of elements.  
   In this context, the coverage (set of line number executed) of each test is one set $S_i$,
- and the set of all line numbers of a function is the universe $U$ to cover [9]. 
+ and the set of all line numbers of a function is the universe $U$ to cover. 
 
 \subsubsection{Check for new coverage via unified set}\label{sec:tuning-2}
 \hfill\\
@@ -277,7 +289,8 @@ Keep this and drop record \#1, as that coverage is only a subset of this coverag
 1-2
 Don’t keep this record; it is a subset of an existing record (\#2)
 Table 1: Hypothetical scenario demonstrating record pruning by checking for subsets
-Unfortunately, this subset approach still leaves room for redundant tests.  Consider a new scenario:
+Unfortunately, this subset approach still leaves room for redundant tests.  
+Consider a new scenario:
 
 Execution \#
 Coverage 
