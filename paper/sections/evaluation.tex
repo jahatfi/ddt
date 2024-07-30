@@ -1,7 +1,147 @@
-\section{Evaluation}\label{sec:evaluation}
+\section{Tester, Test Thyself}\label{sec:evaluation}
 
-The decorator was evaluated informally by applying it to four test cases
-specifically designed to test it.
+The decorator was evaluated informally with three separate approaches.
+The author began by crafting simple but demonstrative test cases 
+(found in the \textit{tests/} folder in the associated repository.) Next,
+the author applied the concept of programmatically generated unit tests
+to the code itself with positive results.  Finally, as previously mentioned, 
+the author applied his work to another project involving parsing C code. 
+These three approaches are described detail below:
+
+\subsection{Manually Created Tests}\label{sec:eval-1}
+\hfill\\
+The author created a variety of tests to ensure the unit test generation 
+code functioned properly. The Procedural Division example is explained in depth
+below and the others are briefly summarized.
+
+The \textit{tests/example\_procedural\_division} test was intended 
+to test procedural (as opposed to object-oriented or functional) code that:  
+
+\begin{enumerate}
+    \item Returned a string given two ints
+    \item Wrote to a global variable
+    \item Raised two different types of exceptions
+\end{enumerate}
+
+The author wrote a \textit{divide\_ints} function as follows:
+
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={divide\_ints.py},%
+  label={lst:Divide Ints},%
+]{examples/divide\_ints\_1.py}
+
+Then wrote an ad-hoc "test" without assertions, but calls 
+\textit{divide\_ints} with a variety of inputs, as shown below:
+
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={test divide\_ints()},%
+  label={lst:Test Divide Ints},%
+]{examples/divide\_ints\_2.py}
+
+Running this code like so:
+
+\begin{lstlisting}[language=bash]
+    $ python divide_ints.py
+\end{lstlisting}
+    
+Produces the following unit test (modified only slightly below to reduce line
+ breaks):
+
+\lstinputlisting[%
+  language=Python,%
+  numbers=left,
+  caption={test divide\_ints()},%
+  label={lst:Test Divide Ints},%
+]{examples/divide\_ints\_3.py}
+
+Executing the unit test is simple\footnote{Due to the verbose way pytest prints the 
+all the parameters of  parameterized tests such as these, the author removed
+them for the sake simpler display.  The reader is encouraged to run the code 
+as shown on their own machine}:
+
+\begin{lstlisting}[language=bash]
+pytest -s -v test_divide_ints.py
+========== test session starts ==========
+platform win32 -- Python 3.11.7, pytest-7.4.4, pluggy-1.4.0 -- <@\textcolor{orange}{PATH REDACTED}@>\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <@\textcolor{orange}{PATH REDACTED}@>\tests\example_procedural_division
+plugins: cov-5.0.0
+collected 4 items
+
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#1 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#2 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#3 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#4 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+\end{lstlisting}
+
+The reader is encouraged to study the other examples in the repository.
+All examples can be executed via the 
+\textit{tests/test\_all.*} scripts.  Those
+scripts can easily be used to determine the invocation required to run each 
+test individually.  They are summarized very briefly below:
+
+The \textit{tests/example\_fizzbuzz} test is nearly identical to the 
+test described above: tests modification of a global value.
+
+The \textit{tests/example\_all\_types} test was designed to test
+the code against a variety of built-in Python types, 
+such as ints, strings, sets, lists, tuples, and dictionaries.
+
+The \textit{tests/example\_pass\_by\_assignment} test was designed to test
+functions that modify mutable arguments such as lists. Not a comprehensive test,
+but demonstrates that the concept works on one such example.
+
+The \textit{tests/example\_oo\_car} test was designed to test
+object-oriened code. Not complete at the time of submission, but worked in a 
+previous branch prior to adding support for the test above.
+The author is confident that this feature will be working by 
+fall of 2024.
+
+
 %
+\subsection{Application of this code to itself}\label{sec:eval-2}
+\hfill\\
+The author naturally sought to determine the effectiveness of automatic
+test code generation against the very code doing just that.  Although not 
+every function in the referenced code was decorated for automatic testing, 
+as of this writing five functions in 
+\textit{unit\_test\_generator\_decorator.py} were successfully decorated, 
+resulting in automatically generated, successfully passing unit tests for this
+very code.  Using the previous Procedural Division example (and others) 
+the reader should see the following test files created in addition to 
+\textit{test\_divide\_ints.py}
+
+\begin{enumerate}
+    \item test\_coverage\_str\_helper.py
+    \item test\_meta\_program\_function\_call.py
+    \item test\_normalize\_args.py
+    \item test\_update\_global.py
+    \item test\_update\_metadata.py
+\end{enumerate}
+
+These tests also pass when run with this command in \textit{tests/example\_procedural\_division/}:
+\begin{lstlisting}[language=bash]
+    pytest -s -v .
+\end{lstlisting}
+
+\subsection{Application of this code to an external project}\label{sec:eval-2}
+As previously mentioned and put simply, this project was applied to a C code parser, 
+specifically to a Python function designed to parse C code line by line
+and extract the name of any functions on each line.  The author applied this
+decorator to the parsing function and passed a C file to the parser function.
+%
+Due to the design of the parser, some lines were parsed multiple times.  
+However, the decorator prevented duplicate results as previously discussed, 
+early instantly producing over three dozen unique test cases 
+from a single functional test and revealing two bugs to the author.
+%
+As noted, some work remains, such as completing the decorator and helper logic
+to handle object-oriented code.  However, due to the variety of successful 
+tests noted above, the author maintains an optimistic outlook that this concept
+of generating unit tests from functional tests can be a valuable paradigm.
 
 % vim: spelllang=en_GB

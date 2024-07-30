@@ -37,13 +37,16 @@ languages this kind of wrapping is often referred to as
 “function hooking” or "function call interception" 
  \cite{kang2018function}. Any number of decorators can be applied to a function 
 in Python, creating a figurative Russian nesting doll of
-functions calling functions, each will the ability to access the 
+functions calling functions,th the ability to access the 
 arguments and functions of the function below it, and modify the 
 return value before return.
 
 % Show the decorator syntax and what it actually looks like under the hood,
 % noting that f, args, and kwargs are accessible
-A Python decorator is applied with the '@' symbol as shown below:
+A Python decorator is applied with the '@' symbol as shown below
+\footnote{The author optimized this and other code snippets for display in 
+this paper; therefore they may differ slightly from their original 
+source found in the associated repository}:
 
 \lstinputlisting[%
   language=Python,%
@@ -122,7 +125,7 @@ the new state in order to assert that the state was correctly changed by the fun
 \subsection{Detecting exceptions}\label{sec:approach-internal-3}
 Detecting exceptions is perhaps the easiest of the three information capture steps.
 Any exception can of course be detected with the simple anti-pattern:
-\newpage
+
 \begin{lstlisting}[language=Python]
   try:
     # call the decorated function, e.g.
@@ -224,11 +227,11 @@ function test, the user may opt not to record every execution by determining
  \subsubsection{Solving the Minimum Set Cover Problem}\label{sec:tuning-2}
  \hfill\\
 If the developer caches all records initially then the Minimum Set Cover Problem
-hassin2005better \cite{hassin2005better}. is the exact algorithm required to select the minimum test cases.
+\cite{hassin2005better}. is the exact algorithm required to select the minimum test cases.
 This classic NP-Hard computer science problem involves finding the smallest number
-  of sets whose union is equal to or greater than (“covers”) some universe U of elements.  
-  In this context, the coverage (set of line number executed) of each test is one set Si,
- and the set of all line numbers of a function is the universe U to cover [9]. 
+  of sets whose union is equal to or greater than (“covers”) some universe $U$ of elements.  
+  In this context, the coverage (set of line number executed) of each test is one set $S_i$,
+ and the set of all line numbers of a function is the universe $U$ to cover [9]. 
 
 \subsubsection{Check for new coverage via unified set}\label{sec:tuning-2}
 \hfill\\
@@ -260,25 +263,25 @@ Alternatively, one can maintain coverage information for all previous
 
 This is more effort than the previous approach but retains fewer records 
 with the same total coverage.  A simple sample of the latter approach is shown here:
-Execution #
+Execution \#
 Coverage 
-(line #s)
+(line \#s)
 Comments
 1
 1-5
 Keep this record, since it is the first one.
 2
 1-7
-Keep this and drop record #1, as that coverage is only a subset of this coverage.
+Keep this and drop record \#1, as that coverage is only a subset of this coverage.
 3
 1-2
-Don’t keep this record; it is a subset of an existing record (#2)
+Don’t keep this record; it is a subset of an existing record (\#2)
 Table 1: Hypothetical scenario demonstrating record pruning by checking for subsets
 Unfortunately, this subset approach still leaves room for redundant tests.  Consider a new scenario:
 
-Execution #
+Execution \#
 Coverage 
-(line #s)
+(line \#s)
 Action
 1
 1-5
@@ -309,25 +312,26 @@ such that coverage is maximized and run time is minimized.
 
 With all the metadata regarding the functions and their executions recorded, 
 the next step was to programmatically generate the unit tests with all their 
-captured test cases.
-
-The \textit{auto\_generate\_tests} function in the associated repo performs this 
-action via metaprogramming by:
+captured test cases. A simple call to \textit{generate\_all\_tests\_and\_metadata}
+at the end of the functional test will do just that.
+ Calling this function eventually executes 
+\textit{auto\_generate\_tests} that uses metaprogramming to:
 \begin{enumerate}
-  \item Buiding a list of imports
-  \item Defining global variables constant across all test cases
-  \item Converting values to valid (i.e. canonical) Python code
-  \item Building a comment indicating the level of coverage achieved
-  \item Collecting parameters to create a parameterized pytest test
-  \item Monkeypatching all non-constant relevant globals read from
-  \item Asserting result is correct
-  \item Asserting modified globals are correct
-  \item Asserting expected exceptions and their messages are correct
+  \item Build a list of imports
+  \item Define global variables constant across all test cases
+  \item Convert values to valid (i.e. canonical) Python code
+  \item Build a comment indicate the level of coverage achieved
+  \item Collect parameters to create a parameterized pytest test
+  \item Monkeypatch all non-constant relevant globals read from
+  \item Assert result is correct
+  \item Assert modified globals are correct
+  \item Assert expected exceptions and their messages are correct
 \end{enumerate}
 
 To aid the developer's troubleshooting efforts, the contents of each FunctionMetaData
-class are also dumped their own .json file, one per decorated function.  This 
-file permits the developer to easily inspect the inputs, outputs, and other data
+class are also dumped to their own .json file, one per decorated function (hence
+the \textit{and\_metadata} suffix noted above).  This file permits the 
+developer to easily inspect the inputs, outputs, and other data
 associated with the recording without the distraction of the test code.
 
 If the function \textit{foo} is decorated with \textit{unit\_test\_decorator},

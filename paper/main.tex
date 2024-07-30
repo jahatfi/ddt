@@ -18,7 +18,9 @@
 
 \usepackage{defs}
 \usepackage{listings}
+\lstset{escapeinside={<@}{@>}}
 \usepackage{amsmath}
+\usepackage{xcolor}
 %\usepackage{lipsum,multicol}
 \graphicspath{{./}{./img/}}
 
@@ -52,7 +54,7 @@
   particularly automated generation of unit tests. 
   %
   % Problem
-  Current and previous work such as Generative AI, search-based heuristics, and 
+  Current and previous work such as generative AI, search-based heuristics, and 
   randomization often led to incomplete coverage and non-deterministic results.
   %
   In addition, some of the previous work lacks a natural way for a human expert 
