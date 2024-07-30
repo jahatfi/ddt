@@ -1284,11 +1284,14 @@
   \gdef\acmConference@name{#2}%
   \gdef\acmConference@date{#3}%
   \gdef\acmConference@venue{#4}%
-  \ifx\acmConference@shortname\@empty
-    \gdef\acmConference@shortname{#2}%
-  \fi
+  %\ifx\acmConference@shortname\@empty
+  %  \gdef\acmConference@shortname{#2}%
+  %\fi
   \global\@ACM@journal@bibstripfalse
 }
+\if@ACM@journal\else
+\acmConference[]{}{}{}%
+\fi
 \def\acmBooktitle#1{\gdef\@acmBooktitle{#1}}
 \acmBooktitle{}
 \ifx\acmConference@name\@undefined\else
@@ -1877,7 +1880,8 @@
     \fi
     \if@ACM@manuscript\else
        \if@ACM@journal@bibstrip\else % Print the conference information
-         {\itshape \acmConference@shortname, \acmConference@date, \acmConference@venue}\par
+         {\itshape \acmConference@shortname \acmConference@date \acmConference@venue}\par
+         %{\itshape \acmConference@shortname, \acmConference@date, \acmConference@venue}\par
        \fi
     \fi
     \if@printcopyright
@@ -2654,11 +2658,13 @@
         \fancyhead[RO]{\ACM@linecountR}%
       \else%
         \fancyhead[LE]{\ACM@linecountL\@headfootfont\footnotesize
-          \acmConference@shortname,
-          \acmConference@date, \acmConference@venue}%
+          \acmConference@shortname%,
+          \acmConference@date%,
+          \acmConference@venue}%
         \fancyhead[RO]{\@headfootfont
-          \acmConference@shortname,
-          \acmConference@date, \acmConference@venue\ACM@linecountR}%
+          \acmConference@shortname%,
+          \acmConference@date%,
+          \acmConference@venue\ACM@linecountR}%
       \fi
     \fi
   \else % Proceedings
@@ -2670,11 +2676,13 @@
       \fancyhead[RO]{\ACM@linecountR}%
     \else%
       \fancyhead[LE]{\ACM@linecountL\@headfootfont
-        \acmConference@shortname,
-        \acmConference@date, \acmConference@venue}%
+        \acmConference@shortname%,
+        \acmConference@date%,
+        \acmConference@venue}%
       \fancyhead[RO]{\@headfootfont
-        \acmConference@shortname,
-        \acmConference@date, \acmConference@venue\ACM@linecountR}%
+        \acmConference@shortname%,
+        \acmConference@date%,
+        \acmConference@venue\ACM@linecountR}%
     \fi
   \fi
   \if@ACM@sigchiamode
