@@ -31,6 +31,29 @@ each.
 %
 The main pros and cons for functional versus unit tests are summarized very
 briefly in the short table below:
+\vskip .2cm
+\begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
+    \hline
+    \multirow{2}{*}{} & \textbf{Functional Test(s)} & \textbf{Unit Test(s)} \\
+    \hline
+    \textbf{Pros} & \begin{itemize}[leftmargin=*]
+    \item Efficient: tests modules together
+    \item Less coupled to the internal unit implementations
+    \end{itemize} & \begin{itemize}[leftmargin=*]
+        \item Verifies individual components
+        \item Efficient when testing single components
+    \end{itemize} \\
+    \hline
+    \textbf{Cons} & \begin{itemize}[leftmargin=*]
+        \item Waste of time when testing small unit changes
+        \item May not accurately identify root cause of failure
+    \end{itemize} & \begin{itemize}[leftmargin=*]
+        \item Time consuming to develop
+        \item Easily broken by refactoring code
+    \end{itemize} \\
+    \hline
+\end{tabular}
+\vskip .2cm
 %
 Since unit tests are tedious and time consuming to develop, the body of academic
 work on generating them automatically is extensive, starting with classic

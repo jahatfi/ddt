@@ -1485,7 +1485,7 @@ def generate_all_tests_and_metadata(outdir:Path,
     Called once the ad-hoc/integration/regression tests
     are completed, this function writes all the results
     of using the unit_test_generator_decorator() decorator
-    to files, one file per decorated function.
+    to files, one file per decorated function.  
 
     The first 'Before' call to
     generate_all_tests_and_metadata_helper()
