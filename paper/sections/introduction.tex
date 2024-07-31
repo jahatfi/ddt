@@ -26,12 +26,14 @@ on small or personal projects such as the author) often don’t adhere to the
 fail to write tests at all.
 %
 Alternatively, some teams may focus primarily on function tests
-and opt not to develop unit tests, despite the pros (not to mention cons) of
-each.
+and opt not to develop unit tests, perhaps because the pros of unit tests
+do not outweight the cons.
 %
 The main pros and cons for functional versus unit tests are summarized very
 briefly in the short table below:
+%
 \vskip .2cm
+
 \begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
     \hline
     \multirow{2}{*}{} & \textbf{Functional Test(s)} & \textbf{Unit Test(s)} \\
@@ -53,8 +55,12 @@ briefly in the short table below:
     \end{itemize} \\
     \hline
 \end{tabular}
-\vskip .2cm
+\captionof{table}{Pros and Cons of Functional and Unit Tests}
 %
+
+%%
+%% Tedious
+%%
 Since unit tests are tedious and time consuming to develop, the body of academic
 work on generating them automatically is extensive, starting with classic
 algorithms like search and randomization based \cite{Luk22Pynguin0170} and
@@ -62,7 +68,8 @@ rapidly expanding with the advent of generative AI
 \cite{bhatia2023unit,takerngsaksiri2024tdd,wang2024software}.
 %
 These AI methods generate tests based on a variety of inputs, typically the code
-itself and some other input such as human prompts \cite{lahiri2023interactivecodegenerationtestdriven},
+itself and some other input such as human prompts 
+\cite{lahiri2023interactivecodegenerationtestdriven},
 natural language requirements \cite{wang2024software}, or entire projects
 \cite{rao2023cat}.
 

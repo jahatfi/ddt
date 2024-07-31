@@ -89,7 +89,7 @@ In addition to the arguments passed directly to the function, any relevant
 global state must also be captured. "Relevant" here refers only to those 
 global values read from and/or written to by the function.
 The author's code focuses on variables (e.g. the int \textit{c} in the example above), 
-disregarding imported modules such as textit{re, os, etc}, detecting such
+disregarding imported modules such as \textit{re, os, etc}, detecting such
 modules in a seperate parsing step.
 % Note that the dis module provides this option via dumping bytecode for f
 Access to the global values is non-trival compared to accessing the function 
@@ -112,7 +112,7 @@ disassembled function.
 If the name is found in the \textit{\_\_globals\_\_} dictionary, its name and 
 value is saved for later reference.  Likewise, names and values written to via 
 the STORE\_GLOBAL commands are also parsed, verified to exist in the function's
- textit{\_\_globals\_\_} attribute, and cached for later use if so.
+ \textit{\_\_globals\_\_} attribute, and cached for later use if so.
 %
 Of note, the disassembly shown above differs from stand-alone disassembly of 
 the same function in the Python interpreter (compare the listing above to the
@@ -135,7 +135,7 @@ the new state in order to assert that the state was correctly changed by the fun
 Detecting exceptions is perhaps the easiest of the three information capture steps.
 Any exception can of course be detected with the simple anti-pattern:
 
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption={Catching and recording exceptions}]
   try:
     # call the decorated function, e.g.
     f(args, kwargs)
@@ -248,7 +248,7 @@ This classic NP-Hard computer science problem involves finding the smallest numb
 \subsubsection{Check for new coverage via unified set}\label{sec:tuning-2}
 \hfill\\
 One approach is to maintain a unified set $U$ that is the union of all lines 
-covered by all recorded executions $S_0-S_n$: 
+covered by all recorded executions $S_0-n$: 
 
 \begin{equation*}
   U = S_0 \cup S_1 ...\cup... S_n
@@ -275,37 +275,38 @@ Alternatively, one can maintain coverage information for all previous
 
 This is more effort than the previous approach but retains fewer records 
 with the same total coverage.  A simple sample of the latter approach is shown here:
-Execution \#
-Coverage 
-(line \#s)
-Comments
-1
-1-5
-Keep this record, since it is the first one.
-2
-1-7
-Keep this and drop record \#1, as that coverage is only a subset of this coverage.
-3
-1-2
-Don’t keep this record; it is a subset of an existing record (\#2)
-Table 1: Hypothetical scenario demonstrating record pruning by checking for subsets
+
+\vskip .2cm
+\begin{tabular}{|>{\centering\arraybackslash}m{1.6cm}|>{\centering\arraybackslash}m{1.25cm}|>{\centering\arraybackslash}m{4.5cm}|}
+    \hline
+    \multirow{2}{*}{\textbf{Execution \#}} & \textbf{Coverage (line \#s)} & \textbf{Action} \\
+    \hline
+    1 & 1-5 & Keep this record, since it is the first one.\\
+    \hline
+    2 & 1-7 & Keep this and drop record \#1, as that coverage is only a subset of this coverage.\\
+    \hline
+    3 & 1-2 & Don’t keep this record; it is a subset of an existing record (\#2)\\
+    \hline
+\end{tabular}
+\captionof{table}{Hypothetical scenario \#1 demonstrating record pruning by checking for subsets}
+\vskip .2cm
 Unfortunately, this subset approach still leaves room for redundant tests.  
 Consider a new scenario:
+\vskip .2cm
+\begin{tabular}{|>{\centering\arraybackslash}m{1.6cm}|>{\centering\arraybackslash}m{1.25cm}|>{\centering\arraybackslash}m{4.5cm}|}
+    \hline
+    \multirow{2}{*}{\textbf{Execution \#}} & \textbf{Coverage (line \#s)} & \textbf{Action} \\
+    \hline
+    1 & 1-5 & Keep this record, since it is the first one.\\
+    \hline
+    2 & 6-10 & Keep this one, it covers new code.\\
+    \hline
+    3 & 5-6 & Keep this record, it’s not a subset of any previous record.\\
+    \hline
+\end{tabular}
+\captionof{table}{Hypothetical scenario \#2 demonstrating record pruning by checking for subsets}
+\vskip .2cm
 
-Execution \#
-Coverage 
-(line \#s)
-Action
-1
-1-5
-Keep this record, it’s the first one
-2
-6-10
-Keep this one, it covers new code.
-3
-5-6
-Keep this record, it’s not a subset of any previous record.
-Table 2: Hypothetical scenario demonstrating record pruning by checking for subsets
 Since the subset approach does not aggregate all  the coverage into a 
 single unified set, the record for execution \#3 would be kept, but this would 
 be redundant, as executions 1 and 2 already executed lines 5 and 6, respectively.
@@ -325,11 +326,13 @@ such that coverage is maximized and run time is minimized.
 
 With all the metadata regarding the functions and their executions recorded, 
 the next step was to programmatically generate the unit tests with all their 
-captured test cases. A simple call to \textit{generate\_all\_tests\_and\_metadata}
-at the end of the functional test will do just that.
+captured test cases and place them in a file named 
+\textit{test_FUNCTION\_NAME.py}. 
+A simple call to \textit{generate\_all\_tests\_and\_metadata} at the end of 
+the functional test will do just that.
  Calling this function eventually executes 
 \textit{auto\_generate\_tests} that uses metaprogramming to:
-\begin{enumerate}
+\begin{enumerate}[leftmargin=*]
   \item Build a list of imports
   \item Define global variables constant across all test cases
   \item Convert values to valid (i.e. canonical) Python code
@@ -339,6 +342,8 @@ at the end of the functional test will do just that.
   \item Assert result is correct
   \item Assert modified globals are correct
   \item Assert expected exceptions and their messages are correct
+  \item Write all of the above to a syntactically correct Python file
+  \item Use subprocess to lint and format the result with \textit{black} and \textit{ruff}
 \end{enumerate}
 
 To aid the developer's troubleshooting efforts, the contents of each FunctionMetaData
@@ -347,9 +352,9 @@ the \textit{and\_metadata} suffix noted above).  This file permits the
 developer to easily inspect the inputs, outputs, and other data
 associated with the recording without the distraction of the test code.
 
-If the function \textit{foo} is decorated with \textit{unit\_test\_decorator},
+Thus, if the function \textit{foo} is decorated with \textit{unit\_test\_decorator},
 the generated unit test code can be found in \textit{test\_foo.py}, and the 
-JSON file will be named \textit{foo.json}
+metadata can be found in a JSON file name named \textit{foo.json}
 % Discuss overhead and coverage
 
 % Demonstrate how the tests themselves are created with metaprogramming

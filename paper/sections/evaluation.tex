@@ -44,12 +44,12 @@ Then wrote an ad-hoc "test" without assertions, but calls
 
 Running this code like so:
 
-\begin{lstlisting}[language=bash]
+\begin{lstlisting}[language=bash, caption={Executing example to create unit test}]
     $ python divide_ints.py
 \end{lstlisting}
     
-Produces the following unit test (modified only slightly below to reduce line
- breaks):
+Produces the following \textit{test\_divide\_ints.py} containing the following 
+unit test (modified only slightly below to reduce line breaks):
 
 \lstinputlisting[%
   language=Python,%
@@ -63,7 +63,7 @@ all the parameters of  parameterized tests such as these, the author removed
 them for the sake simpler display.  The reader is encouraged to run the code 
 as shown on their own machine}:
 
-\begin{lstlisting}[language=bash]
+\begin{lstlisting}[language=, caption={Running one of the generated unit tests}]
 pytest -s -v test_divide_ints.py
 ========== test session starts ==========
 platform win32 -- Python 3.11.7, pytest-7.4.4, pluggy-1.4.0 -- <@\textcolor{orange}{PATH REDACTED}@>\.venv\Scripts\python.exe
@@ -100,11 +100,9 @@ object-oriened code. Not complete at the time of submission, but worked in a
 previous branch prior to adding support for the test above.
 The author is confident that this feature will be working by 
 fall of 2024.
-
-
 %
 \subsection{Application of this code to itself}\label{sec:eval-2}
-\hfill\\
+
 The author naturally sought to determine the effectiveness of automatic
 test code generation against the very code doing just that.  Although not 
 every function in the referenced code was decorated for automatic testing, 
@@ -123,8 +121,11 @@ the reader should see the following test files created in addition to
     \item test\_update\_metadata.py
 \end{enumerate}
 
-These tests also pass when run with this command in \textit{tests/example\_procedural\_division/}:
-\begin{lstlisting}[language=bash]
+These tests also pass when run with this command in 
+\linebreak
+\textit{tests/example\_procedural\_division/} directory:
+\begin{lstlisting}[language=bash, caption={Running all generated unit
+   tests for the division example}]
     pytest -s -v .
 \end{lstlisting}
 
