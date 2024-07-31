@@ -12,7 +12,7 @@ def outermost_decorator_with_parameters(my_int: int):
             args = tuple(args_copy)
             print(f"Modified args: {args=}")
             result = f(*args, **kwargs)
-            print(f"After call: {result=}")
+            print(f"In decorator after call: {result=}")
             return result
         return innermost_decorator
     return my_outer_decorator_with_args
@@ -26,4 +26,4 @@ x = 2
 y = 7
 print(f"Adding {x},{y},{c}...")
 final_result = add_ints(x, y)
-print(f"The result is {final_result}")
+print(f"{final_result=}")

@@ -9,7 +9,6 @@ the author applied his work to another project involving parsing C code.
 These three approaches are described detail below:
 
 \subsection{Manually Created Tests}\label{sec:eval-1}
-\hfill\\
 The author created a variety of tests to ensure the unit test generation 
 code functioned properly. The Procedural Division example is explained in depth
 below and the others are briefly summarized.
@@ -58,12 +57,27 @@ unit test (modified only slightly below to reduce line breaks):
   label={lst:Test Divide Ints},%
 ]{examples/divide\_ints\_3.py}
 
+Lines 18-20 set up the parameterization decorator, defining the inputs to each test,
+and the inputs to each are defined in a list of tuples spanning lines 23-33, 
+34-44, 45-57.  The actual test function follows starting on line 60, monkeypatches
+the required ERROR\_CODE global variable on lines 75-76, tests for expected 
+exceptions on lines 77-80, and only calls the function on line 82 if it expects 
+no exception. The result is verified on lines 82-83
+\footnote{due to the complexity of converting from Python object to string
+(and sometimes back again), the author was forced due to time contraints to
+rely on the \textit{eval} function to convert strings to valid Python.  
+The author acknowleges this is a bad practice and hopes to fix it in
+future revisions.} An unexpected exception (or incorrect 
+(exception, exception message) 
+pair) would cause the unit test to fail.  Finally, global variables expected to be modified 
+are checked for correct values on lines 85-92.
+
 Executing the unit test is simple\footnote{Due to the verbose way pytest prints the 
 all the parameters of  parameterized tests such as these, the author removed
 them for the sake simpler display.  The reader is encouraged to run the code 
 as shown on their own machine}:
 
-\begin{lstlisting}[language=, caption={Running one of the generated unit tests}]
+\begin{lstlisting}[language=bash, numbers=left, caption={Running one of the generated unit tests}]
 pytest -s -v test_divide_ints.py
 ========== test session starts ==========
 platform win32 -- Python 3.11.7, pytest-7.4.4, pluggy-1.4.0 -- <@\textcolor{orange}{PATH REDACTED}@>\.venv\Scripts\python.exe

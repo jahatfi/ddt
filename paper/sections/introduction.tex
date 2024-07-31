@@ -5,7 +5,8 @@ author of \cite{percival2014test}, argue that software developers should
 then the bare minimum amount of code to make those tests pass,
 before beginning the cycle anew with more tests.
 %
-On page 22 of \cite{percival2014test}, Percival advocates both functional and unit tests, making the following distinction:
+On page 22 of \cite{percival2014test}, Percival advocates both functional and
+ unit tests, making the following distinction:
 “functional tests test the application from the outside, from the point of view
 of the user. Unit tests test the application from the inside,
 from the point of view of the programmer.”
@@ -16,31 +17,49 @@ one that depends on and interacts with some external system.
 “Integration test” is sometimes use in common vernacular in the same way that
 Percival uses “functional test”.
 %
-This paper will do the same, using the terms interchangable.  The key point is
-that such a test passes and calls many internal functions with potentially many
- different inputs to each.
-
-In the author’s experience, immature organizations (or solo developers
-on small or personal projects such as the author) often don’t adhere to the
- TDD approach, and end up writing the tests after the development of the code or
-fail to write tests at all.
+This paper will do the same, using the terms interchangably.  The author will 
+even use the term "ad hoc test" in reference to informal tests used by the developer.  
+Regardless of the name used herein, the key asssumption for this paper is
+ that such a test passes and calls many internal functions 
+with potentially multiple different inputs to each.
 %
-Alternatively, some teams may focus primarily on function tests
+Previous academic research \cite{causevic2011factors, ramzan2024test} observed
+ that industry TDD adoption is lower than desired,
+reporting increased longer development cycles, skill issues, and legacy code as 
+a few root factors, among others.
+%
+In constrast to the TDD methodology, 
+others \cite{brown2013agility, shahabuddin2016integration} propose a 
+integration-test-first approach (before unit tests)
+as optimal for accelerating development 
+and reducing a product's time to market due to the time-consuming nature of 
+developing unit tests \cite{kahur2023java, shahabuddin2016integration}, at least when done manually.
+Though the authors of \cite{brown2013agility}
+acknowledge that integration and unit testing may go hand-in-hand, they 
+ultimately argue in favor of the former before the latter.  
+Although implied in \cite{brown2013agility}, the writers of 
+\cite{shahabuddin2016integration} go so far as to explicitly argue that unit
+testing can be performed \textit{after} initial product delivery to the customer.
+%
+This research corresponds with the author’s personal observations that immature 
+organizations (or solo developers such as himself on small or personal projects)
+ often don’t adhere to the  TDD approach, and end up writing the tests 
+ after the development of the code or fail to write tests at all. In such cases,
+ the hobbyist such as the author may focus primarily on function or integration tests
 and opt not to develop unit tests, perhaps because the pros of unit tests
-do not outweight the cons.
+do not outweight the cons compared to a higher level test.
 %
 The main pros and cons for functional versus unit tests are summarized very
 briefly in the short table below:
-%
 \vskip .2cm
-
-\begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
+\noindent\begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
     \hline
     \multirow{2}{*}{} & \textbf{Functional Test(s)} & \textbf{Unit Test(s)} \\
     \hline
     \textbf{Pros} & \begin{itemize}[leftmargin=*]
-    \item Efficient: tests modules together
-    \item Less coupled to the internal unit implementations
+        \item More relevant for the customer
+        \item Efficient: tests modules together
+        \item Less coupled to the internal unit implementations
     \end{itemize} & \begin{itemize}[leftmargin=*]
         \item Verifies individual components
         \item Efficient when testing single components
@@ -56,39 +75,51 @@ briefly in the short table below:
     \hline
 \end{tabular}
 \captionof{table}{Pros and Cons of Functional and Unit Tests}
-%
-
-%%
-%% Tedious
-%%
-Since unit tests are tedious and time consuming to develop, the body of academic
-work on generating them automatically is extensive, starting with classic
-algorithms like search and randomization based \cite{Luk22Pynguin0170} and
-rapidly expanding with the advent of generative AI 
-\cite{bhatia2023unit,takerngsaksiri2024tdd,wang2024software}.
+Despite the time consuming nature of developing unit tests manually, but both camps
+(TDD and integration-test-first proponents) recognize value in \textit{having}
+ unit tests. By definition, any reduction the cost of unit test creation drives 
+up their ROI. Thus, the body of academic work on generating them automatically 
+via metaprogramming is extensive, starting with classic algorithms like search 
+and randomization based \cite{Luk22Pynguin0170} and rapidly expanding 
+with the advent of generative AI 
+\cite{bhatia2023unit,takerngsaksiri2024tdd,wang2024software, kahur2023java}.
 %
 These AI methods generate tests based on a variety of inputs, typically the code
 itself and some other input such as human prompts 
 \cite{lahiri2023interactivecodegenerationtestdriven},
 natural language requirements \cite{wang2024software}, or entire projects
-\cite{rao2023cat}.
+\cite{rao2023cat}.  While the results of such AI-generated tests are promising,
+their coverage is not perfect \cite{kahur2023java} and still require significant
+developer review and correction \cite{sundqvist2024ai}.
 
 In the current research this author did not discover a deterministic (i.e.
-non-generative AI) unit test generation paradigm that monitored live execution
-of the code.
-%
-Thus, this work is perhaps most similar to 
+non-generative AI) unit test generation paradigm that monitored other types of
+tests from which to create unit tests.  In this paper the author presents
+a Python decorator that does just that, at minimal development cost if any, to the developer.
+The tradeoff is that these approach increases execution time of the function 
+tests and like AI-generated tests, such tests would still require review by the developer.
+The latter likely true of any automatically generated test;the author proposes and 
+demonstrates a variety of approaches to mitigate the increased runtime for
+existing tests.
+
+This work is perhaps most similar to 
 \cite{lahiri2023interactivecodegenerationtestdriven}, though
 differs in that rather than prompt users interactively for sample inputs and
 outputs, it automatically detects such inputs, outputs, and changes in global
-state by monitoring actual execution of the code.
-%
-The decorator is written in Python and requires at least Python 3.9 to run.
+state by monitoring actual execution of the code.  It is also worth noting 
+that the work presented here could easily be applied to AI or otherwise 
+automatically generated tests.  Although the AI-generated end-to-end tests 
+in \cite{leotta2024ai} were written in Java, analogously created Python tests could
+be used with the work presented here to generate previously non-existent 
+tests at the unit level.
+
+The decorator presented is written in Python 3.11, but is likely backwards
+compatibile back to Python 3.9 to run.
 %
 The decorator was developed and tested on a Windows 10 PC.  The author 
 did not test it on *nix environments but given the cross-platform support of
 Python, the author believes it should run in *nix environments with no more than
 minor modifications.
 %
-The author releases it under the GNU LGPL open-source licence.
+The author releases it under the GNU LGPL open-source license.
 % vim: spelling=en_US

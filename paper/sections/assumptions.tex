@@ -1,21 +1,23 @@
 \section{Assumptions}\label{sec:introduction}
 
 The author began exploring this concept of automated test case generation
- working on a personal project, a toy static analyzer for C source code.  As the
- author did this for fun and personal education, he had not written any unit
- tests.  Instead, the author did careful develop a sample input that caused large
- portions of the code to execute (e.g. created high code coverage).  This guided
- development until the code eventually produced a “good” output given that input.
+working on a personal project, a toy static analyzer for C source code.  As the
+author did this for fun and personal education, he had not written any unit
+tests.  Instead, the author did careful develop a sample input that caused large
+portions of the code to execute (e.g. created high code coverage).  This guided
+development until the code eventually produced a “good” output given that input.
+
   
- The author then treated this (input, output) pair as an ad hoc functional test.
-  As time went on and the project grew, the internal parts of the system because
- harder mentally track.  The author desired to refactor the code, but the
- increased complexity of the code base sometimes made it unclear exactly what
- each function was doing.  A unit test suite with clearly defined inputs and
- outputs would have helped refactor the code for improved readability,
- organization, and efficiency, not to mention improve comments/documentation.  As
- it was, the sole ad hoc test left the inner workings of the code an opaque black
- box to any other developer aside from the author.
+\indent
+The author then treated this (input, output) pair as an ad hoc functional test.
+As time went on and the project grew, the internal parts of the system because
+harder mentally track.  The author desired to refactor the code, but the
+increased complexity of the code base sometimes made it unclear exactly what
+each function was doing.  A unit test suite with clearly defined inputs and
+outputs would have helped refactor the code for improved readability,
+organization, and efficiency, not to mention improve comments/documentation.  As
+it was, the sole ad hoc test left the inner workings of the code an opaque black
+box to any other developer aside from the author.
 
 Realizing that the functional test was already executing large portions of the
  code, apparently accurately, the author determined that unit tests could be
@@ -41,6 +43,14 @@ Realizing that the functional test was already executing large portions of the
 Another assumption required for successful execution is that the \textit{repr()} method
  of each object generates valid Python code than can be used to re-created that
  object, or that such a function can be developed and used to temporarily
- overwrite a \textit{repr()} method not meeting this requirement.  The author demonstrates
- this in the repository code by overwriting the \textit{repr()} method of the
- Pandas DataFrame class.
+ overwrite a \textit{repr\(\)} method not meeting this requirement.  The author demonstrates
+ this in the repository code by overwriting the \textit{repr\(\)} method of the
+ Pandas DataFrame class like so:
+
+ 
+ \lstinputlisting[%
+ language=Python,%
+ numbers=left,
+ caption={Overwriting incompatible repr method},%
+ label={lst:pandas_repr},%
+]{examples/pandas\_repr.py}
