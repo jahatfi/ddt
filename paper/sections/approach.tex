@@ -1,4 +1,10 @@
 \section{Recording the Execution of a Python Function}\label{sec:approach}
+
+The decorator presented below was written in Python 3.11 and tested on 
+Windows 10.  The author did not test it on *nix environments but given the
+cross-platform support of Python, the author believes it should run in *nix 
+environments with no more than minor modifications. The author releases it
+ under the GNU LGPL open-source license.
 % Overview of concepts
 The author set out to record the execution of Python functions
 in such a way as to enable exact reproduction of that 
@@ -40,7 +46,7 @@ in Python, creating a figurative Russian nesting doll of
 functions calling functions, each with the ability to access the 
 arguments of the function it wraps and modify the 
 return value before return. A Python decorator is applied with the \lq@\rq 
-symbol as shown below \footnote{The author optimized this and other code snippets for display in 
+symbol as shown in Listing 2\footnote{The author optimized this and other code snippets for display in 
 this paper; therefore they may differ slightly from their original 
 source found in the associated repository}:
 
@@ -96,7 +102,8 @@ and its arguments, but still possible.  The first step is to use the \textit{dis
 module to programmatically disassemble the decorating function.  This is only 
 required on initial execution of the decoratee as subsequent executions, if any, 
 benefit from cached results of the disassembly.
-Programmatic disassembly of \textit{add\_ints} function during execution is shown below:
+Programmatic disassembly of \textit{add\_ints} function during execution is shown
+in Listing 4:
 
 \lstinputlisting[%
   language=TeX,%
@@ -116,8 +123,8 @@ the STORE\_GLOBAL commands are also parsed, verified to exist in the function's
 %
 Of note, the disassembly shown above differs from stand-alone disassembly of 
 the same function in the Python interpreter (compare the listing above to the
- examples/disassemble\_decorator\_with\_decorators.txt file in the 
- accompanying repository-it's 80 lines long.)
+\textit{examples/disassemble\_decorator\_with\_decorators.txt} file in the 
+ accompanying repository.)
 They differ as during actual execution the author's code
  disassembles only the \textit{add\_ints} function, after the decorators
   have already executed, leaving only the original  \textit{add\_ints}
@@ -125,12 +132,12 @@ They differ as during actual execution the author's code
 In contrast, disassembling the function in the static, non-executing context of
 the Python interpreter reveals the code of all applied decorators.  
 %
-For the global state read from, those values must be recorded 
+Values read from the global state must be recorded 
 in order to monkeypatch them during the unit test programmatically 
 created by this work.
 %
-For relevant global state written to, the decorated function must also record
-the new state in order to assert that the state was correctly changed by the function.
+The decorated function must also record modified global values in
+order to assert that the state was correctly changed by the function.
 
 \subsection{Detecting exceptions}\label{sec:approach-internal-3}
 Detecting exceptions is perhaps the easiest of the three information capture steps.
@@ -145,14 +152,13 @@ Any exception can of course be detected with the simple anti-pattern:
   \end{lstlisting}
 
 \subsection{Determing Test Coverage}\label{sec:approach-internal-4}
-As the purpose of this work is to advance the science of automated unit test 
-creation, a key component is recording test coverage.  The Python \textit{coverage}
+The Python \textit{coverage}
 module provides support for just this task like so:
 
 \lstinputlisting[%
   language=Python,%
   numbers=left,
-  caption={Coverage: Calling a function and capturing the test coverage.},%
+  caption={Calling a function and capturing the test coverage with the \textit{coverage} module.},%
   label={lst:Coverage},%
 ]{examples/coverage.py}
 
@@ -166,9 +172,9 @@ opting not to use the default coverage database persistantly.
 The author uses all the methods discussed above to take a "before" and “after” 
 snapshot of the arguments and relevant global state of each execution. 
 
-(Note that the state of the arguments must also be captured after the function 
+Note that the state of the arguments must also be captured after the function 
 executes as called functions may change mutable arguments that persist upon 
-return to the caller.) The return value or exception type and exception message
+return to the caller. The return value or exception type and exception message
  are also captured, in addition to line test coverage. 
  For each execution of a given function, an instance of the 
  following class is created and the fields populated:
@@ -204,7 +210,7 @@ The first and perhaps most obvious approach is to set a coverage threshold such
 that the decorator is effectively disabled once a desired level of coverage 
 (e.g. 80\%) is achieved. 
 
-As a corollary, one could also define a specific number 
+One could also define a specific number 
 of executions to capture, after which the decorator would be disabled. 
 The author supports either option by setting either the \textit{percent\_coverage} or 
 \textit{sample\_count} option to the decorator to the desired value.  Setting 
@@ -246,16 +252,25 @@ from the functional test.
 
 \subsection{Selectively keeping specific test cases}\label{sec:tuning-1}
 As the same function may be executed multiple times during an ad hoc or 
-function test, the user may opt not to record every execution by determining
-if the current execution didn’t add any new coverage. There are a few 
-ways to do this; a few are explored below. The reader should bear in mind
-that fully orthogonal test cases, as measured by coverage, are (1 not feasible 
-(all test cases will cover the initial lines until the first conditional statement) 
-(2 redundant tests can still hold value and (3 some code such as function calls 
-and regular expressions may have one line in source code, but multiple branches in the 
-underlying library or machine code.  Nevertheless, the value added by redundant tests
+function test, the user wish to preserve a minimal number of test cases to 
+avoid too much redundancy.  One such approach is to drop the current execution
+reord if the current execution didn’t add any new coverage.  
+Conversely, one can drop previous records if the current coverage supersedes previous coverage.
+There are a few ways to do this as explored below. The reader should bear in mind:
+
+
+\begin{enumerate}
+  \item that fully orthogonal test cases, as measured by coverage, are not feasible 
+  (all test cases will cover the initial lines until the first conditional statement) 
+  \item redundant tests can still hold value
+  \item some code such as function calls 
+  and regular expressions may have one line in source code, but multiple branches in the 
+  underlying library or machine code.
+\end{enumerate}
+
+Nevertheless, the value added by redundant tests
 likely follows the Law of Diminishing Returns, hence the following sections
-on reducing such redundancy.
+describe how to reduce such redundancy.
  
  \subsubsection{Solving the Minimum Set Cover Problem}\label{sec:tuning-2}
  \hfill\\
@@ -294,7 +309,10 @@ coverage records over time.  100\% coverage would mean that:
 \begin{equation*}
   U_f = U_t
 \end{equation*} 
-This approach is the simplest of the three described here, but 
+This approach is the simplest of the three described here, but suffers from a 
+lack of granularity: it's impossible to remove old records if new records have 
+better coverage, as specific coverage per test is not recorded.
+
 \subsubsection{Individual Subset Approach}\label{sec:tuning-2}
 \hfill\\
 Alternatively, one can maintain coverage information for all previous
@@ -352,19 +370,19 @@ such that coverage is maximized and run time is minimized.
    
 \section{Generating the Unit Tests via Metaprogramming}\label{sec:generating-tests}
 
-With all the metadata regarding the functions and their executions recorded, 
+After capturing the function metadata as documented in Listings 7 and 8, 
 the next step was to programmatically generate the unit tests with all their 
 captured test cases and place them in a file named 
-\textit{test\_FUNCTION\_NAME.py}. 
+\textit{test\_\$function\_name.py}. 
 A simple call to \textit{generate\_all\_tests\_and\_metadata} at the end of 
 the functional test will do just that.
  Calling this function eventually executes 
 \textit{auto\_generate\_tests} that uses metaprogramming to:
-\begin{enumerate}[leftmargin=*]
+\begin{enumerate}[leftmargin=.1cm]
   \item Build a list of imports
   \item Define global variables constant across all test cases
   \item Convert values to valid (i.e. canonical) Python code
-  \item Build a comment indicate the level of coverage achieved
+  \item Build a comment specifying the level of coverage achieved\footnote{e.g. line 17 in Listing 13}
   \item Collect parameters to create a parameterized pytest test
   \item Monkeypatch all non-constant relevant globals read from
   \item Assert result is correct
