@@ -1,0 +1,23 @@
+\section{Related Work}\label{sec:rel-work}
+% Contrast previous work
+In the current research this author did not discover a deterministic (i.e.
+non-generative AI) unit test generation paradigm that monitored other types of
+tests from which to create unit tests.  In this paper the author presented
+a Python decorator leveraged previously designed test(s) to directly create 
+unit tests, at minimal development cost to the developer.
+The tradeoff is that this approach increases execution time of the function 
+tests and like AI-generated tests, such tests would still require review by the 
+developer. The latter is true of any automatically generated test and 
+the author proposed and demonstrated a variety of approaches to 
+mitigate the increased runtime for existing tests.
+
+This work is perhaps most similar to 
+\cite{lahiri2023interactivecodegenerationtestdriven}, though
+differs in that rather than prompt users interactively for sample inputs and
+outputs, it automatically detects such inputs, outputs, and changes in global
+state by monitoring actual execution of the code.  It is also worth noting 
+that the work presented here could easily be applied to AI or otherwise 
+automatically generated tests.  Although the AI-generated end-to-end tests 
+in \cite{leotta2024ai} were written in Java, analogously created Python tests could
+be used with the work presented here to generate previously non-existent 
+tests at the unit level.

@@ -144,19 +144,44 @@ These tests also pass when run with this command in
 \end{lstlisting}
 
 \subsection{Application of this code to an external project}\label{sec:eval-2}
-As previously mentioned and put simply, this project was applied to a C code parser, 
-specifically to a Python function designed to parse C code line by line
-and extract the name of any functions on each line.  The author applied this
-decorator to the parsing function and passed a C file to the parser function.
+To valid this work on an external codebase, this project was applied to a 
+C code parser also written by the author.  The parser is a Python 
+function designed to parse C code line by line
+and extract the name of any functions from each.  The author applied this
+decorator to the parsing function and passed a test C file to the parser
+function indirectly via a function test that tested other related 
+functions simaltanously.
 %
-Due to the design of the parser, some lines were parsed multiple times.  
+Due to the design of functional test, some lines were parsed multiple times.  
 However, the decorator prevented duplicate results as previously discussed, 
-early instantly producing over three dozen unique test cases 
-from a single functional test and revealing two bugs to the author.
+rapidly producing over three dozen unique test cases 
+from the sole functional test and revealing two bugs to the author.
 %
 As noted, some work remains, such as completing the decorator and helper logic
 to handle object-oriented code.  However, due to the variety of successful 
 tests noted above, the author maintains an optimistic outlook that this concept
 of generating unit tests from functional tests can be a valuable paradigm.
+
+The author began exploring this concept of automated test case generation
+working on a personal project, a toy static analyzer for C source code.  As the
+author did this for fun and personal education, he had not written any unit
+tests.  Instead, the author did carefully develop a sample input that caused large
+portions of the code to execute (e.g. created high code coverage).  This guided
+development until the code eventually produced a “good” output given that input.
+
+  
+\indent
+The author then treated this (input, output) pair as an ad hoc functional test.
+As time went on and the project grew, the internal parts of the system became
+harder to mentally track.  The author desired to refactor the code, but the
+increased complexity of the code base sometimes made it unclear exactly what
+each function was doing.  A unit test suite with clearly defined inputs and
+outputs would have helped refactor the code for improved readability,
+organization, and efficiency, not to mention improve comments/documentation.  As
+it was, the sole ad hoc test left the inner workings of the code an opaque black
+box to any other developer aside from the author.
+
+Realizing that the functional test was already executing large portions of the
+code, apparently accurately, 
 
 % vim: spelllang=en_GB

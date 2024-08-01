@@ -1,7 +1,8 @@
 \section{Introduction}\label{sec:introduction}
-Advocates of Test Driven Development (TDD)  such a Harry Percival, the 
+
+Advocates of Test Driven Development (TDD) such a Harry Percival, the 
 author of \cite{percival2014test}, argue that software developers should
- follow the TDD process in which they develop software by first writing tests,
+follow the TDD process in which they develop software by first writing tests,
 then the bare minimum amount of code to make those tests pass,
 before beginning the cycle anew with more tests.
 %
@@ -14,14 +15,13 @@ from the point of view of the programmer.”
 Later, on page 470 of \cite{percival2014test}, Percival defines an “integration test” as
 one that depends on and interacts with some external system.
 %
-“Integration test” is sometimes use in common vernacular in the same way that
+“Integration test” is sometimes used in common vernacular in the same way that
 Percival uses “functional test”.
 %
 This paper will do the same, using the terms interchangably.  The author will 
 even use the term "ad hoc test" in reference to informal tests used by the developer.  
-Regardless of the name used herein, the key asssumption for this paper is
- that such a test passes and calls many internal functions 
-with potentially multiple different inputs to each.
+The key asssumption for this paper is that such a test passes and calls many
+internal functions with potentially multiple different inputs to each.
 %
 Previous academic research \cite{causevic2011factors, ramzan2024test} observed
  that industry TDD adoption is lower than desired,
@@ -32,8 +32,8 @@ In constrast to the TDD methodology,
 others \cite{brown2013agility, shahabuddin2016integration} propose a 
 integration-test-first approach (before unit tests)
 as optimal for accelerating development 
-and reducing a product's time to market due to the time-consuming nature of 
-developing unit tests \cite{kahur2023java, shahabuddin2016integration}, at least when done manually.
+and reducing a product's time to market due to the time-consuming nature of manually
+developing unit tests \cite{kahur2023java, shahabuddin2016integration}.
 Though the authors of \cite{brown2013agility}
 acknowledge that integration and unit testing may go hand-in-hand, they 
 ultimately argue in favor of the former before the latter.  
@@ -42,15 +42,15 @@ Although implied in \cite{brown2013agility}, the writers of
 testing can be performed \textit{after} initial product delivery to the customer.
 %
 This research corresponds with the author’s personal observations that immature 
-organizations (or solo developers such as himself on small or personal projects)
+organizations (or solo developers on small or personal projects)
  often don’t adhere to the  TDD approach, and end up writing the tests 
  after the development of the code or fail to write tests at all. In such cases,
- the hobbyist such as the author may focus primarily on function or integration tests
+ the hobbyist may focus primarily on function or integration tests
 and opt not to develop unit tests, perhaps because the pros of unit tests
 do not outweight the cons compared to a higher level test.
 %
 The main pros and cons for functional versus unit tests are summarized very
-briefly in the short table below:
+briefly Table 1.
 \vskip .2cm
 \noindent\begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
     \hline
@@ -75,10 +75,10 @@ briefly in the short table below:
     \hline
 \end{tabular}
 \captionof{table}{Pros and Cons of Functional and Unit Tests}
-Despite the time consuming nature of developing unit tests manually, but both camps
-(TDD and integration-test-first proponents) recognize value in \textit{having}
+Despite the time consuming nature of developing unit tests manually, but both
+TDD and integration-test-first proponents recognize value in \textit{having}
  unit tests. By definition, any reduction the cost of unit test creation drives 
-up their ROI. Thus, the body of academic work on generating them automatically 
+up their return on investment. Thus, the body of academic work on generating them automatically 
 via metaprogramming is extensive, starting with classic algorithms like search 
 and randomization based \cite{Luk22Pynguin0170} and rapidly expanding 
 with the advent of generative AI 
@@ -92,34 +92,24 @@ natural language requirements \cite{wang2024software}, or entire projects
 their coverage is not perfect \cite{kahur2023java} and still require significant
 developer review and correction \cite{sundqvist2024ai}.
 
-In the current research this author did not discover a deterministic (i.e.
-non-generative AI) unit test generation paradigm that monitored other types of
-tests from which to create unit tests.  In this paper the author presents
-a Python decorator that does just that, at minimal development cost if any, to the developer.
-The tradeoff is that these approach increases execution time of the function 
-tests and like AI-generated tests, such tests would still require review by the developer.
-The latter likely true of any automatically generated test;the author proposes and 
-demonstrates a variety of approaches to mitigate the increased runtime for
-existing tests.
+Not long ago the author sought to refactor a 6K+ line Python project - a static
+analyzer for the C language. This project had no unit tests, 
+only a single functional test designed by the author.
+This sole test called most, if not all, of the functions defined within the 
+project, if not directly, indirectly down the Function Call Graph.
+Unit tests would have greatly eased the refactoring process and the author 
+hypothesized that the metaprogramming abilities of Python might empower creation
+of unit tests from that sole existing test. Within three months, he'd proven 
+his hypothesis to be true by crafting a Python decorator that provides exactly
+that function and and continues to refine this work to the present day.
 
-This work is perhaps most similar to 
-\cite{lahiri2023interactivecodegenerationtestdriven}, though
-differs in that rather than prompt users interactively for sample inputs and
-outputs, it automatically detects such inputs, outputs, and changes in global
-state by monitoring actual execution of the code.  It is also worth noting 
-that the work presented here could easily be applied to AI or otherwise 
-automatically generated tests.  Although the AI-generated end-to-end tests 
-in \cite{leotta2024ai} were written in Java, analogously created Python tests could
-be used with the work presented here to generate previously non-existent 
-tests at the unit level.
+Section 2 of this paper describes the overall approach to building a
+Python decorator to generate unit tests from existing tests. The subsequent
+section enumerates both technical and philosophical assumptions made by the
+author, as well as alternative approaches when those assumptions may not hold.
+Section 4 follows to describe the three different approaches taken by the author to 
+evaluate the generated tests, followed by a section dedicated to further 
+discussion of this work compared and constrasted to more related work.  A short
+conclusion follows, trailed by a brief Acknowledgements section.
 
-The decorator presented is written in Python 3.11, but is likely backwards
-compatibile back to Python 3.9 to run.
-%
-The decorator was developed and tested on a Windows 10 PC.  The author 
-did not test it on *nix environments but given the cross-platform support of
-Python, the author believes it should run in *nix environments with no more than
-minor modifications.
-%
-The author releases it under the GNU LGPL open-source license.
 % vim: spelling=en_US
