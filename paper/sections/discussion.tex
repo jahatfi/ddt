@@ -1,0 +1,53 @@
+\section{Discussion}\label{sec:discussion}
+% Contrast previous work
+
+\subsubsection{Areas for future work}\label{sec:tuning-2}
+\hfill\\
+
+As partly noted above, future work should: 
+\begin{enumerate}
+  \item Reduce reliance on \textit{eval}
+  \item Add support for file and socket I/O
+  \item Complete OOP support
+  \item Add multi-thread and multi-process testing and support
+  \item Invistigate applicability of these ideas to other OOP languages such as C\#, Go, and Zig
+\end{enumerate}
+
+\subsubsection{Limitations}\label{sec:limitations}
+\hfill\\
+
+As noted in Section~\ref{sec:assumptions} in order to 
+generat unit tests as described in this paper, the 
+process must be boot-strapped with a initial passing test.
+
+Additionally, for very large applications, or large
+functions with complex inputs, memory constraints may 
+limit the number of functions that can be decorated at once,
+perhaps greatly slowing down the process of creating 
+a large number of unit tests.
+
+\subsubsection{Related Work}\label{sec:related-work}
+\hfill\\
+
+This work is perhaps most similar to 
+\cite{lahiri2023interactivecodegenerationtestdriven}, though
+differs in that rather than prompt users interactively for sample inputs and
+outputs, it automatically detects such inputs, outputs, and changes in global
+state by monitoring actual execution of the code.  It is also worth noting 
+that the work presented here could easily be applied to AI or otherwise 
+automatically generated tests.  Although in one paper the AI-generated end-to-end tests 
+were written in Java \cite{leotta2024ai}, analogously created Python tests could
+be used with the work presented here to generate previously non-existent 
+tests at the unit level.
+
+In the current research this author did not discover a deterministic 
+unit test generation paradigm that monitored other types of
+tests from which to create unit tests.  In this paper the author presented
+a Python decorator leveraged previously designed test(s) to directly create 
+unit tests at minimal development cost.
+The tradeoff is that this approach increases execution time of the function 
+tests and like AI-generated tests, such tests would still require review by the 
+developer. The latter is true of any automatically generated test and 
+the author proposed and demonstrated a variety of approaches to 
+mitigate the increased runtime for existing tests.
+

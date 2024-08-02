@@ -22,7 +22,7 @@ to test procedural (as opposed to object-oriented or functional) code that:
     \item Raised two different types of exceptions
 \end{enumerate}
 
-The author wrote a \textit{divide\_ints} function as follows:
+The author wrote a \textit{divide\_ints} function in Listing~\ref{lst:Divide Ints}
 
 \lstinputlisting[%
   language=Python,%
@@ -32,7 +32,7 @@ The author wrote a \textit{divide\_ints} function as follows:
 ]{examples/divide\_ints\_1.py}
 
 Then wrote an ad-hoc "test" without assertions, but calls 
-\textit{divide\_ints} with a variety of inputs, as shown below:
+\textit{divide\_ints} with a variety of inputs, as shown in List~\ref{lst:Test Divide Ints}:
 
 \lstinputlisting[%
   language=Python,%
@@ -53,7 +53,7 @@ unit test (modified only slightly below to reduce line breaks):
 \lstinputlisting[%
   language=Python,%
   numbers=left,
-  caption={test divide\_ints()},%
+  caption={test divide\_ints},%
   label={lst:Test Divide Ints},%
 ]{examples/divide\_ints\_3.py}
 
@@ -67,7 +67,7 @@ no exception. The result is verified on lines 82-83
 (and sometimes back again), the author was forced due to time contraints to
 rely on the \textit{eval} function to convert strings to valid Python.  
 The author acknowleges this is a bad practice and hopes to fix it in
-future revisions.} An unexpected exception (or incorrect 
+future revisions.}. An unexpected exception (or incorrect 
 (exception, exception message) 
 pair) would cause the unit test to fail.  Finally, global variables expected to be modified 
 are checked for correct values on lines 85-92.
@@ -128,11 +128,11 @@ the reader should see the following test files created in addition to
 \textit{test\_divide\_ints.py}
 
 \begin{enumerate}
-    \item test\_coverage\_str\_helper.py
-    \item test\_meta\_program\_function\_call.py
-    \item test\_normalize\_args.py
-    \item test\_update\_global.py
-    \item test\_update\_metadata.py
+    \item \textit{test\_coverage\_str\_helper.py}
+    \item \textit{test\_meta\_program\_function\_call.py}
+    \item \textit{test\_normalize\_args.py}
+    \item \textit{test\_update\_global.py}
+    \item \textit{test\_update\_metadata.py}
 \end{enumerate}
 
 These tests also pass when run with this command in 
@@ -165,10 +165,9 @@ of generating unit tests from functional tests can be a valuable paradigm.
 The author began exploring this concept of automated test case generation
 working on a personal project, a toy static analyzer for C source code.  As the
 author did this for fun and personal education, he had not written any unit
-tests.  Instead, the author did carefully develop a sample input that caused large
+tests.  Instead, the author carefully developed a sample input that caused large
 portions of the code to execute (e.g. created high code coverage).  This guided
-development until the code eventually produced a “good” output given that input.
-
+development until the code eventually produced a “good” output.
   
 \indent
 The author then treated this (input, output) pair as an ad hoc functional test.

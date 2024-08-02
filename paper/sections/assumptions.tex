@@ -1,13 +1,13 @@
-\section{Assumptions}\label{sec:introduction}
+\section{Assumptions}\label{sec:assumptions}
 
-the author determined that unit tests could be
+The author hypothesized that unit tests could be
 created programmatically by assuming that all code executing under the
 functional test was in fact correct, then using the inputs and outputs from each
 function called during the functional test as the inputs and outputs for the
 unit tests.  
 
 The author acknowleges that software engineers may not 
-wish to assume that a apparently working functional test indicates accuracy of 
+wish to assume that an apparently working functional test indicates accuracy of 
 all internally executed components. Regardless, the creation of such unit 
 tests would still provide a syntactically accurate unit
 test file for the software engineer to start from, rather than create each unit
@@ -21,7 +21,7 @@ could be faster to manually inspect code for accuracy than develop and verify
 such code from scratch.
 
 Another assumption required for successful execution is that the \textit{repr()} method
-of each object generates valid Python code than can be used to re-created that
+of each object generates valid Python code that can be used to re-created that
 object, or that such a function can be developed and used to temporarily
 overwrite a \textit{repr\(\)} method not meeting this requirement.  The author demonstrates
 this in the repository code by overwriting the \textit{repr\(\)} method of the
