@@ -9,7 +9,7 @@ function call in a standalone unit test.  The following components
 must be recorded in some fashion in order to do so:
 \begin{enumerate}
   \item The function itself
-  \item The arguments to the function, including kwargs
+  \item The arguments to the function, including \textit{kwargs}
   \item Any relevant global state (e.g. variables)
   \item Exceptions raised
   \item Test coverage
@@ -79,7 +79,7 @@ arguments (e.g. \textit{my\_int}) passed to the decorator itself.
 
 A decorator like the one on line 5 of Listing~\ref{lst:decorator} permits
 the passing of separate arguments to the decorator itself.  
-If not extranous argument is needed, that \textit{outermost} decorator
+If not extraneous argument is needed, that \textit{outermost} decorator
 is unnecessary.
 
 The author uses such a decorator (specifically named 
@@ -99,7 +99,7 @@ The author's code focuses on variables (e.g. the int \textit{c} in the example a
 disregarding imported modules such as \textit{re, os, etc}, detecting such
 modules in a separate parsing step.
 % Note that the dis module provides this option via dumping bytecode for f
-Access to the global values is non-trival compared to accessing the function 
+Access to the global values is non-trivial compared to accessing the function 
 and its arguments, but still possible.  The first step is to use the \textit{dis}
 module to programmatically disassemble the decorated function.  This is only 
 required on initial execution of the decoratee as subsequent executions, if any, 
@@ -149,10 +149,10 @@ Any exception can be detected with the code shown in Listing
     # Save the exception type and exception message
   \end{lstlisting}
 
-\subsection{Determing Test Coverage}\label{sec:approach-internal-4}
+\subsection{Determining Test Coverage}\label{sec:approach-internal-4}
 The Python \textit{coverage}
 module provides support for capturing line (and branch)-based coverage
-as shown in Listing~\ref{lst:Coverage} \cite{Batchelder}.
+as shown in Listing~\ref{lst:Coverage} \cite{batchelder2024}.
 
 \lstinputlisting[%
   language=Python,%
@@ -165,7 +165,7 @@ The documented approach to using the \textit{coverage} module
 saves results to a persistent database on the filesystem.
 However, due to the already high overhead the author's work, he opted not 
 to use the database option by it separately, 
-opting not to use the default database \cite{Batchelder}.
+opting not to use the default database \cite{batchelder2024}.
 
 \subsection{Summary of the approach}\label{sec:approach-internal-5}
 
@@ -273,7 +273,7 @@ with intermediate complexity. The paragraph that follows describes a much simple
 approach but offers poorer performance in that is rarely selects optimal test 
 cases.  For the reader desiring the truly ideal solution, i.e. keep the fewest test cases that achieve
 maximum coverage, a note on the proper algorithm to pursue such a goal completes
-this section. This method was not selected to due its higher menory
+this section. This method was not selected to due its higher memory
 requirements and higher complexity of implementation.
  
 \subsubsection{Selected Approach: Individual Subsets}\label{sec:tuning-2}
@@ -416,7 +416,7 @@ metadata can be found in a JSON file name named \textit{foo.json}
 
 In addition to all of the above, significant development efforts went into 
 serializing and deserializing Python code to and from strings.  Though
-certainly not a panecea, the work here advances that done by 
+certainly not a panacea, the work here advances that done by 
 Lemueux \textit{et. al.} \cite{lemieux2023codamosa} not only in terms of 
 automated testing but also in terms of serialization capabilities.
 % Discuss overhead and coverage
