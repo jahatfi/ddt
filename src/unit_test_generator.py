@@ -222,7 +222,7 @@ class FunctionMetaData(Jsonable):
             non_code_lines:Optional[List[int]] = None,
             global_vars_read_from:Optional[set] = None,
             global_vars_written_to:Optional[set] = None,
-            coverage_io:Optional[dict] = None,
+            coverage_io:Optional[dict[str, CoverageInfo]] = None,
             coverage_percentage:float=0.0,
             types_in_use:Optional[set] = None,
             unified_test_coverage:Optional[set] = None,
@@ -967,8 +967,8 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     end_time = 0.0
     cov_report_ = None
     result = None
-    data_file = f"coverage_{function_name}_{time.perf_counter()}"
-    cov = coverage.Coverage(data_file)
+    #data_file = f"coverage_{function_name}_{time.perf_counter()}"
+    cov = coverage.Coverage(None)#data_file)
     with cov.collect():
         try:
             if kwargs:
@@ -1015,7 +1015,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     this_coverage &= set(this_metadata.lines)
     #logger.critical("this_coverage=%s", this_coverage)
     is_subset = False
-    Path.unlink(Path(data_file))
+    #Path.unlink(Path(data_file))
 
     # If no new lines were covered, do nothing else,
     # but just immediately return the result
@@ -1219,7 +1219,7 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
     disassembled_function = dis_(f)
     print(f.__name__)
     for line in disassembled_function.splitlines():
-        print(line)
+        #print(line)
         if "faster" in f.__name__ or "gas" in f.__name__:
             logger.debug(line)
         line_number_match = re.match(r"\s*([\d]+)[ >]+[\d]+ [A-Z]", line)
