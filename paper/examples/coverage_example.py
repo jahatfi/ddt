@@ -1,3 +1,5 @@
+import coverage
+cov = coverage.Coverage(None)
 with cov.collect():
     try:
         if kwargs:

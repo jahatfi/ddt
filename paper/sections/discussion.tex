@@ -1,34 +1,45 @@
 \section{Discussion}\label{sec:discussion}
 % Contrast previous work
 
-\subsubsection{Areas for future work}\label{sec:tuning-2}
-\hfill\\
+In this paper and accompanying code the author
+has proved his hypothesis that the metaprogramming abilities of 
+Python can be used to programmatically create multiple 
+unit tests from even a single existing test.
 
+The decorator and supporting code discussed above
+(and provided in the accompanying repository)
+was written in Python 3.11 and tested on a 
+Windows 10 laptop with 16GB of memory and 6 core i7-9750H @2.60Ghz CPU.
+The author did not test it on *nix environments but given the
+cross-platform support of Python, the author believes it should run in *nix 
+environments with no more than minor modifications. The author releases it
+under the GNU LGPL open-source license.
+
+\subsection{Areas for future work}\label{sec:tuning-2}
 As partly noted above, future work should: 
 \begin{enumerate}
   \item Reduce reliance on \textit{eval}
   \item Add support for file and socket I/O
   \item Complete OOP support
+  \item Compare runtime performance of various algorithms for keeping minimal subsets of tests
   \item Add multi-thread and multi-process testing and support
   \item Invistigate applicability of these ideas to other OOP languages such as C\#, Go, and Zig
+  \item Verify cross-platform compability
+  \item Determine backwards compability with older Python versions
 \end{enumerate}
 
-\subsubsection{Limitations}\label{sec:limitations}
-\hfill\\
-
-As noted in Section~\ref{sec:assumptions} in order to 
-generat unit tests as described in this paper, the 
+\subsection{Limitations}\label{sec:limitations}
+As noted in Section~\ref{sec:assumptions}, in order to 
+generate unit tests as described in this paper, the 
 process must be boot-strapped with a initial passing test.
 
 Additionally, for very large applications, or large
 functions with complex inputs, memory constraints may 
 limit the number of functions that can be decorated at once,
-perhaps greatly slowing down the process of creating 
+which would slow down the process of creating 
 a large number of unit tests.
 
-\subsubsection{Related Work}\label{sec:related-work}
-\hfill\\
-
+\subsection{Related Work}\label{sec:related-work}
 This work is perhaps most similar to 
 \cite{lahiri2023interactivecodegenerationtestdriven}, though
 differs in that rather than prompt users interactively for sample inputs and
@@ -50,4 +61,3 @@ tests and like AI-generated tests, such tests would still require review by the
 developer. The latter is true of any automatically generated test and 
 the author proposed and demonstrated a variety of approaches to 
 mitigate the increased runtime for existing tests.
-

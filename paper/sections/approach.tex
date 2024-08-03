@@ -1,17 +1,11 @@
 \section{Recording the Execution of a Python Function}\label{sec:approach}
 
-\subsection{Software Testing Paradigms}\label{sec:intro-1}
+\subsection{Defining the required components to create a unit test}\label{sec:intro-1}
 
-The decorator presented below was written in Python 3.11 and tested on a 
-Windows 10 laptop with 16GB of memory and 6 core i7-9750H @2.60Ghz CPU.
-The author did not test it on *nix environments but given the
-cross-platform support of Python, the author believes it should run in *nix 
-environments with no more than minor modifications. The author releases it
- under the GNU LGPL open-source license.
 % Overview of concepts
 The author set out to record the execution of Python functions
 in such a way as to enable exact reproduction of that 
-function call at at later time.  The following components
+function call in a standalone unit test.  The following components
 must be recorded in some fashion in order to do so:
 \begin{enumerate}
   \item The function itself
@@ -23,8 +17,8 @@ must be recorded in some fashion in order to do so:
   \item Data sent/received via a socket
 \end{enumerate}
 
-The last two are left for future work, but this paper demonstrates how to use 
-the initial components. The subsections that follow discuss exactly how to 
+The last two are left for future work, but this paper demonstrates how to capture 
+the first five. The subsections that follow discuss exactly how to 
 access or determine this info and cache for subsequent creation of unit tests
 with this information.
 %%
@@ -33,8 +27,7 @@ with this information.
 \subsection{Accessing the function and its arguments}\label{sec:approach-internal-1}
 
 Python enables trivial access to a function and 
-its arguments by another function via the concept of 
-decorator functions.
+its arguments via the concept of decorator functions.
 
 Not to be confused with the decorator pattern, a Python decorator is a 
 function that calls another, thereby permitting the developer to place new code 
@@ -60,15 +53,16 @@ source found in the associated repository}:
   label={lst:decorator},%
 ]{examples/decorator.py}
 
-Running the code above yields the output shown in Listing 3. Note the apparently erroneous
-output, as the \textit{add\_ints} function is unaware that its first argument was
-modified by the \text{inner\_most\_decorator}.
+Running the code in Listing~ref{lst:decorator} yields the output shown in 
+Listing 3. Note the apparently erroneous math (line 1,7 of 
+Listing~\ref{lst:decorator-output}), as the \textit{add\_ints} function is 
+unaware that its first argument was modified by the \text{inner\_most\_decorator}.
 
 \lstinputlisting[%
   language=bash,%
   numbers=left,
   caption={Output of decorator.py},%
-  label={lst:decorator},%
+  label={lst:decorator-output},%
 ]{examples/decorator\_result.txt}
 
 As shown in Listing 2, not only can the Python developer access the function
@@ -82,6 +76,11 @@ In addition to access to the function and its arguments,
 decorators provide the power to insert code immediately before and after 
 the function (lines 8-13, 15, respectively), including leveraging arbitrary
 arguments (e.g. \textit{my\_int}) passed to the decorator itself.
+
+A decorator like the one on line 5 of Listing~\ref{lst:decorator} permits
+the passing of separate arguments to the decorator itself.  
+If not extranous argument is needed, that \textit{outermost} decorator
+is unnecessary.
 
 The author uses such a decorator (specifically named 
 \break
@@ -111,34 +110,28 @@ in Listing 4:
 \lstinputlisting[%
   language=TeX,%
   numbers=left,
-  caption={Result of Programmatically Disassembling \textit{add\_ints.py}},%
+  caption={Result of Programmatically Disassembling \textit{add\_ints}},%
   label={lst:decorator},%
 ]{examples/actual\_disassemble\_add\_ints.txt}
 
 Note the LOAD\_GLOBAL command on line 6 of Listing 4 to load the value of 
-\textit{c}.  Any such global names are sanity checked against the 
-\textit{\_\_globals\_\_} attribute of the disassembled function as a 
-mitigation against parsing errors that might yield false positives.
-%
-If the name is found in the \textit{\_\_globals\_\_} dictionary, its name and 
-value is saved for later reference.  Likewise, names and values written to via 
-the STORE\_GLOBAL commands are also parsed, verified to exist in the function's
- \textit{\_\_globals\_\_} attribute, and cached for later use if so.
+\textit{c}.  Such global names \textit{read from} are saved for later reference.  
+Likewise, names and values \textit{written to} via 
+the STORE\_GLOBAL commands are also cached for later use.
 %
 Of note, the disassembly shown above differs from stand-alone disassembly of 
 the same function in the Python interpreter (compare the listing above to the
 \textit{examples/disassemble\_decorator\_with\_decorators.txt} file in the 
- accompanying repository.)
-They differ as during actual execution the author's code
- disassembles only the \textit{add\_ints} function, after the decorators
-  have already executed, leaving only the original  \textit{add\_ints}
-  function for disassembly.
+accompanying repository.)
+During actual execution the author's code disassembles only the
+\textit{add\_ints} function, after the decorators
+have already executed, leaving only the original  \textit{add\_ints}
+function for disassembly.
 In contrast, disassembling the function in the static, non-executing context of
 the Python interpreter reveals the code of all applied decorators.  
 %
 Values read from the global state must be recorded 
-in order to monkeypatch them during the unit test programmatically 
-created by this work.
+in order to monkeypatch them in the resulting unit test.
 %
 The decorated function must also record modified global values in
 order to assert that the state was correctly changed by the function.
@@ -158,45 +151,49 @@ Any exception can be detected with the code shown in Listing
 
 \subsection{Determing Test Coverage}\label{sec:approach-internal-4}
 The Python \textit{coverage}
-module provides support for just this task as shown in \nameref{}:
+module provides support for capturing line (and branch)-based coverage
+as shown in Listing~\ref{lst:Coverage} \cite{Batchelder}.
 
 \lstinputlisting[%
   language=Python,%
   numbers=left,
   caption={Calling a function and capturing the test coverage with the \textit{coverage} module.},%
   label={lst:Coverage},%
-]{examples/coverage.py}
+]{examples/coverage_example.py}
 
-However, given the non-standard
-approach of this work compared to typical testing, the author programmatically
-copied the results from the output of the coverage tool and cached it separately, 
-opting not to use the default coverage database persistantly.
+The documented approach to using the \textit{coverage} module 
+saves results to a persistent database on the filesystem.
+However, due to the already high overhead caused by author's work, he opted not 
+to use the database option by it separately, 
+opting not to use the default database \cite{Batchelder}.
 
 \subsection{Summary of the approach}\label{sec:approach-internal-5}
 
 The author uses all the methods discussed above to take a "before" and “after” 
 snapshot of the arguments and relevant global state of each execution. 
 
-Note that the state of the arguments must also be captured after the function 
-executes as called functions may change mutable arguments that persist upon 
-return to the caller. The return value or exception type and exception message
- are also captured, in addition to line test coverage. 
- For each execution of a given function, an instance of the 
- following class is created and the fields populated:
+Note that the state of mutable \textit{arguments} must also be captured 
+\textit{after} the function executes as called functions may change mutable 
+arguments that persist upon return to the caller. The return value or exception 
+type and exception message are also captured, in addition to line test coverage. 
+For each execution of a given function, an instance of the 
+\textit{CoverageInfo} class is created and the fields populated, see 
+Listing~\ref{lst:CoverageInfo}
 
 \lstinputlisting[%
   language=Python,%
   numbers=left,
-  caption={CoverageInfo: The class that caches all metadata associated with a single execution.},%
+  caption={The CoverageInfo class caches all metadata associated with a single execution.},%
   label={lst:CoverageInfo},%
 ]{examples/coverage_info.py}
-In addition, one of each of the FunctionMetaData classes below is populated for each decorated function:
+In addition, one instance of the FunctionMetaData classes shown in 
+Listing~\ref{lst:FunctionMetaData} is populated for each decorated function.
 
 \lstinputlisting[%
   language=Python,%
   numbers=left,
-  caption={FunctionMetaData: The class that caches all metadata associated with
-   a single function, to include all associated CoverageInfo classes},%
+  caption={The FunctionMetaData class caches all metadata associated with
+   a single function, to include all associated CoverageInfo classes (line 25)},%
   label={lst:FunctionMetaData},%
 ]{examples/function\_metadata.py}
 
@@ -206,9 +203,8 @@ In addition, one of each of the FunctionMetaData classes below is populated for 
 
 As the reader may imagine, the decorator described above adds significant overhead 
 to the execution time of the overall test, as the function call is intercepted,
-arguments inspected, copied etc.  To mitigate this overhead the author provides 
-a variety of methods to 
-reduce this overhead by "bypassing" the decorator, i.e. calling the decorated 
+arguments inspected and copied, etc.  To mitigate this overhead the author provides 
+a variety of methods to "bypass" the decorator, i.e. calling the decorated 
 function and simply returning the result without further action.
 
 The first and perhaps most obvious approach is to set a coverage threshold such 
@@ -220,7 +216,8 @@ of executions to capture, after which the decorator would be disabled.
 The author supports either option by setting either the \textit{percent\_coverage} or 
 \textit{sample\_count} option to the decorator to the desired value.  Setting 
 \textit{percent\_coverage} to a value greater than 100 will capture all 
-executions of the decorated function.
+executions of the decorated function.  Listing~\ref{lst:ProgrammaticallyTuning}
+shows this code.
 \lstinputlisting[%
   language=Python,%
   numbers=left,
@@ -235,37 +232,33 @@ yielding only three unique test cases.  This would in fact be the case, however,
 addressed this by hashing the inputs (global values, args and kwargs) and 
 caching the hash in a set name \textit{hashed\_inputs}.  If a function has
 already been called with the exact same inputs, the decorator immediately returns
-the result in the same fashion as shown above, as the metadata associated with
- executing the decorated function
-with those inputs was already captured and recorded.  Thus, all test cases 
-generated are unique.  This represents the last mitigation
+the result in the same fashion as shown above. Thus, all test cases 
+ultimately generated are unique.  This represents the last mitigation
 currently in the code.  In future work the author hopes to return the cached 
 result/raise the same exception of this execution to save even more overhead.  
 
 It is also important to note that the decorator need only be applied until the 
 test cases are generated and the developer is satisfied that the created unit
 tests will suffice.  At that point the decorator can be completely removed
-from the functional or integration test, thereby restoring the runtime of
-the original test back to its original, faster runtime.  The author 
-was able to generate successful unit tests for a C function parser, patch two
-bugs revealed by the unit tests, re-run the function test, then remove 
-the decorator once confident the bugs were fixed.  The author only had to run 
-the slower, decorated integration test twice before removing the decorator.
-At that point he was confident that the generated unit test and dozens of 
-tests cases created from the function test sufficed for unit testing apart 
-from the functional test.
+from the functional or integration test\footnote{Equivalently, 
+\textit{sample\_count} and \textit{percent\_coverage} can both be set to 0.}, 
+thereby restoring the runtime of
+the original test back to its original, faster runtime.  
 
 \subsection{Selectively keeping specific test cases}\label{sec:tuning-1}
-As the same function may be executed multiple times during an ad hoc or 
-function test, the user may wish to preserve a minimal number of test cases to 
-avoid too much redundancy.  One such approach is to drop the current execution
+Ideally, the same function will be executed multiple times during an ad hoc or 
+function test to maximize coverage.  That said, the tester may wish to preserve 
+a minimal number of test cases to avoid too much redundancy.  
+%
+One such approach is to drop the current execution
 record if the current execution didn’t add any new coverage.  
 Conversely, one can drop previous records if the current coverage supersedes
 previous coverage.
-There are a few ways to do this as explored below, but the reader should bear in mind:
+There are a few ways to minimize duplicate coverage as explored below, 
+but the reader should bear in mind:
 
 \begin{enumerate}
-  \item that fully orthogonal test cases, as measured by coverage, are not feasible 
+  \item that \textit{fully} orthogonal test cases, as measured by coverage, are not feasible 
   (all test cases will cover the initial lines until the first conditional statement) 
   \item test cases with redundant coverage can still hold value
   \item some code such as function calls and regular expressions may have one 
@@ -275,16 +268,15 @@ There are a few ways to do this as explored below, but the reader should bear in
 Nevertheless, the value added by redundant tests often plateaus 
 \cite{lemieux2023codamosa}, hence the following sections
 describe how to reduce such redundancy.  The first section describes
-the technique employed by the author for balanced memory usage performance but
-with intermediate complexity. The sub-section that follows describes a much simpler and faster
-approach but offers poorer performance in terms of selecting only optimal tests 
-cases.  For the reader desring to keep the fewest test case cases that achieve
+the technique employed by the author to balance memory usage and performance but
+with intermediate complexity. The paragraph that follows describes a much simpler and faster
+approach but offers poorer performance in that is rarely selects optimal test 
+cases.  For the reader desiring the truly ideal solution, i.e. keep the fewest test cases that achieve
 maximum coverage, a note on the proper algorithm to pursue such a goal completes
- this section.  This method was not selected to due its
-higher menory requirements and higher complexity of implementation.
+this section. This method was not selected to due its higher menory
+requirements and higher complexity of implementation.
  
 \subsubsection{Selected Approach: Individual Subsets}\label{sec:tuning-2}
-\hfill\\
 One can maintain coverage information for previous
 executions individually and check the current set of covered lines
 against all previous coverage sets.  If the current coverage is
@@ -293,7 +285,7 @@ Else, all previous records whose coverage is
 a proper subset of the current record are deleted (or \textit{pruned})
 and the current record kept. This is more effort than the next approach but
 retains fewer records with the same total coverage.  
-A simple sample of the latter approach is shown here:
+A simple sample of the individual subset approach is shown in Table 2.
 
 \vskip .2cm
 \begin{tabular}{|>{\centering\arraybackslash}m{1.6cm}|>{\centering\arraybackslash}m{1.25cm}|>{\centering\arraybackslash}m{4.5cm}|}
@@ -335,7 +327,6 @@ options to True would not drop redundant records in case the user desired to kee
 test cases that produce redundant coverage.  
 
 \subsubsection{Check for new coverage via unified set}\label{sec:tuning-2}
-\hfill\\
 Another approach is to maintain a unified set $U_t$ that is the union of all lines 
 covered by all recorded tests from $S_0$ to $S_n$: 
 
@@ -362,9 +353,10 @@ lack of granularity: it's impossible to remove old records if new records have
 better coverage, as specific coverage per test is not recorded.
 
 \subsubsection{Optimal Result by Solving the Minimum Set Cover Problem}\label{sec:tuning-2}
-\hfill\\
-If the developer caches all records initially then the Minimum Set Cover Problem
-\cite{hassin2005better} is the exact algorithm required to select the minimum test cases.
+If the developer desires the best solution, e.g. to keep the bare minimum
+number of test cases, all records must be cached initially.  
+From there, the tester must solve the Minimum Set Cover Problem
+\cite{hassin2005better} to select the minimum test cases.
 This classic NP-Hard computer science problem involves finding the smallest number
 of sets whose union is equal to or greater than (“covers”) some universe $U$ of elements.  
 In this context, the coverage (set of line number executed) of each test is one set $S_i$,
@@ -372,11 +364,13 @@ and the set of all line numbers of a function is the universe $U_f$ to cover.
 As noted, this requires caching the unique coverage of each test, which may 
 be prohibitive from a memory standpoint for large applications.
 If memory is not a concern, this method may reduce the runtime 
-compared to the alternate approaches described above.  As the pruning 
+compared to the alternate approaches described above. \footnote{Validating this hypothesis
+could be an area for future work.} As the pruning 
 only takes place after the tests are complete, the tests are not slowed as much
 as the previous methods that prune during the tests.  That said, the sole
 pruning operation will take comparatively longer as all the records must be 
-analyzed all at once.
+analyzed all at once. The reader should be aware that due to the NP-Hard
+nature of this problem, typical solutions are heuristic-based.
    
 The author did not implement 
 the Minimum Set Cover problem or its weighted variants, but encourages 
@@ -391,10 +385,10 @@ After capturing the function metadata as documented in Listings 7 and 8,
 the next step was to programmatically generate the unit tests with all their 
 captured test cases and place them in a file named 
 \textit{test\_\$function\_name.py}. 
-A simple call to \textit{generate\_all\_tests\_and\_metadata} at the end of 
-the functional test will do just that.
- Calling this function eventually executes 
-\textit{auto\_generate\_tests} that uses metaprogramming to:
+via a call to \textit{generate\_all\_tests\_and\_metadata} at the end of 
+the functional test.
+Calling this function eventually executes \textit{auto\_generate\_tests} 
+that uses metaprogramming to:
 \begin{enumerate}
   \item Build a list of imports
   \item Define global variables constant across all test cases
@@ -423,7 +417,7 @@ In addition to all of the above, significant development efforts went into
 serializing and deserializing Python code to and from strings.  Though
 certainly not a panecea, the work here advances that done by 
 Lemueux \textit{et. al.} \cite{lemieux2023codamosa} not only in terms of 
-automated testing but also in terms of serialization capabilties.
+automated testing but also in terms of serialization capabilities.
 % Discuss overhead and coverage
 
 % Demonstrate how the tests themselves are created with metaprogramming
