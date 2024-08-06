@@ -58,12 +58,15 @@ Listing~\ref{lst:decorator-output}. Note the apparently erroneous math (line 1,7
 Listing~\ref{lst:decorator-output}), as the \textit{add\_ints} function is 
 unaware that its first argument was modified by the \text{inner\_most\_decorator}.
 
+\lstset{style=batstyle}
+
 \lstinputlisting[%
   language=bash,%
   numbers=left,
   caption={Output of decorator.py},%
   label={lst:decorator-output},%
 ]{examples/decorator\_result.txt}
+\lstset{style=pythonstyle}
 
 As shown in Listing~\ref{lst:decorator-output}, not only can the Python developer access the function
 via the variable \textit{f} (e.g. line 14), the developer also has full

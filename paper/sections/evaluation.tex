@@ -10,7 +10,7 @@ checks were to:
 
 \begin{enumerate}
   \item Immediately return if the pytest module was loaded, indicating a unit (not integration) test is currently being executed
-  \item Immediately return if the call stack contained a loop, e.g. A->B->A
+  \item Immediately return if the call stack contained a loop, e.g. A$\rightarrow$B$\rightarrow$A
 \end{enumerate}
 
 These checks are shown in Listing~\ref{lst:Limit Recursion}.
@@ -63,9 +63,12 @@ to cover the error handling code.
   label={lst:Test Divide Ints},%
 ]{examples/divide\_ints\_2.py}
 
-Running this code with pytest as displayed in Listing~\ref{lst:run-divide}.
+Running this code with pytest as displayed in Listing 6%~\ref{lst:rundivide}.
 
-\begin{lstlisting}[language=bash, caption={Executing example to create unit test},label{lst:run-divide}]
+\begin{lstlisting}[
+  language=bash, 
+  caption={Executing example to create unit tezst},
+  label={lst:rundivide}]
     $ python divide_ints.py
 \end{lstlisting}
     

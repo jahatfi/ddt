@@ -1,98 +1,91 @@
-% Add option `kerning` to `microtype`. Since `acmart` already loads `microtype`
-% by itself, we need to add this option here to hook into the package-loading
-% process.
-\PassOptionsToPackage{kerning}{microtype}
-%
-\documentclass[%
-  anonymous=true,%
-  authordraft=true,%
-  format=sigconf,%
-  review=false,%
-  screen=true,%
-  timestamp=false,%
-  pbalance,%
-]{acmart}
-
-\copyrightyear{2024}
+\documentclass[10pt, conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
 
 \usepackage{caption}
 \usepackage{enumitem}
 \usepackage{array}
 \usepackage{multirow}
-\usepackage{defs}
 \usepackage{listings}
 \lstset{escapeinside={<@}{@>}}
 \usepackage{amsmath}
 \usepackage{xcolor}
-%\usepackage{lipsum,multicol}
-\graphicspath{{./}{./img/}}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
 
-\input{macros}
-\setlength {\marginparwidth }{2cm}
-\begin{document}
-%\begin{multicols}{2}
+% https://www.overleaf.com/learn/latex/Code_listing
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-\title{A Python Decorator for Programmatic and Deterministic Unit Test Code Generation}
-
-\author{James Hatfield}
-\email{jahatfi@gmail.com}
-\orcid{0009-0003-1677-0026}
-\affiliation{
-  \state{Maryland}
-  \country{United States of America}
+\lstdefinestyle{pythonstyle}{
+    %backgroundcolor=\color{lightgray},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{orange},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    frame=single,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
 }
 
+\lstdefinestyle{batstyle}{
+    %backgroundcolor=\color{lightgray},
+    commentstyle=\color{black},
+    keywordstyle=\color{black},
+    numberstyle=\color{black},
+    stringstyle=\color{black},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    frame=single,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
 
-  
-  \ccsdesc[300]{Software and its engineering~Software maintenance tools}
-  \ccsdesc[500]{Software and its engineering~Software testing and debugging}
-  \ccsdesc[500]{Software and its engineering~Empirical software validation}
-  \ccsdesc[100]{Software and its engineering~Object oriented frameworks}
-  \ccsdesc[100]{Software and its engineering~Object oriented development}
+\lstset{style=pythonstyle}
 
-\begin{abstract}
-  %
-  % Context
-  Automated software testing is an area of active research, 
-  particularly automated generation of unit tests. 
-  %
-  % Problem
-  Current and previous work such as generative artificial intelligence (AI), search-based heuristics, and 
-  randomization often lead to incomplete coverage and non-deterministic results.
-  %
-  In addition, some of the previous work lacks a natural way for a human expert 
-  to provide input to the automated test generator outside the source code itself. 
-  % Insight
-  The author presents a Python decorator to generate deterministic Python 
-  unit tests from existing higher level tests via metaprogramming.  
-  %
-  This Python decorator hooks function calls in order to record the 
-  metadata (input, output, relevant global variables, and code coverage) 
-  of each hooked function. 
-  %
-  The recorded metadata is then used to automatically generate unit 
-  tests for each such function.
-  %
-  % Contribution
-  The author's initial testing confirmed that it can 
-  be a force multiplier for the developer, 
-  as one passing integration test of the overall 
-  system can produce many unit tests.  
-  %
-  This work leverages expert human insight by deriving unit tests
-  from as little as one human-designed test.
-  %
-  Further, many test cases may be generated for each test.  
-  Python programmers can save significant time and effort using the 
-  generated test cases as boilerplate if more test cases are required to 
-  increase coverage.  
-  %
 
-\end{abstract}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
 
-\keywords{Python, Automated Test Generation, Metaprogramming}
+\title{A Python Decorator for Programmatic and Deterministic Unit Test Code Generation\\}
 
+\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
+\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+\textit{name of organization (of Aff.)}\\
+City, Country \\
+email address or ORCID}
+}
 \maketitle
+
+\input{sections/abstract}
+
+\begin{IEEEkeywords}
+Python, Automated Test Generation, Metaprogramming
+\end{IEEEkeywords}
 
 \input{sections/introduction}
 \input{sections/assumptions}
@@ -102,14 +95,8 @@
 \input{sections/conclusion}
 \input{sections/acknowledgements}
 
-\begin{acks}
-  A special thanks to my good friend Brad for his insight and expertise with 
-  Python testing and the pytest library.
-\end{acks}
 
-\bibliographystyle{ACM-Reference-Format}
+\bibliographystyle{ieeetran}
 \bibliography{related}
 
 \end{document}
-
-% vim: spelllang=en_US
