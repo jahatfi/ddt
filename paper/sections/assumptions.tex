@@ -2,7 +2,7 @@
 
 An initial assumption of the author's hypothesis is that all code executing under the
 functional test is mostly correct, as the inputs and outputs from each
-function called during the functional test would become inputs and outputs for the
+function called during the functional test would become data for the
 unit tests.  
 
 That said, the author acknowledges that software engineers may not 
@@ -26,10 +26,9 @@ overwrite a \textit{repr\(\)} method not meeting this requirement.  The author d
 this in the repository code by overwriting the \textit{repr\(\)} method of the
 Pandas DataFrame class as shown in Listing~\ref{lst:pandas_repr}.
 
- 
- \lstinputlisting[%
- language=Python,%
- numbers=left,
- caption={Overwriting incompatible \textit{repr} method},%
- label={lst:pandas_repr},%
+\lstinputlisting[%
+language=Python,%
+numbers=left,
+caption={Overwriting incompatible \textit{repr} method},%
+label={lst:pandas_repr},%
 ]{examples/pandas\_repr.py}
