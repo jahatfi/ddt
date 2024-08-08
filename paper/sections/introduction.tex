@@ -61,35 +61,40 @@ the hobbyist may focus primarily on function or integration tests
 and opt not to develop unit tests, perhaps because the pros of unit tests
 do not outweigh the cons compared to a higher level test.
 %
-The main pros and cons for functional versus unit tests are summarized very
-briefly Table 1.
-\vskip .2cm
-\noindent\begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
-    \hline
-    \multirow{2}{*}{} & \textbf{Functional Test(s)} & \textbf{Unit Test(s)} \\
-    \hline
-    \textbf{Pros} & \begin{itemize}[leftmargin=*]
-        \item More relevant for the customer
-        \item Efficiently tests modules together
-        \item Less dependent on the internal unit implementations
-    \end{itemize} & \begin{itemize}[leftmargin=*]
-        \item Verifies individual components
-        \item Efficient when testing single components
-    \end{itemize} \\
-    \hline
-    \textbf{Cons} & \begin{itemize}[leftmargin=*]
-        \item Waste of time when testing small unit changes
-        \item May not accurately identify root cause of failure
-    \end{itemize} & \begin{itemize}[leftmargin=*]
-        \item Time consuming to develop
-        \item Easily broken by refactoring code
-    \end{itemize} \\
-    \hline
-\end{tabular}
-\captionof{table}{Pros and Cons of Functional and Unit Tests}
-Despite the time-consuming nature of developing unit tests manually, both
-TDD and integration-test-first proponents recognize value in \textit{having}
-unit tests. By definition, any reduction in the cost of unit test creation drives 
+The main pros and cons for functional versus unit tests are summarized very 
+briefly Table \ref{tab1}.
+
+\begin{table}[htbp]
+    \caption{Pros and Cons of Functional and Unit Tests}
+    \begin{center}
+    \begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
+        \hline
+        \multirow{2}{*}{} & \textbf{Functional Test(s)} & \textbf{Unit Test(s)} \\
+        \hline
+        \textbf{Pros} & \begin{itemize}[leftmargin=*]
+            \item More relevant for the customer
+            \item Efficiently tests modules together
+            \item Less dependent on the internal unit implementations
+        \end{itemize} & \begin{itemize}[leftmargin=*]
+            \item Verifies individual components
+            \item Efficient when testing single components
+        \end{itemize} \\
+        \hline
+        \textbf{Cons} & \begin{itemize}[leftmargin=*]
+            \item Waste of time when testing small unit changes
+            \item May not accurately identify root cause of failure
+        \end{itemize} & \begin{itemize}[leftmargin=*]
+            \item Time consuming to develop
+            \item Easily broken by refactoring code
+        \end{itemize} \\
+        \hline
+    \end{tabular}
+    \label{tab1}
+    \end{center}
+\end{table}
+
+Despite the time-consuming nature of developing unit tests manually, developers of all paradigms
+recognize value in \textit{having} unit tests. By definition, any reduction in the cost of unit test creation drives 
 up their return on investment.
 
 \subsubsection{Test Coverage}\label{sec:intro-cov}
