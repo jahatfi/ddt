@@ -1,0 +1,102 @@
+\documentclass[10pt, conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
+
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{listings}
+\lstset{escapeinside={<@}{@>}}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+
+% https://www.overleaf.com/learn/latex/Code_listing
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{pythonstyle}{
+    %backgroundcolor=\color{lightgray},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{orange},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    frame=single,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstdefinestyle{batstyle}{
+    %backgroundcolor=\color{lightgray},
+    commentstyle=\color{black},
+    keywordstyle=\color{black},
+    numberstyle=\color{black},
+    stringstyle=\color{black},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    frame=single,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=pythonstyle}
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{A Python Decorator for Programmatic and Deterministic Unit Test Code Generation\\}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
+\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+\textit{name of organization (of Aff.)}\\
+City, Country \\
+email address or ORCID}
+}
+\maketitle
+
+\input{sections/abstract}
+
+\begin{IEEEkeywords}
+Python, Automated Test Generation, Metaprogramming
+\end{IEEEkeywords}
+
+\input{sections/introduction}
+\input{sections/assumptions}
+\input{sections/approach}
+\input{sections/evaluation}
+\input{sections/discussion}
+\input{sections/conclusion}
+\input{sections/acknowledgements}
+
+
+\bibliographystyle{ieeetran}
+\bibliography{related}
+
+\end{document}

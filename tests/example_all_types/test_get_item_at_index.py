@@ -4,16 +4,24 @@ Programmatically generated test function for get_item_at_index()
 
 import re
 import pytest
-from tests.example_all_types import all_types
+import all_types
 
 
 # In sum, these tests covered 85.71% of get_item_at_index's lines
 # Line(s) not covered by ANY of the tests below:
 # [30]
 @pytest.mark.parametrize(
-    "iterable, index, exception_type, exception_message, expected_result, expected_type",
+    "iterable, index, exception_type, exception_message, expected_result, expected_type, args_after",
     [
-        ("The quick red fox jumped over the lazy brown dog", 3, "N/A", "N/A", " ", str),
+        (
+            "The quick red fox jumped over the lazy brown dog",
+            3,
+            "N/A",
+            "N/A",
+            " ",
+            str,
+            {},
+        ),
         (
             "a test string",
             -5,
@@ -21,6 +29,7 @@ from tests.example_all_types import all_types
             "index must be in range [0, 12], was -5",
             "None",
             "N/A",
+            {},
         ),
         (
             (5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
@@ -29,12 +38,27 @@ from tests.example_all_types import all_types
             "index must be in range [0, 9], was 50",
             "None",
             "N/A",
+            {"iterable": "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)"},
         ),
-        ([-1, -2, -3, -4], 0, "N/A", "N/A", "-1", int),
+        (
+            [-1, -2, -3, -4],
+            0,
+            "N/A",
+            "N/A",
+            "-1",
+            int,
+            {"iterable": "[-1, -2, -3, -4]"},
+        ),
     ],
 )
 def test_get_item_at_index(
-    iterable, index, exception_type, exception_message, expected_result, expected_type
+    iterable,
+    index,
+    exception_type,
+    exception_message,
+    expected_result,
+    expected_type,
+    args_after,
 ):
     """
     Programmatically generated test function for get_item_at_index()

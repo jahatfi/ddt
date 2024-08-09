@@ -29,9 +29,10 @@
    ],
    "coverage_io": {
       "2fcde918ffacbbb30ae860654c530d7850072b9a41fc16835cdc5bf0fdc3020d": {
-         "args": [
+         "args_before": [
             "30"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "mode": "fizzbuzz"
@@ -56,9 +57,10 @@
          "cost": 0.001
       },
       "332f74facbdc5888beeee5ca119926b4501c2dc9dd3ab99e811d6866bdd02840": {
-         "args": [
+         "args_before": [
             "30"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "mode": "buzzfizz"
@@ -84,9 +86,10 @@
          "cost": 0.001
       },
       "458ae2906b3b144383bfba0618ff5c3ea1d2e981782eae30455d98eb608b4488": {
-         "args": [
+         "args_before": [
             "6"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "mode": "a_test"
@@ -133,5 +136,8 @@
       57
    ],
    "needs_pytest": false,
-   "exceptions_raised": []
+   "exceptions_raised": [],
+   "callable_files": {
+      "fizzbuzz": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\example_fizzbuzz\\fizzbuzz.py"
+   }
 }

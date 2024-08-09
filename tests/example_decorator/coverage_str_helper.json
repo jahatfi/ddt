@@ -1,0 +1,134 @@
+{
+   "name": "coverage_str_helper",
+   "parameter_names": [
+      "this_list",
+      "non_code_lines"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      1579,
+      1580,
+      1581,
+      1582,
+      1583,
+      1584,
+      1585,
+      1586,
+      1587,
+      1588,
+      1589,
+      1590,
+      1591,
+      1592,
+      1593,
+      1594,
+      1595,
+      1597,
+      1598,
+      1599,
+      1600,
+      1601,
+      1602,
+      1603,
+      1604,
+      1606,
+      1607,
+      1609,
+      1610,
+      1611,
+      1613,
+      1615
+   ],
+   "non_code_lines": [
+      1596,
+      1605,
+      1608,
+      1612,
+      1614
+   ],
+   "coverage_io": {
+      "9e2f3813564b19b43e1a6865b62f2c4a87785cf424be6163e41c7f0b79edfabb": {
+         "args_before": [
+            "[1539, 1540, 1522, 1523, 1525, 1526, 1527]",
+            "{1536, 1528, 1530, 1531, 1532, 1533, 1534, 1535}"
+         ],
+         "args_after": {
+            "this_list": "[1539, 1540, 1522, 1523, 1525, 1526, 1527]",
+            "non_code_lines": "{1536, 1528, 1530, 1531, 1532, 1533, 1534, 1535}"
+         },
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "['1539-1540', '1522-1523', '1525-1527']",
+         "expected_type": "list",
+         "coverage": [
+            1579,
+            1580,
+            1582,
+            1583,
+            1584,
+            1585,
+            1586,
+            1587,
+            1588,
+            1589,
+            1590,
+            1591,
+            1593,
+            1594,
+            1595,
+            1599,
+            1600,
+            1601,
+            1602,
+            1603,
+            1604,
+            1609,
+            1615
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.001
+      }
+   },
+   "coverage_percentage": 71.88,
+   "types_in_use": [
+      "logging.Logger"
+   ],
+   "global_vars_read_from": [
+      "logger"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      1579,
+      1580,
+      1582,
+      1583,
+      1584,
+      1585,
+      1586,
+      1587,
+      1588,
+      1589,
+      1590,
+      1591,
+      1593,
+      1594,
+      1595,
+      1599,
+      1600,
+      1601,
+      1602,
+      1603,
+      1604,
+      1609,
+      1615
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "coverage_str_helper": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
+   }
+}
