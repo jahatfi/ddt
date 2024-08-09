@@ -6,43 +6,43 @@
    "is_method": false,
    "source_file": null,
    "lines": [
+      1550,
+      1551,
+      1552,
+      1553,
+      1554,
       1555,
-      1556,
       1557,
       1558,
       1559,
-      1560,
-      1562,
-      1563,
-      1564,
-      1565
+      1560
    ],
    "non_code_lines": [
-      1561
+      1556
    ],
    "coverage_io": {
-      "3130d8b69ad22444b65a1aa532cc84c80744eb8292024ebb29c559fe8afe5889": {
+      "f90684d3209aebe5bf8adf62513452df2fa22822d1365da9cf2b2ce9030ba2f6": {
          "args_before": [
-            "\"None\""
+            "\"CoverageInfo(args_before=['2', '7'], args_after={}, kwargs={}, globals_before={'c': [5]}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\""
          ],
          "args_after": {},
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "None",
+         "expected_result": "CoverageInfo(args_before=['2', '7'], args_after={}, kwargs={}, globals_before={'c': [5]}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
          "expected_type": "str",
          "coverage": [
-            1555,
-            1556,
+            1550,
+            1551,
+            1552,
+            1554,
             1557,
-            1559,
-            1562,
-            1565
+            1560
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.001
+         "cost": 0.002
       }
    },
    "coverage_percentage": 60.0,
@@ -50,12 +50,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1555,
-      1556,
+      1550,
+      1551,
+      1552,
+      1554,
       1557,
-      1559,
-      1562,
-      1565
+      1560
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

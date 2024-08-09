@@ -18,10 +18,11 @@
    "non_code_lines": [],
    "coverage_io": {
       "78e4f6e57c2f532c43747e020340acf548111ebba3a4dfbb9b7a12af2d0fa659": {
-         "args": [
+         "args_before": [
             "-1",
             "1"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "method_call_counter": 0
@@ -43,10 +44,11 @@
          "cost": 0.001
       },
       "6489cc7d9835b1fc422a9e25a2d99a7374cf0a90d0450a9435df3167635e432a": {
-         "args": [
+         "args_before": [
             "2",
             "2"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "method_call_counter": 1
@@ -71,8 +73,8 @@
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "global_vars_read_from": [
       "logger",
@@ -92,5 +94,8 @@
    "needs_pytest": true,
    "exceptions_raised": [
       "<class 'ValueError'>"
-   ]
+   ],
+   "callable_files": {
+      "gas": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\example_oo_car\\car.py"
+   }
 }

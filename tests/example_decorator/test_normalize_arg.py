@@ -8,13 +8,13 @@ from src import unit_test_generator
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1558', '1560', '1563-1564']
+# ['1553', '1555', '1558-1559']
 @pytest.mark.parametrize(
     "arg, expected_result, expected_type",
     [
         (
-            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
-            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+            "CoverageInfo(args_before=['2', '7'], args_after={}, kwargs={}, globals_before={'c': [5]}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+            "CoverageInfo(args_before=['2', '7'], args_after={}, kwargs={}, globals_before={'c': [5]}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
             str,
         ),
     ],

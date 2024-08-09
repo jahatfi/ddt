@@ -16,7 +16,7 @@ from src.unit_test_generator import (
 FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.CRITICAL)
+unit_test_generator.logger.setLevel(logging.INFO)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
@@ -102,12 +102,13 @@ class Car:
         ]
         return ''.join(result)
 
-    def __repr__(self):
+    def __repr__(self, **kwargs):
         """
         Return this objective as a valid Python string that can
         be used to recreate this object.
         """
         return f"Car(\"{self.color}\", {self.speed}, {self.steer_angle})"
+
 
     def repr(self):
         """
@@ -123,6 +124,19 @@ class Car:
         else return False.
         """
         return self.speed > other_car.speed
+    
+    def __eq__(self, other_car:object) -> bool:
+        """
+        Return True if and only if the two Car classes
+        are identical, doesn't compare private variables.
+        """
+        if self.color != other_car.color:
+            return False
+        if self.speed != other_car.speed:
+            return False
+        if self.steer_angle != other_car.steer_angle:
+            return False
+        return True
 def first_test():
     """
     Create a bunch of cars to test all the Car class methods
