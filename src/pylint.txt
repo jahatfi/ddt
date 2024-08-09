@@ -1,6 +1,19 @@
 ************* Module src.unit_test_generator
-unit_test_generator.py:1:0: C0302: Too many lines in module (2019/1000) (too-many-lines)
+unit_test_generator.py:743:0: C0301: Line too long (113/100) (line-too-long)
+unit_test_generator.py:916:0: C0301: Line too long (107/100) (line-too-long)
+unit_test_generator.py:1780:0: C0301: Line too long (152/100) (line-too-long)
+unit_test_generator.py:1926:0: C0301: Line too long (132/100) (line-too-long)
+unit_test_generator.py:1966:0: C0301: Line too long (124/100) (line-too-long)
+unit_test_generator.py:1:0: C0302: Too many lines in module (2178/1000) (too-many-lines)
+unit_test_generator.py:1777:9: W0511: TODO Why is this_state.args_after sometimes a tuple?? (fixme)
+unit_test_generator.py:1962:13: W0511: TODO (fixme)
+unit_test_generator.py:214:4: R0914: Too many local variables (16/15) (too-many-locals)
+unit_test_generator.py:735:4: R0912: Too many branches (17/12) (too-many-branches)
+unit_test_generator.py:735:4: R0915: Too many statements (56/50) (too-many-statements)
+unit_test_generator.py:713:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+unit_test_generator.py:1851:49: W0123: Use of eval (eval-used)
+unit_test_generator.py:1950:34: W0123: Use of eval (eval-used)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.99/10 (previous run: 9.99/10, +0.00)
+Your code has been rated at 9.88/10 (previous run: 9.88/10, +0.01)
 
