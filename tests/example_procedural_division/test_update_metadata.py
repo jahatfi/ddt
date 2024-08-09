@@ -7,8 +7,8 @@ from divide_ints import divide_ints
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from src.unit_test_generator import FunctionMetaData
 from pathlib import WindowsPath
+from src.unit_test_generator import FunctionMetaData
 
 
 # In sum, these tests covered 74.36% of update_metadata's lines

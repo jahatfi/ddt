@@ -4,11 +4,11 @@ Programmatically generated test function for Car.gas()
 
 import re
 import pytest
-import car
+from tests.example_oo_car import car
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to Car.gas:
-from car import Car
+from tests.example_oo_car.car import Car
 
 
 # In sum, these tests covered 100.0% of Car.gas's lines

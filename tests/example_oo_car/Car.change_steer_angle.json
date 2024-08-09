@@ -67,7 +67,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"White\", 20, -30)",
-         "cost": 0.001
+         "cost": 0.002
       },
       "4e6967deeb4e51bab447208d79037a8bca61cdf648fb62d21885290b177313f6": {
          "args_before": [
@@ -114,8 +114,8 @@
    },
    "coverage_percentage": 60.0,
    "types_in_use": [
-      "car.Car",
-      "logging.Logger"
+      "logging.Logger",
+      "tests.example_oo_car.car.Car"
    ],
    "global_vars_read_from": [
       "logger"
