@@ -90,3 +90,11 @@ jobs:
           cd tests\\example_oo_car
           poetry run python car.py
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+      - name: pytest pass_by_assignment
+        continue-on-error: true
+        run: |
+          cd tests\\example_pass_by_assignment
+          poetry run python pass_by_assigment.py
+          poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
