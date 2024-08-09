@@ -12,9 +12,12 @@
    "non_code_lines": [],
    "coverage_io": {
       "797ee52405b6b24f04cee9d62d992fd2a5592ed30653401b854ee509666247fc": {
-         "args": [
+         "args_before": [
             "Car(\"White\", 19, 0)"
          ],
+         "args_after": {
+            "other_car": "Car(\"White\", 19, 0)"
+         },
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
@@ -31,8 +34,7 @@
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
-      "car.Car",
-      "tests.example_oo_car.car.Car"
+      "car.Car"
    ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],
@@ -40,5 +42,8 @@
       125
    ],
    "needs_pytest": false,
-   "exceptions_raised": []
+   "exceptions_raised": [],
+   "callable_files": {
+      "is_going_faster_than": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\example_oo_car\\car.py"
+   }
 }

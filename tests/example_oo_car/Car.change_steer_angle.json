@@ -26,9 +26,10 @@
    ],
    "coverage_io": {
       "9e5729283fb4205cc004e81e18786a627d2eb0f21140111b0a77b56ac7ded037": {
-         "args": [
+         "args_before": [
             "30"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
@@ -47,9 +48,10 @@
          "cost": 0.001
       },
       "78fd5f6e8e8bd7118d1ec9602907dd07a7495e42f6814cd047a8057a96388cd7": {
-         "args": [
+         "args_before": [
             "90"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
@@ -68,9 +70,10 @@
          "cost": 0.001
       },
       "4e6967deeb4e51bab447208d79037a8bca61cdf648fb62d21885290b177313f6": {
-         "args": [
+         "args_before": [
             "180"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
@@ -89,9 +92,10 @@
          "cost": 0.001
       },
       "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": {
-         "args": [
+         "args_before": [
             "-1080"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
@@ -110,8 +114,8 @@
    },
    "coverage_percentage": 60.0,
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "global_vars_read_from": [
       "logger"
@@ -128,5 +132,8 @@
    "needs_pytest": true,
    "exceptions_raised": [
       "<class 'AssertionError'>"
-   ]
+   ],
+   "callable_files": {
+      "change_steer_angle": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\example_oo_car\\car.py"
+   }
 }

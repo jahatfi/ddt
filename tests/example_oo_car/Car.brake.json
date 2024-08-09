@@ -19,10 +19,11 @@
    "non_code_lines": [],
    "coverage_io": {
       "79d14ba2847338fe6989a7d3640887679f88b2cfadee250647df044fe4abc0b9": {
-         "args": [
+         "args_before": [
             "-1",
             "1"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {},
          "globals_after": {},
@@ -43,8 +44,8 @@
    },
    "coverage_percentage": 71.43,
    "types_in_use": [
-      "logging.Logger",
-      "tests.example_oo_car.car.Car"
+      "car.Car",
+      "logging.Logger"
    ],
    "global_vars_read_from": [
       "logger"
@@ -58,5 +59,8 @@
       56
    ],
    "needs_pytest": false,
-   "exceptions_raised": []
+   "exceptions_raised": [],
+   "callable_files": {
+      "brake": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\example_oo_car\\car.py"
+   }
 }

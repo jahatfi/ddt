@@ -219,7 +219,7 @@ class FunctionMetaData(Jsonable):
             is_method:bool,
             source_file:Path,
             lines:Optional[List[int]] = None,
-            non_code_lines:Optional[List[int]] = None,
+            non_code_lines:Optional[Set[int]] = None,
             global_vars_read_from:Optional[set] = None,
             global_vars_written_to:Optional[set] = None,
             coverage_io:Optional[dict[str, CoverageInfo]] = None,
@@ -553,7 +553,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                     # Desired number of samples already achieved: skip
                     logger.info("%d samples for %s already collected: skip decorator",
                                 len(this_metadata.coverage_io), function_name)
-                    logger.info(this_metadata.coverage_io)
+                    logger.debug(this_metadata.coverage_io)
                     # Since this decorator is effectively nullified now,
                     # do NOT try/catch/raise any exceptions.
                     return func(*args, **kwargs)
@@ -742,10 +742,12 @@ class ArgsIteratorClass():
         function_name = self.this_metadata.name
         for arg_i, (arg, arg_name) in enumerate(zip(self.args, self.this_metadata.parameter_names)):
 
-            #if id(arg) != params.this_metadata.parameter_names[arg_i]:
-            #    logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
-            #    continue
-            #logger.info("Keeping param #%d: %s for 'after' comparison", arg_i, arg)
+            if mode == "after" and id(arg) != self.args_addresses[arg_name]:
+             #   logger.error(f"{function_name=} {dir(arg)=}")
+                logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
+                continue
+                logger.error(f"The address is the same for {arg_name} in {function_name}")
+                logger.info("Keeping param #%d: %s for 'after' comparison", arg_i, arg)
             # Do not include the first arg of a method (it's "self")
             # in the argument list
             logger.info("Arg #%d: %s", arg_i, arg_name)
@@ -779,7 +781,7 @@ class ArgsIteratorClass():
 
             self.new_types_in_use |= get_all_types("1", arg, False, 0, function_name)
             if hasattr(arg, "__dict__"):
-                logger.info("Adding types for function %s for arg %s", function_name, arg)
+                logger.debug("Adding types for function %s for arg %s", function_name, arg)
                 for v in arg.__dict__.values():
                     self.new_types_in_use |= get_all_types("1.1", v, False, 0, function_name)
 
@@ -803,7 +805,7 @@ class ArgsIteratorClass():
                 if "object at 0x" in class_repr:
                     class_repr = arg.repr()
                 try:
-                    logger.info(class_repr)
+                    logger.debug(class_repr)
                     # This eval is necessary to check if classes can in fact
                     # be represented as strings.  If not, and this SyntaxError
                     # is uncaught, it will break everything.
@@ -1789,7 +1791,7 @@ def meta_program_function_call( this_state:CoverageInfo,
         # TODO Why is this_state.args_after sometimes a tuple??
         if isinstance(this_state.args_after, dict) and this_state.args_after.keys():
             for arg_after in this_state.args_after.keys():
-                list_of_lines.append(f"{indent}assert args_after[\"{arg_after}\"] == {arg_after} or {arg_after} == eval(args_after[\"{arg_after}\"])\n")
+                list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
 
     else:
         for name in parameter_names:
@@ -1943,8 +1945,14 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         try:
             new_params.append(','.join(state[hash_key].args_before))
         except TypeError as e:
-            logger.error(state[hash_key])
-            raise e
+            if str(state[hash_key].args_before[0]).startswith("<function"):
+                state[hash_key].args_before[0] = str(state[hash_key].args_before[0]).split()[1]
+                try:
+                    new_params.append(','.join(state[hash_key].args_before))
+                    logger.error(str(state[hash_key].args_before[0]))
+                    logger.error(state[hash_key])
+                except TypeError as e:
+                    raise e
         if any_kwargs:
             if state[hash_key].kwargs:
                 new_params.append(','.join(state[hash_key].kwargs))
@@ -1981,7 +1989,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 #if isinstance(arg_value, (int, str, float)):
                 #    logger.info("In '%s' Skipping '%s': %s (type:%s)", function_name, arg_name, arg_value, type(arg_value))
                 #    continue
-                logger.info("Keeping '%s':'%s", arg_name, arg_value)
+                logger.debug("Keeping '%s':'%s", arg_name, arg_value)
                 these_aa[arg_name] = arg_value
                 state[hash_key].args_after = these_aa
             new_params.append(repr(these_aa))

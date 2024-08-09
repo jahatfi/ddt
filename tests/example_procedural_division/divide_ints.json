@@ -22,10 +22,11 @@
    "non_code_lines": [],
    "coverage_io": {
       "3c3651fe9bf9ccfdd1a1aff6a70f7ed10020457da35226255464b77c65d9b9f1": {
-         "args": [
+         "args_before": [
             "6",
             "2"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "error_code": 0
@@ -48,10 +49,11 @@
          "cost": 0.002
       },
       "8dcd244d9477f2f2ad357ec77e59f72415baec689cd405b8f6194849632f34bc": {
-         "args": [
+         "args_before": [
             "3",
             "0"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "error_code": 0
@@ -72,13 +74,14 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "ValueError: Cannot divide by zero!",
          "constructor": "",
-         "cost": 0.002
+         "cost": 0.001
       },
       "07a742d4d53ae6bf7189b38410c8560979026474279353f659adda1c5bcd46a8": {
-         "args": [
+         "args_before": [
             "\"10\"",
             "2"
          ],
+         "args_after": {},
          "kwargs": {},
          "globals_before": {
             "error_code": 0
@@ -100,10 +103,13 @@
          "cost": 0.002
       },
       "2ab261f2cc5c9bd11e8c9817bea4afdfda42f0608bcff0ddd4521ae6d59cc6e8": {
-         "args": [
+         "args_before": [
             "8",
             "[]"
          ],
+         "args_after": {
+            "b": "[]"
+         },
          "kwargs": {},
          "globals_before": {
             "error_code": 0
@@ -123,7 +129,7 @@
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable b=[] is not an int!",
          "constructor": "",
-         "cost": 0.002
+         "cost": 0.001
       }
    },
    "coverage_percentage": 100.0,
@@ -154,5 +160,8 @@
    "exceptions_raised": [
       "<class 'TypeError'>",
       "<class 'ValueError'>"
-   ]
+   ],
+   "callable_files": {
+      "divide_ints": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\example_procedural_division\\divide_ints.py"
+   }
 }

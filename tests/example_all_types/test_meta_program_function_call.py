@@ -3,52 +3,60 @@ Programmatically generated test function for meta_program_function_call()
 """
 
 import pytest
+from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to meta_program_function_call:
+from pathlib import WindowsPath
 from src.unit_test_generator import FunctionMetaData
 from src.unit_test_generator import CoverageInfo
-from pathlib import WindowsPath
 
 
-# In sum, these tests covered 50.0% of meta_program_function_call's lines
+# In sum, these tests covered 51.95% of meta_program_function_call's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1601-1602', '1609-1611', '1615-1618', '1621', '1627-1628', '1633-1641', '1643', '1650', '1653', '1658-1663', '1670-1672', '1676', '1687-1688']
+# ['1797-1798', '1706-1707', '1714-1716', '1720-1723', '1726', '1732-1733', '1738-1746', '1748', '1755', '1758', '1763-1768', '1775-1777']
 @pytest.mark.parametrize(
-    "this_state, tab, package, function_metadata, expected_result, expected_type",
+    "this_state, tab, package, function_metadata, expected_result, expected_type, args_after",
     [
         (
             CoverageInfo(
-                args=[
-                    "all_types.get_item_at_index",
-                    "FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False)",
+                args_before=[
+                    "<function get_item_at_index at 0x00000216665F3D80>",
+                    "FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})",
                 ],
+                args_after={
+                    "this_metadata": "FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[29, 30, 31, 32, 33, 34, 36], non_code_lines={35}, global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'get_item_at_index': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\example_all_types\\\\all_types.py'})"
+                },
                 kwargs={},
                 globals_before={},
                 globals_after={},
                 expected_result="None",
                 expected_type="NoneType",
                 coverage=[
-                    1122,
-                    1124,
-                    1126,
-                    1127,
-                    1128,
-                    1129,
-                    1130,
-                    1132,
-                    1133,
-                    1135,
-                    1136,
-                    1137,
-                    1138,
-                    1139,
-                    1140,
-                    1141,
-                    1143,
-                    1147,
-                    1148,
-                    1149,
+                    1213,
+                    1215,
+                    1217,
+                    1218,
+                    1219,
+                    1220,
+                    1221,
+                    1222,
+                    1223,
+                    1225,
+                    1227,
+                    1228,
+                    1229,
+                    1230,
+                    1231,
+                    1232,
+                    1233,
+                    1237,
+                    1245,
+                    1246,
+                    1247,
+                    1248,
+                    1249,
+                    1250,
                 ],
                 exception_type="",
                 exception_message="",
@@ -62,71 +70,96 @@ from pathlib import WindowsPath
                 parameter_names=["f", "this_metadata"],
                 is_method=False,
                 lines=[
-                    1122,
-                    1123,
-                    1124,
-                    1126,
-                    1127,
-                    1128,
-                    1129,
-                    1130,
-                    1132,
-                    1133,
-                    1134,
-                    1135,
-                    1136,
-                    1137,
-                    1138,
-                    1139,
-                    1140,
-                    1141,
-                    1142,
-                    1143,
-                    1144,
-                    1145,
-                    1146,
-                    1147,
-                    1148,
-                    1149,
+                    1213,
+                    1214,
+                    1215,
+                    1217,
+                    1218,
+                    1219,
+                    1220,
+                    1221,
+                    1222,
+                    1223,
+                    1225,
+                    1226,
+                    1227,
+                    1228,
+                    1229,
+                    1230,
+                    1231,
+                    1232,
+                    1233,
+                    1235,
+                    1237,
+                    1238,
+                    1239,
+                    1240,
+                    1241,
+                    1242,
+                    1243,
+                    1244,
+                    1242,
+                    1237,
+                    1245,
+                    1246,
+                    1247,
+                    1248,
+                    1249,
+                    1250,
+                    1251,
+                    1252,
+                    1251,
                 ],
-                non_code_lines={1131, 1125},
+                non_code_lines={1216, 1234, 1236, 1224},
                 global_vars_read_from={"logger"},
                 global_vars_written_to=set(),
                 source_file=WindowsPath(
                     "C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py"
                 ),
                 coverage_io={
-                    "d0eb5422a7465a482ca7ab729bea8d09b281bd64d24199fd626c0116ec46adaf": CoverageInfo(
-                        args=[
-                            "all_types.get_item_at_index",
-                            "FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False)",
+                    "bacf128226b26119a5eb181952f25812fea28057624a60673194ac53942b8cdb": CoverageInfo(
+                        args_before=[
+                            "<function get_item_at_index at 0x00000216665F3D80>",
+                            "FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})",
                         ],
+                        args_after=OrderedDict(
+                            [
+                                (
+                                    "this_metadata",
+                                    "FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[29, 30, 31, 32, 33, 34, 36], non_code_lines={35}, global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'get_item_at_index': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\example_all_types\\\\all_types.py'})",
+                                )
+                            ]
+                        ),
                         kwargs={},
                         globals_before={},
                         globals_after={},
                         expected_result="None",
                         expected_type="NoneType",
                         coverage=[
-                            1122,
-                            1124,
-                            1126,
-                            1127,
-                            1128,
-                            1129,
-                            1130,
-                            1132,
-                            1133,
-                            1135,
-                            1136,
-                            1137,
-                            1138,
-                            1139,
-                            1140,
-                            1141,
-                            1143,
-                            1147,
-                            1148,
-                            1149,
+                            1213,
+                            1215,
+                            1217,
+                            1218,
+                            1219,
+                            1220,
+                            1221,
+                            1222,
+                            1223,
+                            1225,
+                            1227,
+                            1228,
+                            1229,
+                            1230,
+                            1231,
+                            1232,
+                            1233,
+                            1237,
+                            1245,
+                            1246,
+                            1247,
+                            1248,
+                            1249,
+                            1250,
                         ],
                         exception_type="",
                         exception_message="",
@@ -134,44 +167,61 @@ from pathlib import WindowsPath
                         cost=0.003,
                     )
                 },
-                coverage_percentage=76.92,
+                coverage_percentage=61.54,
                 types_in_use={
-                    "src.unit_test_generator.FunctionMetaData",
-                    "logging.Logger",
                     "pathlib.WindowsPath",
+                    "src.unit_test_generator.FunctionMetaData",
                     "all_types",
+                    "logging.Logger",
                 },
                 unified_test_coverage={
-                    1122,
-                    1124,
-                    1126,
-                    1127,
-                    1128,
-                    1129,
-                    1130,
-                    1132,
-                    1133,
-                    1135,
-                    1136,
-                    1137,
-                    1138,
-                    1139,
-                    1140,
-                    1141,
-                    1143,
-                    1147,
-                    1148,
-                    1149,
+                    1213,
+                    1215,
+                    1217,
+                    1218,
+                    1219,
+                    1220,
+                    1221,
+                    1222,
+                    1223,
+                    1225,
+                    1227,
+                    1228,
+                    1229,
+                    1230,
+                    1231,
+                    1232,
+                    1233,
+                    1237,
+                    1245,
+                    1246,
+                    1247,
+                    1248,
+                    1249,
+                    1250,
                 },
                 needs_pytest=False,
+                callable_files={
+                    "update_metadata": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
+                },
             ),
-            "['    result = unit_test_generator.update_metadata(f,this_metadata)\\n', '    assert result == expected_result or result == eval(expected_result)\\n']",
+            "['    result = unit_test_generator.update_metadata(f,this_metadata)\\n', '    assert result == expected_result or result == eval(expected_result)\\n', '    assert this_metadata == eval(args_after[\"this_metadata\"]) or args_after[\"this_metadata\"] == this_metadata\\n']",
             list,
+            {
+                "this_state": "CoverageInfo(args_before=['<function get_item_at_index at 0x00000216665F3D80>', \"FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})\"], args_after={'this_metadata': \"FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[29, 30, 31, 32, 33, 34, 36], non_code_lines={35}, global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'get_item_at_index': 'C:\\\\\\\\Users\\\\\\\\James\\\\\\\\Documents\\\\\\\\CyberResources\\\\\\\\ddt\\\\\\\\tests\\\\\\\\example_all_types\\\\\\\\all_types.py'})\"}, kwargs={}, globals_before={}, globals_after={}, expected_result='None', expected_type='NoneType', coverage=[1213, 1215, 1217, 1218, 1219, 1220, 1221, 1222, 1223, 1225, 1227, 1228, 1229, 1230, 1231, 1232, 1233, 1237, 1245, 1246, 1247, 1248, 1249, 1250], exception_type='', exception_message='', constructor='', cost=0.003)",
+                "function_metadata": "FunctionMetaData(name='update_metadata', parameter_names=['f', 'this_metadata'], is_method=False, lines=[1213, 1214, 1215, 1217, 1218, 1219, 1220, 1221, 1222, 1223, 1225, 1226, 1227, 1228, 1229, 1230, 1231, 1232, 1233, 1235, 1237, 1238, 1239, 1240, 1241, 1242, 1243, 1244, 1242, 1237, 1245, 1246, 1247, 1248, 1249, 1250, 1251, 1252, 1251], non_code_lines={1216, 1234, 1236, 1224}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'bacf128226b26119a5eb181952f25812fea28057624a60673194ac53942b8cdb': CoverageInfo(args_before=['<function get_item_at_index at 0x00000216665F3D80>', \"FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})\"], args_after=OrderedDict([('this_metadata', \"FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[29, 30, 31, 32, 33, 34, 36], non_code_lines={35}, global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'get_item_at_index': 'C:\\\\\\\\Users\\\\\\\\James\\\\\\\\Documents\\\\\\\\CyberResources\\\\\\\\ddt\\\\\\\\tests\\\\\\\\example_all_types\\\\\\\\all_types.py'})\")]), kwargs={}, globals_before={}, globals_after={}, expected_result='None', expected_type='NoneType', coverage=[1213, 1215, 1217, 1218, 1219, 1220, 1221, 1222, 1223, 1225, 1227, 1228, 1229, 1230, 1231, 1232, 1233, 1237, 1245, 1246, 1247, 1248, 1249, 1250], exception_type='', exception_message='', constructor='', cost=0.003)}, coverage_percentage=61.54, types_in_use={'pathlib.WindowsPath', 'src.unit_test_generator.FunctionMetaData', 'all_types', 'logging.Logger'}, unified_test_coverage={1213, 1215, 1217, 1218, 1219, 1220, 1221, 1222, 1223, 1225, 1227, 1228, 1229, 1230, 1231, 1232, 1233, 1237, 1245, 1246, 1247, 1248, 1249, 1250}, needs_pytest=False, callable_files={'update_metadata': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\src\\\\unit_test_generator.py'})",
+            },
         ),
     ],
 )
 def test_meta_program_function_call(
-    this_state, tab, package, function_metadata, expected_result, expected_type
+    this_state,
+    tab,
+    package,
+    function_metadata,
+    expected_result,
+    expected_type,
+    args_after,
 ):
     """
     Programmatically generated test function for meta_program_function_call()
@@ -181,3 +231,11 @@ def test_meta_program_function_call(
     )
     assert isinstance(result, expected_type)
     assert result == expected_result or result == eval(expected_result)
+    assert (
+        this_state == eval(args_after["this_state"])
+        or args_after["this_state"] == this_state
+    )
+    assert (
+        function_metadata == eval(args_after["function_metadata"])
+        or args_after["function_metadata"] == function_metadata
+    )
