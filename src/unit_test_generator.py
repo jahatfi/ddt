@@ -143,6 +143,7 @@ class CoverageInfo:
     args_before: list[str] = dataclasses.field(default_factory=list)
     args_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+    kwargs_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_before: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     globals_after: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     expected_result: str  = ""
@@ -162,6 +163,7 @@ class CoverageInfo:
         result = ["CoverageInfo(args_before="+repr(self.args_before)]
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
+        result.append(" kwargs_after="+repr(self.kwargs_after))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
         result.append(" expected_result="+repr(self.expected_result))
@@ -190,9 +192,11 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = ["CoverageInfo(args_before="+repr(self.args_before)]
+        result = ["CoverageInfo("]
+        result.append("args_before="+repr(self.args_before))
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
+        result.append(" kwargs_after="+repr(self.kwargs_after))
         result.append(" globals_before="+repr(self.globals_before))
         result.append(" globals_after="+repr(self.globals_after))
         result.append(" expected_result="+repr(self.expected_result))
@@ -212,7 +216,7 @@ class FunctionMetaData(Jsonable):
     Class to track metadata when testing functions and methods
     """
     # pylint: disable-next=too-many-arguments
-    def __init__(   
+    def __init__(
             self,
             name:str,
             parameter_names:List[str],
@@ -719,6 +723,7 @@ class ArgsIteratorClass():
     """
     def __init__(   self,
                     args,
+                    kwargs,
                     new_types_in_use,
                     class_type:str,
                     this_metadata: FunctionMetaData):
@@ -726,28 +731,47 @@ class ArgsIteratorClass():
         Holds all the I/O variables for args_iterator
         """
         self.args = args
+        self.kwargs = copy.deepcopy(kwargs)
         self.arg_names: List[str] = []
         self.args_addresses = {}
+        self.kwargs_addresses: dict[str, int] = {}
         for param_name, param in zip(this_metadata.parameter_names, args):
             self.args_addresses[param_name] = id(param)
+        for k, v in self.kwargs.items():
+            self.kwargs_addresses[k] = id(v)
         self.args_copy: dict[str, Any] = OrderedDict()
+        self.kwargs_copy: dict[str, Any] = OrderedDict()
         self.new_types_in_use = new_types_in_use
         self.class_type: str = class_type
         self.this_metadata: FunctionMetaData = this_metadata
 
-    def args_iterator(self, mode:str="Before"):
+    def args_iterator(self, mode:str="Before", which_args="args"):
+        """
+        Parse arguments to the function provided,
+        caching their values
+        """
+        args_dict = {}
+        if which_args == "args":
+            args_dict = dict(zip(self.this_metadata.parameter_names, self.args))
+
+        elif which_args == "kwargs":
+            args_dict = copy.deepcopy(self.kwargs)
+        else:
+            logger.critical("Invalid option %s!", which_args)
+            sys.exit(1)
+        self.iterator_helper(args_dict, which_args, mode)
+
+    def iterator_helper(self, args_dict: dict[str, Any], which_args, mode:str="Before"):
         """
         Parse arguments to the function provided, caching their values
         """
         function_name = self.this_metadata.name
-        for arg_i, (arg, arg_name) in enumerate(zip(self.args, self.this_metadata.parameter_names)):
+        for arg_i, (arg_name, arg) in enumerate(args_dict.items()):#zip(self.args, self.this_metadata.parameter_names)):
 
             if mode == "after" and id(arg) != self.args_addresses[arg_name]:
              #   logger.error(f"{function_name=} {dir(arg)=}")
                 logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
                 continue
-                logger.error(f"The address is the same for {arg_name} in {function_name}")
-                logger.info("Keeping param #%d: %s for 'after' comparison", arg_i, arg)
             # Do not include the first arg of a method (it's "self")
             # in the argument list
             logger.info("Arg #%d: %s", arg_i, arg_name)
@@ -765,7 +789,10 @@ class ArgsIteratorClass():
                 ):
                 newest_import_list = f"{arg.__module__}.{arg.__qualname__}".split('.')
                 newest_import = '.'.join(newest_import_list[:-1])
-                self.args_copy[arg.__qualname__] = arg
+                if which_args == "args":
+                    self.args_copy[arg.__qualname__] = arg
+                else:
+                    self.kwargs_copy[arg.__qualname__] = arg
                 # Reset the class type, as this newest_import will be used instead
                 self.class_type = ""
                 if arg.__module__ == "__main__":
@@ -788,7 +815,10 @@ class ArgsIteratorClass():
 
                 #sys.exit(1)
             elif isinstance(arg, str):
-                self.args_copy[arg_name] = "\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\""
+                if which_args == "args":
+                    self.args_copy[arg_name] = "\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\""
+                else:
+                    self.kwargs_copy[arg_name] = "\""+re.sub(r'(?<!\\)\"', r'\\"',arg)+"\""
                 continue
 
             type_str = str(type(arg))
@@ -811,8 +841,10 @@ class ArgsIteratorClass():
                     # is uncaught, it will break everything.
                     # pylint: disable-next=eval-used
                     eval(class_repr)
-                    self.args_copy[arg_name] = class_repr
-
+                    if which_args == "args":
+                        self.args_copy[arg_name] = class_repr
+                    else:
+                        self.kwargs_copy[arg_name] = class_repr
                 except SyntaxError as e:
                     try:
                         class_repr = arg.repr()
@@ -836,10 +868,15 @@ class ArgsIteratorClass():
                     logger.debug("%s: class_repr=%s arg=%s",
                                     function_name, class_repr, arg)
                     #this_coverage_info.constructor = copy.deepcopy(class_repr)
-
-                    self.args_copy[arg_name] = class_repr
+                    if which_args == "args":
+                        self.args_copy[arg_name] = class_repr
+                    else:
+                        self.kwargs_copy[arg_name] = class_repr
             else:
-                self.args_copy[arg_name] = repr(arg)
+                if which_args == "args":
+                    self.args_copy[arg_name] = repr(arg)
+                else:
+                    self.kwargs_copy[arg_name] = repr(arg)
 
 
 # pylint: disable-next=too-many-locals,too-many-statements,too-many-branches
@@ -904,11 +941,13 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         else:
             logger.info("Found Constructor: %s args=%s", function_name, args[1:])
     args_iterator_class: ArgsIteratorClass = ArgsIteratorClass( args,
+                                                                kwargs,
                                                                 set(),
                                                                 class_type,
                                                                 this_metadata)
     try:
         args_iterator_class.args_iterator()
+        args_iterator_class.args_iterator(which_args="kwargs")
     except AttributeError:
         # skip on error
         return func(*args, **kwargs)
@@ -974,7 +1013,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     with cov.collect():
         try:
             if kwargs:
-                this_coverage_info.kwargs = kwargs
+                this_coverage_info.kwargs = copy.deepcopy(kwargs)
                 start_time = time.perf_counter()
                 result = func(*args, **kwargs)
             else:
@@ -1119,6 +1158,8 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     args_iterator_class.args_iterator("After")
     this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args_copy)
+    args_iterator_class.args_iterator("After", "kwargs")
+    this_coverage_info.kwargs_after = copy.deepcopy(args_iterator_class.kwargs_copy)
 
     #this_coverage_info.args_after = args_iterator_class.args
 
@@ -1487,7 +1528,7 @@ def generate_all_tests_and_metadata(outdir:Path,
     Called once the ad-hoc/integration/regression tests
     are completed, this function writes all the results
     of using the unit_test_generator_decorator() decorator
-    to files, one file per decorated function.  
+    to files, one file per decorated function.
 
     The first 'Before' call to
     generate_all_tests_and_metadata_helper()
@@ -1711,26 +1752,27 @@ def meta_program_function_call( this_state:CoverageInfo,
     kwargs_str = ''
     if this_state.kwargs:
         # Creating "line" variable to condense line width
-        line = f"{indent}kwargs = {this_state.kwargs}\n"
-        list_of_lines.append(line)
-        kwargs_str = ", kwargs=kwargs)"
+        #line = f"{indent}kwargs = {this_state.kwargs}\n"
+        #list_of_lines.append(line)
+        kwargs_str = "kwargs=kwargs"
+        parameter_names.append(kwargs_str)
 
     call = ""
     if is_method:
         prefix = f"{class_var_name}.{function_name.split('.')[1]}"
         if len(this_state.args_before) != 1:
-            call = f"{prefix}({','.join(parameter_names)}{kwargs_str})\n"
+            call = f"{prefix}({','.join(parameter_names)})\n"
         elif len(this_state.args_before):
             #arg = normalize_string(this_state.args_before[0])
             #list_of_lines.append(f"{indent}arg = {arg}\n")
-            call = f"{prefix}({parameter_names[0]}{kwargs_str})\n"
+            call = f"{prefix}({parameter_names[0]})\n"
 
     else:
         prefix = f"{package}.{function_name}"
         if len(this_state.args_before) != 1:
-            call = f"{prefix}({','.join(parameter_names)}{kwargs_str})\n"
+            call = f"{prefix}({','.join(parameter_names)})\n"
         elif len(this_state.args_before):
-            call = f"{prefix}({parameter_names[0]}{kwargs_str})\n"
+            call = f"{prefix}({parameter_names[0]})\n"
 
     # If any exceptions were caught when testing this function, add this code:
     if bool(function_metadata.exceptions_raised):
@@ -1777,8 +1819,8 @@ def meta_program_function_call( this_state:CoverageInfo,
             list_of_lines.append(line)
         #elif result_str in singletons:
             #line = f"{tab}assert x is {result_str}\n"
-    if expected_type and expected_type != "NoneType":
-        list_of_lines.append(f"{indent}assert isinstance(result, expected_type)\n")
+    #if expected_type and expected_type != "NoneType":
+    #    list_of_lines.append(f"{indent}assert isinstance(result, expected_type)\n")
     if "__init__" not in function_name:
         #list_of_lines.append(f"{indent}if result in {repr(singletons)}:\n")
         #indent += tab
@@ -1792,6 +1834,9 @@ def meta_program_function_call( this_state:CoverageInfo,
         if isinstance(this_state.args_after, dict) and this_state.args_after.keys():
             for arg_after in this_state.args_after.keys():
                 list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
+        if isinstance(this_state.kwargs_after, dict) and this_state.kwargs_after.keys():
+            for arg_after in this_state.kwargs_after.keys():
+                list_of_lines.append(f"{indent}assert kwargs['{arg_after}'] == eval(kwargs_after[\"{arg_after}\"]) or kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
 
     else:
         for name in parameter_names:
@@ -1905,27 +1950,34 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     any_ga = False
     any_kwargs = False
     args_after = False
+    kwargs_after = False
     parameterization_list = ["@pytest.mark.parametrize(\n"]
     parameterization_list.append("\"")
     if is_method and "__init__" not in function_name:
         parameterization_list[1] += "test_class_instance, "
-    parameterization_list[1] += f"{', '.join(function_metadata.parameter_names)}"
+    if function_metadata.parameter_names:
+        parameterization_list[1] += f"{', '.join(function_metadata.parameter_names)}, "
     if any(v.kwargs for v in state.values()):
-        parameterization_list[1] += ", kwargs"
+        parameterization_list[1] += "kwargs, "
         any_kwargs = True
     if any(v.exception_type for v in state.values()):
-        parameterization_list[1] += ", exception_type, exception_message"
+        parameterization_list[1] += "exception_type, exception_message, "
         any_exception = True
-    parameterization_list[1] += ", expected_result, expected_type"
+    parameterization_list[1] += "expected_result, "
     if any(v.args_after for v in state.values()):
-        parameterization_list[1] += ", args_after"
+        parameterization_list[1] += "args_after, "
         args_after = True
+    if any(v.kwargs_after for v in state.values()):
+        parameterization_list[1] += "kwargs_after, "
+        kwargs_after = True
     if any(v.globals_before for v in state.values()):
-        parameterization_list[1] += ", globals_before"
+        parameterization_list[1] += "globals_before, "
         any_gb = True
     if any(v.globals_after for v in state.values()):
-        parameterization_list[1] += ", globals_after"
+        parameterization_list[1] += "globals_after, "
         any_ga = True
+    if parameterization_list[1].endswith(", "):
+        parameterization_list[1] = parameterization_list[1][:-2]
     parameterization_list[1] += '\",\n['
 
     if "self" in parameterization_list[1]:
@@ -1943,19 +1995,20 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         if is_method and "__init__" not in function_name:
             new_params.append(state[hash_key].constructor)
         try:
-            new_params.append(','.join(state[hash_key].args_before))
-        except TypeError as e:
+            if state[hash_key].args_before:
+                new_params.append(','.join(state[hash_key].args_before))
+        except TypeError:
             if str(state[hash_key].args_before[0]).startswith("<function"):
                 state[hash_key].args_before[0] = str(state[hash_key].args_before[0]).split()[1]
                 try:
                     new_params.append(','.join(state[hash_key].args_before))
                     logger.error(str(state[hash_key].args_before[0]))
                     logger.error(state[hash_key])
-                except TypeError as e:
-                    raise e
+                except TypeError as e2:
+                    raise e2
         if any_kwargs:
             if state[hash_key].kwargs:
-                new_params.append(','.join(state[hash_key].kwargs))
+                new_params.append(str(normalize_arg(state[hash_key].kwargs)))
             else:
                 new_params.append('"N/A"')
         if any_exception:
@@ -1978,10 +2031,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 new_params.append(repr(expected_result))
         else:
             new_params.append(repr(expected_result))
-        if state[hash_key].expected_type == "NoneType":
-            new_params.append('"N/A"')
-        else:
-            new_params.append(state[hash_key].expected_type.split('.')[-1])
         if args_after:
             # TODO
             these_aa :dict[str, typing.Any] = {}
@@ -1993,6 +2042,17 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 these_aa[arg_name] = arg_value
                 state[hash_key].args_after = these_aa
             new_params.append(repr(these_aa))
+        if kwargs_after:
+            # TODO
+            these_kaa :dict[str, typing.Any] = {}
+            for arg_name, arg_value in state[hash_key].kwargs_after.items():
+                #if isinstance(arg_value, (int, str, float)):
+                #    logger.info("In '%s' Skipping '%s': %s (type:%s)", function_name, arg_name, arg_value, type(arg_value))
+                #    continue
+                logger.debug("Keeping '%s':'%s", arg_name, arg_value)
+                these_kaa[arg_name] = arg_value
+                state[hash_key].kwargs_after = these_kaa
+            new_params.append(repr(these_kaa))
         if any_gb:
             new_params.append('{}' if not globals_before else repr(globals_before))
         if any_ga:
