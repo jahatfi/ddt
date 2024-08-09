@@ -11,16 +11,17 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1440', '1422-1423', '1425-1427']
+# ['1544-1545', '1527-1528', '1530-1532']
 @pytest.mark.parametrize(
-    "obj, this_global, phase, this_coverage_info, expected_result, expected_type",
+    "obj, this_global, phase, this_coverage_info, expected_result, expected_type, args_after",
     [
         (
             0,
             "error_code",
             "Before",
             CoverageInfo(
-                args=["6", "2"],
+                args_before=["6", "2"],
+                args_after={},
                 kwargs={},
                 globals_before={},
                 globals_after={},
@@ -32,13 +33,22 @@ from src.unit_test_generator import CoverageInfo
                 constructor="",
                 cost=0.0,
             ),
-            "CoverageInfo(args=['6', '2'], kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+            "CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
             CoverageInfo,
+            {
+                "this_coverage_info": "CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)"
+            },
         ),
     ],
 )
 def test_update_global(
-    obj, this_global, phase, this_coverage_info, expected_result, expected_type
+    obj,
+    this_global,
+    phase,
+    this_coverage_info,
+    expected_result,
+    expected_type,
+    args_after,
 ):
     """
     Programmatically generated test function for update_global()
@@ -48,3 +58,7 @@ def test_update_global(
     )
     assert isinstance(result, expected_type)
     assert result == expected_result or result == eval(expected_result)
+    assert (
+        this_coverage_info == eval(args_after["this_coverage_info"])
+        or args_after["this_coverage_info"] == this_coverage_info
+    )

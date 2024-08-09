@@ -23,7 +23,7 @@ unit_test_generator.logger.setLevel(logging.CRITICAL)
 # considers global variables when generating unit tests
 error_code = 0 # pylint: disable=invalid-name
 
-def divide_ints(a: int, b: int):
+def divide_ints(a: int, b: int)->str:
     """
     Divide two numbers, raise TypeError or ValueError if not ints 
     or denominator is 0, respectively.

@@ -1,0 +1,55 @@
+{
+   "name": "append_list",
+   "parameter_names": [
+      "this_list",
+      "item"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      31,
+      32
+   ],
+   "non_code_lines": [],
+   "coverage_io": {
+      "41d2d788826b24b7663c460d9fe9b99ae9d847486026e9c41dd367c5d37068cd": {
+         "args_before": [
+            "[1, 2, 3, 4]",
+            "6"
+         ],
+         "args_after": {
+            "this_list": "[1, 2, 3, 4, 6]"
+         },
+         "kwargs": {},
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "None",
+         "expected_type": "NoneType",
+         "coverage": [
+            31,
+            32
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.002
+      }
+   },
+   "coverage_percentage": 100.0,
+   "types_in_use": [
+      "logging.Logger"
+   ],
+   "global_vars_read_from": [
+      "logger"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      31,
+      32
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "append_list": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\example_pass_by_assignment\\pass_by_assignment.py"
+   }
+}

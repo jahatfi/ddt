@@ -12,11 +12,7 @@ from src import unit_test_generator
 @pytest.mark.parametrize(
     "arg, expected_result, expected_type",
     [
-        (
-            "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
-            "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
-            str,
-        ),
+        ("None", "None", str),
     ],
 )
 def test_normalize_arg(arg, expected_result, expected_type):

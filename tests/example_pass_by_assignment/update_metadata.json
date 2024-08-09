@@ -54,13 +54,13 @@
       1236
    ],
    "coverage_io": {
-      "d7e904ddb94bc5c12a5622ff6e8f57c4f24c86b70ef3895e568f2b65559f1e00": {
+      "cc757e491c2d1e763e99a829f48d02603ef6183ee0469c9bd75f1c7351e8b4cb": {
          "args_before": [
-            "<function divide_ints at 0x0000029A8A2B04A0>",
-            "FunctionMetaData(name='divide_ints', parameter_names=['a', 'b'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_procedural_division/divide_ints.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})"
+            "<function append_list at 0x000001E120DEA7A0>",
+            "FunctionMetaData(name='append_list', parameter_names=['this_list', 'item'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_pass_by_assignment/pass_by_assignment.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})"
          ],
          "args_after": {
-            "this_metadata": "FunctionMetaData(name='divide_ints', parameter_names=['a', 'b'], is_method=False, lines=[32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42], non_code_lines=set(), global_vars_read_from={'logger', 'error_code'}, global_vars_written_to={'error_code'}, source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_procedural_division/divide_ints.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'divide_ints': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\example_procedural_division\\\\divide_ints.py'})"
+            "this_metadata": "FunctionMetaData(name='append_list', parameter_names=['this_list', 'item'], is_method=False, lines=[31, 32], non_code_lines=set(), global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_pass_by_assignment/pass_by_assignment.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'append_list': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\example_pass_by_assignment\\\\pass_by_assignment.py'})"
          },
          "kwargs": {},
          "globals_before": {},
@@ -87,10 +87,6 @@
             1233,
             1235,
             1237,
-            1238,
-            1239,
-            1240,
-            1241,
             1245,
             1246,
             1247,
@@ -101,13 +97,13 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.004
+         "cost": 0.002
       }
    },
-   "coverage_percentage": 74.36,
+   "coverage_percentage": 64.1,
    "types_in_use": [
-      "divide_ints",
       "logging.Logger",
+      "pass_by_assignment",
       "pathlib.WindowsPath",
       "src.unit_test_generator.FunctionMetaData"
    ],
@@ -135,10 +131,6 @@
       1233,
       1235,
       1237,
-      1238,
-      1239,
-      1240,
-      1241,
       1245,
       1246,
       1247,
