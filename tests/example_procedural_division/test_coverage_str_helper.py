@@ -10,30 +10,26 @@ from src import unit_test_generator
 
 # In sum, these tests covered 71.88% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1586', '1597', '1602-1603', '1611-1612', '1615-1616']
+# ['1630', '1641', '1646-1647', '1655-1656', '1659-1660']
 @pytest.mark.parametrize(
-    "this_list, non_code_lines, expected_result, expected_type, args_after",
+    "this_list, non_code_lines, expected_result, args_after",
     [
         (
-            [1544, 1545, 1527, 1528, 1530, 1531, 1532],
-            {1536, 1537, 1538, 1539, 1540, 1541, 1533, 1535},
-            "['1544-1545', '1527-1528', '1530-1532']",
-            list,
+            [1571, 1572, 1574, 1575, 1576, 1588, 1589],
+            {1577, 1579, 1580, 1581, 1582, 1583, 1584, 1585},
+            "['1571-1572', '1574-1576', '1588-1589']",
             {
-                "this_list": "[1544, 1545, 1527, 1528, 1530, 1531, 1532]",
-                "non_code_lines": "{1536, 1537, 1538, 1539, 1540, 1541, 1533, 1535}",
+                "this_list": "[1571, 1572, 1574, 1575, 1576, 1588, 1589]",
+                "non_code_lines": "{1577, 1579, 1580, 1581, 1582, 1583, 1584, 1585}",
             },
         ),
     ],
 )
-def test_coverage_str_helper(
-    this_list, non_code_lines, expected_result, expected_type, args_after
-):
+def test_coverage_str_helper(this_list, non_code_lines, expected_result, args_after):
     """
     Programmatically generated test function for coverage_str_helper()
     """
     result = unit_test_generator.coverage_str_helper(this_list, non_code_lines)
-    assert isinstance(result, expected_type)
     assert result == expected_result or result == eval(expected_result)
     assert (
         this_list == eval(args_after["this_list"])

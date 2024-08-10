@@ -11,9 +11,9 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1544-1545', '1527-1528', '1530-1532']
+# ['1571-1572', '1574-1576', '1588-1589']
 @pytest.mark.parametrize(
-    "obj, this_global, phase, this_coverage_info, expected_result, expected_type, args_after",
+    "obj, this_global, phase, this_coverage_info, expected_result, args_after",
     [
         (
             0,
@@ -23,6 +23,7 @@ from src.unit_test_generator import CoverageInfo
                 args_before=["-1", "1"],
                 args_after={},
                 kwargs={},
+                kwargs_after={},
                 globals_before={},
                 globals_after={},
                 expected_result="",
@@ -33,22 +34,15 @@ from src.unit_test_generator import CoverageInfo
                 constructor='Car("Red", 10, 0)',
                 cost=0.0,
             ),
-            "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
-            CoverageInfo,
+            "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
             {
-                "this_coverage_info": "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)"
+                "this_coverage_info": "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)"
             },
         ),
     ],
 )
 def test_update_global(
-    obj,
-    this_global,
-    phase,
-    this_coverage_info,
-    expected_result,
-    expected_type,
-    args_after,
+    obj, this_global, phase, this_coverage_info, expected_result, args_after
 ):
     """
     Programmatically generated test function for update_global()
@@ -56,7 +50,6 @@ def test_update_global(
     result = unit_test_generator.update_global(
         obj, this_global, phase, this_coverage_info
     )
-    assert isinstance(result, expected_type)
     assert result == expected_result or result == eval(expected_result)
     assert (
         this_coverage_info == eval(args_after["this_coverage_info"])

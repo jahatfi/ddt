@@ -31,6 +31,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "30",
@@ -53,6 +54,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "60",
@@ -67,7 +69,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"White\", 20, -30)",
-         "cost": 0.002
+         "cost": 0.001
       },
       "4e6967deeb4e51bab447208d79037a8bca61cdf648fb62d21885290b177313f6": {
          "args_before": [
@@ -75,6 +77,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "210",
@@ -97,6 +100,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",

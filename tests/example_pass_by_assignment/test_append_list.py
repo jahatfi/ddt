@@ -10,12 +10,12 @@ import pass_by_assignment
 
 # In sum, these tests covered 100.0% of append_list's lines
 @pytest.mark.parametrize(
-    "this_list, item, expected_result, expected_type, args_after",
+    "this_list, item, expected_result, args_after",
     [
-        ([1, 2, 3, 4], 6, "None", "N/A", {"this_list": "[1, 2, 3, 4, 6]"}),
+        ([1, 2, 3, 4], 6, "None", {"this_list": "[1, 2, 3, 4, 6]"}),
     ],
 )
-def test_append_list(this_list, item, expected_result, expected_type, args_after):
+def test_append_list(this_list, item, expected_result, args_after):
     """
     Programmatically generated test function for append_list()
     """

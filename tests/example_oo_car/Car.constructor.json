@@ -23,6 +23,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",

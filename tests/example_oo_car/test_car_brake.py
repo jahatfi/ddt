@@ -12,15 +12,14 @@ from tests.example_oo_car.car import Car
 # Line(s) not covered by ANY of the tests below:
 # ['52']
 @pytest.mark.parametrize(
-    "test_class_instance, rate, duration, expected_result, expected_type",
+    "test_class_instance, rate, duration, expected_result",
     [
-        (Car("Red", 10, 0), -1, 1, "9", int),
+        (Car("Red", 10, 0), -1, 1, "9"),
     ],
 )
-def test_car_brake(test_class_instance, rate, duration, expected_result, expected_type):
+def test_car_brake(test_class_instance, rate, duration, expected_result):
     """
     Programmatically generated test function for Car.brake()
     """
     result = test_class_instance.brake(rate, duration)
-    assert isinstance(result, expected_type)
     assert result == expected_result or result == eval(expected_result)

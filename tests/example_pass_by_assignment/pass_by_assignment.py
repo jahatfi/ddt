@@ -20,7 +20,7 @@ T = TypeVar('T')
 FMT_STR = "%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s"
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.INFO)
+unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def append_list(this_list:List[Any], item:Any)->None:
@@ -40,6 +40,24 @@ def overwrite_list(this_list:List[Any])->None:
     this_list = [0]
     print(this_list)
 
+@unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
+def increment_my_list_kwargs(**kwargs):
+    """
+    If kwargs contains an entry "my_list" that is a list,
+    append a 1 to it.
+    """
+    if "my_list" in kwargs and isinstance(kwargs["my_list"], list):
+        kwargs["my_list"].append(1)
+
+@unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
+def add_to_my_set_kwargs(**kwargs):
+    """
+    If kwargs contains an entry "my_set" that is a list,
+    append a 1 to it.
+    """
+    if "my_set" in kwargs and isinstance(kwargs["my_set"], set):
+        kwargs["my_set"].add(5)        
+
 def main():
     """
     Execute the functions above.
@@ -49,6 +67,14 @@ def main():
     my_list = [1,2,3,4]
     append_list(my_list, 6)
     overwrite_list(my_list[::-1])
+    kwargs = {"my_list":[0,3]}
+    print(f"Before: {kwargs=}")
+    increment_my_list_kwargs(**kwargs)
+    print(f"After: {kwargs=}")
+    kwargs = {}
+    kwargs["my_set"] = set([0,1,2,3])
+    add_to_my_set_kwargs(**kwargs)
+    print(f"After: {kwargs=}")
 
     generate_all_tests_and_metadata(Path("."), Path("."))
 

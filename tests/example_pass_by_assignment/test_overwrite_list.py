@@ -8,12 +8,12 @@ import pass_by_assignment
 
 # In sum, these tests covered 100.0% of overwrite_list's lines
 @pytest.mark.parametrize(
-    "this_list, expected_result, expected_type, args_after",
+    "this_list, expected_result, args_after",
     [
-        ([6, 4, 3, 2, 1], "None", "N/A", {"this_list": "[6, 4, 3, 2, 1]"}),
+        ([6, 4, 3, 2, 1], "None", {"this_list": "[6, 4, 3, 2, 1]"}),
     ],
 )
-def test_overwrite_list(this_list, expected_result, expected_type, args_after):
+def test_overwrite_list(this_list, expected_result, args_after):
     """
     Programmatically generated test function for overwrite_list()
     """

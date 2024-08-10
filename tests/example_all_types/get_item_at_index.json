@@ -26,6 +26,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": " ",
@@ -50,6 +51,7 @@
             "iterable": "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)"
          },
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",
@@ -73,6 +75,7 @@
             "iterable": "[-1, -2, -3, -4]"
          },
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "-1",
@@ -95,6 +98,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",

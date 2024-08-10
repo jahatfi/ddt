@@ -28,6 +28,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {
             "error_code": 0
          },
@@ -46,7 +47,7 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.003
+         "cost": 0.002
       },
       "8dcd244d9477f2f2ad357ec77e59f72415baec689cd405b8f6194849632f34bc": {
          "args_before": [
@@ -55,6 +56,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {
             "error_code": 0
          },
@@ -74,7 +76,7 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "ValueError: Cannot divide by zero!",
          "constructor": "",
-         "cost": 0.002
+         "cost": 0.001
       },
       "07a742d4d53ae6bf7189b38410c8560979026474279353f659adda1c5bcd46a8": {
          "args_before": [
@@ -83,6 +85,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {
             "error_code": 0
          },
@@ -111,6 +114,7 @@
             "b": "[]"
          },
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {
             "error_code": 0
          },

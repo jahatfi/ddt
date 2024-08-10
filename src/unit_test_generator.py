@@ -1158,9 +1158,11 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     args_iterator_class.args_iterator("After")
     this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args_copy)
-    args_iterator_class.args_iterator("After", "kwargs")
-    this_coverage_info.kwargs_after = copy.deepcopy(args_iterator_class.kwargs_copy)
+    logger.critical(f"{args_iterator_class.kwargs_copy=}")
 
+    args_iterator_class.args_iterator("After", "kwargs")
+    this_coverage_info.kwargs_after = copy.deepcopy({k:v for (k,v) in kwargs.items() if not isinstance(v, (int, str, tuple))})
+    logger.critical(f"{args_iterator_class.kwargs_copy=}")
     #this_coverage_info.args_after = args_iterator_class.args
 
     this_coverage_info.coverage = sorted_coverage
@@ -1754,7 +1756,7 @@ def meta_program_function_call( this_state:CoverageInfo,
         # Creating "line" variable to condense line width
         #line = f"{indent}kwargs = {this_state.kwargs}\n"
         #list_of_lines.append(line)
-        kwargs_str = "kwargs=kwargs"
+        kwargs_str = "**kwargs"
         parameter_names.append(kwargs_str)
 
     call = ""
@@ -1836,7 +1838,7 @@ def meta_program_function_call( this_state:CoverageInfo,
                 list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
         if isinstance(this_state.kwargs_after, dict) and this_state.kwargs_after.keys():
             for arg_after in this_state.kwargs_after.keys():
-                list_of_lines.append(f"{indent}assert kwargs['{arg_after}'] == eval(kwargs_after[\"{arg_after}\"]) or kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
+                list_of_lines.append(f"{indent}assert kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
 
     else:
         for name in parameter_names:

@@ -13,28 +13,22 @@ from tests.example_oo_car.car import Car
 # Line(s) not covered by ANY of the tests below:
 # ['87-88']
 @pytest.mark.parametrize(
-    "test_class_instance, angle, exception_type, exception_message, expected_result, expected_type",
+    "test_class_instance, angle, exception_type, exception_message, expected_result",
     [
-        (Car("Blue", 0.0, 30), 180, "N/A", "N/A", "210", int),
-        (Car("White", 20, -30), 90, "N/A", "N/A", "60", int),
+        (Car("Blue", 0.0, 30), 180, "N/A", "N/A", "210"),
+        (Car("White", 20, -30), 90, "N/A", "N/A", "60"),
         (
             Car("Green", 48, 90),
             -1080,
             AssertionError,
             "angle=-1080    out of bounds!",
             "None",
-            "N/A",
         ),
-        (Car("Red", 9, 0), 30, "N/A", "N/A", "30", int),
+        (Car("Red", 9, 0), 30, "N/A", "N/A", "30"),
     ],
 )
 def test_car_change_steer_angle(
-    test_class_instance,
-    angle,
-    exception_type,
-    exception_message,
-    expected_result,
-    expected_type,
+    test_class_instance, angle, exception_type, exception_message, expected_result
 ):
     """
     Programmatically generated test function for Car.change_steer_angle()
@@ -44,5 +38,4 @@ def test_car_change_steer_angle(
             test_class_instance.change_steer_angle(angle)
     else:
         result = test_class_instance.change_steer_angle(angle)
-        assert isinstance(result, expected_type)
         assert result == expected_result or result == eval(expected_result)

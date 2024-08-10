@@ -6,19 +6,19 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1555,
-      1556,
-      1557,
-      1558,
-      1559,
-      1560,
-      1562,
-      1563,
-      1564,
-      1565
+      1599,
+      1600,
+      1601,
+      1602,
+      1603,
+      1604,
+      1606,
+      1607,
+      1608,
+      1609
    ],
    "non_code_lines": [
-      1561
+      1605
    ],
    "coverage_io": {
       "3130d8b69ad22444b65a1aa532cc84c80744eb8292024ebb29c559fe8afe5889": {
@@ -27,17 +27,18 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",
          "expected_type": "str",
          "coverage": [
-            1555,
-            1556,
-            1557,
-            1559,
-            1562,
-            1565
+            1599,
+            1600,
+            1601,
+            1603,
+            1606,
+            1609
          ],
          "exception_type": "",
          "exception_message": "",
@@ -50,12 +51,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1555,
-      1556,
-      1557,
-      1559,
-      1562,
-      1565
+      1599,
+      1600,
+      1601,
+      1603,
+      1606,
+      1609
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

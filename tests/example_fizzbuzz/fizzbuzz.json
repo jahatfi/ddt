@@ -34,6 +34,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {
             "mode": "fizzbuzz"
          },
@@ -62,6 +63,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {
             "mode": "buzzfizz"
          },
@@ -91,6 +93,7 @@
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {
             "mode": "a_test"
          },

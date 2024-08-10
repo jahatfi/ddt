@@ -9,53 +9,54 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1526,
-      1527,
-      1528,
-      1529,
-      1530,
-      1531,
-      1532,
-      1534,
-      1542,
-      1543,
-      1544,
-      1545,
-      1546
+      1570,
+      1571,
+      1572,
+      1573,
+      1574,
+      1575,
+      1576,
+      1578,
+      1586,
+      1587,
+      1588,
+      1589,
+      1590
    ],
    "non_code_lines": [
-      1533,
-      1535,
-      1536,
-      1537,
-      1538,
-      1539,
-      1540,
-      1541
+      1577,
+      1579,
+      1580,
+      1581,
+      1582,
+      1583,
+      1584,
+      1585
    ],
    "coverage_io": {
-      "443582681deb6eb6ca8872bd50bbe0616f89e19e315acefa807ce9e2a4551504": {
+      "364dbab6e996d2b07a239c6ce2e2df688159375398cc8e1cb47de9677b4e0af4": {
          "args_before": [
             "\"fizzbuzz\"",
             "\"mode\"",
             "\"Before\"",
-            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)"
+            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)"
          ],
          "args_after": {
-            "this_coverage_info": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)"
+            "this_coverage_info": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)"
          },
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+         "expected_result": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1526,
-            1529,
-            1534,
-            1542,
-            1543,
-            1546
+            1570,
+            1573,
+            1578,
+            1586,
+            1587,
+            1590
          ],
          "exception_type": "",
          "exception_message": "",
@@ -73,12 +74,12 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1526,
-      1529,
-      1534,
-      1542,
-      1543,
-      1546
+      1570,
+      1573,
+      1578,
+      1586,
+      1587,
+      1590
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

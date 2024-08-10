@@ -6,16 +6,16 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from pathlib import WindowsPath
-from src.unit_test_generator import FunctionMetaData
 from car import Car
+from src.unit_test_generator import FunctionMetaData
+from pathlib import WindowsPath
 
 
 # In sum, these tests covered 56.41% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1214', '1226', '1232-1233', '1235', '1238-1244', '1251-1252']
+# ['1282-1288', '1295-1296', '1258', '1270', '1276-1277']
 @pytest.mark.parametrize(
-    "f, this_metadata, expected_result, expected_type, args_after",
+    "f, this_metadata, expected_result, args_after",
     [
         (
             Car.__init__,
@@ -38,14 +38,13 @@ from car import Car
                 callable_files={},
             ),
             "None",
-            "N/A",
             {
                 "this_metadata": "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[41, 42, 43], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/example_oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'__init__': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\example_oo_car\\\\car.py'})"
             },
         ),
     ],
 )
-def test_update_metadata(f, this_metadata, expected_result, expected_type, args_after):
+def test_update_metadata(f, this_metadata, expected_result, args_after):
     """
     Programmatically generated test function for update_metadata()
     """

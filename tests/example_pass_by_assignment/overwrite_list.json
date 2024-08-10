@@ -19,6 +19,7 @@
             "this_list": "[6, 4, 3, 2, 1]"
          },
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",

@@ -13,7 +13,7 @@ from tests.example_oo_car.car import Car
 
 # In sum, these tests covered 100.0% of Car.gas's lines
 @pytest.mark.parametrize(
-    "test_class_instance, rate, duration, exception_type, exception_message, expected_result, expected_type, globals_before, globals_after",
+    "test_class_instance, rate, duration, exception_type, exception_message, expected_result, globals_before, globals_after",
     [
         (
             Car("White", 12, -30),
@@ -22,7 +22,6 @@ from tests.example_oo_car.car import Car
             "N/A",
             "N/A",
             "16",
-            int,
             {"method_call_counter": 1},
             {"method_call_counter": 2},
         ),
@@ -33,7 +32,6 @@ from tests.example_oo_car.car import Car
             ValueError,
             "Gas rate (m/s) must be positive.",
             "None",
-            "N/A",
             {"method_call_counter": 0},
             {"method_call_counter": 1},
         ),
@@ -46,7 +44,6 @@ def test_car_gas(
     exception_type,
     exception_message,
     expected_result,
-    expected_type,
     globals_before,
     globals_after,
 ):
@@ -61,7 +58,6 @@ def test_car_gas(
             test_class_instance.gas(rate, duration)
     else:
         result = test_class_instance.gas(rate, duration)
-        assert isinstance(result, expected_type)
         assert result == expected_result or result == eval(expected_result)
     for global_var_written_to in ["method_call_counter"]:
         if global_var_written_to in ["None", "[]", "{}"]:

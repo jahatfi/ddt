@@ -6,38 +6,39 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1555,
-      1556,
-      1557,
-      1558,
-      1559,
-      1560,
-      1562,
-      1563,
-      1564,
-      1565
+      1599,
+      1600,
+      1601,
+      1602,
+      1603,
+      1604,
+      1606,
+      1607,
+      1608,
+      1609
    ],
    "non_code_lines": [
-      1561
+      1605
    ],
    "coverage_io": {
-      "88f951eb68f4c0df7eede4b273296eaeea7bfc12ef5bc4d7bf3e9e4a3d3065ed": {
+      "6c99719c7639dab11d59af9ba6665aa1d924b4b0e4e55decc6fa65585291ba03": {
          "args_before": [
-            "\"CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\""
+            "\"CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\""
          ],
          "args_after": {},
          "kwargs": {},
+         "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+         "expected_result": "CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
          "expected_type": "str",
          "coverage": [
-            1555,
-            1556,
-            1557,
-            1559,
-            1562,
-            1565
+            1599,
+            1600,
+            1601,
+            1603,
+            1606,
+            1609
          ],
          "exception_type": "",
          "exception_message": "",
@@ -50,12 +51,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1555,
-      1556,
-      1557,
-      1559,
-      1562,
-      1565
+      1599,
+      1600,
+      1601,
+      1603,
+      1606,
+      1609
    ],
    "needs_pytest": false,
    "exceptions_raised": [],
