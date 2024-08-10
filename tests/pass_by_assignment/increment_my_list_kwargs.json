@@ -1,0 +1,56 @@
+{
+   "name": "increment_my_list_kwargs",
+   "parameter_names": [],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      49,
+      50,
+      49
+   ],
+   "non_code_lines": [],
+   "coverage_io": {
+      "4e9bece720611f2a237c80e6c1d94d2684c84abfc6a5e9ef8b087fa8714f078d": {
+         "args_before": [],
+         "args_after": {},
+         "kwargs": {
+            "my_list": [
+               0,
+               3
+            ]
+         },
+         "kwargs_after": {
+            "my_list": [
+               0,
+               3,
+               1
+            ]
+         },
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "None",
+         "expected_type": "NoneType",
+         "coverage": [
+            49,
+            50
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.0
+      }
+   },
+   "coverage_percentage": 66.67,
+   "types_in_use": [],
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      49,
+      50
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "increment_my_list_kwargs": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\pass_by_assignment\\pass_by_assignment.py"
+   }
+}

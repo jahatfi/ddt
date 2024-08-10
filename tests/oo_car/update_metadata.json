@@ -1,0 +1,141 @@
+{
+   "name": "update_metadata",
+   "parameter_names": [
+      "f",
+      "this_metadata"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      1256,
+      1257,
+      1258,
+      1260,
+      1261,
+      1262,
+      1263,
+      1264,
+      1265,
+      1266,
+      1268,
+      1269,
+      1270,
+      1271,
+      1272,
+      1273,
+      1274,
+      1275,
+      1276,
+      1278,
+      1280,
+      1281,
+      1282,
+      1283,
+      1284,
+      1285,
+      1286,
+      1287,
+      1285,
+      1280,
+      1288,
+      1289,
+      1290,
+      1291,
+      1292,
+      1293,
+      1294,
+      1295,
+      1294
+   ],
+   "non_code_lines": [
+      1259,
+      1267,
+      1277,
+      1279
+   ],
+   "coverage_io": {
+      "32c03f35e0e46d046c2a0ee16bd14449c7cd8aec8984b87c52442117bdd05e23": {
+         "args_before": [
+            {},
+            "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})"
+         ],
+         "args_after": {
+            "this_metadata": "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[41, 42, 43], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'__init__': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\oo_car\\\\car.py'})"
+         },
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "None",
+         "expected_type": "NoneType",
+         "coverage": [
+            1256,
+            1258,
+            1260,
+            1261,
+            1262,
+            1263,
+            1264,
+            1265,
+            1266,
+            1268,
+            1270,
+            1271,
+            1272,
+            1273,
+            1274,
+            1280,
+            1288,
+            1289,
+            1290,
+            1291,
+            1292,
+            1293
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.0
+      }
+   },
+   "coverage_percentage": 56.41,
+   "types_in_use": [
+      "car.Car",
+      "logging.Logger",
+      "pathlib.WindowsPath",
+      "src.unit_test_generator.FunctionMetaData"
+   ],
+   "global_vars_read_from": [
+      "logger"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      1256,
+      1258,
+      1260,
+      1261,
+      1262,
+      1263,
+      1264,
+      1265,
+      1266,
+      1268,
+      1270,
+      1271,
+      1272,
+      1273,
+      1274,
+      1280,
+      1288,
+      1289,
+      1290,
+      1291,
+      1292,
+      1293
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "update_metadata": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
+   }
+}

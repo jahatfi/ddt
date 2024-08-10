@@ -1,0 +1,49 @@
+{
+   "name": "update_global",
+   "parameter_names": [
+      "obj",
+      "this_global",
+      "phase",
+      "this_coverage_info"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      1569,
+      1570,
+      1571,
+      1572,
+      1573,
+      1574,
+      1575,
+      1577,
+      1585,
+      1586,
+      1587,
+      1588,
+      1589
+   ],
+   "non_code_lines": [
+      1576,
+      1578,
+      1579,
+      1580,
+      1581,
+      1582,
+      1583,
+      1584
+   ],
+   "coverage_io": {},
+   "coverage_percentage": 0.0,
+   "types_in_use": [],
+   "global_vars_read_from": [
+      "logger"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "update_global": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
+   }
+}

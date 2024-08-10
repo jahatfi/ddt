@@ -1158,18 +1158,18 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     args_iterator_class.args_iterator("After")
     this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args_copy)
-    logger.critical(f"{args_iterator_class.kwargs_copy=}")
+    logger.debug(f"{args_iterator_class.kwargs_copy=}")
 
     args_iterator_class.args_iterator("After", "kwargs")
     this_coverage_info.kwargs_after = copy.deepcopy({k:v for (k,v) in kwargs.items() if not isinstance(v, (int, str, tuple))})
-    logger.critical(f"{args_iterator_class.kwargs_copy=}")
+    logger.debug(f"{args_iterator_class.kwargs_copy=}")
     #this_coverage_info.args_after = args_iterator_class.args
 
     this_coverage_info.coverage = sorted_coverage
     hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
     this_metadata.coverage_io[hashed_input] = this_coverage_info
-    this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 3)
+    this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 2)
 
 
 

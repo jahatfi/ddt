@@ -1,0 +1,56 @@
+{
+   "name": "Car.__init__",
+   "parameter_names": [
+      "self",
+      "color",
+      "speed",
+      "steer_angle"
+   ],
+   "is_method": true,
+   "source_file": null,
+   "lines": [
+      41,
+      42,
+      43
+   ],
+   "non_code_lines": [],
+   "coverage_io": {
+      "c878113de933bc35ec08d5024d0aae800d76ba42b32be7f1075b8a7586805a2c": {
+         "args_before": [
+            "\"Red\"",
+            "10",
+            "0"
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "None",
+         "expected_type": "NoneType",
+         "coverage": [
+            41,
+            42,
+            43
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.0
+      }
+   },
+   "coverage_percentage": 100.0,
+   "types_in_use": [],
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      41,
+      42,
+      43
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "__init__": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\oo_car\\car.py"
+   }
+}

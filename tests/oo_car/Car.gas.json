@@ -1,0 +1,103 @@
+{
+   "name": "Car.gas",
+   "parameter_names": [
+      "self",
+      "rate",
+      "duration"
+   ],
+   "is_method": true,
+   "source_file": null,
+   "lines": [
+      66,
+      67,
+      68,
+      69,
+      70,
+      71
+   ],
+   "non_code_lines": [],
+   "coverage_io": {
+      "78e4f6e57c2f532c43747e020340acf548111ebba3a4dfbb9b7a12af2d0fa659": {
+         "args_before": [
+            "-1",
+            "1"
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {
+            "method_call_counter": 0
+         },
+         "globals_after": {
+            "method_call_counter": 1
+         },
+         "expected_result": "None",
+         "expected_type": "NoneType",
+         "coverage": [
+            66,
+            67,
+            68,
+            69
+         ],
+         "exception_type": "<class 'ValueError'>",
+         "exception_message": "Gas rate (m/s) must be positive.",
+         "constructor": "Car(\"Red\", 10, 0)",
+         "cost": 0.0
+      },
+      "6489cc7d9835b1fc422a9e25a2d99a7374cf0a90d0450a9435df3167635e432a": {
+         "args_before": [
+            "2",
+            "2"
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {
+            "method_call_counter": 1
+         },
+         "globals_after": {
+            "method_call_counter": 2
+         },
+         "expected_result": "16",
+         "expected_type": "int",
+         "coverage": [
+            66,
+            67,
+            68,
+            70,
+            71
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "Car(\"White\", 12, -30)",
+         "cost": 0.0
+      }
+   },
+   "coverage_percentage": 100.0,
+   "types_in_use": [
+      "car.Car",
+      "logging.Logger"
+   ],
+   "global_vars_read_from": [
+      "logger",
+      "method_call_counter"
+   ],
+   "global_vars_written_to": [
+      "method_call_counter"
+   ],
+   "unified_test_coverage": [
+      66,
+      67,
+      68,
+      69,
+      70,
+      71
+   ],
+   "needs_pytest": true,
+   "exceptions_raised": [
+      "<class 'ValueError'>"
+   ],
+   "callable_files": {
+      "gas": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\oo_car\\car.py"
+   }
+}
