@@ -9,9 +9,9 @@ from src import unit_test_generator
 
 # Now import modules specific to meta_program_function_call:
 from src.unit_test_generator import FunctionMetaData
+from pathlib import WindowsPath
 from src.unit_test_generator import CoverageInfo
 from logging import Logger
-from pathlib import WindowsPath
 
 
 # In sum, these tests covered 51.95% of meta_program_function_call's lines

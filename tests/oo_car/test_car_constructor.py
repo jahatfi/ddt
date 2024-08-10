@@ -4,7 +4,7 @@ Programmatically generated test function for Car.__init__()
 
 import re
 import pytest
-from tests.oo_car import car
+import car
 
 
 # In sum, these tests covered 100.0% of Car.__init__'s lines

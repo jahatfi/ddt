@@ -30,7 +30,7 @@ class ClassForTesting():
 FMT_STR = "%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s"
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.DEBUG)
+unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def append_list(this_list:List[Any], item:Any)->None:

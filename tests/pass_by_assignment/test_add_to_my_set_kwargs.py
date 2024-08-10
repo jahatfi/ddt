@@ -4,7 +4,7 @@ Programmatically generated test function for add_to_my_set_kwargs()
 
 import re
 import pytest
-import pass_by_assignment
+from tests.pass_by_assignment import pass_by_assignment
 
 
 # In sum, these tests covered 66.67% of add_to_my_set_kwargs's lines

@@ -54,7 +54,7 @@
       1434
    ],
    "coverage_io": {
-      "30bf716da661392bb59ff873803df9f2db54befa683e1cd90aec9ea3c6171419": {
+      "8ebcf4929505a668fb93bd44ffb9f608639bfac5ebda9300f4a486b3ff526b69": {
          "args_before": [
             {},
             "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})"

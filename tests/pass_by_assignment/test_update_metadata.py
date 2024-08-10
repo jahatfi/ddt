@@ -8,8 +8,8 @@ from pass_by_assignment import append_list
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from pathlib import WindowsPath
 from src.unit_test_generator import FunctionMetaData
+from pathlib import WindowsPath
 from logging import Logger
 
 

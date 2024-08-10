@@ -4,7 +4,7 @@ Programmatically generated test function for fizzbuzz()
 
 import re
 import pytest
-from tests.fizzbuzz import fizzbuzz
+import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 

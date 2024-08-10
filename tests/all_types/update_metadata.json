@@ -54,9 +54,9 @@
       1434
    ],
    "coverage_io": {
-      "f4390f2315caf03deded8c425c539f61940fd46667c0d7a61842bc02675b7812": {
+      "70199fce79650c223fc22ba7461345321f04b2e674544e458980e9ce1614434d": {
          "args_before": [
-            "<function get_item_at_index at 0x0000026CE9EA3EC0>",
+            "<function get_item_at_index at 0x000001AEBA283EC0>",
             "FunctionMetaData(name='get_item_at_index', parameter_names=['iterable', 'index'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/all_types/all_types.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})"
          ],
          "args_after": {
