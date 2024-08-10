@@ -1,0 +1,66 @@
+{
+   "name": "normalize_arg",
+   "parameter_names": [
+      "arg"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      1600,
+      1601,
+      1602,
+      1603,
+      1604,
+      1605,
+      1607,
+      1608,
+      1609,
+      1610
+   ],
+   "non_code_lines": [
+      1606
+   ],
+   "coverage_io": {
+      "3130d8b69ad22444b65a1aa532cc84c80744eb8292024ebb29c559fe8afe5889": {
+         "args_before": [
+            "\"None\""
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "None",
+         "expected_type": "str",
+         "coverage": [
+            1600,
+            1601,
+            1602,
+            1604,
+            1607,
+            1610
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.0
+      }
+   },
+   "coverage_percentage": 60.0,
+   "types_in_use": [],
+   "global_vars_read_from": [],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      1600,
+      1601,
+      1602,
+      1604,
+      1607,
+      1610
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "normalize_arg": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
+   }
+}

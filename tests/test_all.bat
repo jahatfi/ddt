@@ -1,4 +1,4 @@
-cd example_fizzbuzz
+cd fizzbuzz
 python fizzbuzz.py >NUL  2>NUL
 pytest -s -v .
 @echo off
@@ -7,7 +7,7 @@ FOR %%a IN (".\*") DO IF /i NOT "%%~nxa"=="%keepfile%" DEL "%%a"
 @echo on
 cd ..
 
-cd example_all_types
+cd all_types
 python all_types.py >NUL  2>NUL
 pytest -s -v .
 @echo off
@@ -16,7 +16,7 @@ FOR %%a IN (".\*") DO IF /i NOT "%%~nxa"=="%keepfile%" DEL "%%a"
 @echo on
 cd ..
 
-cd example_procedural_division
+cd procedural_division
 python divide_ints.py >NUL  2>NUL
 pytest -s -v .
 @echo off
@@ -25,7 +25,7 @@ FOR %%a IN (".\*") DO IF /i NOT "%%~nxa"=="%keepfile%" DEL "%%a"
 @echo on
 cd ..
 
-cd example_oo_car
+cd oo_car
 python car.py >NUL  2>NUL
 pytest -s -v . 
 @echo off
@@ -34,7 +34,7 @@ FOR %%a IN (".\*") DO IF /i NOT "%%~nxa"=="%keepfile%" DEL "%%a"
 @echo on
 cd ..
 
-cd example_pass_by_assignment
+cd pass_by_assignment
 python pass_by_assignment.py >NUL  2>NUL
 pytest -s -v . 
 @echo off
