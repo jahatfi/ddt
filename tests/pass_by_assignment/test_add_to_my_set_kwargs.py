@@ -2,8 +2,9 @@
 Programmatically generated test function for add_to_my_set_kwargs()
 """
 
+import re
 import pytest
-from tests.pass_by_assignment import pass_by_assignment
+import pass_by_assignment
 
 
 # In sum, these tests covered 66.67% of add_to_my_set_kwargs's lines
@@ -12,7 +13,7 @@ from tests.pass_by_assignment import pass_by_assignment
 @pytest.mark.parametrize(
     "kwargs, expected_result, kwargs_after",
     [
-        ({"my_set": {0, 1, 2, 3}}, "None", {"my_set": {0, 1, 2, 3, 5}}),
+        ({"my_set": {0, 2, 3}}, "None", {"my_set": "{0, 1, 2, 3}"}),
     ],
 )
 def test_add_to_my_set_kwargs(kwargs, expected_result, kwargs_after):
@@ -21,4 +22,7 @@ def test_add_to_my_set_kwargs(kwargs, expected_result, kwargs_after):
     """
     result = pass_by_assignment.add_to_my_set_kwargs(**kwargs)
     assert result == expected_result or result == eval(expected_result)
-    assert kwargs["my_set"] == kwargs_after["my_set"]
+    assert (
+        kwargs["my_set"] == eval(kwargs_after["my_set"])
+        or kwargs["my_set"] == kwargs_after["my_set"]
+    )

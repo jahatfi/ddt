@@ -8,6 +8,7 @@ import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
+from logging import Logger
 
 ERROR_CODE = 0
 

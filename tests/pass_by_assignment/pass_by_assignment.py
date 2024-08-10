@@ -17,10 +17,20 @@ from src.unit_test_generator import (
 T = TypeVar('T')
 
 
+class ClassForTesting():
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"ClassForTesting('{self.name}')"
+    
+    def __eq__(self, __value: Any) -> bool:
+        return self.name == __value.name
+
 FMT_STR = "%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s"
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.CRITICAL)
+unit_test_generator.logger.setLevel(logging.DEBUG)
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def append_list(this_list:List[Any], item:Any)->None:
@@ -30,6 +40,7 @@ def append_list(this_list:List[Any], item:Any)->None:
     """
     logger.info("APPEND %s to %s", item, this_list)
     this_list.append(item)
+    
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def overwrite_list(this_list:List[Any])->None:
@@ -48,6 +59,7 @@ def increment_my_list_kwargs(**kwargs):
     """
     if "my_list" in kwargs and isinstance(kwargs["my_list"], list):
         kwargs["my_list"].append(1)
+        kwargs["my_list"].append(ClassForTesting("test"))
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def add_to_my_set_kwargs(**kwargs):
@@ -56,7 +68,8 @@ def add_to_my_set_kwargs(**kwargs):
     append a 1 to it.
     """
     if "my_set" in kwargs and isinstance(kwargs["my_set"], set):
-        kwargs["my_set"].add(5)        
+        kwargs["my_set"].add(1)
+        
 
 def main():
     """
@@ -64,18 +77,22 @@ def main():
     """
     # Begin ad hoc tests
     # Test append_list
+    
     my_list = [1,2,3,4]
     append_list(my_list, 6)
     overwrite_list(my_list[::-1])
+
     kwargs = {"my_list":[0,3]}
     print(f"Before: {kwargs=}")
     increment_my_list_kwargs(**kwargs)
     print(f"After: {kwargs=}")
+    
+    
     kwargs = {}
-    kwargs["my_set"] = set([0,1,2,3])
+    kwargs["my_set"] = set([0,2,3])
     add_to_my_set_kwargs(**kwargs)
     print(f"After: {kwargs=}")
-
+    
     generate_all_tests_and_metadata(Path("."), Path("."))
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 Programmatically generated test function for update_metadata()
 """
 
+import re
 import pytest
 from pass_by_assignment import append_list
 from src import unit_test_generator
@@ -9,11 +10,12 @@ from src import unit_test_generator
 # Now import modules specific to update_metadata:
 from pathlib import WindowsPath
 from src.unit_test_generator import FunctionMetaData
+from logging import Logger
 
 
 # In sum, these tests covered 64.1% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1283-1289', '1296-1297', '1259']
+# ['1412', '1424', '1436-1442', '1449-1450']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, args_after",
     [
@@ -39,7 +41,7 @@ from src.unit_test_generator import FunctionMetaData
             ),
             "None",
             {
-                "this_metadata": "FunctionMetaData(name='append_list', parameter_names=['this_list', 'item'], is_method=False, lines=[31, 32], non_code_lines=set(), global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/pass_by_assignment/pass_by_assignment.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'append_list': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\pass_by_assignment\\\\pass_by_assignment.py'})"
+                "this_metadata": "FunctionMetaData(name='append_list', parameter_names=['this_list', 'item'], is_method=False, lines=[41, 42], non_code_lines=set(), global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/pass_by_assignment/pass_by_assignment.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'append_list': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\pass_by_assignment\\\\pass_by_assignment.py'})"
             },
         ),
     ],
