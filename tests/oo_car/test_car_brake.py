@@ -2,10 +2,13 @@
 Programmatically generated test function for Car.brake()
 """
 
+import re
 import pytest
+import car
 
 # Now import modules specific to Car.brake:
 from car import Car
+from logging import Logger
 
 
 # In sum, these tests covered 71.43% of Car.brake's lines

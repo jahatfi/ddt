@@ -2,18 +2,20 @@
 Programmatically generated test function for update_metadata()
 """
 
+import re
 import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from src.unit_test_generator import FunctionMetaData
 from car import Car
 from pathlib import WindowsPath
+from src.unit_test_generator import FunctionMetaData
+from logging import Logger
 
 
 # In sum, these tests covered 56.41% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1280', '1283-1289', '1296-1297', '1259', '1271', '1277-1278']
+# ['1412', '1424', '1430-1431', '1433', '1436-1442', '1449-1450']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, args_after",
     [

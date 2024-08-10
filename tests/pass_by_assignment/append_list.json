@@ -7,8 +7,8 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      31,
-      32
+      41,
+      42
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -27,8 +27,8 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            31,
-            32
+            41,
+            42
          ],
          "exception_type": "",
          "exception_message": "",
@@ -45,8 +45,8 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      31,
-      32
+      41,
+      42
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

@@ -4,9 +4,11 @@ Programmatically generated test function for Car.change_steer_angle()
 
 import re
 import pytest
+import car
 
 # Now import modules specific to Car.change_steer_angle:
 from car import Car
+from logging import Logger
 
 
 # In sum, these tests covered 60.0% of Car.change_steer_angle's lines

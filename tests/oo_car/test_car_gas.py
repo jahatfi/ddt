@@ -9,6 +9,7 @@ from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to Car.gas:
 from car import Car
+from logging import Logger
 
 
 # In sum, these tests covered 100.0% of Car.gas's lines

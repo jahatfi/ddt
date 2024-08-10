@@ -109,6 +109,7 @@ class FunctionMetaDataEncoder(JSONEncoder):
     """
     def default(self, o)->typing.Any:
         if isinstance(o, set):
+            #return sorted([str(oi) for oi in o])
             return sorted(list(o))
         if isinstance(o, MappingProxyType):
             logger.warning("Skipping encoding of %s, it's a Mapping ProxyType", o)
@@ -530,7 +531,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 # If this is the first time this func has been called,
                 # disassemble it to get the lines and global variables
                 if function_name not in all_metadata:
-                    logger.critical("%s func.__name__=%s (type(func)=%s) not in %s\n",
+                    logger.debug("%s func.__name__=%s (type(func)=%s) not in %s; getting byte code\n",
                                      function_name, func.__name__, type(func), all_metadata.keys())
 
                     # Using single var names ('x', 'y') to keep lines short
@@ -719,6 +720,146 @@ def get_filename(arg:str):
         file_name = str(file_name_match.groups()[0])
     return file_name
 
+# pylint: disable=too-many-locals, too-many-branches,too-many-return-statements,too-many-statements
+def get_all_types(loc: str,
+                  obj,
+                  import_modules:bool=True,
+                  recursion_depth:int=0,
+                  decoratee:str="n/a")->set[str]:
+    """
+    'loc' is just for debugging purposes
+    Return the set of all types contained in this object,
+    It might be a list of sets so return {"list", "set"}
+    """
+    # If primitive type, add an immediately return
+    if not obj:
+        return set()
+    parsed_type_match = re.match("<class '([^']+)'>", str(type(obj)))
+    if parsed_type_match:
+        expected_type = parsed_type_match.groups()[0]
+        if expected_type in ['int', 'bool', 'str', 'float']:
+            return set()
+
+
+    if recursion_depth > 2:
+        return set()
+    all_types: set[str] = set()
+    type_str = str(type(obj))
+
+    parsed_type_match = re.match("<class '([^']+)'>", type_str)
+    if parsed_type_match:
+        parsed_type:str = parsed_type_match.groups()[0]
+
+    if callable(obj):
+        if hasattr(obj, "__code__"):
+            logger.debug("%s %s.%s as callable",
+                         loc, obj.__module__, obj.__name__)
+            file_name = get_filename(str(obj.__code__))
+            if file_name:
+                if import_modules:
+                    logger.debug("Adding %s.%s", file_name, obj.__name__)
+                    return set([f"{file_name}.{obj.__name__}"])
+                logger.debug("I NEED just THE MODULE: %s", str(file_name))
+                return set([str(file_name)])
+            if import_modules:
+                logger.debug("No filename parsed, use the module: %s",
+                             obj.__module__)
+                return set([obj.__module__])
+            logger.debug("No filename parsed, use the FQDN: %s",
+                         obj.__module__)
+            return set([f"{obj.__module__}.{obj.__name__}"])
+        if import_modules:
+            logger.debug("%s %s missing __code__ < I need this module!", loc, obj)
+        else:
+            logger.debug("%s type_str=%s < I need this FQDN!", loc, type_str)
+
+    # pylint: disable-next=too-many-nested-blocks
+    elif "." in type_str:
+        if import_modules:
+            logger.debug("%s type_str=%s for %s; adding %s (recursion_depth=%d)",
+                         loc, type_str, decoratee, parsed_type, recursion_depth)
+            all_types.add(parsed_type)
+            # Add all non-builtin sub-types of object
+            # If obj is a composite object (e.g. a class) comprised of any
+            # non-built in objects (e.g. other classes), I need to add
+            # all subtypes recursively.
+            if hasattr(obj, "__dict__"):
+                for k,v in obj.__dict__.items():
+                    if isinstance(obj.__dict__[k], dict):
+                        #logger.debug("Adding %s:%s from composite dict",
+                        #             k, type(obj.__dict__[k]))
+                        for v2 in obj.__dict__[k].values():
+                            #all_types.add(type(k))
+                            all_types |= get_all_types("6",
+                                                       v2,
+                                                       import_modules,
+                                                       recursion_depth+1,
+                                                       decoratee)
+
+                    if isinstance(obj.__dict__[k], (set, list, tuple)):
+                        #logger.debug("Adding %s:%s from composite",
+                        #             k, type(obj.__dict__[k]))
+                        for v2 in obj.__dict__[k]:
+                            #all_types.add(type(k))
+                            all_types |= get_all_types("6",
+                                                       v2,
+                                                       import_modules,
+                                                       recursion_depth+1,
+                                                       decoratee)
+
+                return all_types
+            logger.debug("WHAT TO DO? %s type_str=%s for %s; adding %s",
+                         loc, type_str, decoratee, parsed_type)
+        else:
+            logger.debug("%s type_str=%s for %s (recursion_depth=%d)!",
+                         loc, type_str, decoratee, recursion_depth)
+            if parsed_type_match:
+                if parsed_type and parsed_type.startswith("__main__"):
+                    ext_module_file = inspect.getfile(obj.__class__)
+                    logger.info(ext_module_file)
+                    file_name = get_filename(ext_module_file)
+                    if file_name:
+                        ext_module_file = file_name
+                        logger.info(ext_module_file)
+                        fqn = re.sub("__main__", ext_module_file, parsed_type)
+                        logger.info(fqn)
+                        return set([fqn])
+                logger.info(parsed_type)
+                all_types.add(parsed_type)
+                return all_types
+
+    if isinstance(obj, dict):
+        for v in obj.values():
+            all_types |= get_all_types("6", v, import_modules, recursion_depth+1, decoratee)
+
+    elif inspect.isclass(obj):
+        logger.critical("%s is a class", obj)
+        return all_types
+
+    # Now handle all other iterables aside from dictionaries
+    # Non-iterables will throw a TypeError but that's perfectly ok
+    elif not isinstance(obj, str):
+        try:
+            for obj_i in obj:
+                all_types |= get_all_types("7", obj_i, import_modules, recursion_depth+1, decoratee)
+        except TypeError as e:
+            logger.critical(e)
+
+    result = set()
+    for this_type in all_types:
+        parsed_type_match = re.match("<class '([^']+)'>", str(this_type))
+        if parsed_type_match:
+            expected_type = parsed_type_match.groups()[0]
+            logger.debug("Adding %s", expected_type)
+            result.add(expected_type)
+        else:
+            result.add(this_type)
+
+    if result:
+        logger.debug("result=%s", result)
+    return result
+
+
 class ArgsIteratorClass():
     """
     Holds all the I/O variables for args_iterator
@@ -733,7 +874,7 @@ class ArgsIteratorClass():
         Holds all the I/O variables for args_iterator
         """
         self.args = args
-        self.kwargs = copy.deepcopy(kwargs)
+        self.kwargs = kwargs
         self.arg_names: List[str] = []
         self.args_addresses = {}
         self.kwargs_addresses: dict[str, int] = {}
@@ -879,7 +1020,19 @@ class ArgsIteratorClass():
                     self.args_copy[arg_name] = repr(arg)
                 else:
                     self.kwargs_copy[arg_name] = repr(arg)
-
+                    # https://www.geeksforgeeks.org/how-to-check-if-an-object-is-iterable-in-python/
+                    if hasattr(arg, '__iter__'):
+                        logger.debug("%s is iterable!", arg_i)
+                        if isinstance(arg, dict):
+                            for arg_i in arg.values():
+                                self.new_types_in_use |= get_all_types("2.0", arg_i, True, 0)
+                                if "object at 0x" in repr(arg_i):
+                                    logger.debug("Can't repr(%s)", arg_i)
+                        else:
+                            for arg_i in arg:
+                                self.new_types_in_use |= get_all_types("2.0", arg_i, True, 0)
+                                if "object at 0x" in repr(arg_i):
+                                    logger.debug("Can't repr(%s)", arg_i)
 
 # pylint: disable-next=too-many-locals,too-many-statements,too-many-branches
 def do_the_decorator_thing(func: Callable, function_name:str,
@@ -957,7 +1110,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     if args_iterator_class.class_type:
         this_metadata.types_in_use.add(args_iterator_class.class_type)
 
-    this_metadata.types_in_use |= args_iterator_class.new_types_in_use
+
     # pylint: disable-next=unnecessary-comprehension
     this_coverage_info.args_before = copy.deepcopy(list(args_iterator_class.args_copy.values()))
     args_iterator_class.args_copy = OrderedDict()
@@ -982,7 +1135,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     hashed_input = ""
 
     if kwargs:
-        this_coverage_info.kwargs = kwargs
+        this_coverage_info.kwargs = copy.deepcopy(kwargs)
 
     hashed_input_hash = hashlib.new('sha256')
     # TODO Add the function file and function name
@@ -1163,10 +1316,10 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     logger.debug("args_iterator_class.kwargs_copy=%s", args_iterator_class.kwargs_copy)
 
     args_iterator_class.args_iterator("After", "kwargs")
-    this_coverage_info.kwargs_after = copy.deepcopy({k:v for (k,v) in kwargs.items() if not isinstance(v, (int, str, tuple))})
+    this_coverage_info.kwargs_after = copy.deepcopy(args_iterator_class.kwargs_copy)
     logger.debug("args_iterator_class.kwargs_copy=%s", args_iterator_class.kwargs_copy)
     #this_coverage_info.args_after = args_iterator_class.args
-
+    this_metadata.types_in_use |= args_iterator_class.new_types_in_use
     this_coverage_info.coverage = sorted_coverage
     hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
@@ -1337,144 +1490,6 @@ def count_objects(obj: typing.Any):
             count += 1
     return count
 
-# pylint: disable=too-many-locals, too-many-branches,too-many-return-statements,too-many-statements
-def get_all_types(loc: str,
-                  obj,
-                  import_modules:bool=True,
-                  recursion_depth:int=0,
-                  decoratee:str="n/a")->set[str]:
-    """
-    'loc' is just for debugging purposes
-    Return the set of all types contained in this object,
-    It might be a list of sets so return {"list", "set"}
-    """
-    # If primitive type, add an immediately return
-    if not obj:
-        return set()
-    parsed_type_match = re.match("<class '([^']+)'>", str(type(obj)))
-    if parsed_type_match:
-        expected_type = parsed_type_match.groups()[0]
-        if expected_type in ['int', 'bool', 'str', 'float']:
-            return set()
-
-
-    if recursion_depth > 2:
-        return set()
-    all_types: set[str] = set()
-    type_str = str(type(obj))
-
-    parsed_type_match = re.match("<class '([^']+)'>", type_str)
-    if parsed_type_match:
-        parsed_type:str = parsed_type_match.groups()[0]
-
-    if callable(obj):
-        if hasattr(obj, "__code__"):
-            logger.debug("%s %s.%s as callable",
-                         loc, obj.__module__, obj.__name__)
-            file_name = get_filename(str(obj.__code__))
-            if file_name:
-                if import_modules:
-                    logger.debug("Adding %s.%s", file_name, obj.__name__)
-                    return set([f"{file_name}.{obj.__name__}"])
-                logger.debug("I NEED just THE MODULE: %s", str(file_name))
-                return set([str(file_name)])
-            if import_modules:
-                logger.debug("No filename parsed, use the module: %s",
-                             obj.__module__)
-                return set([obj.__module__])
-            logger.debug("No filename parsed, use the FQDN: %s",
-                         obj.__module__)
-            return set([f"{obj.__module__}.{obj.__name__}"])
-        if import_modules:
-            logger.debug("%s %s missing __code__ < I need this module!", loc, obj)
-        else:
-            logger.debug("%s type_str=%s < I need this FQDN!", loc, type_str)
-
-    # pylint: disable-next=too-many-nested-blocks
-    elif "." in type_str:
-        if import_modules:
-            logger.debug("%s type_str=%s for %s; adding %s (recursion_depth=%d)",
-                         loc, type_str, decoratee, parsed_type, recursion_depth)
-            all_types.add(parsed_type)
-            # Add all non-builtin sub-types of object
-            # If obj is a composite object (e.g. a class) comprised of any
-            # non-built in objects (e.g. other classes), I need to add
-            # all subtypes recursively.
-            if hasattr(obj, "__dict__"):
-                for k,v in obj.__dict__.items():
-                    if isinstance(obj.__dict__[k], dict):
-                        #logger.debug("Adding %s:%s from composite dict",
-                        #             k, type(obj.__dict__[k]))
-                        for v2 in obj.__dict__[k].values():
-                            #all_types.add(type(k))
-                            all_types |= get_all_types("6",
-                                                       v2,
-                                                       import_modules,
-                                                       recursion_depth+1,
-                                                       decoratee)
-
-                    if isinstance(obj.__dict__[k], (set, list, tuple)):
-                        #logger.debug("Adding %s:%s from composite",
-                        #             k, type(obj.__dict__[k]))
-                        for v2 in obj.__dict__[k]:
-                            #all_types.add(type(k))
-                            all_types |= get_all_types("6",
-                                                       v2,
-                                                       import_modules,
-                                                       recursion_depth+1,
-                                                       decoratee)
-
-                return all_types
-            logger.debug("WHAT TO DO? %s type_str=%s for %s; adding %s",
-                         loc, type_str, decoratee, parsed_type)
-        else:
-            logger.debug("%s type_str=%s for %s (recursion_depth=%d)!",
-                         loc, type_str, decoratee, recursion_depth)
-            if parsed_type_match:
-                if parsed_type and parsed_type.startswith("__main__"):
-                    ext_module_file = inspect.getfile(obj.__class__)
-                    logger.info(ext_module_file)
-                    file_name = get_filename(ext_module_file)
-                    if file_name:
-                        ext_module_file = file_name
-                        logger.info(ext_module_file)
-                        fqn = re.sub("__main__", ext_module_file, parsed_type)
-                        logger.info(fqn)
-                        return set([fqn])
-                logger.info(parsed_type)
-                all_types.add(parsed_type)
-                return all_types
-
-    if isinstance(obj, dict):
-        for v in obj.values():
-            all_types |= get_all_types("6", v, import_modules, recursion_depth+1, decoratee)
-
-    elif inspect.isclass(obj):
-        logger.critical("%s is a class", obj)
-        return all_types
-
-    # Now handle all other iterables aside from dictionaries
-    # Non-iterables will throw a TypeError but that's perfectly ok
-    elif not isinstance(obj, str):
-        try:
-            for obj_i in obj:
-                all_types |= get_all_types("7", obj_i, import_modules, recursion_depth+1, decoratee)
-        except TypeError as e:
-            logger.critical(e)
-
-    result = set()
-    for this_type in all_types:
-        parsed_type_match = re.match("<class '([^']+)'>", str(this_type))
-        if parsed_type_match:
-            expected_type = parsed_type_match.groups()[0]
-            logger.debug("Adding %s", expected_type)
-            result.add(expected_type)
-        else:
-            result.add(this_type)
-
-    if result:
-        logger.debug("result=%s", result)
-    return result
 
 
 def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, typing.Any],
@@ -1524,7 +1539,7 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         local_all_metadata.pop(function_name)
     return local_all_metadata
 
-@unit_test_generator_decorator(sample_count=0)
+@unit_test_generator_decorator(sample_count=1)
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1664,7 +1679,7 @@ def coverage_str_helper(this_list:list, non_code_lines:set)->list[str]:
 
     return results_list
 
-@unit_test_generator_decorator(sample_count=0)
+@unit_test_generator_decorator(sample_count=1)
 def gen_coverage_list(  function_metadata:FunctionMetaData,
                         coverage_list:list,
                         function_name:str,
@@ -1840,7 +1855,7 @@ def meta_program_function_call( this_state:CoverageInfo,
                 list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
         if isinstance(this_state.kwargs_after, dict) and this_state.kwargs_after.keys():
             for arg_after in this_state.kwargs_after.keys():
-                list_of_lines.append(f"{indent}assert kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
+                list_of_lines.append(f"{indent}assert kwargs[\"{arg_after}\"] == eval(kwargs_after['{arg_after}']) or kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
 
     else:
         for name in parameter_names:
@@ -2036,7 +2051,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         else:
             new_params.append(repr(expected_result))
         if args_after:
-            # TODO
             these_aa :dict[str, typing.Any] = {}
             for arg_name, arg_value in state[hash_key].args_after.items():
                 #if isinstance(arg_value, (int, str, float)):
@@ -2044,10 +2058,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 #    continue
                 logger.debug("Keeping '%s':'%s", arg_name, arg_value)
                 these_aa[arg_name] = arg_value
-                state[hash_key].args_after = these_aa
+            state[hash_key].args_after = these_aa
             new_params.append(repr(these_aa))
         if kwargs_after:
-            # TODO
             these_kaa :dict[str, typing.Any] = {}
             for arg_name, arg_value in state[hash_key].kwargs_after.items():
                 #if isinstance(arg_value, (int, str, float)):
@@ -2055,13 +2068,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                 #    continue
                 logger.debug("Keeping '%s':'%s", arg_name, arg_value)
                 these_kaa[arg_name] = arg_value
-                state[hash_key].kwargs_after = these_kaa
+            state[hash_key].kwargs_after = these_kaa
             new_params.append(repr(these_kaa))
         if any_gb:
             new_params.append('{}' if not globals_before else repr(globals_before))
         if any_ga:
             new_params.append('{}' if not globals_after else repr(globals_after))
-
 
         for pi, param in enumerate(new_params):
             function_match = re.match(r"<function (\w*) at 0x[0-9a-fA-F]{,16}>", param)
@@ -2174,7 +2186,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     if needs_monkeypatch:
         imports.append("from _pytest.monkeypatch import MonkeyPatch\n")
 
-    custom_imports = []
+    custom_imports = set()
 
     for this_type in function_metadata.types_in_use:
         continue_flag = False
@@ -2194,16 +2206,16 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             continue
         if prefix == "__main__":
             if package:
-                custom_imports.append(f"from {package} import {module}\n")
+                custom_imports.add(f"from {package} import {module}\n")
         elif prefix:
-            custom_imports.append(f"from {prefix} import {module}\n")
+            custom_imports.add(f"from {prefix} import {module}\n")
         #elif module:
         #    custom_imports.append(f"import {module}\n")
 
     if custom_imports:
         imports.append("\n")
         imports.append(f"# Now import modules specific to {function_name}:\n")
-    imports += custom_imports
+    imports += list(custom_imports)
 
     logger.debug("function_name=%s", function_name)
     result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
@@ -2245,7 +2257,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Re-formatted %s with black formatter", result_file)
-
+    '''
     try:
         subprocess.run( f"ruff {result_file} --fix".split(),
                         check=True,
@@ -2259,7 +2271,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Linted %s with ruff", result_file)
-
+    '''
     # Return hash of resulting string here
     h = hashlib.new('sha256')
     h.update(str(sorted(test_str_list_def_dict.items())).encode())

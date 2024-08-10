@@ -2,6 +2,7 @@
 Programmatically generated test function for overwrite_list()
 """
 
+import re
 import pytest
 from tests.pass_by_assignment import pass_by_assignment
 
