@@ -530,7 +530,9 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 # If this is the first time this func has been called,
                 # disassemble it to get the lines and global variables
                 if function_name not in all_metadata:
-                    logger.critical(f"{function_name} {func.__name__=} {type(func)=} not in {all_metadata.keys()}\n")
+                    logger.critical("%s func.__name__=%s (type(func)=%s) not in %s\n",
+                                     function_name, func.__name__, type(func), all_metadata.keys())
+
                     # Using single var names ('x', 'y') to keep lines short
                     parameters = inspect.getfullargspec(func)[0]
                     this_metadata = FunctionMetaData(   name=function_name,
@@ -957,7 +959,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     this_metadata.types_in_use |= args_iterator_class.new_types_in_use
     # pylint: disable-next=unnecessary-comprehension
-    this_coverage_info.args_before = copy.deepcopy([arg for arg in args_iterator_class.args_copy.values()])
+    this_coverage_info.args_before = copy.deepcopy(list(args_iterator_class.args_copy.values()))
     args_iterator_class.args_copy = OrderedDict()
 
     phase = "Before"
@@ -1158,11 +1160,11 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     args_iterator_class.args_iterator("After")
     this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args_copy)
-    logger.debug(f"{args_iterator_class.kwargs_copy=}")
+    logger.debug("args_iterator_class.kwargs_copy=%s", args_iterator_class.kwargs_copy)
 
     args_iterator_class.args_iterator("After", "kwargs")
     this_coverage_info.kwargs_after = copy.deepcopy({k:v for (k,v) in kwargs.items() if not isinstance(v, (int, str, tuple))})
-    logger.debug(f"{args_iterator_class.kwargs_copy=}")
+    logger.debug("args_iterator_class.kwargs_copy=%s", args_iterator_class.kwargs_copy)
     #this_coverage_info.args_after = args_iterator_class.args
 
     this_coverage_info.coverage = sorted_coverage

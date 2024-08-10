@@ -3,7 +3,7 @@ Programmatically generated test function for increment_my_list_kwargs()
 """
 
 import pytest
-import pass_by_assignment
+from tests.pass_by_assignment import pass_by_assignment
 
 
 # In sum, these tests covered 66.67% of increment_my_list_kwargs's lines

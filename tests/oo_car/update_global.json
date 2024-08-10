@@ -9,29 +9,29 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1569,
-      1570,
       1571,
       1572,
       1573,
       1574,
       1575,
+      1576,
       1577,
-      1585,
-      1586,
+      1579,
       1587,
       1588,
-      1589
+      1589,
+      1590,
+      1591
    ],
    "non_code_lines": [
-      1576,
       1578,
-      1579,
       1580,
       1581,
       1582,
       1583,
-      1584
+      1584,
+      1585,
+      1586
    ],
    "coverage_io": {
       "bc219f43158bcf9bd56390fd2488dcf6143970ff6002221e94e29f0d72d381d9": {
@@ -51,12 +51,12 @@
          "expected_result": "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1569,
-            1572,
-            1577,
-            1585,
-            1586,
-            1589
+            1571,
+            1574,
+            1579,
+            1587,
+            1588,
+            1591
          ],
          "exception_type": "",
          "exception_message": "",
@@ -74,12 +74,12 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1569,
-      1572,
-      1577,
-      1585,
-      1586,
-      1589
+      1571,
+      1574,
+      1579,
+      1587,
+      1588,
+      1591
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

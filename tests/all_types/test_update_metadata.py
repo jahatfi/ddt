@@ -13,7 +13,7 @@ from pathlib import WindowsPath
 
 # In sum, these tests covered 61.54% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1281-1287', '1294-1295', '1257', '1269']
+# ['1280', '1283-1289', '1296-1297', '1259']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, args_after",
     [
