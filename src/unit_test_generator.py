@@ -161,7 +161,13 @@ class CoverageInfo:
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
-        result = ["CoverageInfo(args_before="+repr(self.args_before)]
+        args_before_repr = [repr(x) for x in self.args_before]
+        for i, arg_before_repr in enumerate(args_before_repr):
+            if "<function" in arg_before_repr:
+                logger.critical(f"{arg_before_repr=} {dir(self.args_before[i])=}")
+            args_before_repr[i] = re.sub(r"<function.*__init__ at 0x[0-9a-fA-F]+>", "OKAYHI", args_before_repr[i])
+        result = ["CoverageInfo(args_before=["+','.join(args_before_repr)+"]"]#repr(self.args_before)]
+        logger.critical(f"{result=}")
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" kwargs_after="+repr(self.kwargs_after))
@@ -195,6 +201,7 @@ class CoverageInfo:
         """
         result = ["CoverageInfo("]
         result.append("args_before="+repr(self.args_before))
+        logger.critical(f"{result=}")
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" kwargs_after="+repr(self.kwargs_after))
@@ -1124,6 +1131,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
 
     # pylint: disable-next=unnecessary-comprehension
+    # TODO use repr on the values?
     this_coverage_info.args_before = copy.deepcopy(list(args_iterator_class.args_copy.values()))
     args_iterator_class.args_copy = OrderedDict()
 
