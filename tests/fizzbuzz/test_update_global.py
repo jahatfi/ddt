@@ -2,22 +2,16 @@
 Programmatically generated test function for update_global()
 """
 
-import re
 import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
-from logging import Manager
 from src.unit_test_generator import CoverageInfo
-from logging import StreamHandler
-from logging import PlaceHolder
-from logging import RootLogger
-from logging import Logger
 
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1605-1606', '1608-1610', '1622-1623']
+# ['1600-1601', '1603-1605', '1617-1618']
 @pytest.mark.parametrize(
     "obj, this_global, phase, this_coverage_info, expected_result, args_after",
     [
