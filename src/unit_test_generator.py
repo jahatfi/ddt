@@ -733,7 +733,7 @@ def get_all_types(loc: str,
     """
     # If primitive type, add an immediately return
     if not isinstance(obj, (int, set, str, dict, str, list, float)):
-        logger.critical("RD: %d type(obj)=%s", recursion_depth, type(obj))
+        logger.debug("RD: %d type(obj)=%s", recursion_depth, type(obj))
     if not obj:
         return set()
     parsed_type_match = re.match("<class '([^']+)'>", str(type(obj)))
@@ -744,7 +744,7 @@ def get_all_types(loc: str,
 
 
     if recursion_depth > 2:
-        logger.critical(f"{recursion_depth=} Returning due to max R.D. {type(obj)=}")
+        logger.debug(f"{recursion_depth=} Returning due to max R.D. {type(obj)=}")
         return set()
     all_types: set[str] = set()
     type_str = str(type(obj))
@@ -755,31 +755,31 @@ def get_all_types(loc: str,
 
     if callable(obj):
         if hasattr(obj, "__code__"):
-            logger.critical("RD: %d %s %s.%s as callable",
+            logger.debug("RD: %d %s %s.%s as callable",
                          recursion_depth, loc, obj.__module__, obj.__name__)
             file_name = get_filename(str(obj.__code__))
             if file_name:
                 if import_modules:
-                    logger.critical("RD: %d Adding %s.%s", recursion_depth, file_name, obj.__name__)
+                    logger.debug("RD: %d Adding %s.%s", recursion_depth, file_name, obj.__name__)
                     return set([f"{file_name}.{obj.__name__}"])
-                logger.critical("RD: %d I NEED just THE MODULE: %s", recursion_depth, str(file_name))
+                logger.debug("RD: %d I NEED just THE MODULE: %s", recursion_depth, str(file_name))
                 return set([str(file_name)])
             if import_modules:
-                logger.critical("RD: %d No filename parsed, use the module: %s",
+                logger.debug("RD: %d No filename parsed, use the module: %s",
                              recursion_depth, obj.__module__)
                 return set([obj.__module__])
-            logger.critical("RD: %d No filename parsed, use the FQDN: %s",
+            logger.debug("RD: %d No filename parsed, use the FQDN: %s",
                          recursion_depth, obj.__module__)
             return set([f"{obj.__module__}.{obj.__name__}"])
         if import_modules:
-            logger.critical("RD: %d %s %s missing __code__ < I need this module!", recursion_depth, loc, obj)
+            logger.debug("RD: %d %s %s missing __code__ < I need this module!", recursion_depth, loc, obj)
         else:
-            logger.critical("RD: %d %s type_str=%s < I need this FQDN!", recursion_depth, loc, type_str)
+            logger.debug("RD: %d %s type_str=%s < I need this FQDN!", recursion_depth, loc, type_str)
 
     # pylint: disable-next=too-many-nested-blocks
     elif "." in type_str:
         if import_modules:
-            logger.critical("RD: %d %s type_str=%s for %s; adding %s (recursion_depth=%d)",
+            logger.debug("RD: %d %s type_str=%s for %s; adding %s (recursion_depth=%d)",
                          recursion_depth, loc, type_str, decoratee, parsed_type, recursion_depth)
             all_types.add(parsed_type)
             # Add all non-builtin sub-types of object
@@ -788,13 +788,13 @@ def get_all_types(loc: str,
             # all subtypes recursively.
             if hasattr(obj, "__dict__"):
                 for k,v in obj.__dict__.items():
-                    logger.critical("RD: %d attr:%s", recursion_depth, k)
+                    logger.debug("RD: %d attr:%s", recursion_depth, k)
                     all_types |= get_all_types("60",
                                                 v,
                                                 import_modules,
                                                 recursion_depth+1)  
                     if isinstance(v, dict):
-                        logger.critical("Adding %s:%s from composite dict",
+                        logger.debug("Adding %s:%s from composite dict",
                                      k, type(v))
                         for v2 in v.values():
                             #all_types.add(type(k))
@@ -815,19 +815,19 @@ def get_all_types(loc: str,
                                                        recursion_depth+1,
                                                        decoratee)
                     else:#if not type(v).__module__ != "__builtin__":
-                        logger.critical("RD: %d attr:%s", recursion_depth, k)
+                        logger.debug("RD: %d attr:%s", recursion_depth, k)
                         all_types |= get_all_types("6",
                                                     v,
                                                     import_modules,
                                                     recursion_depth+1,
                                                     decoratee)
-                logger.critical("RD: %d Returning %s type_str=%s for %s; adding %s",
+                logger.debug("RD: %d Returning %s type_str=%s for %s; adding %s",
                              recursion_depth, all_types, type_str, decoratee, parsed_type)
                 return all_types
-            logger.critical("RD: %d WHAT TO DO? %s type_str=%s for %s; adding %s",
+            logger.debug("RD: %d WHAT TO DO? %s type_str=%s for %s; adding %s",
                          recursion_depth, loc, type_str, decoratee, parsed_type)
         else:
-            logger.critical("RD: %d %s type_str=%s for %s (recursion_depth=%d)!",
+            logger.debug("RD: %d %s type_str=%s for %s (recursion_depth=%d)!",
                          recursion_depth, loc, type_str, decoratee, recursion_depth)
             if parsed_type_match:
                 if parsed_type and parsed_type.startswith("__main__"):
@@ -838,12 +838,11 @@ def get_all_types(loc: str,
                         ext_module_file = file_name
                         logger.info(ext_module_file)
                         fqn = re.sub("__main__", ext_module_file, parsed_type)
-                        logger.critical(fqn)
+                        logger.debug(fqn)
                         all_types.add(fqn)
-                logger.critical(parsed_type)
+                logger.debug(parsed_type)
                 if parsed_type.endswith("FunctionMetaData"):
                     raise TypeError("Yikes")
-                    logger.critical(dir(obj))
                 all_types.add(parsed_type)
                 #return all_types
 
@@ -857,7 +856,7 @@ def get_all_types(loc: str,
             all_types |= get_all_types("7", obj_i, import_modules, recursion_depth+1, decoratee)
 
     if inspect.isclass(obj):
-        logger.critical("%s is a class", obj)
+        logger.debug("%s is a class", obj)
         #return all_types
 
     result = set()
@@ -865,15 +864,11 @@ def get_all_types(loc: str,
         parsed_type_match = re.match("<class '([^']+)'>", str(this_type))
         if parsed_type_match:
             expected_type = parsed_type_match.groups()[0]
-            logger.critical("Adding %s", expected_type)
+            logger.debug("Adding %s", expected_type)
             result.add(expected_type)
         else:
             result.add(this_type)
 
-    if result:
-        logger.critical("result=%s", result)
-    if not isinstance(obj, (int, set, str, dict, str, list, float)):
-        logger.critical(f"{recursion_depth=} {result=}")
     return result
 
 
@@ -1552,7 +1547,8 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
                             function_name,
                             function_metadata.source_file,
                             tests_dir,
-                            outdir)
+                            outdir,
+                            2)
         local_all_metadata.pop(function_name)
     return local_all_metadata
 
@@ -1945,16 +1941,15 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             k = k[:-11]
             header.append(f"{k.upper()} = {(repr(eval(v)))[1:-1]}\n")
         else:
-            logger.critical(f"{k=}")
-            pprint.pprint(v)
+            logger.debug(f"{k=}")
             repr_v = repr(v)
             class_name_matcher = re.match(r"defaultdict\(<class '([^']+)'>", repr_v)
             if bool(class_name_matcher):
                 class_name = class_name_matcher.groups()[0].split('.')[-1]
-                logger.critical(class_name)
+                logger.debug(class_name)
 
             repr_v = re.sub(r"^(defaultdict\()(<class ')(([^']+\.)?)(?P<this_capture>[^']+)'>", r"\1\g<this_capture>",repr_v)
-            logger.critical(f"{repr_v=}")
+            logger.debug(f"{repr_v=}")
             header.append(f"{k.upper()} = {repr_v}\n")
 
 
@@ -2284,7 +2279,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Re-formatted %s with black formatter", result_file)
-    '''
+    
     try:
         subprocess.run( f"ruff {result_file} --fix".split(),
                         check=True,
@@ -2298,7 +2293,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Linted %s with ruff", result_file)
-    '''
+    
     # Return hash of resulting string here
     h = hashlib.new('sha256')
     h.update(str(sorted(test_str_list_def_dict.items())).encode())

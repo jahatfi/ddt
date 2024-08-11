@@ -2,12 +2,10 @@
 Programmatically generated test function for append_list()
 """
 
-import re
 import pytest
 import pass_by_assignment
 
 # Now import modules specific to append_list:
-from logging import Logger
 
 
 # In sum, these tests covered 100.0% of append_list's lines

@@ -2,12 +2,11 @@
 Programmatically generated test function for Car.is_going_faster_than()
 """
 
-import re
 import pytest
-import car
 
 # Now import modules specific to Car.is_going_faster_than:
 from car import Car
+from tests.oo_car.car import Car
 
 
 # In sum, these tests covered 100.0% of Car.is_going_faster_than's lines

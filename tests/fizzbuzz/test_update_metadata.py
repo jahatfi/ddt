@@ -8,14 +8,14 @@ from fizzbuzz import fizzbuzz
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from logging import Logger
-from pathlib import WindowsPath
-from src.unit_test_generator import FunctionMetaData
 from logging import Manager
-from logging import PlaceHolder
+from pathlib import WindowsPath
 from logging import StreamHandler
-from logging import RootLogger
 from fizzbuzz import fizzbuzz
+from logging import PlaceHolder
+from logging import RootLogger
+from src.unit_test_generator import FunctionMetaData
+from logging import Logger
 
 
 # In sum, these tests covered 64.1% of update_metadata's lines

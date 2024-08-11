@@ -2,7 +2,6 @@
 Programmatically generated test function for add_to_my_set_kwargs()
 """
 
-import re
 import pytest
 import pass_by_assignment
 

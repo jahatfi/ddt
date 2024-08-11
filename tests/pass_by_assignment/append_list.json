@@ -38,7 +38,11 @@
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
-      "logging.Logger"
+      "logging.Logger",
+      "logging.Manager",
+      "logging.PlaceHolder",
+      "logging.RootLogger",
+      "logging.StreamHandler"
    ],
    "global_vars_read_from": [
       "logger"
