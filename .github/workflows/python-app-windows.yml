@@ -89,7 +89,7 @@ jobs:
         run: |
           cd tests\\oo_car
           poetry run python car.py
-          cat test_auto_generate_test.py
+          cat test_auto_generate_tests.py
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment
