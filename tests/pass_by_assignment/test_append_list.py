@@ -4,7 +4,7 @@ Programmatically generated test function for append_list()
 
 import re
 import pytest
-from tests.pass_by_assignment import pass_by_assignment
+import pass_by_assignment
 
 # Now import modules specific to append_list:
 from logging import Logger

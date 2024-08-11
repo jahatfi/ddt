@@ -7,8 +7,8 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
-from src.unit_test_generator import CoverageInfo
 from logging import Logger
+from src.unit_test_generator import CoverageInfo
 
 
 # In sum, these tests covered 46.15% of update_global's lines

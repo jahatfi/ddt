@@ -4,7 +4,7 @@ Programmatically generated test function for get_item_at_index()
 
 import re
 import pytest
-from tests.all_types import all_types
+import all_types
 
 
 # In sum, these tests covered 85.71% of get_item_at_index's lines

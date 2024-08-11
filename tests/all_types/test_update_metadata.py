@@ -8,9 +8,9 @@ from all_types import get_item_at_index
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
+from pathlib import WindowsPath
 from src.unit_test_generator import FunctionMetaData
 from logging import Logger
-from pathlib import WindowsPath
 
 
 # In sum, these tests covered 61.54% of update_metadata's lines
