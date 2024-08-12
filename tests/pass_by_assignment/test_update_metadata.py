@@ -9,13 +9,18 @@ from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
 from src.unit_test_generator import FunctionMetaData
+from logging import PlaceHolder
+from pass_by_assignment import append_list
+from logging import StreamHandler
 from pathlib import WindowsPath
 from logging import Logger
+from logging import Manager
+from logging import RootLogger
 
 
 # In sum, these tests covered 64.1% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1412', '1424', '1436-1442', '1449-1450']
+# ['1432', '1444', '1456-1462', '1469-1470']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, args_after",
     [

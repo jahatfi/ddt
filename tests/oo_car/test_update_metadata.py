@@ -7,15 +7,19 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
-from car import Car
-from pathlib import WindowsPath
+from logging import StreamHandler
 from src.unit_test_generator import FunctionMetaData
+from pathlib import WindowsPath
+from logging import PlaceHolder
 from logging import Logger
+from logging import RootLogger
+from logging import Manager
+from car import Car
 
 
 # In sum, these tests covered 56.41% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1412', '1424', '1430-1431', '1433', '1436-1442', '1449-1450']
+# ['1432', '1444', '1450-1451', '1453', '1456-1462', '1469-1470']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, args_after",
     [

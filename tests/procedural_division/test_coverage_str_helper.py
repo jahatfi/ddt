@@ -7,22 +7,26 @@ import pytest
 from src import unit_test_generator
 
 # Now import modules specific to coverage_str_helper:
+from logging import PlaceHolder
 from logging import Logger
+from logging import StreamHandler
+from logging import Manager
+from logging import RootLogger
 
 
 # In sum, these tests covered 71.88% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1671-1672', '1675-1676', '1678', '1646', '1657', '1662-1663']
+# ['1667', '1678', '1683-1684', '1692-1693', '1696-1697']
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, args_after",
     [
         (
-            [1604, 1605, 1587, 1588, 1590, 1591, 1592],
-            {1600, 1601, 1593, 1595, 1596, 1597, 1598, 1599},
-            "['1604-1605', '1587-1588', '1590-1592']",
+            [1608, 1609, 1611, 1612, 1613, 1625, 1626],
+            {1614, 1616, 1617, 1618, 1619, 1620, 1621, 1622},
+            "['1608-1609', '1611-1613', '1625-1626']",
             {
-                "this_list": "[1604, 1605, 1587, 1588, 1590, 1591, 1592]",
-                "non_code_lines": "{1600, 1601, 1593, 1595, 1596, 1597, 1598, 1599}",
+                "this_list": "[1608, 1609, 1611, 1612, 1613, 1625, 1626]",
+                "non_code_lines": "{1614, 1616, 1617, 1618, 1619, 1620, 1621, 1622}",
             },
         ),
     ],

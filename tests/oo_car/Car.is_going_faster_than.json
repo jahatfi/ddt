@@ -35,7 +35,8 @@
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
-      "car.Car"
+      "__main__.Car",
+      "tests.oo_car.car.Car"
    ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],

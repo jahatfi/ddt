@@ -40,8 +40,7 @@
    },
    "coverage_percentage": 75.0,
    "types_in_use": [
-      "__main__.ClassForTesting",
-      "pass_by_assignment.ClassForTesting"
+      "__main__.ClassForTesting"
    ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],
