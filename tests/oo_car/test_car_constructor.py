@@ -2,6 +2,7 @@
 Programmatically generated test function for Car.__init__()
 """
 
+import re
 import pytest
 from tests.oo_car import car
 

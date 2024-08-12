@@ -2,19 +2,20 @@
 Programmatically generated test function for normalize_arg()
 """
 
+import re
 import pytest
 from src import unit_test_generator
 
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1633', '1636-1637']
+# ['1639', '1641', '1644-1645']
 @pytest.mark.parametrize(
     "arg, expected_result",
     [
         (
-            "CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
-            "CoverageInfo(args_before=['6', '2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+            "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+            "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
         ),
     ],
 )

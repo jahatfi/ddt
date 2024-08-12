@@ -147,7 +147,7 @@ ALL_METADATA = defaultdict(
             coverage_io={
                 "a957a0aed8423c01c38d1111e384806112a73d4876a082ea2ca1421a6a95602a": CoverageInfo(
                     args_before=[
-                        'Car("Red", 10, 0)',
+                        'X',
                         "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})",
                     ],
                     args_after=OrderedDict(

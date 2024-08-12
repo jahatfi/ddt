@@ -2,13 +2,14 @@
 Programmatically generated test function for normalize_arg()
 """
 
+import re
 import pytest
 from src import unit_test_generator
 
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1633', '1636-1637']
+# ['1639', '1641', '1644-1645']
 @pytest.mark.parametrize(
     "arg, expected_result",
     [

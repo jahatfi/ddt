@@ -163,11 +163,11 @@ class CoverageInfo:
         """
         args_before_repr = [repr(x) for x in self.args_before]
         for i, arg_before_repr in enumerate(args_before_repr):
-            if "<function" in arg_before_repr:
-                logger.critical(f"{arg_before_repr=} {dir(self.args_before[i])=}")
-            args_before_repr[i] = re.sub(r"<function.*__init__ at 0x[0-9a-fA-F]+>", "OKAYHI", args_before_repr[i])
+            #if "<function" in arg_before_repr:
+            #    logger.critical(f"{arg_before_repr=} {inspect.getmembers(self.args_before[i])=}")
+            args_before_repr[i] = re.sub(r"(<function.*__init__ at 0x[0-9a-fA-F]+>)", r"'\1'", args_before_repr[i])
         result = ["CoverageInfo(args_before=["+','.join(args_before_repr)+"]"]#repr(self.args_before)]
-        logger.critical(f"{result=}")
+        #logger.critical(f"{result=}")
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" kwargs_after="+repr(self.kwargs_after))
@@ -2287,7 +2287,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Re-formatted %s with black formatter", result_file)
-    
+    '''
     try:
         subprocess.run( f"ruff {result_file} --fix".split(),
                         check=True,
@@ -2301,7 +2301,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Linted %s with ruff", result_file)
-    
+    '''
     # Return hash of resulting string here
     h = hashlib.new('sha256')
     h.update(str(sorted(test_str_list_def_dict.items())).encode())

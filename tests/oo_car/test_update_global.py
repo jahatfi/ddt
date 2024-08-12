@@ -2,16 +2,22 @@
 Programmatically generated test function for update_global()
 """
 
+import re
 import pytest
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
+from logging import StreamHandler
+from logging import PlaceHolder
+from logging import Logger
+from logging import RootLogger
+from logging import Manager
 from src.unit_test_generator import CoverageInfo
 
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1600-1601', '1603-1605', '1617-1618']
+# ['1608-1609', '1611-1613', '1625-1626']
 @pytest.mark.parametrize(
     "obj, this_global, phase, this_coverage_info, expected_result, args_after",
     [
@@ -34,9 +40,9 @@ from src.unit_test_generator import CoverageInfo
                 constructor='Car("Red", 10, 0)',
                 cost=0.0,
             ),
-            "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
+            "CoverageInfo(args_before=['-1','1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)",
             {
-                "this_coverage_info": "CoverageInfo(args_before=['-1', '1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)"
+                "this_coverage_info": "CoverageInfo(args_before=['-1','1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'method_call_counter': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0)"
             },
         ),
     ],

@@ -2,9 +2,16 @@
 Programmatically generated test function for Car.brake()
 """
 
+import re
 import pytest
+from tests.oo_car import car
 
 # Now import modules specific to Car.brake:
+from logging import StreamHandler
+from logging import PlaceHolder
+from logging import Logger
+from logging import RootLogger
+from logging import Manager
 from tests.oo_car.car import Car
 
 

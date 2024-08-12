@@ -2,16 +2,24 @@
 Programmatically generated test function for auto_generate_tests()
 """
 
+import re
 import pytest
 from src import unit_test_generator
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to auto_generate_tests:
+from src.unit_test_generator import FunctionMetaData
+from pprint import PrettyPrinter
 from src.unit_test_generator import CoverageInfo
 from collections import defaultdict
-from collections import OrderedDict
-from src.unit_test_generator import FunctionMetaData
+from logging import Logger
+from logging import StreamHandler
+from _io import TextIOWrapper
+from logging import RootLogger
+from logging import Manager
 from pathlib import WindowsPath
+from logging import PlaceHolder
+from collections import OrderedDict
 
 ALL_METADATA = defaultdict(
     FunctionMetaData,
@@ -21,21 +29,21 @@ ALL_METADATA = defaultdict(
             parameter_names=["obj", "this_global", "phase", "this_coverage_info"],
             is_method=False,
             lines=[
-                1599,
-                1600,
-                1601,
-                1602,
-                1603,
-                1604,
-                1605,
                 1607,
+                1608,
+                1609,
+                1610,
+                1611,
+                1612,
+                1613,
                 1615,
-                1616,
-                1617,
-                1618,
-                1619,
+                1623,
+                1624,
+                1625,
+                1626,
+                1627,
             ],
-            non_code_lines={1606, 1608, 1609, 1610, 1611, 1612, 1613, 1614},
+            non_code_lines={1614, 1616, 1617, 1618, 1619, 1620, 1621, 1622},
             global_vars_read_from={"logger"},
             global_vars_written_to=set(),
             source_file=WindowsPath(
@@ -63,7 +71,7 @@ ALL_METADATA = defaultdict(
                     globals_after={},
                     expected_result="CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
                     expected_type="src.unit_test_generator.CoverageInfo",
-                    coverage=[1599, 1602, 1607, 1615, 1616, 1619],
+                    coverage=[1607, 1610, 1615, 1623, 1624, 1627],
                     exception_type="",
                     exception_message="",
                     constructor="",
@@ -72,14 +80,14 @@ ALL_METADATA = defaultdict(
             },
             coverage_percentage=46.15,
             types_in_use={
-                "logging.PlaceHolder",
-                "logging.Manager",
-                "src.unit_test_generator.CoverageInfo",
-                "logging.Logger",
                 "logging.StreamHandler",
+                "src.unit_test_generator.CoverageInfo",
+                "logging.Manager",
+                "logging.PlaceHolder",
                 "logging.RootLogger",
+                "logging.Logger",
             },
-            unified_test_coverage={1602, 1607, 1615, 1616, 1619, 1599},
+            unified_test_coverage={1607, 1610, 1615, 1623, 1624, 1627},
             needs_pytest=False,
             callable_files={
                 "update_global": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
@@ -90,13 +98,6 @@ ALL_METADATA = defaultdict(
             parameter_names=["f", "this_metadata"],
             is_method=False,
             lines=[
-                1423,
-                1424,
-                1425,
-                1427,
-                1428,
-                1429,
-                1430,
                 1431,
                 1432,
                 1433,
@@ -107,19 +108,16 @@ ALL_METADATA = defaultdict(
                 1439,
                 1440,
                 1441,
-                1442,
                 1443,
+                1444,
                 1445,
+                1446,
                 1447,
                 1448,
                 1449,
                 1450,
                 1451,
-                1452,
                 1453,
-                1454,
-                1452,
-                1447,
                 1455,
                 1456,
                 1457,
@@ -128,18 +126,28 @@ ALL_METADATA = defaultdict(
                 1460,
                 1461,
                 1462,
-                1461,
+                1460,
+                1455,
+                1463,
+                1464,
+                1465,
+                1466,
+                1467,
+                1468,
+                1469,
+                1470,
+                1469,
             ],
-            non_code_lines={1426, 1444, 1446, 1434},
+            non_code_lines={1442, 1452, 1454, 1434},
             global_vars_read_from={"logger"},
             global_vars_written_to=set(),
             source_file=WindowsPath(
                 "C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py"
             ),
             coverage_io={
-                "4a9e58a6341cf3b3e996853541d0925820690a6cef067e5242e73f5898c612bc": CoverageInfo(
+                "81b0b79f99c4c6c8da805d371d799d98bbf771459f131f638d16e385ed46b84e": CoverageInfo(
                     args_before=[
-                        "<function fizzbuzz at 0x0000021533D63D80>",
+                        "<function fizzbuzz at 0x0000020D1CBE3D80>",
                         "FunctionMetaData(name='fizzbuzz', parameter_names=['number'], is_method=False, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/fizzbuzz/fizzbuzz.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})",
                     ],
                     args_after=OrderedDict(
@@ -157,31 +165,31 @@ ALL_METADATA = defaultdict(
                     expected_result="None",
                     expected_type="NoneType",
                     coverage=[
-                        1423,
-                        1425,
-                        1427,
-                        1428,
-                        1429,
-                        1430,
                         1431,
-                        1432,
                         1433,
                         1435,
+                        1436,
                         1437,
                         1438,
                         1439,
                         1440,
                         1441,
-                        1442,
                         1443,
                         1445,
+                        1446,
                         1447,
+                        1448,
+                        1449,
+                        1450,
+                        1451,
+                        1453,
                         1455,
-                        1456,
-                        1457,
-                        1458,
-                        1459,
-                        1460,
+                        1463,
+                        1464,
+                        1465,
+                        1466,
+                        1467,
+                        1468,
                     ],
                     exception_type="",
                     exception_message="",
@@ -191,41 +199,41 @@ ALL_METADATA = defaultdict(
             },
             coverage_percentage=64.1,
             types_in_use={
-                "logging.PlaceHolder",
-                "logging.Manager",
-                "src.unit_test_generator.FunctionMetaData",
-                "pathlib.WindowsPath",
-                "logging.Logger",
-                "fizzbuzz.fizzbuzz",
                 "logging.StreamHandler",
+                "src.unit_test_generator.FunctionMetaData",
+                "logging.Manager",
+                "pathlib.WindowsPath",
                 "logging.RootLogger",
+                "fizzbuzz.fizzbuzz",
+                "logging.PlaceHolder",
+                "logging.Logger",
             },
             unified_test_coverage={
-                1423,
-                1425,
-                1427,
-                1428,
-                1429,
-                1430,
                 1431,
-                1432,
                 1433,
                 1435,
+                1436,
                 1437,
                 1438,
                 1439,
                 1440,
                 1441,
-                1442,
                 1443,
                 1445,
+                1446,
                 1447,
+                1448,
+                1449,
+                1450,
+                1451,
+                1453,
                 1455,
-                1456,
-                1457,
-                1458,
-                1459,
-                1460,
+                1463,
+                1464,
+                1465,
+                1466,
+                1467,
+                1468,
             },
             needs_pytest=False,
             callable_files={
@@ -320,9 +328,9 @@ ALL_METADATA = defaultdict(
 )
 
 
-# In sum, these tests covered 49.4% of auto_generate_tests's lines
+# In sum, these tests covered 50.62% of auto_generate_tests's lines
 # Line(s) not covered by ANY of the tests below:
-# ['2048-2049', '2051-2052', '2054', '2056-2057', '2059-2061', '2063', '2068', '2070', '2074', '2086-2087', '2091-2094', '2096', '2098', '2104-2110', '2121', '2125', '2127-2128', '2130-2135', '2137', '2139-2140', '2142-2144', '2147', '2149', '2154', '2156', '2158-2159', '2163-2165', '2169-2180', '2190', '2194', '2209', '2219-2220', '2222', '2227-2228', '2230-2231', '2251-2253', '2271-2272', '2274-2279', '2285-2286', '2288-2293', '1899', '1918-1923', '1925-1926', '1928-1929', '1939-1942', '1944-1949', '1951-1953', '1963-1964', '1977-1978', '1980', '1998', '2002-2003', '2005-2006', '2012-2013', '2015-2016', '2018-2019', '2026', '2029-2030', '2037', '2041-2047']
+# ['2049-2057', '2059-2060', '2062', '2064-2065', '2067-2069', '2071', '2076', '2078', '2082', '2094-2095', '2099-2102', '2104', '2106', '2112-2118', '2129', '2133', '2135-2136', '2138-2143', '2145', '2147-2148', '2150-2152', '2155', '2157', '2162', '2164', '2166-2167', '2171-2173', '2177-2188', '2198', '2202', '2217', '2227-2228', '2230', '2235-2236', '2238-2239', '2259-2261', '2279-2280', '2282-2287', '1907', '1926-1931', '1933-1934', '1936-1937', '1947-1950', '1952-1957', '1959-1961', '1971-1972', '1985-1986', '1988', '2006', '2010-2011', '2013-2014', '2020-2021', '2023-2024', '2026-2027', '2034', '2037-2038']
 @pytest.mark.parametrize(
     "function_metadata, state, function_name, source_file, tests_dir, outdir, indent_size, expected_result, args_after, globals_before",
     [
@@ -332,21 +340,21 @@ ALL_METADATA = defaultdict(
                 parameter_names=["obj", "this_global", "phase", "this_coverage_info"],
                 is_method=False,
                 lines=[
-                    1599,
-                    1600,
-                    1601,
-                    1602,
-                    1603,
-                    1604,
-                    1605,
                     1607,
+                    1608,
+                    1609,
+                    1610,
+                    1611,
+                    1612,
+                    1613,
                     1615,
-                    1616,
-                    1617,
-                    1618,
-                    1619,
+                    1623,
+                    1624,
+                    1625,
+                    1626,
+                    1627,
                 ],
-                non_code_lines={1606, 1608, 1609, 1610, 1611, 1612, 1613, 1614},
+                non_code_lines={1614, 1616, 1617, 1618, 1619, 1620, 1621, 1622},
                 global_vars_read_from={"logger"},
                 global_vars_written_to=set(),
                 source_file=WindowsPath(
@@ -374,7 +382,7 @@ ALL_METADATA = defaultdict(
                         globals_after={},
                         expected_result="CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
                         expected_type="src.unit_test_generator.CoverageInfo",
-                        coverage=[1599, 1602, 1607, 1615, 1616, 1619],
+                        coverage=[1607, 1610, 1615, 1623, 1624, 1627],
                         exception_type="",
                         exception_message="",
                         constructor="",
@@ -383,14 +391,14 @@ ALL_METADATA = defaultdict(
                 },
                 coverage_percentage=46.15,
                 types_in_use={
-                    "logging.PlaceHolder",
-                    "logging.Manager",
                     "logging.StreamHandler",
                     "logging.RootLogger",
-                    "src.unit_test_generator.CoverageInfo",
                     "logging.Logger",
+                    "src.unit_test_generator.CoverageInfo",
+                    "logging.Manager",
+                    "logging.PlaceHolder",
                 },
-                unified_test_coverage={1602, 1607, 1615, 1616, 1619, 1599},
+                unified_test_coverage={1607, 1610, 1615, 1623, 1624, 1627},
                 needs_pytest=False,
                 callable_files={
                     "update_global": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
@@ -418,7 +426,7 @@ ALL_METADATA = defaultdict(
                     globals_after={},
                     expected_result="CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
                     expected_type="src.unit_test_generator.CoverageInfo",
-                    coverage=[1599, 1602, 1607, 1615, 1616, 1619],
+                    coverage=[1607, 1610, 1615, 1623, 1624, 1627],
                     exception_type="",
                     exception_message="",
                     constructor="",
@@ -434,8 +442,8 @@ ALL_METADATA = defaultdict(
             2,
             "252acc6c11e8af0020608482027ff01a094facec4dddd6c5b97a134d630b6692",
             {
-                "function_metadata": "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1599, 1600, 1601, 1602, 1603, 1604, 1605, 1607, 1615, 1616, 1617, 1618, 1619], non_code_lines={1606, 1608, 1609, 1610, 1611, 1612, 1613, 1614}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'364dbab6e996d2b07a239c6ce2e2df688159375398cc8e1cb47de9677b4e0af4': CoverageInfo(args_before=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], args_after=OrderedDict([('this_coverage_info', \"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\")]), kwargs={}, kwargs_after=OrderedDict(), globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1599, 1602, 1607, 1615, 1616, 1619], exception_type='', exception_message='', constructor='', cost=0.0)}, coverage_percentage=46.15, types_in_use={'logging.PlaceHolder', 'logging.Manager', 'logging.StreamHandler', 'logging.RootLogger', 'src.unit_test_generator.CoverageInfo', 'logging.Logger'}, unified_test_coverage={1602, 1607, 1615, 1616, 1619, 1599}, needs_pytest=False, callable_files={'update_global': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\src\\\\unit_test_generator.py'})",
-                "state": "{'364dbab6e996d2b07a239c6ce2e2df688159375398cc8e1cb47de9677b4e0af4': CoverageInfo(args_before=['\"fizzbuzz\"', '\"mode\"', '\"Before\"', \"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], args_after={'this_coverage_info': \"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"}, kwargs={}, kwargs_after=OrderedDict(), globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1599, 1602, 1607, 1615, 1616, 1619], exception_type='', exception_message='', constructor='', cost=0.0)}",
+                "function_metadata": "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1607, 1608, 1609, 1610, 1611, 1612, 1613, 1615, 1623, 1624, 1625, 1626, 1627], non_code_lines={1614, 1616, 1617, 1618, 1619, 1620, 1621, 1622}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'364dbab6e996d2b07a239c6ce2e2df688159375398cc8e1cb47de9677b4e0af4': CoverageInfo(args_before=['\"fizzbuzz\"','\"mode\"','\"Before\"',\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], args_after=OrderedDict([('this_coverage_info', \"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\")]), kwargs={}, kwargs_after=OrderedDict(), globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1607, 1610, 1615, 1623, 1624, 1627], exception_type='', exception_message='', constructor='', cost=0.0)}, coverage_percentage=46.15, types_in_use={'logging.StreamHandler', 'logging.RootLogger', 'logging.Logger', 'src.unit_test_generator.CoverageInfo', 'logging.Manager', 'logging.PlaceHolder'}, unified_test_coverage={1607, 1610, 1615, 1623, 1624, 1627}, needs_pytest=False, callable_files={'update_global': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\src\\\\unit_test_generator.py'})",
+                "state": "{'364dbab6e996d2b07a239c6ce2e2df688159375398cc8e1cb47de9677b4e0af4': CoverageInfo(args_before=['\"fizzbuzz\"','\"mode\"','\"Before\"',\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"], args_after={'this_coverage_info': \"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\"}, kwargs={}, kwargs_after=OrderedDict(), globals_before={}, globals_after={}, expected_result=\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\", expected_type='src.unit_test_generator.CoverageInfo', coverage=[1607, 1610, 1615, 1623, 1624, 1627], exception_type='', exception_message='', constructor='', cost=0.0)}",
                 "source_file": "WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py')",
                 "tests_dir": "WindowsPath('.')",
                 "outdir": "WindowsPath('.')",

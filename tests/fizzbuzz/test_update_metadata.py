@@ -2,18 +2,25 @@
 Programmatically generated test function for update_metadata()
 """
 
+import re
 import pytest
 from fizzbuzz import fizzbuzz
 from src import unit_test_generator
 
 # Now import modules specific to update_metadata:
 from src.unit_test_generator import FunctionMetaData
+from logging import Logger
+from logging import StreamHandler
+from logging import RootLogger
+from fizzbuzz import fizzbuzz
+from logging import Manager
 from pathlib import WindowsPath
+from logging import PlaceHolder
 
 
 # In sum, these tests covered 64.1% of update_metadata's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1424', '1436', '1448-1454', '1461-1462']
+# ['1432', '1444', '1456-1462', '1469-1470']
 @pytest.mark.parametrize(
     "f, this_metadata, expected_result, args_after",
     [
