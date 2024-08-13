@@ -4,39 +4,32 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      58,
-      59,
-      58
+      70,
+      71,
+      70
    ],
    "non_code_lines": [],
    "coverage_io": {
-      "0fd18db6fbcfc6b614c39b871e7527dbcbd465f057e8605da775492cd4ac8d3e": {
+      "1b177cafdf940e50d12724a764cb0cc7f839f27de1ee0db42ea6c73ab23f1ac6": {
          "args_before": [],
          "args_after": {},
          "kwargs": {
             "my_set": [
                0,
-               1,
                2,
                3
             ]
          },
          "kwargs_after": {
-            "my_set": [
-               0,
-               1,
-               2,
-               3,
-               5
-            ]
+            "my_set": "{0, 1, 2, 3}"
          },
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            58,
-            59
+            70,
+            71
          ],
          "exception_type": "",
          "exception_message": "",
@@ -49,8 +42,8 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      58,
-      59
+      70,
+      71
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

@@ -4,9 +4,10 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      49,
-      50,
-      49
+      60,
+      61,
+      62,
+      60
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -20,19 +21,16 @@
             ]
          },
          "kwargs_after": {
-            "my_list": [
-               0,
-               3,
-               1
-            ]
+            "my_list": "[0, 3, 1, ClassForTesting('test')]"
          },
          "globals_before": {},
          "globals_after": {},
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            49,
-            50
+            60,
+            61,
+            62
          ],
          "exception_type": "",
          "exception_message": "",
@@ -40,13 +38,16 @@
          "cost": 0.0
       }
    },
-   "coverage_percentage": 66.67,
-   "types_in_use": [],
+   "coverage_percentage": 75.0,
+   "types_in_use": [
+      "__main__.ClassForTesting"
+   ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      49,
-      50
+      60,
+      61,
+      62
    ],
    "needs_pytest": false,
    "exceptions_raised": [],
