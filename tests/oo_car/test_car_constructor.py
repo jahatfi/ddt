@@ -4,6 +4,7 @@ Programmatically generated test function for Car.__init__()
 
 import re
 import pytest
+from collections import OrderedDict
 from tests.oo_car import car
 
 

@@ -4,6 +4,7 @@ Programmatically generated test function for Car.is_going_faster_than()
 
 import re
 import pytest
+from collections import OrderedDict
 from tests.oo_car import car
 
 # Now import modules specific to Car.is_going_faster_than:

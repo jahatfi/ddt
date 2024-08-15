@@ -1,0 +1,62 @@
+{
+   "name": "generate_all_tests_and_metadata_helper",
+   "parameter_names": [
+      "local_all_metadata",
+      "function_names",
+      "outdir",
+      "tests_dir",
+      "ext"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      1546,
+      1547,
+      1548,
+      1549,
+      1554,
+      1555,
+      1556,
+      1557,
+      1558,
+      1559,
+      1560,
+      1561,
+      1558,
+      1556,
+      1563,
+      1564,
+      1565,
+      1566,
+      1567,
+      1568,
+      1569,
+      1570,
+      1571,
+      1572,
+      1566,
+      1573,
+      1574
+   ],
+   "non_code_lines": [
+      1550,
+      1551,
+      1552,
+      1553,
+      1562
+   ],
+   "coverage_io": {},
+   "coverage_percentage": 0.0,
+   "types_in_use": [],
+   "global_vars_read_from": [
+      "FunctionMetaDataEncoder",
+      "logger"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "generate_all_tests_and_metadata_helper": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\src\\unit_test_generator.py"
+   }
+}

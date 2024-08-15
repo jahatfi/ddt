@@ -4,14 +4,15 @@ Programmatically generated test function for append_list()
 
 import re
 import pytest
-import pass_by_assignment
+from collections import OrderedDict
+from tests.pass_by_assignment import pass_by_assignment
 
 # Now import modules specific to append_list:
-from logging import PlaceHolder
-from logging import StreamHandler
 from logging import Logger
-from logging import Manager
+from logging import StreamHandler
+from logging import PlaceHolder
 from logging import RootLogger
+from logging import Manager
 
 
 # In sum, these tests covered 100.0% of append_list's lines

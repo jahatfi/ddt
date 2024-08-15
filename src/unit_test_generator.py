@@ -65,7 +65,7 @@ logger.setLevel(logging.DEBUG)
 
 recursion_depth_per_decoratee: dict[str, int] = defaultdict(int)
 
-def fullname(o:object):
+def fullname(o:object)->str:
     """
     Return the "Fully Qualified Name (FQN) of a provided Python
     object. Copied on 21 jAN 2024 directly from Greg Bacon's answer on
@@ -155,14 +155,14 @@ class CoverageInfo:
     constructor: str = ""
     cost:float = 0.0
 
-    def repr(self):
+    def repr(self)->str:
         """
         This function represents  CoverageInfo as a string that
         is valid Python code.  This string can be used to re-create
         the object in Python.
         """
         args_before_repr = [repr(x) for x in self.args_before]
-        for i, arg_before_repr in enumerate(args_before_repr):
+        for i in range(len(args_before_repr)):
             #if "<function" in arg_before_repr:
             #    logger.critical(f"{arg_before_repr=} {inspect.getmembers(self.args_before[i])=}")
             args_before_repr[i] = re.sub(r"(<function.*__init__ at 0x[0-9a-fA-F]+>)", r"'\1'", args_before_repr[i])
@@ -181,9 +181,9 @@ class CoverageInfo:
         result.append(" constructor="+repr(self.constructor).replace('\"', "\""))
         result.append(" cost="+repr(self.cost)+')')
 
-        result = ','.join(result)
-        logger.debug("result=%s", result)
-        return result
+        result_str:str = ','.join(result)
+        logger.debug("result=%s", result_str)
+        return result_str
 
     def __repr__(self) -> str:
         """
@@ -201,7 +201,6 @@ class CoverageInfo:
         """
         result = ["CoverageInfo("]
         result.append("args_before="+repr(self.args_before))
-        logger.critical(f"{result=}")
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
         result.append(" kwargs_after="+repr(self.kwargs_after))
@@ -288,7 +287,7 @@ class FunctionMetaData(Jsonable):
         else:
             self.callable_files = callable_files
 
-    def update_lines(self, lines: List[int]):
+    def update_lines(self, lines: List[int])->None:
         """
         Assigns the provided List of ints (line numbers) to "lines"
         property of this class.
@@ -297,7 +296,7 @@ class FunctionMetaData(Jsonable):
         self.lines = lines
         self.non_code_lines = self.return_non_code_lines()
 
-    def percent_covered(self, precision:int=2):
+    def percent_covered(self, precision:int=2)-> float:
         """
         Compute and return percent of covered lines,
         rounded to 'precision' digits.
@@ -325,7 +324,7 @@ class FunctionMetaData(Jsonable):
         return result
 
 
-    def __str__(self):
+    def __str__(self)->str:
         return f"{self.name}:\n{self.lines=}\n"
 
     def return_non_code_lines(self)->Set[int]:
@@ -375,7 +374,7 @@ class FunctionMetaData(Jsonable):
         """
         return self.repr()
 
-    def purge_record(self, hash_key):
+    def purge_record(self, hash_key)->None:
         """
         Delete IO record with this hashed_input as key
         NOTE: Need to add "update_types_in_use" method and convert
@@ -396,14 +395,14 @@ class FunctionMetaData(Jsonable):
         return _default(self)
 
     # https://stackoverflow.com/questions/3768895
-    def to_json(self):
+    def to_json(self)->str:
         """
         Convert this class to a json-string
         """
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
 
-    def __eq__(self, other):
+    def __eq__(self, other)-> bool:
         """
         Return True if and only if the two FunctionMetaData class are identical,
         doesn't compare private variables.
@@ -538,8 +537,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 # If this is the first time this func has been called,
                 # disassemble it to get the lines and global variables
                 if function_name not in all_metadata:
-                    logger.debug("%s func.__name__=%s (type(func)=%s) not in %s; getting byte code\n",
-                                     function_name, func.__name__, type(func), all_metadata.keys())
+                    logger.debug("First call to %s getting byte code\n", function_name)
 
                     # Using single var names ('x', 'y') to keep lines short
                     parameters = inspect.getfullargspec(func)[0]
@@ -600,6 +598,11 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
 
 pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign, assignment]
 
+# NOTE: Can't self-test this as easily as the others.
+# This is because it produces an import
+# string relative to this file, not the file under test.
+# To test it, move the test_get_module_import_string.py
+# to the same folder as this file.
 def get_module_import_string(my_path:Path)->str:
     """
     Given a module, return a dotted import string, the
@@ -630,7 +633,8 @@ def get_module_import_string(my_path:Path)->str:
 
     return this_type
 
-def get_class_import_string(arg:typing.Any):
+#@unit_test_generator_decorator(sample_count=1)
+def get_class_import_string(arg:typing.Any)->str:
     """
     Given a class, return a dotted import string, the
     fully qualified name to that class, e.g.
@@ -656,7 +660,8 @@ def get_class_import_string(arg:typing.Any):
 
     return this_type
 
-def get_method_class_import_string(arg:typing.Any):
+@unit_test_generator_decorator(sample_count=1)
+def get_method_class_import_string(arg:typing.Any)->str:
     """
     Given a method, return a dotted import string, the
     fully qualified name to its class, e.g.
@@ -681,6 +686,7 @@ def get_method_class_import_string(arg:typing.Any):
 
     return this_type
 
+@unit_test_generator_decorator(sample_count=1)
 def convert_file_to_import(start:Path, my_path:str)->str:
     """"
     Given a file, return it as a relative dotted string,
@@ -696,7 +702,7 @@ def convert_file_to_import(start:Path, my_path:str)->str:
     return result
 
 @unit_test_generator_decorator(percent_coverage=0, sample_count=1)
-def sorted_set_repr(obj: set):
+def sorted_set_repr(obj: set)->str:
     """
     I want sets to appear sorted when initialized in unit tests.
     Thus function does just that.
@@ -716,7 +722,7 @@ pp = pprint.PrettyPrinter(indent=3)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.CRITICAL)
 
-def get_filename(arg:str):
+def get_filename(arg:str)->str:
     """
     Returns the name of this Python module if valid,
     else returns the empty string.
@@ -751,7 +757,7 @@ def get_all_types(loc: str,
 
 
     if recursion_depth > 2:
-        logger.debug(f"{recursion_depth=} Returning due to max R.D. {type(obj)=}")
+        logger.debug("%d Returning due to max R.D. %s", recursion_depth, type(obj))
         return set()
     all_types: set[str] = set()
     type_str = str(type(obj))
@@ -779,9 +785,11 @@ def get_all_types(loc: str,
                          recursion_depth, obj.__module__)
             return set([f"{obj.__module__}.{obj.__name__}"])
         if import_modules:
-            logger.debug("RD: %d %s %s missing __code__ < I need this module!", recursion_depth, loc, obj)
+            logger.debug("RD: %d %s %s missing __code__ < I need this module!",
+                         recursion_depth, loc, obj)
         else:
-            logger.debug("RD: %d %s type_str=%s < I need this FQDN!", recursion_depth, loc, type_str)
+            logger.debug("RD: %d %s type_str=%s < I need this FQDN!",
+                         recursion_depth, loc, type_str)
 
     # pylint: disable-next=too-many-nested-blocks
     elif "." in type_str:
@@ -799,7 +807,7 @@ def get_all_types(loc: str,
                     all_types |= get_all_types("60",
                                                 v,
                                                 import_modules,
-                                                recursion_depth+1)  
+                                                recursion_depth+1)
                     if isinstance(v, dict):
                         logger.debug("Adding %s:%s from composite dict",
                                      k, type(v))
@@ -907,7 +915,9 @@ class ArgsIteratorClass():
         self.class_type: str = class_type
         self.this_metadata: FunctionMetaData = this_metadata
 
-    def args_iterator(self, mode:str="Before", which_args="args"):
+    def args_iterator(self,
+                      mode:str="Before",
+                      which_args="args")->None:
         """
         Parse arguments to the function provided,
         caching their values
@@ -923,7 +933,9 @@ class ArgsIteratorClass():
             sys.exit(1)
         self.iterator_helper(args_dict, which_args, mode)
 
-    def iterator_helper(self, args_dict: dict[str, Any], which_args, mode:str="Before"):
+    def iterator_helper(self,
+                        args_dict: dict[str, Any],
+                        which_args, mode:str="Before")->None:
         """
         Parse arguments to the function provided, caching their values
         """
@@ -1378,7 +1390,7 @@ class Capturing(list):
         self._stdout = sys.stdout
         sys.stdout = self._stringio = StringIO()
         return self
-    def __exit__(self, *args):
+    def __exit__(self, *args)->None:
         self.extend(self._stringio.getvalue().splitlines())
         del self._stringio    # free up some memory
         sys.stdout = self._stdout
@@ -1402,7 +1414,8 @@ def capture(f):
     return captured
 
 # Decorating yields recursion exception
-def is_global_var(this_global:str, function_globals:dict, function_name:str):
+#@unit_test_generator_decorator(sample_count=1)
+def is_global_var(this_global:str, function_globals:dict, function_name:str)-> bool:
     """
     Not all global "variables" LOADed are relevant, some are just
     imported modules (e.g. os, sys, re, etc). Given a the name of a
@@ -1420,8 +1433,8 @@ def is_global_var(this_global:str, function_globals:dict, function_name:str):
         logger.debug("Got import for %s this_global=%s", function_name, this_global)
     return is_variable
 
-@unit_test_generator_decorator(sample_count=1)
-def update_metadata(f: Callable, this_metadata: FunctionMetaData):
+#@unit_test_generator_decorator(sample_count=1)
+def update_metadata(f: Callable, this_metadata: FunctionMetaData)->None:
     """
     Given a function, returns three sets:
     1. a set of the line numbers of this function's source code
@@ -1471,7 +1484,7 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData):
     #return this_metadata
 
 @unit_test_generator_decorator(sample_count=1)
-def count_objects(obj: typing.Any):
+def count_objects(obj: typing.Any)->int:
     """
     Given a Python object, e.g. a number, string, list, list of lists,
     list of dictionaries of sets ...
@@ -1511,7 +1524,7 @@ def count_objects(obj: typing.Any):
     return count
 
 
-
+@unit_test_generator_decorator(sample_count=1)
 def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, typing.Any],
                                             function_names:list[str],
                                             outdir:Path,
@@ -1645,6 +1658,7 @@ def normalize_arg(arg:typing.Any)->typing.Any:
         arg = arg[1:-1]
     return arg
 
+@unit_test_generator_decorator(sample_count=1)
 def normalize_string(arg:str)->str:
     """
     Return canonical representation of string
@@ -1758,7 +1772,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     return result
 
 # pylint: disable=too-many-locals,too-many-branches
-@unit_test_generator_decorator(sample_count=1)
+#@unit_test_generator_decorator(sample_count=1)
 def meta_program_function_call( this_state:CoverageInfo,
                                 tab:str,
                                 package,
@@ -1884,7 +1898,7 @@ def meta_program_function_call( this_state:CoverageInfo,
     return list_of_lines
 
 
-@unit_test_generator_decorator(sample_count=1)
+#@unit_test_generator_decorator(sample_count=1)
 # pylint: disable-next=too-many-statements,too-many-locals,too-many-branches,too-many-arguments
 def auto_generate_tests(function_metadata:FunctionMetaData,
                         state:dict[str, CoverageInfo],
@@ -1902,7 +1916,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     """
     outdir = outdir.absolute()
     tests_dir = tests_dir.absolute()
-    imports = ["import re\n","import pytest\n"]
+    imports = ["import re\n",
+               "import pytest\n",
+               "from collections import OrderedDict\n"]
     if function_name == "meta_program_function_call":
         imports.append("from collections import OrderedDict\n")
 
@@ -1949,7 +1965,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             k = k[:-11]
             header.append(f"{k.upper()} = {(repr(eval(v)))[1:-1]}\n")
         else:
-            logger.debug(f"{k=}")
+            logger.debug("k=%s", k)
             repr_v = repr(v)
             class_name_matcher = re.match(r"defaultdict\(<class '([^']+)'>", repr_v)
             if bool(class_name_matcher):
@@ -2038,7 +2054,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         "# Monkeypatch here"
                     ]
     for hash_key in sorted(state):
-        globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items() if k not in constant_globals_before}
+        globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()
+                           if k not in constant_globals_before}
         globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}
         new_params = []
         if is_method and "__init__" not in function_name:
