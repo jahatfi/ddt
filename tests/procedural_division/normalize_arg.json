@@ -6,19 +6,19 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1636,
-      1637,
-      1638,
-      1639,
-      1640,
-      1641,
-      1643,
-      1644,
-      1645,
-      1646
+      1649,
+      1650,
+      1651,
+      1652,
+      1653,
+      1654,
+      1656,
+      1657,
+      1658,
+      1659
    ],
    "non_code_lines": [
-      1642
+      1655
    ],
    "coverage_io": {
       "9d9eead80c3c0d57b0b652af888646c9aba643252734dff380448d4eaceb2400": {
@@ -33,12 +33,12 @@
          "expected_result": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
          "expected_type": "str",
          "coverage": [
-            1636,
-            1637,
-            1638,
-            1640,
-            1643,
-            1646
+            1649,
+            1650,
+            1651,
+            1653,
+            1656,
+            1659
          ],
          "exception_type": "",
          "exception_message": "",
@@ -51,12 +51,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1636,
-      1637,
-      1638,
-      1640,
-      1643,
-      1646
+      1649,
+      1650,
+      1651,
+      1653,
+      1656,
+      1659
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

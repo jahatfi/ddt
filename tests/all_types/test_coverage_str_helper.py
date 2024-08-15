@@ -4,31 +4,24 @@ Programmatically generated test function for coverage_str_helper()
 
 import re
 import pytest
+from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to coverage_str_helper:
-from logging import RootLogger
-from logging import StreamHandler
 from logging import Logger
-from logging import Manager
+from logging import StreamHandler
+from logging import RootLogger
 from logging import PlaceHolder
+from logging import Manager
 
 
-# In sum, these tests covered 78.12% of coverage_str_helper's lines
+# In sum, these tests covered 37.5% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1667', '1678', '1692-1693', '1696-1697']
+# ['1681', '1687-1695', '1697-1700', '1702-1704', '1706-1707']
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, args_after",
     [
-        (
-            [1432, 1444, 1453, 1456, 1457, 1458, 1459, 1460, 1461, 1462, 1469, 1470],
-            {1442, 1434, 1452, 1454},
-            "['1432', '1444', '1453', '1456-1462', '1469-1470']",
-            {
-                "this_list": "[1432, 1444, 1453, 1456, 1457, 1458, 1459, 1460, 1461, 1462, 1469, 1470]",
-                "non_code_lines": "{1442, 1434, 1452, 1454}",
-            },
-        ),
+        ([30], {35}, "[30]", {"this_list": "[30]", "non_code_lines": "{35}"}),
     ],
 )
 def test_coverage_str_helper(this_list, non_code_lines, expected_result, args_after):
