@@ -577,26 +577,13 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 return do_the_decorator_thing(func, function_name, this_metadata,
                                               str(source_file), keep_subsets,
                                               *args, **kwargs)
+            except AttributeError as e1:
+                raise e1
             except Exception as e:
-                logger.warning("e=%s", e)
+                logger.critical("e=%s", e)
                 raise e
         return unit_test_generator_decorator_inner
     return actual_decorator
-
-def _pandas_df_repr(df: pd.DataFrame)->str:
-    '''
-    Sadly, the 'repr' method for Pandas DataFrames does not work the
-    same as 'repr' for built-in types.  Specifically, while 'repr' on
-    built-in types (strings, lists, dicts, etc) produces valid Python
-    code that can be instantly used to re-create the original object,
-    this is not true of Pandas DataFrames, which are instead pretty
-    printed as a table.  The best alternative for non-empty dataframes is
-    https://stackoverflow.com/questions/67845199 by user Silveri
-    Overwrite the native Pandas DataFram repr() method with that approach.
-    '''
-    return f"DataFrame.from_dict({df.to_dict()})"
-
-pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign, assignment]
 
 # NOTE: Can't self-test this as easily as the others.
 # This is because it produces an import
@@ -1023,13 +1010,16 @@ class ArgsIteratorClass():
                     try:
                         class_repr = arg.repr()
                         logger.debug("%s, class_repr = %s", e, class_repr)
-                    except AttributeError as e2:
+                    except AttributeError:
                         # skip on error
-                        logger.error("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
-                                    class_repr, type(e2), function_name, arg, e2, arg)
-                        logger.error(arg.__repr__)
-                        all_metadata[function_name] = self.this_metadata
-                        raise e2
+                        try:
+                            class_repr = repr(arg)
+                        except Exception as e2:
+                            logger.critical("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
+                                        class_repr, type(e2), function_name, arg, e2, arg)
+                            logger.error(arg.__repr__)
+                            all_metadata[function_name] = self.this_metadata
+                            raise e2
 
                 except NameError as e:
                     # What's going on here?
@@ -1237,8 +1227,13 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     #hash_keys.add(hash_keys)
 
     # There is only one file in cov_report_['files']
-    assert len(cov_report_['files']) == 1
-    this_coverage:Set[int] = set(cov_report_['files'].popitem()[1]['executed_lines'])
+    this_file_name = Path(inspect.getabsfile(func)).name
+    for key in cov_report_['files'].keys():
+        if key.endswith(this_file_name):
+            this_file_name = key
+            break
+    #assert len(cov_report_['files']) == 1
+    this_coverage:Set[int] = set(cov_report_['files'][this_file_name]['executed_lines'])
     #assert this_coverage & set(this_metadata.lines)
     this_coverage &= set(this_metadata.lines)
     #logger.critical("this_coverage=%s", this_coverage)
@@ -1596,6 +1591,7 @@ def generate_all_tests_and_metadata(outdir:Path,
     file and called by generate_all_tests_and_metadata_helper()
     """
     for phase in ["Before", "After"]:
+        logger.critical(phase.center(80, "-"))
         logger.debug("phase=%s", phase)
         #pp.pprint(all_metadata)
 
@@ -1914,6 +1910,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     to lists of strings, these lists of strings are evenutally
     written to a file, one per decorated function.
     """
+    print(f"Auto-generating test for {function_name}...")
     outdir = outdir.absolute()
     tests_dir = tests_dir.absolute()
     imports = ["import re\n",
@@ -2279,6 +2276,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     parameterization_list[-1] += "])\n"
     docstring = f'\"\"\"\nProgrammatically generated test function for {function_name}()\n\"\"\"'
+    print(f"Creating {result_file}...")
     with open(result_file, "w", encoding="utf-8") as st:
         st.write(docstring+"\n")
         for item in [imports, header, parameterization_list]:
