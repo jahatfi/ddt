@@ -928,22 +928,21 @@ class ArgsIteratorClass():
         """
         function_name = self.this_metadata.name
         for arg_i, (arg_name, arg) in enumerate(args_dict.items()):#zip(self.args, self.this_metadata.parameter_names)):
-
-            if mode == "after" and id(arg) != self.args_addresses[arg_name]:
-             #   logger.error(f"{function_name=} {dir(arg)=}")
-                logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
-                continue
+            if mode == "after":
+                if id(arg) != self.args_addresses[arg_name]:
+                #   logger.error(f"{function_name=} {dir(arg)=}")
+                    logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
+                    continue
+                if isinstance(arg, (int, str, float)):
+                    logger.info("After: Skip it!")
+                    continue
+                if callable(arg):
+                    continue
             # Do not include the first arg of a method (it's "self")
             # in the argument list
             logger.info("Arg #%d: %s", arg_i, arg_name)
             if self.this_metadata.is_method and arg_i == 0:
                 continue
-            if mode == "After" and isinstance(arg, (int, str, float)):
-                logger.info("After: Skip it!")
-                continue
-            if mode == "After" and callable(arg):
-                continue
-
             if (
                     callable(arg) and inspect.isfunction(arg) and
                     "." in arg.__qualname__ and arg.__qualname__[0].isupper()
@@ -995,6 +994,7 @@ class ArgsIteratorClass():
                 class_repr = repr(arg)
                 if "object at 0x" in class_repr:
                     class_repr = arg.repr()
+                    class_repr = normalize_defaultdict_repr(class_repr)
                 try:
                     logger.debug(class_repr)
                     # This eval is necessary to check if classes can in fact
@@ -1009,11 +1009,21 @@ class ArgsIteratorClass():
                 except SyntaxError as e:
                     try:
                         class_repr = arg.repr()
-                        logger.debug("%s, class_repr = %s", e, class_repr)
+                        class_repr = normalize_defaultdict_repr(class_repr)
+                        if which_args == "args":
+                            self.args_copy[arg_name] = class_repr
+                        else:
+                            self.kwargs_copy[arg_name] = class_repr
+                        logger.critical("%s, class_repr = %s", e, class_repr)
                     except AttributeError:
                         # skip on error
                         try:
                             class_repr = repr(arg)
+                            class_repr = normalize_defaultdict_repr(class_repr)
+                            if which_args == "args":
+                                self.args_copy[arg_name] = class_repr
+                            else:
+                                self.kwargs_copy[arg_name] = class_repr                            
                         except Exception as e2:
                             logger.critical("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
                                         class_repr, type(e2), function_name, arg, e2, arg)
@@ -1029,7 +1039,7 @@ class ArgsIteratorClass():
                     # can import it later; now we simply record it as one of
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
-                    logger.debug("%s: class_repr=%s arg=%s",
+                    logger.critical("%s: class_repr=%s arg=%s",
                                     function_name, class_repr, arg)
                     #this_coverage_info.constructor = copy.deepcopy(class_repr)
                     if which_args == "args":
@@ -1037,6 +1047,7 @@ class ArgsIteratorClass():
                     else:
                         self.kwargs_copy[arg_name] = class_repr
             else:
+                logger.critical(f"{arg_name=} {mode=} 3")
                 if which_args == "args":
                     self.args_copy[arg_name] = repr(arg)
                 else:
@@ -1893,6 +1904,15 @@ def meta_program_function_call( this_state:CoverageInfo,
             list_of_lines.append(f"{indent}assert result.{name} == {name}\n")
     return list_of_lines
 
+def normalize_defaultdict_repr(repr_value:str)->str:
+    class_name_matcher = re.match(r"defaultdict\(<class '([^']+)'>", repr_value)
+    if bool(class_name_matcher):
+        class_name = class_name_matcher.groups()[0].split('.')[-1]
+        logger.debug(class_name)
+
+    result = re.sub(r"^(defaultdict\()(<class ')(([^']+\.)?)(?P<this_capture>[^']+)'>", r"\1\g<this_capture>",repr_value)
+    logger.debug(f"{repr_value=}")
+    return result
 
 #@unit_test_generator_decorator(sample_count=1)
 # pylint: disable-next=too-many-statements,too-many-locals,too-many-branches,too-many-arguments
@@ -1963,14 +1983,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             header.append(f"{k.upper()} = {(repr(eval(v)))[1:-1]}\n")
         else:
             logger.debug("k=%s", k)
-            repr_v = repr(v)
-            class_name_matcher = re.match(r"defaultdict\(<class '([^']+)'>", repr_v)
-            if bool(class_name_matcher):
-                class_name = class_name_matcher.groups()[0].split('.')[-1]
-                logger.debug(class_name)
-
-            repr_v = re.sub(r"^(defaultdict\()(<class ')(([^']+\.)?)(?P<this_capture>[^']+)'>", r"\1\g<this_capture>",repr_v)
-            logger.debug(f"{repr_v=}")
+            repr_v = repr(v)            
+            repr_v = normalize_defaultdict_repr(repr_v)
             header.append(f"{k.upper()} = {repr_v}\n")
 
 
