@@ -154,6 +154,12 @@ class CoverageInfo:
     exception_message: str = ""
     constructor: str = ""
     cost:float = 0.0
+    # Some records can't be tested, e.g. due to invalid repr() methods like
+    # the logging.Logger instance (a logger instance cannot be completely
+    # re-created via a constructor).  Such untestable records can still be
+    # recorded in a JSON file.  Set the "testable" flag to "False"
+    # for such invalid records.
+    testable:bool = True
 
     def repr(self)->str:
         """
@@ -166,7 +172,7 @@ class CoverageInfo:
             #if "<function" in arg_before_repr:
             #    logger.critical(f"{arg_before_repr=} {inspect.getmembers(self.args_before[i])=}")
             args_before_repr[i] = re.sub(r"(<function.*__init__ at 0x[0-9a-fA-F]+>)", r"'\1'", args_before_repr[i])
-        result = ["CoverageInfo(args_before=["+','.join(args_before_repr)+"]"]#repr(self.args_before)]
+        result = ["CoverageInfo(args_before=["+','.join(args_before_repr)+"]"]
         #logger.critical(f"{result=}")
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
@@ -179,10 +185,11 @@ class CoverageInfo:
         result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('\"', "\""))
-        result.append(" cost="+repr(self.cost)+')')
+        result.append(" cost="+repr(self.cost))
+        result.append(" testable="+repr(self.cost)+')')
 
         result_str:str = ','.join(result)
-        logger.debug("result=%s", result_str)
+        #logger.debug("result=%s", result_str)
         return result_str
 
     def __repr__(self) -> str:
@@ -211,7 +218,9 @@ class CoverageInfo:
         result.append(" coverage="+repr(self.coverage))
         result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
-        result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
+        result.append(" constructor="+repr(self.constructor).replace('"', "\""))
+        result.append(" cost="+repr(self.cost))
+        result.append(" testable="+repr(self.cost)+')')
 
         result_str = ','.join(result)
         logger.debug("result=%s", result_str)
@@ -363,7 +372,7 @@ class FunctionMetaData(Jsonable):
         result.append(" needs_pytest="+repr(self.needs_pytest))
         result.append(" callable_files="+repr(self.callable_files)+')')
         result_str = ','.join(result)
-        logger.debug("result=%s", result_str)
+        #logger.debug("result=%s", result_str)
         return result_str
 
     def __repr__(self) -> str:
@@ -509,9 +518,12 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
             # A -> B -> A # Does not apply to decorator in 2nd call to A
             for f in inspect.stack()[::-1]:
                 this_frame = inspect.getframeinfo(f[0])
+                #logger.critical("--->"*fi+this_frame.function)
                 function_calls[this_frame.function] += 1
 
             max_func_call_vals = max(function_calls.values())
+            logger.debug("max_func_call_vals=%s, recursion_depth_per_decoratee=%s",
+                         max_func_call_vals, recursion_depth_per_decoratee)
             if function_name not in recursion_depth_per_decoratee:
                 recursion_depth_per_decoratee[function_name] = max_func_call_vals
 
@@ -570,15 +582,17 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                     # do NOT try/catch/raise any exceptions.
                     return func(*args, **kwargs)
 
-                # percent_coverage or saple_count properly specified, but
+                # percent_coverage or sample_count properly specified, but
                 # desired coverage/samples not yet achieved
                 # so apply the decorator
                 logger.info("Decorate %s", function_name)
                 return do_the_decorator_thing(func, function_name, this_metadata,
                                               str(source_file), keep_subsets,
                                               *args, **kwargs)
+            except AttributeError as e1:
+                raise e1
             except Exception as e:
-                logger.warning("e=%s", e)
+                logger.critical("e=%s", e)
                 raise e
         return unit_test_generator_decorator_inner
     return actual_decorator
@@ -597,6 +611,7 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
     return f"DataFrame.from_dict({df.to_dict()})"
 
 pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign, assignment]
+
 
 # NOTE: Can't self-test this as easily as the others.
 # This is because it produces an import
@@ -746,7 +761,8 @@ def get_all_types(loc: str,
     """
     # If primitive type, add an immediately return
     if not isinstance(obj, (int, set, str, dict, str, list, float)):
-        logger.debug("RD: %d type(obj)=%s", recursion_depth, type(obj))
+        pass
+        #logger.debug("RD: %d type(obj)=%s", recursion_depth, type(obj))
     if not obj:
         return set()
     parsed_type_match = re.match("<class '([^']+)'>", str(type(obj)))
@@ -757,7 +773,7 @@ def get_all_types(loc: str,
 
 
     if recursion_depth > 2:
-        logger.debug("%d Returning due to max R.D. %s", recursion_depth, type(obj))
+        #logger.debug("%d Returning due to max R.D. %s", recursion_depth, type(obj))
         return set()
     all_types: set[str] = set()
     type_str = str(type(obj))
@@ -857,7 +873,9 @@ def get_all_types(loc: str,
                         all_types.add(fqn)
                 logger.debug(parsed_type)
                 if parsed_type.endswith("FunctionMetaData"):
-                    raise TypeError("Yikes")
+                    raise TypeError("FunctionMetaData not a supported type")
+                    #all_types.add(parsed_type)
+                    #raise TypeError(f"Yikes {parsed_type=}")
                 all_types.add(parsed_type)
                 #return all_types
 
@@ -940,23 +958,24 @@ class ArgsIteratorClass():
         Parse arguments to the function provided, caching their values
         """
         function_name = self.this_metadata.name
-        for arg_i, (arg_name, arg) in enumerate(args_dict.items()):#zip(self.args, self.this_metadata.parameter_names)):
-
-            if mode == "after" and id(arg) != self.args_addresses[arg_name]:
-             #   logger.error(f"{function_name=} {dir(arg)=}")
-                logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
-                continue
+        for arg_i, (arg_name, arg) in enumerate(args_dict.items()):
+            if mode == "after":
+                if id(arg) != self.args_addresses[arg_name]:
+                #   logger.error(f"{function_name=} {dir(arg)=}")
+                    logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", 
+                                 arg_i, arg)
+                    continue
+                if isinstance(arg, (int, str, float)):
+                    logger.info("After: Skip it!")
+                    continue
+                if callable(arg):
+                    logger.critical("Keeping callable: %s", arg)
+                    continue
             # Do not include the first arg of a method (it's "self")
             # in the argument list
             logger.info("Arg #%d: %s", arg_i, arg_name)
             if self.this_metadata.is_method and arg_i == 0:
                 continue
-            if mode == "After" and isinstance(arg, (int, str, float)):
-                logger.info("After: Skip it!")
-                continue
-            if mode == "After" and callable(arg):
-                continue
-
             if (
                     callable(arg) and inspect.isfunction(arg) and
                     "." in arg.__qualname__ and arg.__qualname__[0].isupper()
@@ -1008,8 +1027,9 @@ class ArgsIteratorClass():
                 class_repr = repr(arg)
                 if "object at 0x" in class_repr:
                     class_repr = arg.repr()
+                    class_repr = normalize_defaultdict_repr(class_repr)
                 try:
-                    logger.debug(class_repr)
+                    #logger.debug(class_repr)
                     # This eval is necessary to check if classes can in fact
                     # be represented as strings.  If not, and this SyntaxError
                     # is uncaught, it will break everything.
@@ -1022,14 +1042,27 @@ class ArgsIteratorClass():
                 except SyntaxError as e:
                     try:
                         class_repr = arg.repr()
-                        logger.debug("%s, class_repr = %s", e, class_repr)
-                    except AttributeError as e2:
+                        class_repr = normalize_defaultdict_repr(class_repr)
+                        if which_args == "args":
+                            self.args_copy[arg_name] = class_repr
+                        else:
+                            self.kwargs_copy[arg_name] = class_repr
+                        logger.critical("%s, class_repr = %s", e, class_repr)
+                    except AttributeError:
                         # skip on error
-                        logger.error("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
-                                    class_repr, type(e2), function_name, arg, e2, arg)
-                        logger.error(arg.__repr__)
-                        all_metadata[function_name] = self.this_metadata
-                        raise e2
+                        try:
+                            class_repr = repr(arg)
+                            class_repr = normalize_defaultdict_repr(class_repr)
+                            if which_args == "args":
+                                self.args_copy[arg_name] = class_repr
+                            else:
+                                self.kwargs_copy[arg_name] = class_repr
+                        except Exception as e2:
+                            logger.critical("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
+                                        class_repr, type(e2), function_name, arg, e2, arg)
+                            logger.error(arg.__repr__)
+                            all_metadata[function_name] = self.this_metadata
+                            raise e2
 
                 except NameError as e:
                     # What's going on here?
@@ -1039,7 +1072,7 @@ class ArgsIteratorClass():
                     # can import it later; now we simply record it as one of
                     # the arguments to this decoratee by adding it to args_copy.
                     logger.debug(e)
-                    logger.debug("%s: class_repr=%s arg=%s",
+                    logger.critical("%s: class_repr=%s arg=%s",
                                     function_name, class_repr, arg)
                     #this_coverage_info.constructor = copy.deepcopy(class_repr)
                     if which_args == "args":
@@ -1047,6 +1080,7 @@ class ArgsIteratorClass():
                     else:
                         self.kwargs_copy[arg_name] = class_repr
             else:
+                logger.critical(f"arg_name=%s mode=%s", arg_name, mode)
                 if which_args == "args":
                     self.args_copy[arg_name] = repr(arg)
                 else:
@@ -1091,6 +1125,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     per decorated function.
     """
     # pylint: disable-next=global-variable-not-assigned
+    logger.critical(function_name)
     global all_metadata, hashed_inputs
     caught_exception = None
     kwargs = kwargs.get("kwargs", kwargs)
@@ -1116,6 +1151,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     this_coverage_info: CoverageInfo = CoverageInfo()
 
     #args_copy = [convert_to_serializable(x) for x in args]
+    logger.critical("function_name = %s", function_name)
     class_type = ""
     if this_metadata.is_method:
         if not function_name.endswith("__init__"):
@@ -1134,16 +1170,15 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     try:
         args_iterator_class.args_iterator()
         args_iterator_class.args_iterator(which_args="kwargs")
-    except AttributeError:
+    except AttributeError as e:
         # skip on error
+        logger.warning("Caught '%s'", e)
         return func(*args, **kwargs)
 
     if args_iterator_class.class_type:
         this_metadata.types_in_use.add(args_iterator_class.class_type)
 
-
     # pylint: disable-next=unnecessary-comprehension
-    # TODO use repr on the values?
     this_coverage_info.args_before = copy.deepcopy(list(args_iterator_class.args_copy.values()))
     args_iterator_class.args_copy = OrderedDict()
 
@@ -1196,6 +1231,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     cov_report_ = None
     result = None
     #data_file = f"coverage_{function_name}_{time.perf_counter()}"
+    logger.debug("covering %s", function_name)
     cov = coverage.Coverage(None)#data_file)
     with cov.collect():
         try:
@@ -1207,7 +1243,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
                 start_time = time.perf_counter()
                 result = func(*args)
 
-            logger.debug("No exception :)")
+            logger.debug("No exception :) for %s", function_name)
         # There's no way to know ahead of time what kind of exception func
         # might raise, so catch any of them.
         # pylint: disable-next=broad-exception-caught
@@ -1237,8 +1273,13 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     #hash_keys.add(hash_keys)
 
     # There is only one file in cov_report_['files']
-    assert len(cov_report_['files']) == 1
-    this_coverage:Set[int] = set(cov_report_['files'].popitem()[1]['executed_lines'])
+    this_file_name = Path(inspect.getabsfile(func)).name
+    for key in cov_report_['files'].keys():
+        if key.endswith(this_file_name):
+            this_file_name = key
+            break
+    #assert len(cov_report_['files']) == 1
+    this_coverage:Set[int] = set(cov_report_['files'][this_file_name]['executed_lines'])
     #assert this_coverage & set(this_metadata.lines)
     this_coverage &= set(this_metadata.lines)
     #logger.critical("this_coverage=%s", this_coverage)
@@ -1355,7 +1396,15 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     this_coverage_info.coverage = sorted_coverage
     hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
+    for arg in this_coverage_info.args_before:
+        # I'm unclear why it's not repr(arg)[0]
+        if repr(arg)[1] == '<':
+            logger.critical("Decorating %s; can't properly repr %s, this record is untestable",
+                            function_name, arg)
+            this_coverage_info.testable = False
     this_metadata.coverage_io[hashed_input] = this_coverage_info
+    logger.debug("function_name=%s, this_metadata.coverage_io.keys=%s",
+                    function_name, this_metadata.coverage_io.keys())
     this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 2)
 
 
@@ -1524,9 +1573,10 @@ def count_objects(obj: typing.Any)->int:
     return count
 
 
-@unit_test_generator_decorator(sample_count=1)
-def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, typing.Any],
+#@unit_test_generator_decorator(sample_count=2, keep_subsets=True)
+def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, FunctionMetaData],
                                             function_names:list[str],
+                                            phase:str,
                                             outdir:Path,
                                             tests_dir:Path,
                                             ext:Path=Path(".json"))->defaultdict[str, typing.Any]:
@@ -1535,13 +1585,19 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
 
     Because I also decorate functions within this very file
     (i.e. the functions and methods that implement the automatic unit
-    test generation), it's necessary to call this function twice to
-    ensure that unit tests are created for all functions and
+    test generation), it's necessary to call this function twice
+    (phase: "Before" and "After" to
+    ensure that unit tests are created for some of* functions and
     methods defined within this very file.
 
-    I do claim this is self-testing code after all!
-    """
+    * It was not feasible to self-test ALL the functions in this file, as
+    sucessfully pulling off that amount of metaprogramming (100% self-testing code)
+    was either not possible or just beyond my skill level, and I tried for about 2 weeks.
 
+    Even if fill self-testing of ALL the functions defined in this file IS possible,
+    it will create a significant amount of overhead.
+    """
+    logger.debug("phase=%s", phase)
     #pp.pprint(local_all_metadata)
     for function_name in function_names:
         logger.debug("function_name=%s", function_name)
@@ -1563,17 +1619,33 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         if not test_suite:
             logger.debug("No test record for %s", function_name)
             continue
-        auto_generate_tests(local_all_metadata[function_name],
-                            test_suite,
-                            function_name,
-                            function_metadata.source_file,
-                            tests_dir,
-                            outdir,
-                            2)
+
+
+        local_all_metadata[function_name].coverage_io = {k:v for k,v in local_all_metadata[function_name].coverage_io.items() if v.testable}
+        result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
+        result_file_str = re.sub("__init__", "constructor", result_file_str)
+        result_file = tests_dir.joinpath(result_file_str)
+
+        if not local_all_metadata[function_name].coverage_io:
+
+            print(f"Creating {result_file}...")
+            with open(result_file, "w", encoding="utf-8") as st:
+                st.write("import warnings\n")
+                st.write("warnings.warn(\"No testable samples!\")")
+
+        else:
+            auto_generate_tests(local_all_metadata[function_name],
+                                test_suite,
+                                function_name,
+                                function_metadata.source_file,
+                                tests_dir,
+                                outdir,
+                                result_file,
+                                2)
         local_all_metadata.pop(function_name)
     return local_all_metadata
 
-@unit_test_generator_decorator(sample_count=1)
+#@unit_test_generator_decorator(sample_count=2, keep_subsets=True)
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1596,6 +1668,7 @@ def generate_all_tests_and_metadata(outdir:Path,
     file and called by generate_all_tests_and_metadata_helper()
     """
     for phase in ["Before", "After"]:
+        logger.critical(phase.center(80, "-"))
         logger.debug("phase=%s", phase)
         #pp.pprint(all_metadata)
 
@@ -1605,20 +1678,25 @@ def generate_all_tests_and_metadata(outdir:Path,
         local_all_metadata = all_metadata
         local_all_metadata = generate_all_tests_and_metadata_helper(local_all_metadata,
                                                                     function_names,
+                                                                    phase,
                                                                     outdir,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator(sample_count=2)
 def update_global(obj,
                   this_global:str,
                   phase:str,
                   this_coverage_info:CoverageInfo)->CoverageInfo:
     """
-    Update and return state dictionary with new global.
+    Update and return state dictionary with the new global object 'obj'.
+
+    Note that if an object's repr function does not
+    produce valide code for re-creating the code, this
+    function skips it.
     """
     if repr(obj).startswith("<"):
-        logger.info("Skipping %s", obj)
+        logger.critical("Skipping %s", obj)
         return this_coverage_info
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
@@ -1897,6 +1975,21 @@ def meta_program_function_call( this_state:CoverageInfo,
             list_of_lines.append(f"{indent}assert result.{name} == {name}\n")
     return list_of_lines
 
+def normalize_defaultdict_repr(repr_value:str)->str:
+    """
+    Helper function returns a canonical string for a
+    default dictionary.
+    """
+    # Line below adapted from answer by user u/await_yesterday
+    # in response to question here:
+    # https://www.reddit.com/r/learnpython/comments/17eq932/how_to_handle_rematch_none_with_mypy/
+    if (class_name_matcher := re.match(r"defaultdict\(<class '([^']+)'>", repr_value)) is not None:
+        class_name = class_name_matcher.groups()[0].split('.')[-1]
+        logger.debug(class_name)
+
+    result = re.sub(r"^(defaultdict\()(<class ')(([^']+\.)?)(?P<this_capture>[^']+)'>", r"\1\g<this_capture>",repr_value)
+    #logger.debug(f"{repr_value=}")
+    return result
 
 #@unit_test_generator_decorator(sample_count=1)
 # pylint: disable-next=too-many-statements,too-many-locals,too-many-branches,too-many-arguments
@@ -1906,6 +1999,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         source_file:Path,
                         tests_dir:Path,
                         outdir:Path,
+                        result_file:Path,
                         indent_size:int=2)->str:
     """
     This is the function that can automatically create a unit
@@ -1914,6 +2008,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     to lists of strings, these lists of strings are evenutally
     written to a file, one per decorated function.
     """
+    logger.debug("Dropping any untestable records")
+    print(f"Auto-generating test for {function_name}...")
     outdir = outdir.absolute()
     tests_dir = tests_dir.absolute()
     imports = ["import re\n",
@@ -1967,13 +2063,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         else:
             logger.debug("k=%s", k)
             repr_v = repr(v)
-            class_name_matcher = re.match(r"defaultdict\(<class '([^']+)'>", repr_v)
-            if bool(class_name_matcher):
-                class_name = class_name_matcher.groups()[0].split('.')[-1]
-                logger.debug(class_name)
-
-            repr_v = re.sub(r"^(defaultdict\()(<class ')(([^']+\.)?)(?P<this_capture>[^']+)'>", r"\1\g<this_capture>",repr_v)
-            logger.debug(f"{repr_v=}")
+            repr_v = normalize_defaultdict_repr(repr_v)
             header.append(f"{k.upper()} = {repr_v}\n")
 
 
@@ -2265,9 +2355,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     imports += list(custom_imports)
 
     logger.debug("function_name=%s", function_name)
-    result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
-    result_file_str = re.sub("__init__", "constructor", result_file_str)
-    result_file = tests_dir.joinpath(result_file_str)
 
     if "pytest" in sys.modules:
         # Return hash of resulting string here,
@@ -2279,6 +2366,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
 
     parameterization_list[-1] += "])\n"
     docstring = f'\"\"\"\nProgrammatically generated test function for {function_name}()\n\"\"\"'
+    print(f"Creating {result_file}...")
     with open(result_file, "w", encoding="utf-8") as st:
         st.write(docstring+"\n")
         for item in [imports, header, parameterization_list]:

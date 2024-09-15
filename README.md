@@ -1,3 +1,10 @@
+#### TODO: Update this file - it's quite out of date as of 14 Sept 2024
+Notes:
+
+Need to test coverage with non-standard types, e.g. default dictionary 
+Some of the asserts may be superfluous.  I intentionally assert that all modified objects are modified as expected, as "pass by assignment" means
+that any argument passed in may be used by the calling function, so assert it was (or wasn't) modified as expected.
+
 # Development Driven Testing, or "Self-Testing Code"
 
 ## Setup (TODO: Fill this out more)

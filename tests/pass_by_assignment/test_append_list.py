@@ -5,21 +5,21 @@ Programmatically generated test function for append_list()
 import re
 import pytest
 from collections import OrderedDict
-from tests.pass_by_assignment import pass_by_assignment
+import pass_by_assignment
 
 # Now import modules specific to append_list:
 from logging import Logger
 from logging import StreamHandler
+from logging import Manager
 from logging import PlaceHolder
 from logging import RootLogger
-from logging import Manager
 
 
 # In sum, these tests covered 100.0% of append_list's lines
 @pytest.mark.parametrize(
     "this_list, item, expected_result, args_after",
     [
-        ([1, 2, 3, 4], 6, "None", {"this_list": "[1, 2, 3, 4, 6]"}),
+        ([1, 2, 3, 4], 6, "None", {"this_list": "[1, 2, 3, 4, 6]", "item": "6"}),
     ],
 )
 def test_append_list(this_list, item, expected_result, args_after):
@@ -32,3 +32,4 @@ def test_append_list(this_list, item, expected_result, args_after):
         this_list == eval(args_after["this_list"])
         or args_after["this_list"] == this_list
     )
+    assert item == eval(args_after["item"]) or args_after["item"] == item

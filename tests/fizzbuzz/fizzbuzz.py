@@ -16,7 +16,7 @@ from src.unit_test_generator import (
 FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.CRITICAL)
+unit_test_generator.logger.setLevel(logging.WARNING)
 
 mode = 'fizzbuzz' # pylint: disable=invalid-name
 

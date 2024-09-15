@@ -18,7 +18,8 @@
             "6"
          ],
          "args_after": {
-            "this_list": "[1, 2, 3, 4, 6]"
+            "this_list": "[1, 2, 3, 4, 6]",
+            "item": "6"
          },
          "kwargs": {},
          "kwargs_after": {},
@@ -33,7 +34,8 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 100.0,
