@@ -32,7 +32,9 @@
          "args_before": [
             "30"
          ],
-         "args_after": {},
+         "args_after": {
+            "number": "30"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -55,13 +57,16 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "332f74facbdc5888beeee5ca119926b4501c2dc9dd3ab99e811d6866bdd02840": {
          "args_before": [
             "30"
          ],
-         "args_after": {},
+         "args_after": {
+            "number": "30"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -85,13 +90,16 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "458ae2906b3b144383bfba0618ff5c3ea1d2e981782eae30455d98eb608b4488": {
          "args_before": [
             "6"
          ],
-         "args_after": {},
+         "args_after": {
+            "number": "6"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -110,7 +118,8 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 100.0,

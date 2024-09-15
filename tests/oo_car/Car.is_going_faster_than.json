@@ -30,13 +30,14 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"Red\", 20, 0)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
       "__main__.Car",
-      "tests.oo_car.car.Car"
+      "car.Car"
    ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],

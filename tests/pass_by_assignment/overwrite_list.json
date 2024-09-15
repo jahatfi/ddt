@@ -31,7 +31,8 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 100.0,

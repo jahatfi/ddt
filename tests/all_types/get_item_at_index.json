@@ -24,7 +24,10 @@
             "\"The quick red fox jumped over the lazy brown dog\"",
             "3"
          ],
-         "args_after": {},
+         "args_after": {
+            "iterable": "\"The quick red fox jumped over the lazy brown dog\"",
+            "index": "3"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -40,7 +43,8 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "5ac62d59657bfac04cf3ce48377adb129cadd4a9805d0ac28817844589527dd0": {
          "args_before": [
@@ -48,7 +52,8 @@
             "50"
          ],
          "args_after": {
-            "iterable": "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)"
+            "iterable": "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
+            "index": "50"
          },
          "kwargs": {},
          "kwargs_after": {},
@@ -64,7 +69,8 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 9], was 50",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "6ada6749e00170edea0441df3c3aaa576d3c3ccd15b95326f404c2c08c0cfb9a": {
          "args_before": [
@@ -72,7 +78,8 @@
             "0"
          ],
          "args_after": {
-            "iterable": "[-1, -2, -3, -4]"
+            "iterable": "[-1, -2, -3, -4]",
+            "index": "0"
          },
          "kwargs": {},
          "kwargs_after": {},
@@ -89,14 +96,18 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "4af9da0fec2cbcc1502be3a9e1783eac06314de8c4435addbe985665e569908d": {
          "args_before": [
             "\"a test string\"",
             "-5"
          ],
-         "args_after": {},
+         "args_after": {
+            "iterable": "\"a test string\"",
+            "index": "-5"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -112,7 +123,8 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 12], was -5",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 85.71,

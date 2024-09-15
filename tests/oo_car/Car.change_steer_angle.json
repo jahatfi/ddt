@@ -29,7 +29,9 @@
          "args_before": [
             "30"
          ],
-         "args_after": {},
+         "args_after": {
+            "angle": "30"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -46,13 +48,16 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"Red\", 9, 0)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "78fd5f6e8e8bd7118d1ec9602907dd07a7495e42f6814cd047a8057a96388cd7": {
          "args_before": [
             "90"
          ],
-         "args_after": {},
+         "args_after": {
+            "angle": "90"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -69,13 +74,16 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"White\", 20, -30)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "4e6967deeb4e51bab447208d79037a8bca61cdf648fb62d21885290b177313f6": {
          "args_before": [
             "180"
          ],
-         "args_after": {},
+         "args_after": {
+            "angle": "180"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -92,13 +100,16 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"Blue\", 0.0, 30)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": {
          "args_before": [
             "-1080"
          ],
-         "args_after": {},
+         "args_after": {
+            "angle": "-1080"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -113,17 +124,18 @@
          "exception_type": "<class 'AssertionError'>",
          "exception_message": "angle=-1080    out of bounds!",
          "constructor": "Car(\"Green\", 48, 90)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 60.0,
    "types_in_use": [
+      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler",
-      "tests.oo_car.car.Car"
+      "logging.StreamHandler"
    ],
    "global_vars_read_from": [
       "logger"

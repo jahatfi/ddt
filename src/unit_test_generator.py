@@ -154,6 +154,12 @@ class CoverageInfo:
     exception_message: str = ""
     constructor: str = ""
     cost:float = 0.0
+    # Some records can't be tested, e.g. due to invalid repr() methods like
+    # the logging.Logger instance (a logger instance cannot be completely 
+    # re-created via a constructor).  Such untestable records can still be 
+    # recorded in a JSON file.  Set the "testable" flag to "False"
+    # for such invalid records.
+    testable:bool = True
 
     def repr(self)->str:
         """
@@ -179,7 +185,8 @@ class CoverageInfo:
         result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('\"', "\""))
-        result.append(" cost="+repr(self.cost)+')')
+        result.append(" cost="+repr(self.cost))
+        result.append(" testable="+repr(self.cost)+')')
 
         result_str:str = ','.join(result)
         #logger.debug("result=%s", result_str)
@@ -211,8 +218,10 @@ class CoverageInfo:
         result.append(" coverage="+repr(self.coverage))
         result.append(" exception_type="+repr(self.exception_type))
         result.append(" exception_message="+repr(self.exception_message))
-        result.append(" constructor="+repr(self.constructor).replace('"', "\"")+")")
-
+        result.append(" constructor="+repr(self.constructor).replace('"', "\""))
+        result.append(" cost="+repr(self.cost))
+        result.append(" testable="+repr(self.cost)+')')
+        
         result_str = ','.join(result)
         logger.debug("result=%s", result_str)
         return result_str
@@ -587,6 +596,22 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
         return unit_test_generator_decorator_inner
     return actual_decorator
 
+def _pandas_df_repr(df: pd.DataFrame)->str:
+    '''
+    Sadly, the 'repr' method for Pandas DataFrames does not work the
+    same as 'repr' for built-in types.  Specifically, while 'repr' on
+    built-in types (strings, lists, dicts, etc) produces valid Python
+    code that can be instantly used to re-create the original object,
+    this is not true of Pandas DataFrames, which are instead pretty
+    printed as a table.  The best alternative for non-empty dataframes is
+    https://stackoverflow.com/questions/67845199 by user Silveri
+    Overwrite the native Pandas DataFram repr() method with that approach.
+    '''
+    return f"DataFrame.from_dict({df.to_dict()})"
+
+pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign, assignment]
+  
+
 # NOTE: Can't self-test this as easily as the others.
 # This is because it produces an import
 # string relative to this file, not the file under test.
@@ -942,6 +967,7 @@ class ArgsIteratorClass():
                     logger.info("After: Skip it!")
                     continue
                 if callable(arg):
+                    logger.critical("Keeping callable: %s", arg)
                     continue
             # Do not include the first arg of a method (it's "self")
             # in the argument list
@@ -1149,7 +1175,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     if args_iterator_class.class_type:
         this_metadata.types_in_use.add(args_iterator_class.class_type)
-    logger.critical("function_name = %s", function_name)
 
     # pylint: disable-next=unnecessary-comprehension
     # TODO use repr on the values?
@@ -1172,7 +1197,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         this_coverage_info = update_global(obj, this_global, phase, this_coverage_info)
         these_types = get_all_types("3", func.__globals__[this_global], True, 0, function_name)
         this_metadata.types_in_use |= these_types
-    logger.critical("function_name = %s", function_name)
 
     hashed_input = ""
 
@@ -1371,9 +1395,15 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     this_coverage_info.coverage = sorted_coverage
     hashed_inputs.add(hashed_input)
     this_metadata.coverage_percentage = percent_covered
+    for arg in this_coverage_info.args_before:
+        # I'm unclear why it's not repr(arg)[0]
+        if repr(arg)[1] == '<':
+            logger.critical("Decorating %s; can't properly repr %s, this record is untestable", 
+                            function_name, arg)
+            this_coverage_info.testable = False
     this_metadata.coverage_io[hashed_input] = this_coverage_info
-    logger.critical("function_name=%s, this_metadata.coverage_io.keys=%s", 
-                    function_name, this_metadata.coverage_io.keys)
+    logger.debug("function_name=%s, this_metadata.coverage_io.keys=%s", 
+                    function_name, this_metadata.coverage_io.keys())
     this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 2)
 
 
@@ -1542,8 +1572,8 @@ def count_objects(obj: typing.Any)->int:
     return count
 
 
-@unit_test_generator_decorator(sample_count=2, keep_subsets=True)
-def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, typing.Any],
+#@unit_test_generator_decorator(sample_count=2, keep_subsets=True)
+def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, FunctionMetaData],
                                             function_names:list[str],
                                             phase:str,
                                             outdir:Path,
@@ -1587,17 +1617,33 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         if not test_suite:
             logger.debug("No test record for %s", function_name)
             continue
-        auto_generate_tests(local_all_metadata[function_name],
-                            test_suite,
-                            function_name,
-                            function_metadata.source_file,
-                            tests_dir,
-                            outdir,
-                            2)
+
+
+        local_all_metadata[function_name].coverage_io = {k:v for k,v in local_all_metadata[function_name].coverage_io.items() if v.testable}
+        result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
+        result_file_str = re.sub("__init__", "constructor", result_file_str)
+        result_file = tests_dir.joinpath(result_file_str)
+
+        if not local_all_metadata[function_name].coverage_io:
+
+            print(f"Creating {result_file}...")
+            with open(result_file, "w", encoding="utf-8") as st:
+                st.write("import warnings\n")
+                st.write("warnings.warn(\"No testable samples!\")")
+
+        else:
+            auto_generate_tests(local_all_metadata[function_name],
+                                test_suite,
+                                function_name,
+                                function_metadata.source_file,
+                                tests_dir,
+                                outdir,
+                                result_file,
+                                2)
         local_all_metadata.pop(function_name)
     return local_all_metadata
 
-@unit_test_generator_decorator(sample_count=2, keep_subsets=True)
+#@unit_test_generator_decorator(sample_count=2, keep_subsets=True)
 def generate_all_tests_and_metadata(outdir:Path,
                                     tests_dir:Path,
                                     suffix:Path=Path(".json")):
@@ -1635,16 +1681,20 @@ def generate_all_tests_and_metadata(outdir:Path,
                                                                     tests_dir,
                                                                     suffix)
 
-@unit_test_generator_decorator(sample_count=1)
+@unit_test_generator_decorator(sample_count=2)
 def update_global(obj,
                   this_global:str,
                   phase:str,
                   this_coverage_info:CoverageInfo)->CoverageInfo:
     """
-    Update and return state dictionary with new global.
+    Update and return state dictionary with the new global object 'obj'.
+
+    Note that if an object's repr function does not 
+    produce valide code for re-creating the code, this
+    function skips it.
     """
     if repr(obj).startswith("<"):
-        logger.info("Skipping %s", obj)
+        logger.critical("Skipping %s", obj)
         return this_coverage_info
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
@@ -1924,8 +1974,14 @@ def meta_program_function_call( this_state:CoverageInfo,
     return list_of_lines
 
 def normalize_defaultdict_repr(repr_value:str)->str:
-    class_name_matcher = re.match(r"defaultdict\(<class '([^']+)'>", repr_value)
-    if bool(class_name_matcher):
+    """
+    Helper function returns a canonical string for a 
+    default dictionary.
+    """
+    # Line below adapted from answer by user u/await_yesterday
+    # in response to question here:
+    # https://www.reddit.com/r/learnpython/comments/17eq932/how_to_handle_rematch_none_with_mypy/
+    if (class_name_matcher := re.match(r"defaultdict\(<class '([^']+)'>", repr_value)) is not None:
         class_name = class_name_matcher.groups()[0].split('.')[-1]
         logger.debug(class_name)
 
@@ -1941,6 +1997,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         source_file:Path,
                         tests_dir:Path,
                         outdir:Path,
+                        result_file:Path,
                         indent_size:int=2)->str:
     """
     This is the function that can automatically create a unit
@@ -1949,6 +2006,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     to lists of strings, these lists of strings are evenutally
     written to a file, one per decorated function.
     """
+    logger.debug("Dropping any untestable records")
     print(f"Auto-generating test for {function_name}...")
     outdir = outdir.absolute()
     tests_dir = tests_dir.absolute()
@@ -2295,9 +2353,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     imports += list(custom_imports)
 
     logger.debug("function_name=%s", function_name)
-    result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
-    result_file_str = re.sub("__init__", "constructor", result_file_str)
-    result_file = tests_dir.joinpath(result_file_str)
 
     if "pytest" in sys.modules:
         # Return hash of resulting string here,

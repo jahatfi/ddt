@@ -6,44 +6,47 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1649,
-      1650,
-      1651,
-      1652,
-      1653,
-      1654,
-      1656,
-      1657,
-      1658,
-      1659
+      1725,
+      1726,
+      1727,
+      1728,
+      1729,
+      1730,
+      1732,
+      1733,
+      1734,
+      1735
    ],
    "non_code_lines": [
-      1655
+      1731
    ],
    "coverage_io": {
-      "c5c98d14e95a818dcb50a031c01ac0938fe3ca8db073399bd1abd7e91ecfce0e": {
+      "6176344bda5fcd5c189c63ea53eb0c38ad5566d698321fa688a3aef31d17817b": {
          "args_before": [
-            "\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)\""
+            "\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)\""
          ],
-         "args_after": {},
+         "args_after": {
+            "arg": "\"CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)\""
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0)",
+         "expected_result": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
          "expected_type": "str",
          "coverage": [
-            1649,
-            1650,
-            1651,
-            1653,
-            1656,
-            1659
+            1725,
+            1726,
+            1727,
+            1729,
+            1732,
+            1735
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 60.0,
@@ -51,12 +54,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1649,
-      1650,
-      1651,
-      1653,
-      1656,
-      1659
+      1725,
+      1726,
+      1727,
+      1729,
+      1732,
+      1735
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

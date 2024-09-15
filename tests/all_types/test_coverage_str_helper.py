@@ -9,15 +9,15 @@ from src import unit_test_generator
 
 # Now import modules specific to coverage_str_helper:
 from logging import Logger
-from logging import StreamHandler
 from logging import RootLogger
-from logging import PlaceHolder
 from logging import Manager
+from logging import StreamHandler
+from logging import PlaceHolder
 
 
 # In sum, these tests covered 37.5% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1681', '1687-1695', '1697-1700', '1702-1704', '1706-1707']
+# ['1757', '1763-1771', '1773-1776', '1778-1780', '1782-1783']
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, args_after",
     [

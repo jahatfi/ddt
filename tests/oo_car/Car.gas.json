@@ -22,7 +22,10 @@
             "-1",
             "1"
          ],
-         "args_after": {},
+         "args_after": {
+            "rate": "-1",
+            "duration": "1"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -42,14 +45,18 @@
          "exception_type": "<class 'ValueError'>",
          "exception_message": "Gas rate (m/s) must be positive.",
          "constructor": "Car(\"Red\", 10, 0)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       },
       "6489cc7d9835b1fc422a9e25a2d99a7374cf0a90d0450a9435df3167635e432a": {
          "args_before": [
             "2",
             "2"
          ],
-         "args_after": {},
+         "args_after": {
+            "rate": "2",
+            "duration": "2"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -70,17 +77,18 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"White\", 12, -30)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
+      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler",
-      "tests.oo_car.car.Car"
+      "logging.StreamHandler"
    ],
    "global_vars_read_from": [
       "logger",

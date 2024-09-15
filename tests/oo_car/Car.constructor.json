@@ -21,7 +21,11 @@
             "10",
             "0"
          ],
-         "args_after": {},
+         "args_after": {
+            "color": "\"Red\"",
+            "speed": "10",
+            "steer_angle": "0"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -36,7 +40,8 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 100.0,

@@ -23,7 +23,10 @@
             "-1",
             "1"
          ],
-         "args_after": {},
+         "args_after": {
+            "rate": "-1",
+            "duration": "1"
+         },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -40,17 +43,18 @@
          "exception_type": "",
          "exception_message": "",
          "constructor": "Car(\"Red\", 10, 0)",
-         "cost": 0.0
+         "cost": 0.0,
+         "testable": true
       }
    },
    "coverage_percentage": 71.43,
    "types_in_use": [
+      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler",
-      "tests.oo_car.car.Car"
+      "logging.StreamHandler"
    ],
    "global_vars_read_from": [
       "logger"
