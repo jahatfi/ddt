@@ -155,8 +155,8 @@ class CoverageInfo:
     constructor: str = ""
     cost:float = 0.0
     # Some records can't be tested, e.g. due to invalid repr() methods like
-    # the logging.Logger instance (a logger instance cannot be completely 
-    # re-created via a constructor).  Such untestable records can still be 
+    # the logging.Logger instance (a logger instance cannot be completely
+    # re-created via a constructor).  Such untestable records can still be
     # recorded in a JSON file.  Set the "testable" flag to "False"
     # for such invalid records.
     testable:bool = True
@@ -172,7 +172,7 @@ class CoverageInfo:
             #if "<function" in arg_before_repr:
             #    logger.critical(f"{arg_before_repr=} {inspect.getmembers(self.args_before[i])=}")
             args_before_repr[i] = re.sub(r"(<function.*__init__ at 0x[0-9a-fA-F]+>)", r"'\1'", args_before_repr[i])
-        result = ["CoverageInfo(args_before=["+','.join(args_before_repr)+"]"]#repr(self.args_before)]
+        result = ["CoverageInfo(args_before=["+','.join(args_before_repr)+"]"]
         #logger.critical(f"{result=}")
         result.append(" args_after="+repr(self.args_after))
         result.append(" kwargs="+repr(self.kwargs))
@@ -221,7 +221,7 @@ class CoverageInfo:
         result.append(" constructor="+repr(self.constructor).replace('"', "\""))
         result.append(" cost="+repr(self.cost))
         result.append(" testable="+repr(self.cost)+')')
-        
+
         result_str = ','.join(result)
         logger.debug("result=%s", result_str)
         return result_str
@@ -522,7 +522,8 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
                 function_calls[this_frame.function] += 1
 
             max_func_call_vals = max(function_calls.values())
-            logger.debug(f"{max_func_call_vals=} {recursion_depth_per_decoratee=}")
+            logger.debug("max_func_call_vals=%s, recursion_depth_per_decoratee=%s",
+                         max_func_call_vals, recursion_depth_per_decoratee)
             if function_name not in recursion_depth_per_decoratee:
                 recursion_depth_per_decoratee[function_name] = max_func_call_vals
 
@@ -610,7 +611,7 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
     return f"DataFrame.from_dict({df.to_dict()})"
 
 pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign, assignment]
-  
+
 
 # NOTE: Can't self-test this as easily as the others.
 # This is because it produces an import
@@ -957,11 +958,12 @@ class ArgsIteratorClass():
         Parse arguments to the function provided, caching their values
         """
         function_name = self.this_metadata.name
-        for arg_i, (arg_name, arg) in enumerate(args_dict.items()):#zip(self.args, self.this_metadata.parameter_names)):
+        for arg_i, (arg_name, arg) in enumerate(args_dict.items()):
             if mode == "after":
                 if id(arg) != self.args_addresses[arg_name]:
                 #   logger.error(f"{function_name=} {dir(arg)=}")
-                    logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", arg_i, arg)
+                    logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", 
+                                 arg_i, arg)
                     continue
                 if isinstance(arg, (int, str, float)):
                     logger.info("After: Skip it!")
@@ -1054,7 +1056,7 @@ class ArgsIteratorClass():
                             if which_args == "args":
                                 self.args_copy[arg_name] = class_repr
                             else:
-                                self.kwargs_copy[arg_name] = class_repr                            
+                                self.kwargs_copy[arg_name] = class_repr
                         except Exception as e2:
                             logger.critical("\"%s\" raised %s decorating %s repr'ing arg=%s:\ne=%s\n%s",
                                         class_repr, type(e2), function_name, arg, e2, arg)
@@ -1078,7 +1080,7 @@ class ArgsIteratorClass():
                     else:
                         self.kwargs_copy[arg_name] = class_repr
             else:
-                logger.critical(f"{arg_name=} {mode=} 3")
+                logger.critical(f"arg_name=%s mode=%s", arg_name, mode)
                 if which_args == "args":
                     self.args_copy[arg_name] = repr(arg)
                 else:
@@ -1177,7 +1179,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         this_metadata.types_in_use.add(args_iterator_class.class_type)
 
     # pylint: disable-next=unnecessary-comprehension
-    # TODO use repr on the values?
     this_coverage_info.args_before = copy.deepcopy(list(args_iterator_class.args_copy.values()))
     args_iterator_class.args_copy = OrderedDict()
 
@@ -1398,11 +1399,11 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     for arg in this_coverage_info.args_before:
         # I'm unclear why it's not repr(arg)[0]
         if repr(arg)[1] == '<':
-            logger.critical("Decorating %s; can't properly repr %s, this record is untestable", 
+            logger.critical("Decorating %s; can't properly repr %s, this record is untestable",
                             function_name, arg)
             this_coverage_info.testable = False
     this_metadata.coverage_io[hashed_input] = this_coverage_info
-    logger.debug("function_name=%s, this_metadata.coverage_io.keys=%s", 
+    logger.debug("function_name=%s, this_metadata.coverage_io.keys=%s",
                     function_name, this_metadata.coverage_io.keys())
     this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 2)
 
@@ -1584,18 +1585,19 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
 
     Because I also decorate functions within this very file
     (i.e. the functions and methods that implement the automatic unit
-    test generation), it's necessary to call this function twice 
+    test generation), it's necessary to call this function twice
     (phase: "Before" and "After" to
     ensure that unit tests are created for some of* functions and
     methods defined within this very file.
 
-    * It was not feasible to self-test ALL the functions in this file, as 
+    * It was not feasible to self-test ALL the functions in this file, as
     sucessfully pulling off that amount of metaprogramming (100% self-testing code)
     was either not possible or just beyond my skill level, and I tried for about 2 weeks.
 
     Even if fill self-testing of ALL the functions defined in this file IS possible,
     it will create a significant amount of overhead.
     """
+    logger.debug("phase=%s", phase)
     #pp.pprint(local_all_metadata)
     for function_name in function_names:
         logger.debug("function_name=%s", function_name)
@@ -1689,7 +1691,7 @@ def update_global(obj,
     """
     Update and return state dictionary with the new global object 'obj'.
 
-    Note that if an object's repr function does not 
+    Note that if an object's repr function does not
     produce valide code for re-creating the code, this
     function skips it.
     """
@@ -1975,7 +1977,7 @@ def meta_program_function_call( this_state:CoverageInfo,
 
 def normalize_defaultdict_repr(repr_value:str)->str:
     """
-    Helper function returns a canonical string for a 
+    Helper function returns a canonical string for a
     default dictionary.
     """
     # Line below adapted from answer by user u/await_yesterday
@@ -2060,7 +2062,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             header.append(f"{k.upper()} = {(repr(eval(v)))[1:-1]}\n")
         else:
             logger.debug("k=%s", k)
-            repr_v = repr(v)            
+            repr_v = repr(v)
             repr_v = normalize_defaultdict_repr(repr_v)
             header.append(f"{k.upper()} = {repr_v}\n")
 
