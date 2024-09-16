@@ -1,0 +1,10 @@
+ 29           0 RESUME                   0
+
+ 31           2 LOAD_FAST                0 (a)
+              4 LOAD_FAST                1 (b)
+              6 BINARY_OP                0 (+)
+             10 LOAD_GLOBAL              0 (c)
+             22 LOAD_CONST               1 (0)
+             24 BINARY_SUBSCR
+             34 BINARY_OP                0 (+)
+             38 RETURN_VALUE

@@ -1,0 +1,39 @@
+\begin{abstract}
+    %
+    % Context
+    Automated software testing is an area of active research, 
+    particularly automated generation of unit tests. 
+    %
+    % Problem
+    Current and previous work such as generative artificial intelligence, search-based heuristics, and 
+    randomization often lead to incomplete coverage and non-deterministic results.
+    %
+    In addition, some of the previous work lacks a natural way for a human expert 
+    to provide input to the automated test generator outside the source code itself. 
+    % Insight
+    The author presents a Python decorator to generate deterministic Python 
+    unit tests from existing higher level tests via metaprogramming.  
+    %
+    This Python decorator hooks function calls in order to record the 
+    metadata (input, output, relevant global variables, code coverage, etc.) 
+    of each hooked function. 
+    %
+    The recorded metadata is then used to automatically generate unit 
+    tests for such functions.
+    %
+    % Contribution
+    The author's initial testing confirmed that it can 
+    be a force multiplier for the developer, 
+    as one passing functional test of the overall 
+    system can produce many unit tests.  
+    %
+    This work leverages expert human insight by deriving unit tests
+    from as little as one human-designed test.
+    %
+    Further, many test cases may be generated for each test.  
+    Python programmers can save significant time and effort using the 
+    generated test cases as boilerplate if more test cases are required to 
+    increase coverage.  
+    %
+  
+  \end{abstract}

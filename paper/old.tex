@@ -1,0 +1,969 @@
+\documentclass[10pt, conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{listings}
+\lstset{escapeinside={<@}{@>}}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{pythonstyle}{
+commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{orange},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    frame=single,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstdefinestyle{batstyle}{
+commentstyle=\color{black},
+    keywordstyle=\color{black},
+    numberstyle=\color{black},
+    stringstyle=\color{black},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    frame=single,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=pythonstyle}
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{A Python Decorator for Programmatic and Deterministic Unit Test Code Generation\\}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
+\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+\textit{name of organization (of Aff.)}\\
+City, Country \\
+email address or ORCID}
+}
+\maketitle
+
+\begin{abstract}
+Automated software testing is an area of active research, 
+    particularly automated generation of unit tests. 
+Current and previous work such as generative artificial intelligence, search-based heuristics, and 
+    randomization often lead to incomplete coverage and non-deterministic results.
+In addition, some of the previous work lacks a natural way for a human expert 
+    to provide input to the automated test generator outside the source code itself. 
+The author presents a Python decorator to generate deterministic Python 
+    unit tests from existing higher level tests via metaprogramming.  
+This Python decorator hooks function calls in order to record the 
+    metadata (input, output, relevant global variables, and code coverage) 
+    of each hooked function. 
+The recorded metadata is then used to automatically generate unit 
+    tests for each such function.
+The author's initial testing confirmed that it can 
+    be a force multiplier for the developer, 
+    as one passing integration test of the overall 
+    system can produce many unit tests.  
+This work leverages expert human insight by deriving unit tests
+    from as little as one human-designed test.
+Further, many test cases may be generated for each test.  
+    Python programmers can save significant time and effort using the 
+    generated test cases as boilerplate if more test cases are required to 
+    increase coverage.  
+
+
+  \end{abstract} 
+\begin{IEEEkeywords}
+Python, Automated Test Generation, Metaprogramming
+\end{IEEEkeywords}
+
+\section{Introduction}\label{sec:introduction}
+
+\subsection{Software Testing Paradigms}\label{sec:intro-3}
+
+\subsubsection{Test Driven Development}\label{sec:intro-}
+Advocates of Test Driven Development (TDD) such a Harry Percival
+ \cite{percival2014test} argue that software developers should
+follow the TDD process in which they develop software by first writing tests,
+then the bare minimum amount of code to make those tests pass,
+before beginning the cycle anew with more tests.
+On page 22 \cite{percival2014test} Percival advocates both functional and
+ unit tests, making the following distinction:
+“functional tests test the application from the outside, from the point of view
+of the user. Unit tests test the application from the inside,
+from the point of view of the programmer.”
+Later, on page 470 \cite{percival2014test} Percival defines an “integration test” as
+one that depends on and interacts with some external system.
+“Integration test” is sometimes used in common vernacular in the same way that
+Percival uses “functional test”.
+This paper will do the same, using the terms interchangably.  The author will 
+even use the term "ad hoc test" in reference to informal tests used by the developer.  
+The key asssumption for this paper is that there exists at least one passing 
+test above the unit level that calls at least one internal function.  This 
+paper will describe how the work takes advantage (to a point) of the 
+comprehensive nature of higher-level tests in which multiple functions are 
+executed, potentially with various inputs.
+Previous academic research \cite{causevic2011factors, ramzan2024test} observed
+ that industry TDD adoption is lower than desired,
+reporting increased longer development cycles, skill issues, and legacy code as 
+a few root factors, among others.
+\subsubsection{Non-TDD Testing Paradigms}\label{sec:intro-}
+In contrast to the TDD methodology in which only the developers write the tests
+\cite{axelrod2018unit}, 
+others \cite{brown2013agility, shahabuddin2016integration, moe2019comparative} propose a 
+more customer-focused testing approaches such as Behavior-Driven Development (BDD)
+or Acceptance Test Driven Development (ATDD) focused on on the software's behavior 
+from the user's perspective. In these paradigms, non-developers play a role 
+in creating the tests, such as a business analyst (BDD) \cite{barus2019implementation}
+or a cross-functional team of developers, business analysts, and testers \cite{pugh2010lean}.
+These advocates argue that such feature-first approaches are optimal for accelerating development 
+and reducing a product's time to market due to the time-consuming nature of manually
+developing unit tests \cite{kahur2023java, shahabuddin2016integration}.
+Though Brown \textit{et. al.} acknowledge that integration and unit
+testing may go hand-in-hand, they 
+ultimately argue in favor of the former before the latter \cite{brown2013agility}.  
+Although implied by Brown \textit{et. al.}, Shahabuddin \textit{et. al.} 
+\cite{shahabuddin2016integration} go so far as to explicitly argue that unit
+testing can be performed \textit{after} initial product delivery to the customer.
+This research corresponds with the author’s personal observations that immature 
+organizations (or solo developers on small or personal projects)
+often don’t adhere to the  TDD approach, and end up writing the tests 
+after the development of the code or fail to write tests at all. In such cases,
+the hobbyist may focus primarily on function or integration tests
+and opt not to develop unit tests, perhaps because the pros of unit tests
+do not outweigh the cons compared to a higher level test.
+The main pros and cons for functional versus unit tests are summarized very 
+briefly Table \ref{tab1}.
+
+\begin{table}[htbp]
+    \caption{Pros and Cons of Functional and Unit Tests}
+    \begin{center}
+    \begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
+        \hline
+        \multirow{2}{*}{} & \textbf{Functional Test(s)} & \textbf{Unit Test(s)} \\
+        \hline
+        \textbf{Pros} & \begin{itemize}[leftmargin=*]
+            \item More relevant for the customer
+            \item Efficiently tests modules together
+            \item Less dependent on the internal unit implementations
+        \end{itemize} & \begin{itemize}[leftmargin=*]
+            \item Verifies individual components
+            \item Efficient when testing single components
+        \end{itemize} \\
+        \hline
+        \textbf{Cons} & \begin{itemize}[leftmargin=*]
+            \item Waste of time when testing small unit changes
+            \item May not accurately identify root cause of failure
+        \end{itemize} & \begin{itemize}[leftmargin=*]
+            \item Time consuming to develop
+            \item Easily broken by refactoring code
+        \end{itemize} \\
+        \hline
+    \end{tabular}
+    \label{tab1}
+    \end{center}
+\end{table}
+
+Despite the time-consuming nature of developing unit tests manually, developers of all paradigms
+recognize value in \textit{having} unit tests. By definition, any reduction in the cost of unit test creation drives 
+up their return on investment.
+
+\subsubsection{Test Coverage}\label{sec:intro-cov}
+The term “coverage” refers to the measure of the completeness of a test.  
+Coverage can be measured in various ways, two prominent metrics are branch coverage 
+(what percent of if/else branches executed) and line coverage 
+(what percent of lines in the function executed during the test) 
+\cite{wang2024software}. The \textit{coverage} Python module can
+be used to gather this information directly; in fact, it is often paired with 
+\textit{pytest} to generate coverage tests for existing tests. This paper will focus 
+on the use of the line coverage metric, both in implementation and 
+as the standard for selecting which execution records to ultimately 
+keep for the final generated tests.
+
+\subsection{Previous work on automated test creation}\label{sec:intro-3}
+
+Given the cost of creating valuable tests,
+the body of academic work on generating them automatically 
+via metaprogramming is extensive. Classic algorithms like search 
+and randomization feature prominently in earlier work 
+\cite{Luk22Pynguin0170}, with generative AI significantly increasing in 
+popularity most recently
+\cite{bhatia2023unit,takerngsaksiri2024tdd,wang2024software, kahur2023java}.
+These AI methods generate tests based on a variety of inputs, typically the code
+itself and some other input such as human prompts 
+\cite{lahiri2023interactivecodegenerationtestdriven},
+natural language requirements \cite{wang2024software}, or entire projects
+\cite{rao2023cat}.  
+
+While the results of such AI-generated tests are promising,
+their coverage is not perfect \cite{kahur2023java} and still require significant
+developer review and correction \cite{sundqvist2024ai}.  
+
+Lemieux \textit{et. al.} propose a hybrid method, \textit{CodaMosa}, that 
+combines search and mutation (classical approaches) with generative AI
+\cite{lemieux2023codamosa}.  Their work is impressive but still relies on 
+heuristic techniques that the work here does not. This author is also unclear 
+what, if any, specialized hardware was required to use \textit{CodaMosa} given
+it's reliance on a large language model (LLM).
+
+\subsection{Initial motivation}\label{sec:intro-4}
+
+The author began exploring this concept of automated test case generation
+working on a personal project, a static analyzer he'd written for C source code.  As the
+author did this for fun and personal education, he had not written any unit
+tests.  Instead, the author carefully developed a sample input that caused large
+portions of the code to execute (e.g. created high code coverage).  This guided
+development until the code eventually produced a “good” output, i.e. an integration
+test.
+  
+Unit tests would have greatly eased the refactoring process and the author 
+hypothesized that the metaprogramming abilities of Python might empower creation
+of unit tests from that sole existing test. This paper describes the author's
+effort to prove this hypothesis.
+
+\subsection{Organization of this paper}\label{sec:intro-5}
+
+Section 2 of this paper describes the overall approach to building a
+Python decorator to generate unit tests from existing tests. The subsequent
+section enumerates both technical and philosophical assumptions made by the
+author, as well as alternative approaches when those assumptions may not hold.
+Section 4 describes the three different approaches taken by the author to 
+evaluate the generated tests, followed by a section dedicated to further 
+discussion of this work compared and constrasted to more related work.  A short
+conclusion follows, trailed by a brief Acknowledgements section.
+
+%
+ \section{Assumptions}\label{sec:assumptions}
+
+An initial assumption of the author's hypothesis is that all code executing under the
+functional test is mostly correct, as the inputs and outputs from each
+function called during the functional test would become data for the
+unit tests.  
+
+That said, the author acknowledges that software engineers may not 
+wish to assume that an apparently working functional test indicates accuracy of 
+all internally executed components. Regardless, the creation of such unit 
+tests would still provide a syntactically accurate unit
+test file for the software engineer to start from, rather than create each unit
+test from scratch.  
+
+In addition to saving time from creating the test
+boilerplate, the true expense saved is that of manually defining the desired
+inputs and correct outputs.  This author believes there is value in this automated
+approach even if the generated tests must still be verified for accuracy,
+as in the author's experience it was faster in some cases to manually inspect 
+the resulting unit test code for accuracy than develop and verify unit tests from scratch.
+
+Another assumption required for successful execution is that the \textit{repr()} method
+of each object generates valid Python code that can be used to re-created that
+object, or that such a function can be developed and used to temporarily
+overwrite a \textit{repr\(\)} method not meeting this requirement.  The author demonstrates
+this in the repository code by overwriting the \textit{repr\(\)} method of the
+Pandas DataFrame class as shown in Listing~\ref{lst:pandas_repr}.
+
+\lstinputlisting[language=Python,numbers=left,
+caption={Overwriting incompatible \textit{repr} method},label={lst:pandas_repr},]{examples/pandas\_repr.py}
+ \section{Recording the Execution of a Python Function}\label{sec:approach}
+
+\subsection{Defining the required components to create a unit test}\label{sec:intro-1}
+
+The author set out to record the execution of Python functions
+in such a way as to enable exact reproduction of that 
+function call in a standalone unit test.  The following components
+must be recorded in some fashion in order to do so:
+\begin{enumerate}
+  \item The function itself
+  \item The arguments to the function, including \textit{kwargs}
+  \item Any relevant global state (e.g. variables)
+  \item Exceptions raised
+  \item Test coverage
+  \item Files/databases read from and/or written to
+  \item Data sent/received via a socket
+\end{enumerate}
+
+The last two are left for future work, but this paper demonstrates how to capture 
+the first five. The subsections that follow discuss exactly how to 
+access or determine this info and cache for subsequent creation of unit tests
+with this information.
+\subsection{Accessing the function and its arguments}\label{sec:approach-internal-1}
+
+Python enables trivial access to a function and 
+its arguments via the concept of decorator functions.
+
+Not to be confused with the decorator pattern, a Python decorator is a 
+function that calls another, thereby permitting the developer to place new code 
+before and/or after calling the original “decorated” function \textit{f}.  
+The decorator function has full access to both the decorated 
+(or "wrapped" function) \textit{f} as well as all the 
+arguments passed to \textit{f}, both \textit{args} and \textit{kwargs}.  In other 
+languages this kind of wrapping is often referred to as 
+“function hooking” or "function call interception" 
+ \cite{kang2018function}. Any number of decorators can be applied to a function 
+in Python, creating a figurative Russian nesting doll of
+functions calling functions, each with the ability to access the 
+arguments of the function it wraps and modify the 
+return value before return. A Python decorator is applied with the \lq@\rq 
+symbol as shown on line 20 of Listing~\ref{lst:decorator}\footnote{The author optimized this and other code snippets for display in 
+this paper; therefore they may differ slightly from their original 
+source found in the associated repository}:
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={decorator.py: A sample decorator that takes one argument.},label={lst:decorator},]{examples/decorator.py}
+
+Running the code in Listing~ref{lst:decorator} yields the output shown in 
+Listing~\ref{lst:decorator-output}. Note the apparently erroneous math (line 1,7 of 
+Listing~\ref{lst:decorator-output}), as the \textit{add\_ints} function is 
+unaware that its first argument was modified by the \text{inner\_most\_decorator}.
+
+\lstset{style=batstyle}
+
+\lstinputlisting[language=bash,numbers=left,
+  caption={Output of decorator.py},label={lst:decorator-output},]{examples/decorator\_result.txt}
+\lstset{style=pythonstyle}
+
+As shown in Listing~\ref{lst:decorator-output}, not only can the Python developer access the function
+via the variable \textit{f} (e.g. line 14), the developer also has full
+access to the variables passed to \textit{f}, and can make 
+arbitrary changes to the arguments in a transparent way (line 11), 
+i.e. the calling function would never know the arguments 
+were modified before being passed to the callee function.
+
+In addition to access to the function and its arguments,
+decorators provide the power to insert code immediately before and after 
+the function (lines 8-13, 15, respectively), including leveraging arbitrary
+arguments (e.g. \textit{my\_int}) passed to the decorator itself.
+
+A decorator like the one on line 5 of Listing~\ref{lst:decorator} permits
+the passing of separate arguments to the decorator itself.  
+If not extraneous argument is needed, that \textit{outermost} decorator
+is unnecessary.
+
+The author uses such a decorator (specifically named 
+\break
+\textit{unit\_test\_generator\_decorator} in the referenced repository) to take
+ a “before” and "after" snapshot of the arguments
+before and after the function is called.
+
+\subsection{Accessing relevant global state}\label{sec:approach-internal-2}
+
+In addition to the arguments passed directly to the function, any relevant 
+global state must also be captured. "Relevant" here refers only to those 
+global values read from and/or written to by the function.
+The author's code focuses on variables (e.g. the int \textit{c} in the example above), 
+disregarding imported modules such as \textit{re, os, etc}, detecting such
+modules in a separate parsing step.
+Access to the global values is non-trivial compared to accessing the function 
+and its arguments, but still possible.  The first step is to use the \textit{dis}
+module to programmatically disassemble the decorated function.  This is only 
+required on initial execution of the decoratee as subsequent executions, if any, 
+benefit from cached results of the disassembly.
+Programmatic disassembly of \textit{add\_ints} function during execution is shown
+in Listing~\ref{lst:dissas-add-ints}:
+
+\lstinputlisting[language=TeX,numbers=left,
+  caption={Result of Programmatically Disassembling \textit{add\_ints}},label={lst:dissas-add-ints},]{examples/actual\_disassemble\_add\_ints.txt}
+
+Note the LOAD\_GLOBAL command on line 6 of Listing 4 to load the value of 
+\textit{c}.  Such global names \textit{read from} are saved for later reference.  
+Likewise, names and values \textit{written to} via 
+the STORE\_GLOBAL commands are also cached for later use.
+Of note, the disassembly shown above differs from stand-alone disassembly of 
+the same function in the Python interpreter (compare the listing above to the
+\textit{examples/disassemble\_decorator\_with\_decorators.txt} file in the 
+accompanying repository.)
+During actual execution the author's code disassembles only the
+\textit{add\_ints} function, after the decorators
+have already executed, leaving only the original  \textit{add\_ints}
+function for disassembly.
+In contrast, disassembling the function in the static, non-executing context of
+the Python interpreter reveals the code of all applied decorators.  
+Values read from the global state must be recorded 
+in order to monkeypatch them in the resulting unit test.
+The decorated function must also record modified global values in
+order to assert that the state was correctly changed by the function.
+
+\subsection{Detecting exceptions}\label{sec:approach-internal-3}
+Detecting exceptions is easiest of the three information capture steps.
+Any exception can be detected with the code shown in Listing 
+~\ref{exceptions}.
+
+\begin{lstlisting}[language=Python, caption={Catching and recording exceptions}, label={exceptions}]
+  try:
+    # call the decorated function, e.g.
+    f(args, kwargs)
+  exception Exception as e:
+    # Save the exception type and exception message
+  \end{lstlisting}
+
+\subsection{Determining Test Coverage}\label{sec:approach-internal-4}
+The Python \textit{coverage}
+module provides support for capturing line (and branch)-based coverage
+as shown in Listing~\ref{lst:Coverage} \cite{batchelder2024}.
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={Calling a function and capturing the test coverage with the \textit{coverage} module.},label={lst:Coverage},]{examples/coverage_example.py}
+
+The documented approach to using the \textit{coverage} module 
+saves results to a persistent database on the filesystem.
+However, due to the already high overhead the author's work, he opted not 
+to use the database option by it separately, 
+opting not to use the default database \cite{batchelder2024}.
+
+\subsection{Summary of the approach}\label{sec:approach-internal-5}
+
+The author uses all the methods discussed above to take a "before" and “after” 
+snapshot of the arguments and relevant global state of each execution. 
+
+Note that the state of mutable \textit{arguments} must also be captured 
+\textit{after} the function executes as called functions may change mutable 
+arguments that persist upon return to the caller. The return value or exception 
+type and exception message are also captured, in addition to line test coverage. 
+For each execution of a given function, an instance of the 
+\textit{CoverageInfo} class is created and the fields populated, see 
+Listing~\ref{lst:CoverageInfo}.
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={The CoverageInfo class caches all metadata associated with a single execution.},label={lst:CoverageInfo},]{examples/coverage_info.py}
+In addition, one instance of the FunctionMetaData classes shown in 
+Listing~\ref{lst:FunctionMetaData} is populated for each decorated function.
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={The FunctionMetaData class caches all metadata associated with
+   a single function, to include all associated CoverageInfo classes (line 25)},label={lst:FunctionMetaData},]{examples/function\_metadata.py}
+
+\section{Programmatically Tuning the Decorator}\label{sec:decorator tuning}
+
+\subsection{Selectively bypassing the decorator}\label{sec:tuning-1}
+
+As the reader may imagine, the decorator described above adds significant overhead 
+to the execution time of the overall test, as the function call is intercepted,
+arguments inspected and copied, etc.  To mitigate this overhead the author provides 
+a variety of methods to "bypass" the decorator, i.e. calling the decorated 
+function and simply returning the result without further action.
+
+The first and perhaps most obvious approach is to set a coverage threshold such 
+that the decorator is effectively disabled once a desired level of coverage 
+(e.g. 80\%) is achieved. 
+
+One could also define a specific number 
+of executions to capture, after which the decorator would be disabled. 
+The author supports either option by setting either the \textit{percent\_coverage} or 
+\textit{sample\_count} option to the decorator to the desired value.  Setting 
+\textit{percent\_coverage} to a value greater than 100 will capture all 
+executions of the decorated function.  Listing~\ref{lst:ProgrammaticallyTuning}
+shows this code.
+\lstinputlisting[language=Python,numbers=left,
+  caption={Programmatically "bypassing" the decorator by immediately returning 
+  the function results when desired coverage met},label={lst:ProgrammaticallyTuning},]{examples/programmatictuning.py}
+
+The careful reader may wonder if the \textit{sample\_count} option may result in 
+duplicate tests cases, e.g. five test cases are captured but three are duplicates, 
+yielding only three unique test cases.  This would in fact be the case, however, the author 
+addressed this by hashing the inputs (global values, args and kwargs) and 
+caching the hash in a set name \textit{hashed\_inputs}.  If a function has
+already been called with the exact same inputs, the decorator immediately returns
+the result in the same fashion as shown above. Thus, all test cases 
+ultimately generated are unique.  This represents the last mitigation
+currently in the code.  In future work the author hopes to return the cached 
+result/raise the same exception of this execution to save even more overhead.  
+
+It is also important to note that the decorator need only be applied until the 
+test cases are generated and the developer is satisfied that the created unit
+tests will suffice.  At that point the decorator can be completely removed
+from the functional or integration test\footnote{Equivalently, 
+\textit{sample\_count} and \textit{percent\_coverage} can both be set to 0.}, 
+thereby restoring the runtime of
+the original test back to its original, faster runtime.  
+
+\subsection{Selectively keeping specific test cases}\label{sec:tuning-1}
+Ideally, the same function will be executed multiple times during an ad hoc or 
+function test to maximize coverage.  That said, the tester may wish to preserve 
+a minimal number of test cases to avoid too much redundancy.  
+One such approach is to drop the current execution
+record if the current execution didn’t add any new coverage.  
+Conversely, one can drop previous records if the current coverage supersedes
+previous coverage.
+There are a few ways to minimize duplicate coverage as explored below, 
+but the reader should bear in mind:
+
+\begin{enumerate}
+  \item that \textit{fully} orthogonal test cases, as measured by coverage, are not feasible 
+  (all test cases will cover the initial lines until the first conditional statement) 
+  \item test cases with redundant coverage can still hold value
+  \item some code such as function calls and regular expressions may have one 
+  line in source code, but multiple branches in the underlying library or machine code.
+\end{enumerate}
+
+Nevertheless, the value added by redundant tests often plateaus 
+\cite{lemieux2023codamosa}, hence the following sections
+describe how to reduce such redundancy.  The first section describes
+the technique employed by the author to balance memory usage and performance but
+with intermediate complexity. The paragraph that follows describes a much simpler and faster
+approach but offers poorer performance in that is rarely selects optimal test 
+cases.  For the reader desiring the truly ideal solution, i.e. keep the fewest test cases that achieve
+maximum coverage, a note on the proper algorithm to pursue such a goal completes
+this section. This method was not selected to due its higher memory
+requirements and higher complexity of implementation.
+ 
+\subsubsection{Selected Approach: Individual Subsets}\label{sec:tuning-2}
+One can maintain coverage information for previous
+executions individually and check the current set of covered lines
+against all previous coverage sets.  If the current coverage is
+a subset of all existing records, it is discarded.  
+Else, all previous records whose coverage is 
+a proper subset of the current record are deleted (or \textit{pruned})
+and the current record kept. This is more effort than the next approach but
+retains fewer records with the same total coverage.  
+A simple sample of the individual subset approach is shown in Table 2.
+
+\vskip .2cm
+\begin{tabular}{|>{\centering\arraybackslash}m{1.6cm}|>{\centering\arraybackslash}m{1.25cm}|>{\centering\arraybackslash}m{4.5cm}|}
+    \hline
+    \multirow{2}{*}{\textbf{Execution \#}} & \textbf{Coverage (line \#s)} & \textbf{Action} \\
+    \hline
+    1 & 1-5 & Keep this record, since it is the first one.\\
+    \hline
+    2 & 1-7 & Keep this and drop record \#1, as that coverage is only a subset of this coverage.\\
+    \hline
+    3 & 1-2 & Don’t keep this record; it is a subset of an existing record (\#2)\\
+    \hline
+\end{tabular}
+\captionof{table}{Hypothetical scenario \#1 demonstrating record pruning by checking for subsets}
+\vskip .2cm
+Unfortunately, this subset approach still leaves room for redundant tests.  
+Consider a new scenario:
+\vskip .2cm
+\begin{tabular}{|>{\centering\arraybackslash}m{1.6cm}|>{\centering\arraybackslash}m{1.25cm}|>{\centering\arraybackslash}m{4.5cm}|}
+    \hline
+    \multirow{2}{*}{\textbf{Execution \#}} & \textbf{Coverage (line \#s)} & \textbf{Action} \\
+    \hline
+    1 & 1-5 & Keep this record, since it is the first one.\\
+    \hline
+    2 & 6-10 & Keep this one, it covers new code.\\
+    \hline
+    3 & 5-6 & Keep this record, it’s not a subset of any previous record.\\
+    \hline
+\end{tabular}
+\captionof{table}{Hypothetical scenario \#2 demonstrating record pruning by checking for subsets}
+\vskip .2cm
+
+Since the subset approach does not aggregate all the coverage into a 
+single unified set as in the next approach, the record for execution \#3 would
+be kept, but this would be redundant, as executions 1 and 2 already executed
+lines 5 and 6, respectively.
+The author implemented this approach such that setting the \textit{keep\_subsets}
+options to True would not drop redundant records in case the user desired to keep
+test cases that produce redundant coverage. The author did maintain a unified
+set of coverage as discussed next, but it played no role here.
+
+\subsubsection{Check for new coverage via unified set}\label{sec:tuning-2}
+Another approach is to maintain a unified set $U_t$ that is the union of all lines 
+covered by all recorded tests from $S_0$ to $S_n$: 
+
+\begin{equation*}
+  U_t = S_0 \cup S_1 ...\cup... S_n
+\end{equation*}
+then only keeping the current record $S_i$ if any currently 
+covered lines are not in the unified set:
+\begin{equation*}
+  S_i \not \subset U_t
+\end{equation*}
+then updating the unified set with the new coverage information like so:
+\begin{equation*}
+  U_t \Leftarrow U_t + S_i
+\end{equation*} 
+With this approach the individual coverage information $S_i$ is not maintained 
+($U_t$ is updated, then $S_i$ is discarded), making it impossible to drop superseded 
+coverage records over time.  100\% coverage would mean that:
+\begin{equation*}
+  U_f = U_t
+\end{equation*} 
+This approach is the simplest of the three described here but suffers from a 
+lack of granularity: it's impossible to remove old records if new records have 
+better coverage, as specific coverage per test is not recorded.
+
+\subsubsection{Optimal Result by Solving the Minimum Set Cover Problem}\label{sec:tuning-2}
+If the developer desires the best solution, e.g. to keep the bare minimum
+number of test cases, all records must be cached initially.  
+From there, the tester must solve the Minimum Set Cover Problem
+\cite{hassin2005better} to select the minimum test cases.
+This classic NP-Hard computer science problem involves finding the smallest number
+of sets whose union is equal to or greater than (“covers”) some universe $U$ of elements.  
+In this context, the coverage (set of line number executed) of each test is one set $S_i$,
+and the set of all line numbers of a function is the universe $U_f$ to cover.  
+As noted, this requires caching the unique coverage of each test, which may 
+be prohibitive from a memory standpoint for large applications.
+If memory is not a concern, this method may reduce the runtime 
+compared to the alternate approaches described above. \footnote{Validating this hypothesis
+could be an area for future work.} As the pruning 
+only takes place after the tests are complete, the tests are not slowed as much
+as the previous methods that prune during the tests.  That said, the sole
+pruning operation will take comparatively longer as all the records must be 
+analyzed all at once. The reader should be aware that due to the NP-Hard
+nature of this problem, typical solutions are heuristic-based.
+   
+The author did not implement 
+the Minimum Set Cover problem or its weighted variants, but encourages 
+the interested reader to do so.  The author records the execution time of each 
+execution as the \lq cost \rq. This value could be applied in a weighted 
+variant of the Minimum Set Cover problem, i.e. select the "best" test cases
+such that coverage is maximized and run time is minimized.
+
+\section{Generating the Unit Tests via Metaprogramming}\label{sec:generating-tests}
+
+After capturing the function metadata as documented in Listings 7 and 8, 
+the next step was to programmatically generate the unit tests with all their 
+captured test cases and place them in a file named 
+\textit{test\_\$function\_name.py}. 
+via a call to \textit{generate\_all\_tests\_and\_metadata} at the end of 
+the functional test.
+Calling this function eventually executes \textit{auto\_generate\_tests} 
+that uses metaprogramming to:
+\begin{enumerate}
+  \item Build a list of imports
+  \item Define global variables constant across all test cases
+  \item Convert values to valid (i.e. canonical) Python code
+  \item Build a comment specifying the level of coverage achieved\footnote{e.g. line 17 in Listing 13}
+  \item Collect parameters to create a parameterized pytest test
+  \item Monkeypatch all non-constant relevant globals read from
+  \item Assert result is correct
+  \item Assert modified globals are correct
+  \item Assert expected exceptions and their messages are correct
+  \item Write all of the above to a syntactically correct Python file
+  \item Use subprocess to lint and format the result with \textit{black} and \textit{ruff}
+\end{enumerate}
+
+To aid the developer's troubleshooting efforts, the contents of each FunctionMetaData
+class are also dumped to their own .json file, one per decorated function (hence
+the \textit{and\_metadata} suffix noted above).  This file permits the 
+developer to easily inspect the inputs, outputs, and other data
+associated with the recording without the distraction of the test code.
+
+Thus, if the function \textit{foo} is decorated with \textit{unit\_test\_decorator},
+the generated unit test code can be found in \textit{test\_foo.py}, and the 
+metadata can be found in a JSON file name named \textit{foo.json}
+
+In addition to all of the above, significant development efforts went into 
+serializing and deserializing Python code to and from strings.  Though
+certainly not a panacea, the work here advances that done by 
+Lemueux \textit{et. al.} \cite{lemieux2023codamosa} not only in terms of 
+automated testing but also in terms of serialization capabilities.
+
+
+
+
+ \section{Tester, Test Thyself}\label{sec:evaluation}
+
+The decorator was evaluated informally with three separate approaches.
+The author began by crafting simple but demonstrative test cases 
+(found in the \textit{tests/} folder in the associated repository.) Next,
+the author applied the concept of programmatically generated unit tests
+to the code itself with positive results. With two key logical checks it
+was possible to apply the decorator to its very own support code.  Those
+checks were to:
+
+\begin{enumerate}
+  \item Immediately return if the pytest module was loaded, indicating a unit (not integration) test is currently being executed
+  \item Immediately return if the call stack contained a loop, e.g. A$\rightarrow$B$\rightarrow$A
+\end{enumerate}
+
+These checks are shown in Listing~\ref{lst:Limit Recursion}.
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={limit\_recursion.py},label={lst:Limit Recursion},]{examples/limit_recursion.py}
+
+the carefule examination of the call stack was required to limit 
+recursive decorators to just one level. Finally, as previously mentioned, 
+the author applied his work to another project involving parsing C code. 
+These three approaches are described detail below:
+
+\subsection{Manually Created Tests}\label{sec:eval-1}
+The author created a variety of tests to ensure the unit test generation 
+code functioned properly. The Procedural Division example is explained in depth
+below and the others are briefly summarized.
+
+The \textit{tests/example\_procedural\_division} test was intended 
+to test procedural (as opposed to object-oriented or functional) code that:  
+
+\begin{enumerate}
+    \item Returned a string given two ints
+    \item Wrote to a global variable
+    \item Raised two different types of exceptions
+\end{enumerate}
+
+The author wrote a \textit{divide\_ints} function as shown 
+in Listing~\ref{lst:Divide Ints}.
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={divide\_ints.py},label={lst:Divide Ints},]{examples/divide\_ints\_1.py}
+
+Then wrote an ad-hoc "test" that calls 
+\textit{divide\_ints} with a variety of inputs, but no assertions
+as shown in List~\ref{lst:Test Divide Ints}.  Note the useof erroneous inputs
+to cover the error handling code.
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={test divide\_ints()},label={lst:Test Divide Ints},]{examples/divide\_ints\_2.py}
+
+Running this code with pytest as displayed in Listing 6
+
+\begin{lstlisting}[
+  language=bash, 
+  caption={Executing example to create unit tezst},
+  label={lst:rundivide}]
+    $ python divide_ints.py
+\end{lstlisting}
+    
+produces the following \textit{test\_divide\_ints.py} containing the following 
+unit test (modified only slightly below to reduce line breaks):
+
+\lstinputlisting[language=Python,numbers=left,
+  caption={test divide\_ints},label={lst:Test Divide Ints},]{examples/divide\_ints\_3.py}
+
+Lines 18-20 set up the parameterization decorator, defining the inputs to each test,
+and the inputs to each are defined in a list of tuples spanning lines 23-33, 
+34-44, 45-57.  The actual test function follows starting on line 60, monkeypatches
+the required ERROR\_CODE global variable on lines 75-76, tests for expected 
+exceptions on lines 77-80, and only calls the function on line 82 if it expects 
+no exception. The result is verified on lines 82-83
+\footnote{due to the complexity of converting from Python object to string
+(and sometimes back again), the author was forced due to time contraints to
+rely on the \textit{eval} function to convert strings to valid Python.  
+The author acknowleges this is a bad practice and hopes to fix it in
+future revisions.}. An unexpected exception (or incorrect 
+(exception, exception message) 
+pair) would cause the unit test to fail.  Finally, global variables expected to be modified 
+are checked for correct values on lines 85-92.  Note that not all test cases 
+were retained due to the deduplication logic discussed in Section~\ref{sec:tuning-1}.
+
+Executing the unit test is simple as shown in Listing~\ref{Running one of the generated unit tests}\footnote{Due to the verbose way pytest prints the 
+all the parameters of  parameterized tests such as these, the author removed
+them for the sake of simpler display.  The reader is encouraged to run the code 
+as shown on their own machine}.
+
+\begin{lstlisting}[language=bash, numbers=left, caption={Running one of the generated unit tests}]
+pytest -s -v test_divide_ints.py
+========== test session starts ==========
+platform win32 -- Python 3.11.7, pytest-7.4.4, pluggy-1.4.0 -- <@\textcolor{orange}{PATH REDACTED}@>\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <@\textcolor{orange}{PATH REDACTED}@>\tests\example_procedural_division
+plugins: cov-5.0.0
+collected 4 items
+
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#1 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#2 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#3 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+test_divide_ints.py::test_divide_ints[<@\textcolor{orange}{Test \#4 arguments SNIPPED}@>] <@\textcolor{green}{PASSED}@>
+\end{lstlisting}
+
+The reader is encouraged to study the other examples in the repository.
+All examples can be executed via the 
+\textit{tests/test\_all.*} scripts.  The reader can inspect those scripts
+to determine how to run each test individually. 
+They are summarized very briefly below:
+
+The \textit{tests/example\_fizzbuzz} test is nearly identical to the 
+test described above: tests modification of a global value.
+
+The \textit{tests/example\_all\_types} test was designed to test
+the code against a variety of built-in Python types, 
+such as ints, strings, sets, lists, tuples, and dictionaries.
+
+The \textit{tests/example\_pass\_by\_assignment} test was designed to test
+functions that modify mutable arguments such as lists. Not a comprehensive test,
+but demonstrates that the concept works on one such example.
+
+The \textit{tests/example\_oo\_car} test was designed to test
+object-oriented code. Not complete at the time of submission, but worked in a 
+previous branch prior to adding support for the test above.
+The author hopes to restore this feature to full functionality in future work.
+\subsection{Application of this code to itself}\label{sec:eval-2}
+
+The author naturally sought to determine the effectiveness of automatic
+test code generation against itself.  Although not 
+every function in the referenced code was decorated for automatic testing, 
+as of this writing five functions in 
+\textit{unit\_test\_generator\_decorator.py} were successfully decorated
+\footnote{with the exception of a few OOP relate tests, see above.}, 
+resulting in automatically generated, successfully passing unit tests for this
+very code.  Using the previous Procedural Division example (and others) 
+the reader should see the following test files created in addition to 
+\textit{test\_divide\_ints.py}
+
+\begin{enumerate}
+    \item \textit{test\_coverage\_str\_helper.py}
+    \item \textit{test\_meta\_program\_function\_call.py}
+    \item \textit{test\_normalize\_args.py}
+    \item \textit{test\_update\_global.py}
+    \item \textit{test\_update\_metadata.py}
+\end{enumerate}
+
+These tests also pass when run with this command in 
+\linebreak
+\textit{tests/example\_procedural\_division/} directory:
+\begin{lstlisting}[language=bash, caption={Running all generated unit
+   tests for the division example}]
+    pytest -s -v .
+\end{lstlisting}
+
+\subsection{Application of this code to an external project}\label{sec:eval-2}
+To validate this work on an external codebase, the author applied 
+this project to a single function (due to time constraints) of his C code
+parser that inspired it.  The author applied this
+decorator to a Python function designed to extract the name of any C functions 
+from a provided line of code, then ran the sole function test that called 
+the decorated function extensively with various and redundant inputs.
+The applied decorator worked as desired, including deduplicating results as
+previously discussed, rapidly capturing over three dozen unique test cases.
+Upon visually inspecting the inputs and outputs, the author 
+nearly instantly identified two bugs in the decorated function.
+After patching both bugs revealed by the unit tests, he re-ran the function test, 
+and inspected the newly created unit tests. At that point he was confident that
+the generated unit test and dozens of tests cases sufficed for unit testing apart 
+from the functional test.
+
+At that point, he removed the decorator, restoring the functional test to its 
+original runtime. Thus, under ideal situations, the tester only pays the 
+decoration penalty as few as two times per function.  Of course, multiple 
+functions can be decorated at once.
+ \section{Discussion}\label{sec:discussion}
+
+
+In this paper and accompanying code the author
+has proved his hypothesis that the metaprogramming abilities of 
+Python can be used to programmatically create multiple 
+unit tests from even a single existing test.
+
+The decorator and supporting code discussed above
+(and provided in the accompanying repository)
+was written in Python 3.11 and tested on a 
+Windows 10 laptop with 16GB of memory and 6 core i7-9750H @2.60Ghz CPU.
+The author did not test it on *nix environments but given the
+cross-platform support of Python, the author believes it should run in *nix 
+environments with no more than minor modifications. The author releases it
+under the GNU LGPL open-source license.
+
+\subsection{Areas for future work}\label{sec:tuning-2}
+As partly noted above, future work should: 
+\begin{enumerate}
+  \item Reduce reliance on \textit{eval}
+  \item Add support for file and socket I/O
+  \item Complete OOP support
+  \item Compare runtime performance of various algorithms for keeping minimal subsets of tests
+  \item Add multi-thread and multi-process testing and support
+  \item Investigate applicability of these ideas to other OOP languages such as C\#, Go, and Zig
+  \item Verify cross-platform compatibility
+  \item Determine backwards compatibility with older Python versions
+\end{enumerate}
+
+\subsection{Limitations}\label{sec:limitations}
+As noted in Section~\ref{sec:assumptions}, in order to 
+generate unit tests as described in this paper, the 
+process must be boot-strapped with a initial passing test.
+
+Additionally, for very large applications, or large
+functions with complex inputs, memory constraints may 
+limit the number of functions that can be decorated at once,
+which would slow down the process of creating 
+a large number of unit tests.
+
+\subsection{Related Work}\label{sec:related-work}
+This work is perhaps most similar to 
+\cite{lahiri2023interactivecodegenerationtestdriven}, though
+differs in that rather than prompt users interactively for sample inputs and
+outputs, it automatically detects such inputs, outputs, and changes in global
+state by monitoring actual execution of the code.  It is also worth noting 
+that the work presented here could easily be applied to AI or otherwise 
+automatically generated tests.  Although in one paper the AI-generated end-to-end tests 
+were written in Java \cite{leotta2024ai}, analogously created Python tests could
+be used with the work presented here to generate previously non-existent 
+tests at the unit level.
+
+In the current research this author did not discover a deterministic 
+unit test generation paradigm that monitored other types of
+tests from which to create unit tests.  In this paper the author presented
+a Python decorator leveraged previously designed test(s) to directly create 
+unit tests at minimal development cost.
+The trade-off is that this approach increases execution time of the function 
+tests and like AI-generated tests, such tests would still require review by the 
+developer. The latter is true of any automatically generated test and 
+the author proposed and demonstrated a variety of approaches to 
+mitigate the increased runtime for existing tests.
+ \section{Conclusion}\label{sec:conclusion}
+
+The author proved his initial hypothesis that 
+that unit tests could be
+created programmatically by monitoring and capturing 
+metadata from existing tests.
+
+Although much work remains, the author maintains an optimistic outlook
+that the testing paradigm presented here could prove valuable in the 
+world of automated test generation due to the variety of successful 
+tests noted above.  By generating unit tests from functional tests, 
+not only are the unit tests created essentially for free,
+but the quality (i.e. coverage) of other tests generated via BDD or ATDD 
+processes can be assessed. This could enable rapid comparison
+of the relative test coverage of various testing paradigms.
+
+The code is available in a single Python file to permit 
+easy integration into any supported Python project.
+The author wishes to give back to the computing community
+and therefore offers this project free and open source
+in the hopes that it will be found useful and lay the ground
+work for future related research and application.
+The author hopes the concepts described herein will be 
+applied in other languages with strong metaprogramming support
+such as C\#, Go, Zig, etc. Further information on the code and  documentation, please
+find it online at
+\begin{center}
+  \textbf{LINK REDACTED FOR DOUBLE BLIND REVIEW}
+\end{center}
+
+
+ \section{Acknowledgements}\label{sec:acknowledgements}
+
+Redacted for double-blind review; will populate if accepted.  e.g.
+The author wishes to thank Drs. \_\_\_\_\_ \_\_\_\_\_\_ and \_\_\_\_\_\_\_ \_\_\_\_\_\_\_\_
+for their assistance in technical writing, Mr. \_\_\_\_\_ \_\_\_\_\_\_
+for his input on the abstract, and Mr. \_\_\_\_\_ \_\_\_\_\_\_ for sharing his pytest
+expertise.
+
+
+
+ 
+
+\bibliographystyle{ieeetran}
+\bibliography{related}
+
+\end{document}
