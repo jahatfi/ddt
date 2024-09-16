@@ -10,7 +10,7 @@ from src import unit_test_generator
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1728', '1730', '1733-1734']
+# ['1729', '1731', '1734-1735']
 @pytest.mark.parametrize(
     "arg, expected_result, args_after",
     [

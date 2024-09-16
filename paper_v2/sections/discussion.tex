@@ -8,7 +8,7 @@ unit tests from even a single existing test.
 
 The decorator and supporting code discussed above
 (and provided in the accompanying repository)
-was written in Python 3.11 and tested on a 
+were written in Python 3.11 and tested on a 
 Windows 10 laptop with 16GB of memory and 6 core i7-9750H @2.60Ghz CPU.
 The author did not test it on *nix environments but given the
 cross-platform support of Python, the author believes it should run in *nix 
@@ -20,7 +20,6 @@ As partly noted above, future work should:
 \begin{enumerate}
   \item Reduce reliance on \textit{eval}
   \item Add support for file and socket I/O
-  \item Complete OOP support
   \item Compare runtime performance of various algorithms for keeping minimal subsets of tests
   \item Add multi-thread and multi-process testing and support
   \item Investigate applicability of these ideas to other OOP languages such as C\#, Go, and Zig
@@ -53,11 +52,4 @@ tests at the unit level.
 
 In the current research this author did not discover a deterministic 
 unit test generation paradigm that monitored other types of
-tests from which to create unit tests.  In this paper the author presented
-a Python decorator leveraged previously designed test(s) to directly create 
-unit tests at minimal development cost.
-The trade-off is that this approach increases execution time of the function 
-tests and like AI-generated tests, such tests would still require review by the 
-developer. The latter is true of any automatically generated test and 
-the author proposed and demonstrated a variety of approaches to 
-mitigate the increased runtime for existing tests.
+tests from which to create unit tests.

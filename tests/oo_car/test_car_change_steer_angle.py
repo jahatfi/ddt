@@ -5,15 +5,15 @@ Programmatically generated test function for Car.change_steer_angle()
 import re
 import pytest
 from collections import OrderedDict
-import car
+from tests.oo_car import car
 
 # Now import modules specific to Car.change_steer_angle:
+from logging import Logger
 from logging import PlaceHolder
 from logging import StreamHandler
 from logging import Manager
-from logging import Logger
 from logging import RootLogger
-from car import Car
+from tests.oo_car.car import Car
 
 
 # In sum, these tests covered 60.0% of Car.change_steer_angle's lines

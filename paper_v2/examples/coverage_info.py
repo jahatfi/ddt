@@ -22,3 +22,4 @@ class CoverageInfo:
     exception_message: str = ""
     constructor: str = ""
     cost:float = 0.0
+    testable:bool = True

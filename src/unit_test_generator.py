@@ -305,7 +305,7 @@ class FunctionMetaData(Jsonable):
         self.lines = lines
         self.non_code_lines = self.return_non_code_lines()
 
-    def percent_covered(self, precision:int=2)-> float:
+    def get_percent_covered(self, precision:int=2)-> float:
         """
         Compute and return percent of covered lines,
         rounded to 'precision' digits.
@@ -565,7 +565,7 @@ def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
 
                 # Check if this decorator should be applied based on the
                 # provided percent_coverage or sample_count variables
-                if percent_coverage and percent_coverage <= this_metadata.percent_covered(0):
+                if percent_coverage and percent_coverage <= this_metadata.get_percent_covered():
                     # Desired percent coverage already achieved: skip
                     logger.info("%d coverage for %s already achieved: skip decorator",
                                 percent_coverage, function_name)
@@ -1230,9 +1230,8 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     end_time = 0.0
     cov_report_ = None
     result = None
-    #data_file = f"coverage_{function_name}_{time.perf_counter()}"
     logger.debug("covering %s", function_name)
-    cov = coverage.Coverage(None)#data_file)
+    cov = coverage.Coverage(None)
     with cov.collect():
         try:
             if kwargs:
@@ -1289,7 +1288,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     # If no new lines were covered, do nothing else,
     # but just immediately return the result
 
-    pct_covered = this_metadata.percent_covered()
+    pct_covered = this_metadata.get_percent_covered()
     pct_covered = round(pct_covered, 4)
     delta = len(this_coverage-this_metadata.unified_test_coverage)
 
@@ -1378,7 +1377,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         this_metadata.types_in_use |= these_types
 
     this_metadata.unified_test_coverage |= this_coverage
-    percent_covered = this_metadata.percent_covered(2)
+    percent_covered = this_metadata.get_percent_covered(precision=2)
 
     logger.debug("Achieved %.2f%% coverage for %s", percent_covered, function_name)
     sorted_coverage:List[int] = sorted(list(this_coverage))

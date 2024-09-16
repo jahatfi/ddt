@@ -6,19 +6,19 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1725,
       1726,
       1727,
       1728,
       1729,
       1730,
-      1732,
+      1731,
       1733,
       1734,
-      1735
+      1735,
+      1736
    ],
    "non_code_lines": [
-      1731
+      1732
    ],
    "coverage_io": {
       "6176344bda5fcd5c189c63ea53eb0c38ad5566d698321fa688a3aef31d17817b": {
@@ -35,12 +35,12 @@
          "expected_result": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
          "expected_type": "str",
          "coverage": [
-            1725,
             1726,
             1727,
-            1729,
-            1732,
-            1735
+            1728,
+            1730,
+            1733,
+            1736
          ],
          "exception_type": "",
          "exception_message": "",
@@ -54,12 +54,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1725,
       1726,
       1727,
-      1729,
-      1732,
-      1735
+      1728,
+      1730,
+      1733,
+      1736
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

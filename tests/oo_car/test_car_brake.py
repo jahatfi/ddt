@@ -5,15 +5,15 @@ Programmatically generated test function for Car.brake()
 import re
 import pytest
 from collections import OrderedDict
-import car
+from tests.oo_car import car
 
 # Now import modules specific to Car.brake:
+from logging import Logger
 from logging import PlaceHolder
 from logging import StreamHandler
 from logging import Manager
-from logging import Logger
 from logging import RootLogger
-from car import Car
+from tests.oo_car.car import Car
 
 
 # In sum, these tests covered 71.43% of Car.brake's lines

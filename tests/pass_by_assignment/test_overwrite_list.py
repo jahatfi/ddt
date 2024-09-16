@@ -5,7 +5,7 @@ Programmatically generated test function for overwrite_list()
 import re
 import pytest
 from collections import OrderedDict
-import pass_by_assignment
+from tests.pass_by_assignment import pass_by_assignment
 
 
 # In sum, these tests covered 100.0% of overwrite_list's lines

@@ -13,25 +13,22 @@ On page 22 \cite{percival2014test} Percival advocates both functional and
  unit tests, making the following distinction:
 “functional tests test the application from the outside, from the point of view
 of the user. Unit tests test the application from the inside,
-from the point of view of the programmer.”
+from the point of view of the programmer."
 %
-Later, on page 470 \cite{percival2014test} Percival defines an “integration test” as
+Later, on page 470 \cite{percival2014test} Percival defines an “integration test" as
 one that depends on and interacts with some external system.
 %
-“Integration test” is sometimes used in common vernacular in the same way that
-Percival uses “functional test”.
-%
-This paper will do the same, using the terms interchangably.  The author will 
-even use the term "ad hoc test" in reference to informal tests used by the developer.  
+This paper will use both terms interchangably, in addition to the term 
+"ad hoc test" in reference to informal tests used by the developer.  
 The key asssumption for this paper is that there exists at least one passing 
 test above the unit level that calls at least one internal function.  This 
-paper will describe how the work takes advantage (to a point) of the 
+paper will describe how the author's work takes advantage of the 
 comprehensive nature of higher-level tests in which multiple functions are 
 executed, potentially with various inputs.
 %
 Previous academic research \cite{causevic2011factors, ramzan2024test} observed
  that industry TDD adoption is lower than desired,
-reporting increased longer development cycles, skill issues, and legacy code as 
+reporting longer development cycles, skill issues, and legacy code as 
 a few root factors, among others.
 %
 \subsubsection{Non-TDD Testing Paradigms}\label{sec:intro-}
@@ -39,9 +36,9 @@ In contrast to the TDD methodology in which only the developers write the tests
 \cite{axelrod2018unit}, 
 others \cite{brown2013agility, shahabuddin2016integration, moe2019comparative} propose a 
 more customer-focused testing approaches such as Behavior-Driven Development (BDD)
-or Acceptance Test Driven Development (ATDD) focused on on the software's behavior 
+or Acceptance Test Driven Development (ATDD) focused on the software's behavior 
 from the user's perspective. In these paradigms, non-developers play a role 
-in creating the tests, such as a business analyst (BDD) \cite{barus2019implementation}
+in creating the tests, such as a business analyst (in BDD) \cite{barus2019implementation}
 or a cross-functional team of developers, business analysts, and testers \cite{pugh2010lean}.
 These advocates argue that such feature-first approaches are optimal for accelerating development 
 and reducing a product's time to market due to the time-consuming nature of manually
@@ -61,15 +58,15 @@ the hobbyist may focus primarily on function or integration tests
 and opt not to develop unit tests, perhaps because the pros of unit tests
 do not outweigh the cons compared to a higher level test.
 %
-The main pros and cons for functional versus unit tests are summarized very 
-briefly Table \ref{tab1}.
+Table \ref{tab1} briefly summarizes a few pros and cons of high level 
+(e.g. functional) compared to units tests.
 
 \begin{table}[htbp]
-    \caption{Pros and Cons of Functional and Unit Tests}
+    \caption{Pros and Cons of High Level and Unit Tests}
     \begin{center}
     \begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\centering\arraybackslash}m{3.4cm}|>{\centering\arraybackslash}m{3.4cm}|}
         \hline
-        \multirow{2}{*}{} & \textbf{Functional Test(s)} & \textbf{Unit Test(s)} \\
+        \multirow{2}{*}{} & \textbf{High Level Test(s)} & \textbf{Unit Test(s)} \\
         \hline
         \textbf{Pros} & \begin{itemize}[leftmargin=*]
             \item More relevant for the customer
@@ -98,16 +95,14 @@ recognize value in \textit{having} unit tests. By definition, any reduction in t
 up their return on investment.
 
 \subsubsection{Test Coverage}\label{sec:intro-cov}
-The term “coverage” refers to the measure of the completeness of a test.  
+The term “coverage" refers to the measure of the completeness of a test.  
 Coverage can be measured in various ways, two prominent metrics are branch coverage 
 (what percent of if/else branches executed) and line coverage 
 (what percent of lines in the function executed during the test) 
 \cite{wang2024software}. The \textit{coverage} Python module can
 be used to gather this information directly; in fact, it is often paired with 
-\textit{pytest} to generate coverage tests for existing tests. This paper will focus 
-on the use of the line coverage metric, both in implementation and 
-as the standard for selecting which execution records to ultimately 
-keep for the final generated tests.
+\textit{pytest} to generate coverage tests for existing tests. Without loss of 
+generality, this paper will focus use the line coverage metric.
 
 \subsection{Previous work on automated test creation}\label{sec:intro-3}
 
@@ -115,8 +110,8 @@ Given the cost of creating valuable tests,
 the body of academic work on generating them automatically 
 via metaprogramming is extensive. Classic algorithms like search 
 and randomization feature prominently in earlier work 
-\cite{Luk22Pynguin0170}, with generative AI significantly increasing in 
-popularity most recently
+\cite{Luk22Pynguin0170}, with generative artificial intelligence (AI)
+significantly increasing in popularity most recently
 \cite{bhatia2023unit,takerngsaksiri2024tdd,wang2024software, kahur2023java}.
 %
 These AI methods generate tests based on a variety of inputs, typically the code
@@ -139,11 +134,11 @@ it's reliance on a large language model (LLM).
 \subsection{Initial motivation}\label{sec:intro-4}
 
 The author began exploring this concept of automated test case generation
-working on a personal project, a static analyzer he'd written for C source code.  As the
+while refactoring a personal project, a static analyzer he'd written for C source code.  As the
 author did this for fun and personal education, he had not written any unit
 tests.  Instead, the author carefully developed a sample input that caused large
 portions of the code to execute (e.g. created high code coverage).  This guided
-development until the code eventually produced a “good” output, i.e. an integration
+development until the code eventually produced a “good" output, i.e. a functional
 test.
   
 Unit tests would have greatly eased the refactoring process and the author 
@@ -159,7 +154,7 @@ section enumerates both technical and philosophical assumptions made by the
 author, as well as alternative approaches when those assumptions may not hold.
 Section 4 describes the three different approaches taken by the author to 
 evaluate the generated tests, followed by a section dedicated to further 
-discussion of this work compared and constrasted to more related work.  A short
-conclusion follows, trailed by a brief Acknowledgements section.
+discussion of this work compared and contrasted to more related work.  A short
+conclusion follows, capped off by Acknowledgements.
 
 % vim: spelling=en_US

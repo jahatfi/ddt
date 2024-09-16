@@ -3,7 +3,7 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
     '''
     The 'repr' method for Pandas DataFrames does
     not work the same as 'repr' for built-in types.  
-    StackOverflow user Silveri answer at
+    StackOverflow user Silveri's answer at
     https://stackoverflow.com/questions/67845199.
     provides a solution. The code overwrites the 
     native Pandas DataFrame __repr__  method directly,

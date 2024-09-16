@@ -49,12 +49,12 @@
    },
    "coverage_percentage": 71.43,
    "types_in_use": [
-      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler"
+      "logging.StreamHandler",
+      "tests.oo_car.car.Car"
    ],
    "global_vars_read_from": [
       "logger"

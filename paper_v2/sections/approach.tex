@@ -6,10 +6,9 @@
 The author set out to record the execution of Python functions
 in such a way as to enable exact reproduction of that 
 function call in a standalone unit test.  The following components
-must be recorded in some fashion in order to do so:
+must be recorded in order to do so:
 \begin{enumerate}
-  \item The function itself
-  \item The arguments to the function, including \textit{kwargs}
+  \item The function itself and it's arguments, including \textit{kwargs}
   \item Any relevant global state (e.g. variables)
   \item Exceptions raised
   \item Test coverage
@@ -19,7 +18,7 @@ must be recorded in some fashion in order to do so:
 
 The last two are left for future work, but this paper demonstrates how to capture 
 the first five. The subsections that follow discuss exactly how to 
-access or determine this info and cache for subsequent creation of unit tests
+access or determine this info and cache it for subsequent creation of unit tests
 with this information.
 %%
 %% General information about The decorator
@@ -27,16 +26,15 @@ with this information.
 \subsection{Accessing the function and its arguments}\label{sec:approach-internal-1}
 
 Python enables trivial access to a function and 
-its arguments via the concept of decorator functions.
-
-Not to be confused with the decorator pattern, a Python decorator is a 
+its arguments via the concept of decorator functions. Not to be confused with 
+the decorator pattern, a Python decorator is a 
 function that calls another, thereby permitting the developer to place new code 
-before and/or after calling the original “decorated” function \textit{f}.  
+before and/or after calling the original “decorated" function \textit{f}.  
 The decorator function has full access to both the decorated 
 (or "wrapped" function) \textit{f} as well as all the 
 arguments passed to \textit{f}, both \textit{args} and \textit{kwargs}.  In other 
 languages this kind of wrapping is often referred to as 
-“function hooking” or "function call interception" 
+“function hooking" or "function call interception" 
  \cite{kang2018function}. Any number of decorators can be applied to a function 
 in Python, creating a figurative Russian nesting doll of
 functions calling functions, each with the ability to access the 
@@ -53,8 +51,8 @@ source found in the associated repository}:
   label={lst:decorator},%
 ]{examples/decorator.py}
 
-Running the code in Listing~ref{lst:decorator} yields the output shown in 
-Listing~\ref{lst:decorator-output}. Note the apparently erroneous math (line 1,7 of 
+Running the code in Listing~ref{lst:decorator-output} yields the output shown in 
+Listing~\ref{lst:decorator-output}. Note the apparently erroneous math (line 1,6 of 
 Listing~\ref{lst:decorator-output}), as the \textit{add\_ints} function is 
 unaware that its first argument was modified by the \text{inner\_most\_decorator}.
 
@@ -76,19 +74,19 @@ i.e. the calling function would never know the arguments
 were modified before being passed to the callee function.
 
 In addition to access to the function and its arguments,
-decorators provide the power to insert code immediately before and after 
+a decorator provides the power to insert code immediately before and after 
 the function (lines 8-13, 15, respectively), including leveraging arbitrary
 arguments (e.g. \textit{my\_int}) passed to the decorator itself.
 
 A decorator like the one on line 5 of Listing~\ref{lst:decorator} permits
 the passing of separate arguments to the decorator itself.  
-If not extraneous argument is needed, that \textit{outermost} decorator
+If no extraneous argument is needed, that \textit{outermost} decorator
 is unnecessary.
 
 The author uses such a decorator (specifically named 
 \break
 \textit{unit\_test\_generator\_decorator} in the referenced repository) to take
- a “before” and "after" snapshot of the arguments
+ a “before" and "after" snapshot of the arguments
 before and after the function is called.
 
 %
@@ -99,21 +97,22 @@ In addition to the arguments passed directly to the function, any relevant
 global state must also be captured. "Relevant" here refers only to those 
 global values read from and/or written to by the function.
 The author's code focuses on variables (e.g. the int \textit{c} in the example above), 
-disregarding imported modules such as \textit{re, os, etc}, detecting such
-modules in a separate parsing step.
+detecting import modules such as \textit{re, os, etc} in a separate parsing step 
+(see )
 % Note that the dis module provides this option via dumping bytecode for f
 Access to the global values is non-trivial compared to accessing the function 
-and its arguments, but still possible.  The first step is to use the \textit{dis}
-module to programmatically disassemble the decorated function.  This is only 
+and its arguments, but still possible by first using the \textit{dis}
+module to disassemble the decorated function ato determine which global variables 
+are ever accessed by the function.  This disassembly is only 
 required on initial execution of the decoratee as subsequent executions, if any, 
 benefit from cached results of the disassembly.
-Programmatic disassembly of \textit{add\_ints} function during execution is shown
+Disassembly of \textit{add\_ints} function during execution is shown
 in Listing~\ref{lst:dissas-add-ints}:
 
 \lstinputlisting[%
   language=TeX,%
   numbers=left,
-  caption={Result of Programmatically Disassembling \textit{add\_ints}},%
+  caption={Result of Disassembling \textit{add\_ints}},%
   label={lst:dissas-add-ints},%
 ]{examples/actual\_disassemble\_add\_ints.txt}
 
@@ -165,14 +164,14 @@ as shown in Listing~\ref{lst:Coverage} \cite{batchelder2024}.
 ]{examples/coverage_example.py}
 
 The documented approach to using the \textit{coverage} module 
-saves results to a persistent database on the filesystem.
-However, due to the already high overhead the author's work, he opted not 
-to use the database option by it separately, 
-opting not to use the default database \cite{batchelder2024}.
+saves results to a persistent database on the filesystem as specified with the 
+\textit{data\_file} option. However, due to the already high overhead of the 
+author's work, he opted to specify \textit{None} for this value to use the in-memory 
+option, thereby eliminating such file I/O time \cite{batchelder2024}.
 
 \subsection{Summary of the approach}\label{sec:approach-internal-5}
 
-The author uses all the methods discussed above to take a "before" and “after” 
+The author uses all the methods discussed above to take a "before" and "after" 
 snapshot of the arguments and relevant global state of each execution. 
 
 Note that the state of mutable \textit{arguments} must also be captured 
@@ -233,7 +232,7 @@ The careful reader may wonder if the \textit{sample\_count} option may result in
 duplicate tests cases, e.g. five test cases are captured but three are duplicates, 
 yielding only three unique test cases.  This would in fact be the case, however, the author 
 addressed this by hashing the inputs (global values, args and kwargs) and 
-caching the hash in a set name \textit{hashed\_inputs}.  If a function has
+caching the hash in a set named \textit{hashed\_inputs}.  If a function has
 already been called with the exact same inputs, the decorator immediately returns
 the result in the same fashion as shown above. Thus, all test cases 
 ultimately generated are unique.  This represents the last mitigation
@@ -249,8 +248,9 @@ thereby restoring the runtime of
 the original test back to its original, faster runtime.  
 
 \subsection{Selectively keeping specific test cases}\label{sec:tuning-1}
-Ideally, the same function will be executed multiple times during an ad hoc or 
-function test to maximize coverage.  That said, the tester may wish to preserve 
+Ideally, to maximize coverage, the same function will be executed multiple 
+times during a functional test or similarly high level test.  That said, 
+the tester may wish to preserve 
 a minimal number of test cases to avoid too much redundancy.  
 %
 One such approach is to drop the current execution
@@ -273,10 +273,10 @@ Nevertheless, the value added by redundant tests often plateaus
 describe how to reduce such redundancy.  The first section describes
 the technique employed by the author to balance memory usage and performance but
 with intermediate complexity. The paragraph that follows describes a much simpler and faster
-approach but offers poorer performance in that is rarely selects optimal test 
+approach but offers poorer performance in that it rarely selects optimal test 
 cases.  For the reader desiring the truly ideal solution, i.e. keep the fewest test cases that achieve
 maximum coverage, a note on the proper algorithm to pursue such a goal completes
-this section. This method was not selected to due its higher memory
+this section. This method was not selected due to its higher memory
 requirements and higher complexity of implementation.
  
 \subsubsection{Selected Approach: Individual Subsets}\label{sec:tuning-2}
@@ -362,7 +362,7 @@ number of test cases, all records must be cached initially.
 From there, the tester must solve the Minimum Set Cover Problem
 \cite{hassin2005better} to select the minimum test cases.
 This classic NP-Hard computer science problem involves finding the smallest number
-of sets whose union is equal to or greater than (“covers”) some universe $U$ of elements.  
+of sets whose union is equal to or greater than (“covers") some universe $U$ of elements.  
 In this context, the coverage (set of line number executed) of each test is one set $S_i$,
 and the set of all line numbers of a function is the universe $U_f$ to cover.  
 As noted, this requires caching the unique coverage of each test, which may 
@@ -388,7 +388,7 @@ such that coverage is maximized and run time is minimized.
 After capturing the function metadata as documented in Listings 7 and 8, 
 the next step was to programmatically generate the unit tests with all their 
 captured test cases and place them in a file named 
-\textit{test\_\$function\_name.py}. 
+\textit{test\_\$function\_name.py}
 via a call to \textit{generate\_all\_tests\_and\_metadata} at the end of 
 the functional test.
 Calling this function eventually executes \textit{auto\_generate\_tests} 
@@ -401,15 +401,17 @@ that uses metaprogramming to:
   \item Collect parameters to create a parameterized pytest test
   \item Monkeypatch all non-constant relevant globals read from
   \item Assert result is correct
-  \item Assert modified globals are correct
+  \item Assert modified globals and mutable arguments are correct
   \item Assert expected exceptions and their messages are correct
   \item Write all of the above to a syntactically correct Python file
-  \item Use subprocess to lint and format the result with \textit{black} and \textit{ruff}
+  \item Use subprocess to lint and format the result, e.g. with \textit{black and/or ruff}
 \end{enumerate}
 
 To aid the developer's troubleshooting efforts, the contents of each FunctionMetaData
 class are also dumped to their own .json file, one per decorated function (hence
-the \textit{and\_metadata} suffix noted above).  This file permits the 
+the \textit{and\_metadata} suffix noted above) \footnote{This includes 
+"untestable" test cases, i.e. those that could not be represented as canonical strings
+but may be valuable to the developer regardless}.  This file permits the 
 developer to easily inspect the inputs, outputs, and other data
 associated with the recording without the distraction of the test code.
 
