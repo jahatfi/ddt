@@ -1,4 +1,0 @@
-@unit_test_generator_decorator(sample_count=0)
-def generate_all_tests_and_metadata(outdir:Path,
-                                    tests_dir:Path,
-                                    suffix:Path=Path(".json")):
