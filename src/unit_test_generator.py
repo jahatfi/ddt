@@ -959,7 +959,7 @@ class ArgsIteratorClass():
         """
         function_name = self.this_metadata.name
         for arg_i, (arg_name, arg) in enumerate(args_dict.items()):
-            if mode == "after":
+            if mode == "After":
                 if id(arg) != self.args_addresses[arg_name]:
                 #   logger.error(f"{function_name=} {dir(arg)=}")
                     logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", 
