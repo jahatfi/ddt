@@ -8,9 +8,9 @@ from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to coverage_str_helper:
-from logging import Manager
-from logging import StreamHandler
 from logging import RootLogger
+from logging import StreamHandler
+from logging import Manager
 from logging import Logger
 from logging import PlaceHolder
 

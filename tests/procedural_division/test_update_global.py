@@ -8,9 +8,9 @@ from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
-from logging import Logger
 from logging import StreamHandler
 from logging import Manager
+from logging import Logger
 from logging import PlaceHolder
 from src.unit_test_generator import CoverageInfo
 from logging import RootLogger
