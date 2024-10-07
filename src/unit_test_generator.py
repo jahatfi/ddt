@@ -332,7 +332,6 @@ class FunctionMetaData(Jsonable):
         logger.debug("result=%s", result)
         return result
 
-
     def __str__(self)->str:
         return f"{self.name}:\n{self.lines=}\n"
 
@@ -385,7 +384,7 @@ class FunctionMetaData(Jsonable):
 
     def purge_record(self, hash_key)->None:
         """
-        Delete IO record with this hashed_input as key
+        Delete IO record with this unique_input as key
         NOTE: Need to add "update_types_in_use" method and convert
         types_in_use to a dict {hash_key:set(types_per_hash_key)}
         if this function is ever called.
@@ -426,7 +425,6 @@ class FunctionMetaData(Jsonable):
             if v != other.__dict__[k]:
                 return False
         return True
-
 
 # https://stackoverflow.com/questions/47060133/python-3-type-hinting-for-decorator
 def unit_test_generator_decorator(  percent_coverage: Optional[int]=0,
@@ -612,7 +610,6 @@ def _pandas_df_repr(df: pd.DataFrame)->str:
 
 pd.DataFrame.__repr__ = _pandas_df_repr # type: ignore[method-assign, assignment]
 
-
 # NOTE: Can't self-test this as easily as the others.
 # This is because it produces an import
 # string relative to this file, not the file under test.
@@ -731,7 +728,6 @@ def sorted_set_repr(obj: set)->str:
     # The objects in this line of code appear in sorted order
     return repr(obj_set_code)
 
-
 pp = pprint.PrettyPrinter(indent=3)
 
 logger = logging.getLogger(__name__)
@@ -770,7 +766,6 @@ def get_all_types(loc: str,
         expected_type = parsed_type_match.groups()[0]
         if expected_type in ['int', 'bool', 'str', 'float']:
             return set()
-
 
     if recursion_depth > 2:
         #logger.debug("%d Returning due to max R.D. %s", recursion_depth, type(obj))
@@ -904,7 +899,6 @@ def get_all_types(loc: str,
 
     return result
 
-
 class ArgsIteratorClass():
     """
     Holds all the I/O variables for args_iterator
@@ -1005,7 +999,6 @@ class ArgsIteratorClass():
                 logger.debug("Adding types for function %s for arg %s", function_name, arg)
                 for v in arg.__dict__.values():
                     self.new_types_in_use |= get_all_types("1.1", v, False, 0, function_name)
-
 
                 #sys.exit(1)
             elif isinstance(arg, str):
@@ -1135,7 +1128,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     #logger.critical(f"Decorating {function_name}".center(80, '-'))
 
-
     #if function_name in all_metadata and\
     #    all_metadata[function_name].coverage_percentage >= coverage_cutoff:
     #    logger.debug(f"Hit >={coverage_cutoff=} in {function_name}; skip it.")
@@ -1200,19 +1192,15 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         these_types = get_all_types("3", func.__globals__[this_global], True, 0, function_name)
         this_metadata.types_in_use |= these_types
 
-    hashed_input = ""
-
     if kwargs:
         this_coverage_info.kwargs = copy.deepcopy(kwargs)
 
-    hashed_input_hash = hashlib.new('sha256')
     # TODO Add the function file and function name
-    hashed_input_hash.update(str(this_coverage_info.globals_before).encode())
-    hashed_input_hash.update(str(this_coverage_info.args_before).encode())
-    hashed_input_hash.update(str(this_coverage_info.kwargs).encode())
-    hashed_input = hashed_input_hash.hexdigest()
+    unique_input = str(this_coverage_info.globals_before)
+    unique_input += str(this_coverage_info.args_before)
+    unique_input += str(this_coverage_info.kwargs)
 
-    if hashed_input in hashed_inputs:
+    if unique_input in hashed_inputs:
         # If this input has already been captured, there's no need to
         # run it again with coverage, just run it and immediately return
         # the result/raise the exception as applicable.
@@ -1251,7 +1239,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             #this_metadata.exceptions[hash_key] = e
             logger.debug("function: '%s' Caught %s e=%s", function_name, type(e), e)
             logger.debug("caught_exception=%s @ %s result=%s",
-                     caught_exception, hashed_input, result)
+                     caught_exception, unique_input, result)
             caught_exception = e
             #raise caught_exception'
         finally:
@@ -1266,10 +1254,10 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         expected_type = parsed_type.groups()[0]
 
     this_metadata.types_in_use |= get_all_types("4", result, True, 0, function_name)
-    #assert hashed_input not in hashed_inputs, "ALREADY"
+    #assert unique_input not in hashed_inputs, "ALREADY"
     this_coverage_info.expected_type = expected_type
-    #if hashed_input in this_metadata.coverage_io:
-    #    this_metadata.coverage_io[hashed_input].expected_type = expected_type
+    #if unique_input in this_metadata.coverage_io:
+    #    this_metadata.coverage_io[unique_input].expected_type = expected_type
     #hash_keys.add(hash_keys)
 
     # There is only one file in cov_report_['files']
@@ -1334,7 +1322,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             logger.debug("%s removing subset coverage @ %s.", source_file, key)
             this_metadata.coverage_io.pop(key)
 
-
     # Put another way, only keep these results IF the test coverage
     # here is NOT a subset of ANY previous run
     if is_subset:
@@ -1347,7 +1334,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         #logger.critical(f"Undecorating {function_name}".center(80, '-'))
         return result
 
-    logger.debug("%s coverage @%s is not a subset", function_name, hashed_input)
+    logger.debug("%s coverage @%s is not a subset", function_name, unique_input)
 
     if caught_exception:
         caught_exception_str = str(caught_exception)
@@ -1394,7 +1381,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     #this_coverage_info.args_after = args_iterator_class.args
     this_metadata.types_in_use |= args_iterator_class.new_types_in_use
     this_coverage_info.coverage = sorted_coverage
-    hashed_inputs.add(hashed_input)
+    hashed_inputs.add(unique_input)
     this_metadata.coverage_percentage = percent_covered
     for arg in this_coverage_info.args_before:
         # I'm unclear why it's not repr(arg)[0]
@@ -1402,15 +1389,10 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             logger.critical("Decorating %s; can't properly repr %s, this record is untestable",
                             function_name, arg)
             this_coverage_info.testable = False
-    this_metadata.coverage_io[hashed_input] = this_coverage_info
+    this_metadata.coverage_io[unique_input] = this_coverage_info
     logger.debug("function_name=%s, this_metadata.coverage_io.keys=%s",
                     function_name, this_metadata.coverage_io.keys())
-    this_metadata.coverage_io[hashed_input].cost = round(end_time - start_time, 2)
-
-
-
-
-    #print("Cost")
+    this_metadata.coverage_io[unique_input].cost = round(end_time - start_time, 2)
 
     if caught_exception:
         all_metadata[function_name] = this_metadata
@@ -1419,7 +1401,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     all_metadata[function_name] = this_metadata
     return result
-
 
 # pylint: disable-next=line-too-long
 all_metadata:defaultdict[str, FunctionMetaData] = defaultdict(FunctionMetaData) # type: ignore[arg-type]
@@ -1572,7 +1553,6 @@ def count_objects(obj: typing.Any)->int:
             count += 1
     return count
 
-
 #@unit_test_generator_decorator(sample_count=2, keep_subsets=True)
 def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, FunctionMetaData],
                                             function_names:list[str],
@@ -1603,6 +1583,13 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         logger.debug("function_name=%s", function_name)
         function_metadata:FunctionMetaData = copy.deepcopy(local_all_metadata[function_name])
         test_suite = function_metadata.coverage_io
+
+        # Replace hash keys with numbers
+        sorted_hash_keys = sorted(test_suite.keys())
+        for sorted_hash_key_index, sorted_hash_key in enumerate(sorted_hash_keys):
+            test_suite[sorted_hash_key_index] = test_suite[sorted_hash_key]
+            del test_suite[sorted_hash_key]
+
         # The json file is optional and unused but makes for
         # friendly reading of the inputs to the unit test if
         # the actual .py unit test file is hard to read
@@ -1619,7 +1606,6 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         if not test_suite:
             logger.debug("No test record for %s", function_name)
             continue
-
 
         local_all_metadata[function_name].coverage_io = {k:v for k,v in local_all_metadata[function_name].coverage_io.items() if v.testable}
         result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
@@ -1716,7 +1702,6 @@ def update_global(obj,
     elif phase == "After":
         this_coverage_info.globals_after[this_global] = updated_entry
     return this_coverage_info
-
 
 @unit_test_generator_decorator(sample_count=1)
 def normalize_arg(arg:typing.Any)->typing.Any:
@@ -1922,7 +1907,6 @@ def meta_program_function_call( this_state:CoverageInfo,
         list_of_lines.append(f"{tab*2}else:\n")
         #indent = indent[:-len(tab)]
 
-
     normal_call = f"{indent}result = {call}"
     if function_name.endswith(".__init__"):
         #function_name = re.sub(".__init__", "", function_name)
@@ -2066,7 +2050,6 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             repr_v = normalize_defaultdict_repr(repr_v)
             header.append(f"{k.upper()} = {repr_v}\n")
 
-
     pct = function_metadata.coverage_percentage
     #assert pct <= 100, "Bad math"
     line = f"{tab}# In sum, these tests covered {pct}% of {function_name}'s lines\n"
@@ -2143,7 +2126,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
                         docstring,
                         "# Monkeypatch here"
                     ]
-    for hash_key in sorted(state):
+
+    for hash_key_index, hash_key in enumerate(sorted(state)):
         globals_before = {k:normalize_arg(v) for k, v in state[hash_key].globals_before.items()
                            if k not in constant_globals_before}
         globals_after = {k:normalize_arg(v) for k, v in state[hash_key].globals_after.items()}

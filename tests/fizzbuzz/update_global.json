@@ -34,7 +34,7 @@
       1713
    ],
    "coverage_io": {
-      "3d66e853444e30cf7cfa98f04f3fb5977a5e0b65aefc84c27d265c9b3c79ab61": {
+      "0": {
          "args_before": [
             "\"fizzbuzz\"",
             "\"mode\"",
