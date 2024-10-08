@@ -8,17 +8,17 @@ from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
-from logging import Logger
-from logging import PlaceHolder
 from logging import Manager
 from logging import StreamHandler
 from logging import RootLogger
 from src.unit_test_generator import CoverageInfo
+from logging import Logger
+from logging import PlaceHolder
 
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1699-1700', '1702-1704', '1716-1717']
+# ['1701-1702', '1684-1685', '1687-1689']
 @pytest.mark.parametrize(
     "obj, this_global, phase, this_coverage_info, expected_result, args_after",
     [

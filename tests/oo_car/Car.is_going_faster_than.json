@@ -11,7 +11,7 @@
    ],
    "non_code_lines": [],
    "coverage_io": {
-      "797ee52405b6b24f04cee9d62d992fd2a5592ed30653401b854ee509666247fc": {
+      "0": {
          "args_before": [
             "Car(\"White\", 19, 0)"
          ],

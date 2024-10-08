@@ -17,7 +17,7 @@
    ],
    "non_code_lines": [],
    "coverage_io": {
-      "78e4f6e57c2f532c43747e020340acf548111ebba3a4dfbb9b7a12af2d0fa659": {
+      "0": {
          "args_before": [
             "-1",
             "1"
@@ -45,7 +45,7 @@
          "cost": 0.0,
          "testable": true
       },
-      "6489cc7d9835b1fc422a9e25a2d99a7374cf0a90d0450a9435df3167635e432a": {
+      "1": {
          "args_before": [
             "2",
             "2"

@@ -12,7 +12,7 @@
    ],
    "non_code_lines": [],
    "coverage_io": {
-      "41d2d788826b24b7663c460d9fe9b99ae9d847486026e9c41dd367c5d37068cd": {
+      "0": {
          "args_before": [
             "[1, 2, 3, 4]",
             "6"

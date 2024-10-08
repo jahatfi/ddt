@@ -11,7 +11,7 @@
    ],
    "non_code_lines": [],
    "coverage_io": {
-      "3a457b3fa7a76eef0fefd90d54716eee8e40ce3dd5f99aff349b890e6bf7a440": {
+      "0": {
          "args_before": [
             "[6, 4, 3, 2, 1]"
          ],

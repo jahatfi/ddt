@@ -5,7 +5,7 @@ Programmatically generated test function for fizzbuzz()
 import re
 import pytest
 from collections import OrderedDict
-import fizzbuzz
+from tests.fizzbuzz import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 
@@ -13,9 +13,9 @@ from _pytest.monkeypatch import MonkeyPatch
 @pytest.mark.parametrize(
     "number, expected_result, globals_before",
     [
-        (30, "30 with mode='fizzbuzz' yields 'fizzbuzz'", {"mode": "fizzbuzz"}),
-        (30, "30 with mode='buzzfizz' yields 'buzzfizz'", {"mode": "buzzfizz"}),
         (6, "Mode 'a_test' invalid for fizzbuzz()", {"mode": "a_test"}),
+        (30, "30 with mode='buzzfizz' yields 'buzzfizz'", {"mode": "buzzfizz"}),
+        (30, "30 with mode='fizzbuzz' yields 'fizzbuzz'", {"mode": "fizzbuzz"}),
     ],
 )
 def test_fizzbuzz(number, expected_result, globals_before):
