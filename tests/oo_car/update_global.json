@@ -9,29 +9,29 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1697,
       1698,
       1699,
       1700,
       1701,
       1702,
       1703,
-      1705,
-      1713,
+      1704,
+      1706,
       1714,
       1715,
       1716,
-      1717
+      1717,
+      1718
    ],
    "non_code_lines": [
-      1704,
-      1706,
+      1705,
       1707,
       1708,
       1709,
       1710,
       1711,
-      1712
+      1712,
+      1713
    ],
    "coverage_io": {
       "23e071c8ef8f9217a196aaf263ddcbe2c7d27f9a696cf09308b6c35a115a5ce5": {
@@ -43,8 +43,6 @@
          ],
          "args_after": {
             "obj": "<Logger __main__ (INFO)>",
-            "this_global": "\"logger\"",
-            "phase": "\"Before\"",
             "this_coverage_info": "CoverageInfo(args_before=['-1','1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, testable=0.0)"
          },
          "kwargs": {},
@@ -54,9 +52,9 @@
          "expected_result": "CoverageInfo(args_before=['-1','1'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='Car(\"Red\", 10, 0)', cost=0.0, testable=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1697,
             1698,
-            1699
+            1699,
+            1700
          ],
          "exception_type": "",
          "exception_message": "",
@@ -79,9 +77,9 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1697,
       1698,
-      1699
+      1699,
+      1700
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

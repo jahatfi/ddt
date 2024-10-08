@@ -18,8 +18,7 @@
             "6"
          ],
          "args_after": {
-            "this_list": "[1, 2, 3, 4, 6]",
-            "item": "6"
+            "this_list": "[1, 2, 3, 4, 6]"
          },
          "kwargs": {},
          "kwargs_after": {},

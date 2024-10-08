@@ -10,12 +10,12 @@ from tests.oo_car import car
 
 # In sum, these tests covered 100.0% of Car.__init__'s lines
 @pytest.mark.parametrize(
-    "color, speed, steer_angle, expected_result, args_after",
+    "color, speed, steer_angle, expected_result",
     [
-        ("Red", 10, 0, "None", {"color": '"Red"', "speed": "10", "steer_angle": "0"}),
+        ("Red", 10, 0, "None"),
     ],
 )
-def test_car___init__(color, speed, steer_angle, expected_result, args_after):
+def test_car___init__(color, speed, steer_angle, expected_result):
     """
     Programmatically generated test function for Car.__init__()
     """

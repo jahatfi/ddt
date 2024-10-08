@@ -32,9 +32,7 @@
          "args_before": [
             "30"
          ],
-         "args_after": {
-            "number": "30"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -64,9 +62,7 @@
          "args_before": [
             "30"
          ],
-         "args_after": {
-            "number": "30"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -97,9 +93,7 @@
          "args_before": [
             "6"
          ],
-         "args_after": {
-            "number": "6"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {

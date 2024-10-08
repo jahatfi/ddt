@@ -26,10 +26,7 @@
             "6",
             "2"
          ],
-         "args_after": {
-            "a": "6",
-            "b": "2"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -58,10 +55,7 @@
             "3",
             "0"
          ],
-         "args_after": {
-            "a": "3",
-            "b": "0"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -91,10 +85,7 @@
             "\"10\"",
             "2"
          ],
-         "args_after": {
-            "a": "\"10\"",
-            "b": "2"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
@@ -123,7 +114,6 @@
             "[]"
          ],
          "args_after": {
-            "a": "8",
             "b": "[]"
          },
          "kwargs": {},

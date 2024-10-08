@@ -3,6 +3,7 @@ settings.json
 #tests/*/test*.py
 #tests/*/*.json
 tests/*/.coverage
+feedback.pdf
 
 
 # https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore

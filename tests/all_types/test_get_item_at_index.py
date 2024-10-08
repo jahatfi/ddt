@@ -14,24 +14,14 @@ import all_types
 @pytest.mark.parametrize(
     "iterable, index, exception_type, exception_message, expected_result, args_after",
     [
-        (
-            "The quick red fox jumped over the lazy brown dog",
-            3,
-            "N/A",
-            "N/A",
-            " ",
-            {
-                "iterable": '"The quick red fox jumped over the lazy brown dog"',
-                "index": "3",
-            },
-        ),
+        ("The quick red fox jumped over the lazy brown dog", 3, "N/A", "N/A", " ", {}),
         (
             "a test string",
             -5,
             ValueError,
             "index must be in range [0, 12], was -5",
             "None",
-            {"iterable": '"a test string"', "index": "-5"},
+            {},
         ),
         (
             (5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
@@ -39,16 +29,9 @@ import all_types
             ValueError,
             "index must be in range [0, 9], was 50",
             "None",
-            {"iterable": "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)", "index": "50"},
+            {"iterable": "(5, 6, 7, 8, 9, 10, 11, 12, 13, 14)"},
         ),
-        (
-            [-1, -2, -3, -4],
-            0,
-            "N/A",
-            "N/A",
-            "-1",
-            {"iterable": "[-1, -2, -3, -4]", "index": "0"},
-        ),
+        ([-1, -2, -3, -4], 0, "N/A", "N/A", "-1", {"iterable": "[-1, -2, -3, -4]"}),
     ],
 )
 def test_get_item_at_index(
@@ -63,8 +46,3 @@ def test_get_item_at_index(
     else:
         result = all_types.get_item_at_index(iterable, index)
         assert result == expected_result or result == eval(expected_result)
-        assert (
-            iterable == eval(args_after["iterable"])
-            or args_after["iterable"] == iterable
-        )
-        assert index == eval(args_after["index"]) or args_after["index"] == index

@@ -9,29 +9,29 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1697,
       1698,
       1699,
       1700,
       1701,
       1702,
       1703,
-      1705,
-      1713,
+      1704,
+      1706,
       1714,
       1715,
       1716,
-      1717
+      1717,
+      1718
    ],
    "non_code_lines": [
-      1704,
-      1706,
+      1705,
       1707,
       1708,
       1709,
       1710,
       1711,
-      1712
+      1712,
+      1713
    ],
    "coverage_io": {
       "35bf506648a54de4d639a92f6a3f03f2d47d78efd9e3d170e285925d124d4121": {
@@ -42,9 +42,6 @@
             "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
          ],
          "args_after": {
-            "obj": "0",
-            "this_global": "\"error_code\"",
-            "phase": "\"Before\"",
             "this_coverage_info": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
          },
          "kwargs": {},
@@ -54,12 +51,12 @@
          "expected_result": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1697,
-            1700,
-            1705,
-            1713,
+            1698,
+            1701,
+            1706,
             1714,
-            1717
+            1715,
+            1718
          ],
          "exception_type": "",
          "exception_message": "",
@@ -82,12 +79,12 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1697,
-      1700,
-      1705,
-      1713,
+      1698,
+      1701,
+      1706,
       1714,
-      1717
+      1715,
+      1718
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

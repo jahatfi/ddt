@@ -23,10 +23,7 @@
             "-1",
             "1"
          ],
-         "args_after": {
-            "rate": "-1",
-            "duration": "1"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
