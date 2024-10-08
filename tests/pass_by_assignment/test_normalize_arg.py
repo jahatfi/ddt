@@ -10,17 +10,16 @@ from src import unit_test_generator
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1729', '1731', '1734-1735']
+# ['1730', '1732', '1735-1736']
 @pytest.mark.parametrize(
-    "arg, expected_result, args_after",
+    "arg, expected_result",
     [
-        ("None", "None", {"arg": '"None"'}),
+        ("None", "None"),
     ],
 )
-def test_normalize_arg(arg, expected_result, args_after):
+def test_normalize_arg(arg, expected_result):
     """
     Programmatically generated test function for normalize_arg()
     """
     result = unit_test_generator.normalize_arg(arg)
     assert result == expected_result or result == eval(expected_result)
-    assert arg == eval(args_after["arg"]) or args_after["arg"] == arg

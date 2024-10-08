@@ -8,26 +8,26 @@ from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to coverage_str_helper:
-from logging import PlaceHolder
 from logging import RootLogger
-from logging import Manager
-from logging import StreamHandler
 from logging import Logger
+from logging import StreamHandler
+from logging import Manager
+from logging import PlaceHolder
 
 
 # In sum, these tests covered 71.88% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1758', '1769', '1774-1775', '1783-1784', '1787-1788']
+# ['1759', '1770', '1775-1776', '1784-1785', '1788-1789']
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, args_after",
     [
         (
-            [1698, 1699, 1701, 1702, 1703, 1715, 1716],
-            {1704, 1706, 1707, 1708, 1709, 1710, 1711, 1712},
-            "['1698-1699', '1701-1703', '1715-1716']",
+            [1699, 1700, 1702, 1703, 1704, 1716, 1717],
+            {1705, 1707, 1708, 1709, 1710, 1711, 1712, 1713},
+            "['1699-1700', '1702-1704', '1716-1717']",
             {
-                "this_list": "[1698, 1699, 1701, 1702, 1703, 1715, 1716]",
-                "non_code_lines": "{1704, 1706, 1707, 1708, 1709, 1710, 1711, 1712}",
+                "this_list": "[1699, 1700, 1702, 1703, 1704, 1716, 1717]",
+                "non_code_lines": "{1705, 1707, 1708, 1709, 1710, 1711, 1712, 1713}",
             },
         ),
     ],

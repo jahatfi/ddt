@@ -21,11 +21,7 @@
             "10",
             "0"
          ],
-         "args_after": {
-            "color": "\"Red\"",
-            "speed": "10",
-            "steer_angle": "0"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},

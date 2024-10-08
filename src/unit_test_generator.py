@@ -945,7 +945,7 @@ class ArgsIteratorClass():
             args_dict = dict(zip(self.this_metadata.parameter_names, self.args))
 
         elif which_args == "kwargs":
-            args_dict = copy.deepcopy(self.kwargs)
+            args_dict = self.kwargs
         else:
             logger.critical("Invalid option %s!", which_args)
             sys.exit(1)
@@ -960,19 +960,19 @@ class ArgsIteratorClass():
         function_name = self.this_metadata.name
         for arg_i, (arg_name, arg) in enumerate(args_dict.items()):
             if mode == "After":
-                if arg_name not in self.args_addresses:
-                    logger.critical(f"\n{function_name=}\n{arg_name=}\n{arg=}\n{self.kwargs=}\n{self.args_addresses=}")
+               
                 if  ((which_args == "args" and id(arg) != self.args_addresses[arg_name]) or \
                     (which_args == "kwargs" and id(arg) != self.kwargs_addresses[arg_name])):                    
-                        logger.error("Discarding param #%d: %s for 'after' comparison, address has changed", 
+                        logger.info("Discarding param #%d: %s for 'after' comparison, address has changed", 
                                     arg_i, arg)
                         continue
                 if isinstance(arg, (int, str, float)):
                     logger.info("After: Skip it!")
                     continue
                 if callable(arg):
-                    logger.critical("Keeping callable: %s", arg)
+                    logger.info("Keeping callable: %s", arg)
                     continue
+
             # Do not include the first arg of a method (it's "self")
             # in the argument list
             logger.info("Arg #%d: %s", arg_i, arg_name)
@@ -1000,7 +1000,6 @@ class ArgsIteratorClass():
                 self.new_types_in_use.add(newest_import)
 
                 continue
-
             self.new_types_in_use |= get_all_types("1", arg, True, 0, function_name)
             if hasattr(arg, "__dict__"):
                 logger.debug("Adding types for function %s for arg %s", function_name, arg)

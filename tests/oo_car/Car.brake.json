@@ -23,10 +23,7 @@
             "-1",
             "1"
          ],
-         "args_after": {
-            "rate": "-1",
-            "duration": "1"
-         },
+         "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
@@ -49,12 +46,12 @@
    },
    "coverage_percentage": 71.43,
    "types_in_use": [
-      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler"
+      "logging.StreamHandler",
+      "tests.oo_car.car.Car"
    ],
    "global_vars_read_from": [
       "logger"
