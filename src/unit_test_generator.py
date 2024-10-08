@@ -2107,7 +2107,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     if any(v.kwargs_after for v in state.values()):
         parameterization_list[1] += "kwargs_after, "
         kwargs_after = True
-    if any(v.globals_before for v in state.values()):
+    if not globals_before_are_constant and any(v.globals_before for v in state.values()):
         parameterization_list[1] += "globals_before, "
         any_gb = True
     if any(v.globals_after for v in state.values()):
