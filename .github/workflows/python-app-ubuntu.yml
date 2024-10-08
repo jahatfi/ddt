@@ -36,8 +36,8 @@ jobs:
         with:
           path: ~/.cache
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
 
+      - name: Install dependencies
         run: |
           # set PATH=%PATH%;C:/Users/runneradmin/.local/bin/poetry
           poetry --version
