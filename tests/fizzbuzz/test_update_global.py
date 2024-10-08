@@ -8,12 +8,12 @@ from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
-from logging import Manager
-from logging import StreamHandler
-from logging import RootLogger
-from src.unit_test_generator import CoverageInfo
 from logging import Logger
 from logging import PlaceHolder
+from src.unit_test_generator import CoverageInfo
+from logging import RootLogger
+from logging import Manager
+from logging import StreamHandler
 
 
 # In sum, these tests covered 46.15% of update_global's lines
@@ -23,11 +23,11 @@ from logging import PlaceHolder
     "obj, this_global, phase, this_coverage_info, expected_result, args_after",
     [
         (
-            0,
-            "error_code",
+            "fizzbuzz",
+            "mode",
             "Before",
             CoverageInfo(
-                args_before=["6", "2"],
+                args_before=["6"],
                 args_after={},
                 kwargs={},
                 kwargs_after={},
@@ -42,9 +42,9 @@ from logging import PlaceHolder
                 cost=0.0,
                 testable=0.0,
             ),
-            "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
+            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
             {
-                "this_coverage_info": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
+                "this_coverage_info": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
             },
         ),
     ],

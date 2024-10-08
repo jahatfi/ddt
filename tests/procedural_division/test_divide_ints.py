@@ -5,15 +5,15 @@ Programmatically generated test function for divide_ints()
 import re
 import pytest
 from collections import OrderedDict
-import divide_ints
+from tests.procedural_division import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
-from logging import Logger
 from logging import Manager
-from logging import PlaceHolder
 from logging import StreamHandler
 from logging import RootLogger
+from logging import Logger
+from logging import PlaceHolder
 
 ERROR_CODE = 0
 
@@ -33,17 +33,6 @@ ERROR_CODE = 0
             {"error_code": -1},
         ),
         (
-            8,
-            [],
-            TypeError,
-            "TypeError: Variable b=[] is not an int!",
-            "None",
-            {"b": "[]"},
-            {},
-            {"error_code": -2},
-        ),
-        (6, 2, "N/A", "N/A", "6/2=3.0", {}, {}, {"error_code": 0}),
-        (
             3,
             0,
             ValueError,
@@ -52,6 +41,17 @@ ERROR_CODE = 0
             {},
             {},
             {"error_code": -3},
+        ),
+        (6, 2, "N/A", "N/A", "6/2=3.0", {}, {}, {"error_code": 0}),
+        (
+            8,
+            [],
+            TypeError,
+            "TypeError: Variable b=[] is not an int!",
+            "None",
+            {"b": "[]"},
+            {},
+            {"error_code": -2},
         ),
     ],
 )

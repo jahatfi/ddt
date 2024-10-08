@@ -25,55 +25,29 @@
       89
    ],
    "coverage_io": {
-      "9e5729283fb4205cc004e81e18786a627d2eb0f21140111b0a77b56ac7ded037": {
+      "0": {
          "args_before": [
-            "30"
+            "-1080"
          ],
          "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "30",
-         "expected_type": "int",
+         "expected_result": "None",
+         "expected_type": "NoneType",
          "coverage": [
             79,
             80,
-            83,
-            86,
-            90
+            81
          ],
-         "exception_type": "",
-         "exception_message": "",
-         "constructor": "Car(\"Red\", 9, 0)",
+         "exception_type": "<class 'AssertionError'>",
+         "exception_message": "angle=-1080    out of bounds!",
+         "constructor": "Car(\"Green\", 48, 90)",
          "cost": 0.0,
          "testable": true
       },
-      "78fd5f6e8e8bd7118d1ec9602907dd07a7495e42f6814cd047a8057a96388cd7": {
-         "args_before": [
-            "90"
-         ],
-         "args_after": {},
-         "kwargs": {},
-         "kwargs_after": {},
-         "globals_before": {},
-         "globals_after": {},
-         "expected_result": "60",
-         "expected_type": "int",
-         "coverage": [
-            79,
-            80,
-            83,
-            86,
-            90
-         ],
-         "exception_type": "",
-         "exception_message": "",
-         "constructor": "Car(\"White\", 20, -30)",
-         "cost": 0.0,
-         "testable": true
-      },
-      "4e6967deeb4e51bab447208d79037a8bca61cdf648fb62d21885290b177313f6": {
+      "1": {
          "args_before": [
             "180"
          ],
@@ -97,25 +71,51 @@
          "cost": 0.0,
          "testable": true
       },
-      "9da25bda4c0856a5b359c8df1d926a3ed762a3d8f6f58108d234a201cb75d875": {
+      "2": {
          "args_before": [
-            "-1080"
+            "30"
          ],
          "args_after": {},
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "None",
-         "expected_type": "NoneType",
+         "expected_result": "30",
+         "expected_type": "int",
          "coverage": [
             79,
             80,
-            81
+            83,
+            86,
+            90
          ],
-         "exception_type": "<class 'AssertionError'>",
-         "exception_message": "angle=-1080    out of bounds!",
-         "constructor": "Car(\"Green\", 48, 90)",
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "Car(\"Red\", 9, 0)",
+         "cost": 0.0,
+         "testable": true
+      },
+      "3": {
+         "args_before": [
+            "90"
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {},
+         "globals_after": {},
+         "expected_result": "60",
+         "expected_type": "int",
+         "coverage": [
+            79,
+            80,
+            83,
+            86,
+            90
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "Car(\"White\", 20, -30)",
          "cost": 0.0,
          "testable": true
       }

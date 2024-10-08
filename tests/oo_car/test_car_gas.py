@@ -9,28 +9,18 @@ from tests.oo_car import car
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to Car.gas:
-from logging import RootLogger
+from tests.oo_car.car import Car
 from logging import Logger
 from logging import Manager
-from logging import StreamHandler
-from tests.oo_car.car import Car
+from logging import RootLogger
 from logging import PlaceHolder
+from logging import StreamHandler
 
 
 # In sum, these tests covered 100.0% of Car.gas's lines
 @pytest.mark.parametrize(
     "test_class_instance, rate, duration, exception_type, exception_message, expected_result, globals_before, globals_after",
     [
-        (
-            Car("White", 12, -30),
-            2,
-            2,
-            "N/A",
-            "N/A",
-            "16",
-            {"method_call_counter": 1},
-            {"method_call_counter": 2},
-        ),
         (
             Car("Red", 10, 0),
             -1,
@@ -40,6 +30,16 @@ from logging import PlaceHolder
             "None",
             {"method_call_counter": 0},
             {"method_call_counter": 1},
+        ),
+        (
+            Car("White", 12, -30),
+            2,
+            2,
+            "N/A",
+            "N/A",
+            "16",
+            {"method_call_counter": 1},
+            {"method_call_counter": 2},
         ),
     ],
 )

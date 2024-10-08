@@ -1,0 +1,149 @@
+{
+   "name": "fizzbuzz",
+   "parameter_names": [
+      "number"
+   ],
+   "is_method": false,
+   "source_file": null,
+   "lines": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      56,
+      57
+   ],
+   "non_code_lines": [
+      55
+   ],
+   "coverage_io": {
+      "0": {
+         "args_before": [
+            "6"
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {
+            "mode": "a_test"
+         },
+         "globals_after": {},
+         "expected_result": "Mode 'a_test' invalid for fizzbuzz()",
+         "expected_type": "str",
+         "coverage": [
+            40,
+            41,
+            48,
+            56,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.0,
+         "testable": true
+      },
+      "1": {
+         "args_before": [
+            "30"
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {
+            "mode": "buzzfizz"
+         },
+         "globals_after": {},
+         "expected_result": "30 with mode='buzzfizz' yields 'buzzfizz'",
+         "expected_type": "str",
+         "coverage": [
+            40,
+            41,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.0,
+         "testable": true
+      },
+      "2": {
+         "args_before": [
+            "30"
+         ],
+         "args_after": {},
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {
+            "mode": "fizzbuzz"
+         },
+         "globals_after": {},
+         "expected_result": "30 with mode='fizzbuzz' yields 'fizzbuzz'",
+         "expected_type": "str",
+         "coverage": [
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            57
+         ],
+         "exception_type": "",
+         "exception_message": "",
+         "constructor": "",
+         "cost": 0.0,
+         "testable": true
+      }
+   },
+   "coverage_percentage": 100.0,
+   "types_in_use": [],
+   "global_vars_read_from": [
+      "mode"
+   ],
+   "global_vars_written_to": [],
+   "unified_test_coverage": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      56,
+      57
+   ],
+   "needs_pytest": false,
+   "exceptions_raised": [],
+   "callable_files": {
+      "fizzbuzz": "C:\\Users\\James\\Documents\\CyberResources\\ddt\\tests\\fizzbuzz\\fizzbuzz.py"
+   }
+}

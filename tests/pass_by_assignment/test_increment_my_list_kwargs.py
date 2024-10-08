@@ -5,7 +5,7 @@ Programmatically generated test function for increment_my_list_kwargs()
 import re
 import pytest
 from collections import OrderedDict
-import pass_by_assignment
+from tests.pass_by_assignment import pass_by_assignment
 
 # Now import modules specific to increment_my_list_kwargs:
 from pass_by_assignment import ClassForTesting
