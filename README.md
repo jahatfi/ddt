@@ -1,4 +1,4 @@
-![CI](https://github.com/jahatfu/ddt/actions/workflows/your-workflow.yml/badge.svg)
+![CI](https://github.com/jahatfu/ddt/actions/workflows/python-app-ubuntu.yml/badge.svg)
 
 
 #### TODO: Update this file - it's quite out of date as of 14 Sept 2024
