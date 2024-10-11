@@ -9,11 +9,11 @@ from src import unit_test_generator
 
 # Now import modules specific to update_global:
 from logging import Logger
-from logging import PlaceHolder
-from src.unit_test_generator import CoverageInfo
-from logging import RootLogger
 from logging import Manager
+from logging import PlaceHolder
+from logging import RootLogger
 from logging import StreamHandler
+from src.unit_test_generator import CoverageInfo
 
 
 # In sum, these tests covered 46.15% of update_global's lines
