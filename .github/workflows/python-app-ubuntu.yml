@@ -111,5 +111,6 @@ jobs:
         # continue-on-error: true
         run: |
           pip install coverage-badge
+          coverage run pytest --ignore=decorator --ignore=paper .
           coverage-badge -o coverage.svg
 
