@@ -1,4 +1,4 @@
-# Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+i# Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 name: Lint and Test on Ubuntu
 run-name: ${{ github.actor }} is testing out DDT on Ubuntu (latest)
@@ -48,6 +48,12 @@ jobs:
       - run: |
           source $VENV
           pytest --version
+
+      - name: pytest coverage badge
+        run: |
+          poetry add coverage-badge
+          poetry run coverage run -m "pytest --ignore=decorator --ignore=paper --ignore=src ."
+          poetry run coverage-badge -o coverage.svg
 
       - name: Lint with pylint
         continue-on-error: true
@@ -106,11 +112,4 @@ jobs:
           cd tests/pass_by_assignment
           poetry run python pass_by_assignment.py
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-
-      - name: pytest coverage badge
-        # continue-on-error: true
-        run: |
-          poetry add coverage-badge
-          poetry run coverage run -m "pytest --ignore=decorator --ignore=paper --ignore=src ."
-          poetry run coverage-badge -o coverage.svg
 
