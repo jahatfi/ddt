@@ -30,3 +30,9 @@ ignore=[
 "decorator",
 "paper",
 ]
+norecursedirs=[
+"src",
+"decorator",
+"paper",
+]
+
