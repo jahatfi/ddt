@@ -110,7 +110,7 @@ jobs:
       - name: pytest coverage badge
         # continue-on-error: true
         run: |
-          pip install coverage-badge
-          coverage run pytest --ignore=decorator --ignore=paper .
-          coverage-badge -o coverage.svg
+          poetry add coverage-badge
+          poetry run coverage run pytest --ignore=decorator --ignore=paper .
+          poetry run coverage-badge -o coverage.svg
 
