@@ -1,4 +1,4 @@
-i# Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+# Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 name: Lint and Test on Ubuntu
 run-name: ${{ github.actor }} is testing out DDT on Ubuntu (latest)
