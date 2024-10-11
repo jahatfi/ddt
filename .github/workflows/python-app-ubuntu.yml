@@ -111,5 +111,5 @@ jobs:
       - name: pytest coverage badge
         run: |
           poetry add coverage-badge
-          poetry run coverage run -m "pytest --ignore=decorator --ignore=paper --ignore=src ."
+          poetry run coverage run -m pytest .
           poetry run coverage-badge -o coverage.svg
