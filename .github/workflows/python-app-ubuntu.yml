@@ -49,11 +49,6 @@ jobs:
           source $VENV
           pytest --version
 
-      - name: pytest coverage badge
-        run: |
-          poetry add coverage-badge
-          poetry run coverage run -m "pytest --ignore=decorator --ignore=paper --ignore=src ."
-          poetry run coverage-badge -o coverage.svg
 
       - name: Lint with pylint
         continue-on-error: true
@@ -113,3 +108,8 @@ jobs:
           poetry run python pass_by_assignment.py
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
+      - name: pytest coverage badge
+        run: |
+          poetry add coverage-badge
+          poetry run coverage run -m "pytest --ignore=decorator --ignore=paper --ignore=src ."
+          poetry run coverage-badge -o coverage.svg
