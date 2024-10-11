@@ -2335,7 +2335,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     if custom_imports:
         imports.append("\n")
         imports.append(f"# Now import modules specific to {function_name}:\n")
-    imports += list(custom_imports)
+    imports += sorted(list(custom_imports))
 
     logger.debug("function_name=%s", function_name)
 

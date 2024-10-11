@@ -8,12 +8,12 @@ from collections import OrderedDict
 from tests.oo_car import car
 
 # Now import modules specific to Car.brake:
-from tests.oo_car.car import Car
 from logging import Logger
 from logging import Manager
-from logging import RootLogger
 from logging import PlaceHolder
+from logging import RootLogger
 from logging import StreamHandler
+from tests.oo_car.car import Car
 
 
 # In sum, these tests covered 71.43% of Car.brake's lines

@@ -9,10 +9,10 @@ from src import unit_test_generator
 
 # Now import modules specific to coverage_str_helper:
 from logging import Logger
-from logging import StreamHandler
-from logging import PlaceHolder
 from logging import Manager
+from logging import PlaceHolder
 from logging import RootLogger
+from logging import StreamHandler
 
 
 # In sum, these tests covered 37.5% of coverage_str_helper's lines
