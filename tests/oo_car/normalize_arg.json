@@ -6,19 +6,19 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1711,
-      1712,
-      1713,
-      1714,
-      1715,
-      1716,
       1718,
       1719,
       1720,
-      1721
+      1721,
+      1722,
+      1723,
+      1725,
+      1726,
+      1727,
+      1728
    ],
    "non_code_lines": [
-      1717
+      1724
    ],
    "coverage_io": {
       "0": {
@@ -33,12 +33,12 @@
          "expected_result": "None",
          "expected_type": "str",
          "coverage": [
-            1711,
-            1712,
-            1713,
-            1715,
             1718,
-            1721
+            1719,
+            1720,
+            1722,
+            1725,
+            1728
          ],
          "exception_type": "",
          "exception_message": "",
@@ -52,12 +52,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1711,
-      1712,
-      1713,
-      1715,
       1718,
-      1721
+      1719,
+      1720,
+      1722,
+      1725,
+      1728
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

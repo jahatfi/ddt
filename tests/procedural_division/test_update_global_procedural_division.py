@@ -18,16 +18,16 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1701-1702', '1684-1685', '1687-1689']
+# ['1696', '1708-1709', '1691-1692', '1694-1695']
 @pytest.mark.parametrize(
     "obj, this_global, phase, this_coverage_info, expected_result, args_after",
     [
         (
-            "fizzbuzz",
-            "mode",
+            0,
+            "error_code",
             "Before",
             CoverageInfo(
-                args_before=["6"],
+                args_before=["6", "2"],
                 args_after={},
                 kwargs={},
                 kwargs_after={},
@@ -42,9 +42,9 @@ from src.unit_test_generator import CoverageInfo
                 cost=0.0,
                 testable=0.0,
             ),
-            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
+            "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
             {
-                "this_coverage_info": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
+                "this_coverage_info": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
             },
         ),
     ],

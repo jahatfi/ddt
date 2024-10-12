@@ -63,6 +63,10 @@ pp = pprint.PrettyPrinter(indent=3)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+# FUNCTIONS is a set of all function names in this file, to be populated
+# at the end of this file
+FUNCTIONS = set()
+
 recursion_depth_per_decoratee: dict[str, int] = defaultdict(int)
 
 def fullname(o:object)->str:
@@ -954,10 +958,10 @@ class ArgsIteratorClass():
         function_name = self.this_metadata.name
         for arg_i, (arg_name, arg) in enumerate(args_dict.items()):
             if mode == "After":
-               
+
                 if  ((which_args == "args" and id(arg) != self.args_addresses[arg_name]) or \
-                    (which_args == "kwargs" and id(arg) != self.kwargs_addresses[arg_name])):                    
-                        logger.info("Discarding param #%d: %s for 'after' comparison, address has changed", 
+                    (which_args == "kwargs" and id(arg) != self.kwargs_addresses[arg_name])):
+                        logger.info("Discarding param #%d: %s for 'after' comparison, address has changed",
                                     arg_i, arg)
                         continue
                 if isinstance(arg, (int, str, float)):
@@ -1607,7 +1611,10 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
             continue
 
         local_all_metadata[function_name].coverage_io = {k:v for k,v in local_all_metadata[function_name].coverage_io.items() if v.testable}
-        result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
+        if function_name in FUNCTIONS:
+            result_file_str = f"test_{function_name.lower()}_{os.path.basename(os.getcwd())}".replace('.','_') + ".py"
+        else:
+            result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
         result_file_str = re.sub("__init__", "constructor", result_file_str)
         result_file = tests_dir.joinpath(result_file_str)
 
@@ -2394,3 +2401,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     h = hashlib.new('sha256')
     h.update(str(sorted(test_str_list_def_dict.items())).encode())
     return h.digest().hex()
+
+# REF: https://stackoverflow.com/questions/18451541
+copyied_locals = dict(locals())
+for key, value in copyied_locals.items():
+    value = str(value)
+    if value.startswith("<function"):
+        value = value.split()[1]
+        print(value)
+        FUNCTIONS.add(value)
