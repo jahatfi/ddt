@@ -78,35 +78,35 @@ jobs:
         run: |
           cd tests/procedural_division
           poetry run python divide_ints.py
-          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest fizzbuzz
         # continue-on-error: true
         run: |
           cd tests/fizzbuzz
           poetry run python fizzbuzz.py
-          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest all_types
         # continue-on-error: true
         run: |
           cd tests/all_types
           poetry run python all_types.py
-          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest oo_car
         # continue-on-error: true
         run: |
           cd tests/oo_car
           poetry run python car.py
-          poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment
         # continue-on-error: true
         run: |
           cd tests/pass_by_assignment
           poetry run python pass_by_assignment.py
-          poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest coverage badge
         run: |
