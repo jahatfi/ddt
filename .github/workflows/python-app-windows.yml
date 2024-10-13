@@ -98,7 +98,7 @@ jobs:
           poetry run python pass_by_assignment.py
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
-      - name: pytest pass_by_assignment
+      - name: pytest helper functions 
         # continue-on-error: true
         run: |
           cd src
