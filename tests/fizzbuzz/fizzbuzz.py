@@ -76,9 +76,10 @@ def main():
         
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
-        logger.critical(stdout_lines)
-        
-        logger.critical(json.loads(stdout_lines[0]))
+    # result will not exist if the function threw an exception
+    cov_report_ = json.loads(stdout_lines)
+    logger.critical(cov_report_)
+    
     
     # The generate_all_tests_and_metadata() function takes 2 Paths:
     # 1. The output directory for the unit tests (.py)
