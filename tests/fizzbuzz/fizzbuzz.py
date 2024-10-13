@@ -77,7 +77,7 @@ def main():
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
-    cov_report_ = json.loads(stdout_lines)
+    cov_report_ = json.loads(stdout_lines[0])
     logger.critical(cov_report_)
     
     
