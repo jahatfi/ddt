@@ -210,7 +210,7 @@ def main():
     Call test functions for Car class, then generate test files for each
     method.
     """
-    cov = coverage.Coverage("../.coverage")
+    cov = coverage.Coverage()
     with cov.collect():
         first_test()
         second_test()

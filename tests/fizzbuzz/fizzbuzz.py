@@ -64,7 +64,7 @@ def main():
     Begin ad hoc tests
     """
     global mode # pylint: disable=global-statement
-    cov = coverage.Coverage("../.coverage")
+    cov = coverage.Coverage()
     with cov.collect():
         print(fizzbuzz(6))
         print(fizzbuzz(30))
