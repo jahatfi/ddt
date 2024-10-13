@@ -629,9 +629,10 @@ def get_module_import_string(my_path:Path)->str:
     files = set(sorted(sys.path))
     keep_file = None
     this_type = ""
+    logger.critical(f"{my_path=}")
     logger.critical(f"{files=}")
-    for file_str in files:
-        file = Path(file_str)
+    for file in files:
+        #file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
             logger.critical("os.path.relpath(file, my_path, )=%s",
@@ -649,7 +650,8 @@ def get_module_import_string(my_path:Path)->str:
         logger.critical(f"{this_type=}")
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
-
+    else:
+        logger.critical("my_path not relative to any sys paths")
     return this_type
 
 #@unit_test_generator_decorator(sample_count=1)
