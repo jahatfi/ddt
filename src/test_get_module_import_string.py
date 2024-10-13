@@ -24,10 +24,10 @@ from pathlib import Path
     "my_path, expected_result, args_after",
     [
         (
-            Path("../tests/oo_car/car.py").absolute(),
+            Path("../tests/oo_car/car.py").resolve(),
             "tests.oo_car.car",
             {
-                "my_path": "Path('../tests/oo_car/car.py').absolute()"
+                "my_path": "Path('../tests/oo_car/car.py').resolve()"
             },
         ),
     ],
