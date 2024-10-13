@@ -8,6 +8,8 @@ import os
 import time
 from pathlib import Path
 
+import coverage
+
 from src import unit_test_generator
 from src.unit_test_generator import (
     generate_all_tests_and_metadata,
@@ -105,4 +107,7 @@ if __name__ == "__main__":
     # Hint: https://stackoverflow.com/questions/3467526/
     divide_ints = unit_test_generator_decorator(percent_coverage=110)(divide_ints)
 
-    main()
+    cov = coverage.Coverage()
+    with cov.collect():
+        main()
+    cov.save()

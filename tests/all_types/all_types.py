@@ -7,6 +7,8 @@ import logging
 import os
 from pathlib import Path
 
+import coverage
+
 from src import unit_test_generator
 from src.unit_test_generator import (
     generate_all_tests_and_metadata,
@@ -146,4 +148,7 @@ if __name__ == "__main__":
     # get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value) # pylint: disable=line-too-long
     # get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index) # pylint: disable=line-too-long
 
-    main()
+    cov = coverage.Coverage()
+    with cov.collect():
+        main()
+    cov.save()
