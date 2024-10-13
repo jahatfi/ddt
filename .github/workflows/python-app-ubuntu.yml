@@ -110,6 +110,9 @@ jobs:
 
       - name: pytest coverage badge
         run: |
+          ls -lah
+          ls -lah tests/fizzbuzz
+          ls -lah tests/oo_car
           poetry add coverage-badge
           poetry run coverage combine tests/fizzbuzz tests/oo_car
           ls -lah
