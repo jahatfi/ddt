@@ -210,12 +210,10 @@ def main():
     Call test functions for Car class, then generate test files for each
     method.
     """
-    cov = coverage.Coverage()
-    with cov.collect():
-        first_test()
-        second_test()
-        generate_all_tests_and_metadata(Path('.'), Path('.'))
-    cov.save()
+
+    first_test()
+    second_test()
+    generate_all_tests_and_metadata(Path('.'), Path('.'))
 
 if __name__ == "__main__":
 
@@ -261,4 +259,8 @@ if __name__ == "__main__":
     Car.change_steer_angle = unit_test_generator_decorator(110, 100, True)(Car.change_steer_angle)
     Car.is_going_faster_than = unit_test_generator_decorator(110, 110)(Car.is_going_faster_than)
     Car.__init__ = unit_test_generator_decorator(110, 110)(Car.__init__)
-    main()
+
+    cov = coverage.Coverage()
+    with cov.collect():
+        main()
+    cov.save()

@@ -64,16 +64,15 @@ def main():
     Begin ad hoc tests
     """
     global mode # pylint: disable=global-statement
-    cov = coverage.Coverage()
-    with cov.collect():
-        print(fizzbuzz(6))
-        print(fizzbuzz(30))
-        mode = 'buzzfizz'
-        print(fizzbuzz(6))
-        print(fizzbuzz(30))
-        mode = "a_test"
-        print(fizzbuzz(6))
-    cov.save()
+
+    print(fizzbuzz(6))
+    print(fizzbuzz(30))
+    mode = 'buzzfizz'
+    print(fizzbuzz(6))
+    print(fizzbuzz(30))
+    mode = "a_test"
+    print(fizzbuzz(6))
+
     '''
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
@@ -126,5 +125,7 @@ if __name__ == "__main__":
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
     #fizzbuzz = unit_test_generator_decorator(not args.disable_unit_test_generation)(fizzbuzz)
-
-    main()
+    cov = coverage.Coverage()
+    with cov.collect():
+        main()
+    cov.save()

@@ -1252,7 +1252,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
     cov_report_ = json.loads(stdout_lines[0])
-    logger.critical(cov_report_)
     expected_type = str(type(result))
     parsed_type = re.match("<class '([^']+)'>", expected_type)
     if parsed_type:
