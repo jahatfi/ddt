@@ -6,11 +6,13 @@ import argparse
 import logging
 import os
 from pathlib import Path
+import coverage
 
 from src import unit_test_generator
 from src.unit_test_generator import (
     generate_all_tests_and_metadata,
     unit_test_generator_decorator,
+    Capturing
 )
 
 FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
@@ -61,14 +63,21 @@ def main():
     Begin ad hoc tests
     """
     global mode # pylint: disable=global-statement
-    print(fizzbuzz(6))
-    print(fizzbuzz(30))
-    mode = 'buzzfizz'
-    print(fizzbuzz(6))
-    print(fizzbuzz(30))
-    mode = "a_test"
-    print(fizzbuzz(6))
-
+    cov = coverage.Coverage():
+    with cov.collect():
+        print(fizzbuzz(6))
+        print(fizzbuzz(30))
+        mode = 'buzzfizz'
+        print(fizzbuzz(6))
+        print(fizzbuzz(30))
+        mode = "a_test"
+        print(fizzbuzz(6))
+        
+    with Capturing() as stdout_lines:
+        cov.json_report(outfile='-')
+        
+        logger.critical(json.loads(stdout_lines[0])
+    
     # The generate_all_tests_and_metadata() function takes 2 Paths:
     # 1. The output directory for the unit tests (.py)
     # 2. The output directory for the .json files (I/O for each test)
