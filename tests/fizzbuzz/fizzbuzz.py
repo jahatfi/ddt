@@ -73,6 +73,7 @@ def main():
         print(fizzbuzz(30))
         mode = "a_test"
         print(fizzbuzz(6))
+    cov.save()
     '''
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')

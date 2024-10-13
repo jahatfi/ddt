@@ -215,6 +215,7 @@ def main():
         first_test()
         second_test()
         generate_all_tests_and_metadata(Path('.'), Path('.'))
+    cov.save()
 
 if __name__ == "__main__":
 
