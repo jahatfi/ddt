@@ -662,12 +662,15 @@ def get_class_import_string(arg:typing.Any)->str:
     keep_file = None
     this_type = ""
     for file in files:
+        logger.debug(file)
         file_path = Path(file)
         if my_path.is_relative_to(file_path):
             keep_file = file_path
             this_type = f"{os.path.relpath(file_path, my_path)}"
+            logger.debug("this_type=%s", this_type)
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
+        logger.debug("my_path_str=%s", my_path_str)
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
         this_type = f'{re.sub(".py$", "", my_path_str)}.{arg.__class__.__qualname__}'
         this_type = re.sub(r"\\", ".", this_type)
