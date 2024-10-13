@@ -76,6 +76,7 @@ def main():
         
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
+        logger.critical(stdout_lines)
         
         logger.critical(json.loads(stdout_lines[0]))
     
