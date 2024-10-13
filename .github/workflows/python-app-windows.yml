@@ -102,6 +102,6 @@ jobs:
         # continue-on-error: true
         run: |
           cd src
-          poetry run pytest -s -v .
+          poetry run pytest --log-level=DEBUG -s -v .
 
       # TODO Get full coverage
