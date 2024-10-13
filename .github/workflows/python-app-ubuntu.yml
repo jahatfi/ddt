@@ -114,7 +114,7 @@ jobs:
           ls -lah tests/fizzbuzz
           ls -lah tests/oo_car
           poetry add coverage-badge
-          poetry run coverage combine tests/fizzbuzz tests/oo_car
+          poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage
           ls -lah
           #poetry run coverage run -m pytest .
           poetry run coverage report -m --omit="*/test_*"
