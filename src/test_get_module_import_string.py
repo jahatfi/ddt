@@ -6,6 +6,7 @@ import re
 import pytest
 from collections import OrderedDict
 from src import unit_test_generator
+#import pathlib
 
 # Now import modules specific to get_module_import_string:
 from logging import Manager
@@ -13,7 +14,7 @@ from logging import PlaceHolder
 from logging import StreamHandler
 from logging import RootLogger
 from logging import Logger
-from pathlib import WindowsPath
+from pathlib import Path
 
 
 # In sum, these tests covered 85.0% of get_module_import_string's lines
@@ -23,12 +24,10 @@ from pathlib import WindowsPath
     "my_path, expected_result, args_after",
     [
         (
-            WindowsPath(
-                "C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py"
-            ),
+            Path("../tests/oo_car/car.py").resolve(),
             "tests.oo_car.car",
             {
-                "my_path": "WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py')"
+                "my_path": "Path('../tests/oo_car/car.py').resolve()"
             },
         ),
     ],

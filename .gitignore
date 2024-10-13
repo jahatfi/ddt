@@ -4,6 +4,7 @@ settings.json
 #tests/*/*.json
 tests/*/.coverage
 feedback.pdf
+.coverage
 
 
 # https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore

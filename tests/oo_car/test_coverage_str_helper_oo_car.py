@@ -17,7 +17,7 @@ from logging import StreamHandler
 
 # In sum, these tests covered 53.12% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1743', '1750-1752', '1754', '1756-1757', '1764-1766', '1768-1769', '1772-1773']
+# ['1750', '1757-1759', '1761', '1763-1764', '1771-1773', '1775-1776', '1779-1780']
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, args_after",
     [

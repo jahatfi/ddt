@@ -19,7 +19,7 @@ from collections import OrderedDict
 from collections import defaultdict
 from logging import RootLogger
 from logging import Logger
-from pathlib import WindowsPath
+from pathlib import Path
 
 ALL_METADATA = defaultdict(
     FunctionMetaData,
@@ -46,7 +46,7 @@ ALL_METADATA = defaultdict(
             non_code_lines={1606, 1608, 1609, 1610, 1611, 1612, 1613, 1614},
             global_vars_read_from={"logger"},
             global_vars_written_to=set(),
-            source_file=WindowsPath(
+            source_file=Path(
                 "C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py"
             ),
             coverage_io={
@@ -141,20 +141,20 @@ ALL_METADATA = defaultdict(
             non_code_lines={1426, 1444, 1446, 1434},
             global_vars_read_from={"logger"},
             global_vars_written_to=set(),
-            source_file=WindowsPath(
+            source_file=Path(
                 "C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py"
             ),
             coverage_io={
                 "a957a0aed8423c01c38d1111e384806112a73d4876a082ea2ca1421a6a95602a": CoverageInfo(
                     args_before=[
                         'X',
-                        "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})",
+                        "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=Path('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={})",
                     ],
                     args_after=OrderedDict(
                         [
                             (
                                 "this_metadata",
-                                "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[41, 42, 43], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'__init__': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\oo_car\\\\car.py'})",
+                                "FunctionMetaData(name='Car.__init__', parameter_names=['self', 'color', 'speed', 'steer_angle'], is_method=True, lines=[41, 42, 43], non_code_lines=set(), global_vars_read_from=set(), global_vars_written_to=set(), source_file=Path('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py'), coverage_io={}, coverage_percentage=0.0, types_in_use=set(), unified_test_coverage=set(), needs_pytest=False, callable_files={'__init__': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\tests\\\\oo_car\\\\car.py'})",
                             )
                         ]
                     ),
@@ -197,7 +197,7 @@ ALL_METADATA = defaultdict(
             coverage_percentage=56.41,
             types_in_use={
                 "logging.Manager",
-                "pathlib.WindowsPath",
+                "pathlib.Path",
                 "logging.Logger",
                 "logging.StreamHandler",
                 "src.unit_test_generator.FunctionMetaData",
@@ -242,7 +242,7 @@ ALL_METADATA = defaultdict(
             non_code_lines=set(),
             global_vars_read_from=set(),
             global_vars_written_to=set(),
-            source_file=WindowsPath(
+            source_file=Path(
                 "C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py"
             ),
             coverage_io={
@@ -278,7 +278,7 @@ ALL_METADATA = defaultdict(
             non_code_lines=set(),
             global_vars_read_from={"method_call_counter", "logger"},
             global_vars_written_to={"method_call_counter"},
-            source_file=WindowsPath(
+            source_file=Path(
                 "C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py"
             ),
             coverage_io={
@@ -336,7 +336,7 @@ ALL_METADATA = defaultdict(
             non_code_lines=set(),
             global_vars_read_from={"logger"},
             global_vars_written_to=set(),
-            source_file=WindowsPath(
+            source_file=Path(
                 "C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py"
             ),
             coverage_io={
@@ -379,7 +379,7 @@ ALL_METADATA = defaultdict(
             non_code_lines={89, 82, 84, 85},
             global_vars_read_from={"logger"},
             global_vars_written_to=set(),
-            source_file=WindowsPath(
+            source_file=Path(
                 "C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py"
             ),
             coverage_io={
@@ -467,7 +467,7 @@ ALL_METADATA = defaultdict(
             non_code_lines=set(),
             global_vars_read_from=set(),
             global_vars_written_to=set(),
-            source_file=WindowsPath(
+            source_file=Path(
                 "C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py"
             ),
             coverage_io={
@@ -528,7 +528,7 @@ ALL_METADATA = defaultdict(
                 non_code_lines={1606, 1608, 1609, 1610, 1611, 1612, 1613, 1614},
                 global_vars_read_from={"logger"},
                 global_vars_written_to=set(),
-                source_file=WindowsPath(
+                source_file=Path(
                     "C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py"
                 ),
                 coverage_io={
@@ -605,19 +605,19 @@ ALL_METADATA = defaultdict(
                 )
             },
             "update_global",
-            WindowsPath(
+            Path(
                 "C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py"
             ),
-            WindowsPath("."),
-            WindowsPath("."),
+            Path("."),
+            Path("."),
             2,
             "252acc6c11e8af0020608482027ff01a094facec4dddd6c5b97a134d630b6692",
             {
-                "function_metadata": "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1599, 1600, 1601, 1602, 1603, 1604, 1605, 1607, 1615, 1616, 1617, 1618, 1619], non_code_lines={1606, 1608, 1609, 1610, 1611, 1612, 1613, 1614}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'bc219f43158bcf9bd56390fd2488dcf6143970ff6002221e94e29f0d72d381d9': CoverageInfo(args_before=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)'], args_after=OrderedDict([('this_coverage_info', 'CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)')]), kwargs={}, kwargs_after=OrderedDict(), globals_before={}, globals_after={}, expected_result='CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)', expected_type='src.unit_test_generator.CoverageInfo', coverage=[1599, 1602, 1607, 1615, 1616, 1619], exception_type='', exception_message='', constructor='', cost=0.0)}, coverage_percentage=46.15, types_in_use={'logging.Manager', 'logging.RootLogger', 'logging.StreamHandler', 'logging.Logger', 'src.unit_test_generator.CoverageInfo', 'logging.PlaceHolder'}, unified_test_coverage={1602, 1607, 1615, 1616, 1619, 1599}, needs_pytest=False, callable_files={'update_global': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\src\\\\unit_test_generator.py'})",
+                "function_metadata": "FunctionMetaData(name='update_global', parameter_names=['obj', 'this_global', 'phase', 'this_coverage_info'], is_method=False, lines=[1599, 1600, 1601, 1602, 1603, 1604, 1605, 1607, 1615, 1616, 1617, 1618, 1619], non_code_lines={1606, 1608, 1609, 1610, 1611, 1612, 1613, 1614}, global_vars_read_from={'logger'}, global_vars_written_to=set(), source_file=Path('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py'), coverage_io={'bc219f43158bcf9bd56390fd2488dcf6143970ff6002221e94e29f0d72d381d9': CoverageInfo(args_before=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)'], args_after=OrderedDict([('this_coverage_info', 'CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)')]), kwargs={}, kwargs_after=OrderedDict(), globals_before={}, globals_after={}, expected_result='CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)', expected_type='src.unit_test_generator.CoverageInfo', coverage=[1599, 1602, 1607, 1615, 1616, 1619], exception_type='', exception_message='', constructor='', cost=0.0)}, coverage_percentage=46.15, types_in_use={'logging.Manager', 'logging.RootLogger', 'logging.StreamHandler', 'logging.Logger', 'src.unit_test_generator.CoverageInfo', 'logging.PlaceHolder'}, unified_test_coverage={1602, 1607, 1615, 1616, 1619, 1599}, needs_pytest=False, callable_files={'update_global': 'C:\\\\Users\\\\James\\\\Documents\\\\CyberResources\\\\ddt\\\\src\\\\unit_test_generator.py'})",
                 "state": "{'bc219f43158bcf9bd56390fd2488dcf6143970ff6002221e94e29f0d72d381d9': CoverageInfo(args_before=['0', '\"method_call_counter\"', '\"Before\"', 'CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)'], args_after={'this_coverage_info': 'CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)'}, kwargs={}, kwargs_after=OrderedDict(), globals_before={}, globals_after={}, expected_result='CoverageInfo(args_before=[\\'-1\\', \\'1\\'], args_after={}, kwargs={}, kwargs_after={}, globals_before={\\'method_call_counter\\': 0}, globals_after={}, expected_result=\\'\\', expected_type=\\'\\', coverage=[], exception_type=\\'\\', exception_message=\\'\\', constructor=\\'Car(\"Red\", 10, 0)\\', cost=0.0)', expected_type='src.unit_test_generator.CoverageInfo', coverage=[1599, 1602, 1607, 1615, 1616, 1619], exception_type='', exception_message='', constructor='', cost=0.0)}",
-                "source_file": "WindowsPath('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py')",
-                "tests_dir": "WindowsPath('.')",
-                "outdir": "WindowsPath('.')",
+                "source_file": "Path('C:/Users/James/Documents/CyberResources/ddt/src/unit_test_generator.py')",
+                "tests_dir": "Path('.')",
+                "outdir": "Path('.')",
             },
             {},
         ),

@@ -6,11 +6,14 @@ import argparse
 import logging
 import os
 from pathlib import Path
+import coverage
+import json
 
 from src import unit_test_generator
 from src.unit_test_generator import (
     generate_all_tests_and_metadata,
     unit_test_generator_decorator,
+    Capturing
 )
 
 FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-20s:%(lineno)-4d:%(message)s'
@@ -61,6 +64,7 @@ def main():
     Begin ad hoc tests
     """
     global mode # pylint: disable=global-statement
+
     print(fizzbuzz(6))
     print(fizzbuzz(30))
     mode = 'buzzfizz'
@@ -69,6 +73,14 @@ def main():
     mode = "a_test"
     print(fizzbuzz(6))
 
+    '''
+    with Capturing() as stdout_lines:
+        cov.json_report(outfile='-')
+    # result will not exist if the function threw an exception
+    cov_report_ = json.loads(stdout_lines[0])
+    logger.critical(cov_report_)
+    '''
+    
     # The generate_all_tests_and_metadata() function takes 2 Paths:
     # 1. The output directory for the unit tests (.py)
     # 2. The output directory for the .json files (I/O for each test)
@@ -113,5 +125,7 @@ if __name__ == "__main__":
     # Decorating all functions programmatically is left as an exercise to the reader:
     # Hint: https://stackoverflow.com/questions/3467526/
     #fizzbuzz = unit_test_generator_decorator(not args.disable_unit_test_generation)(fizzbuzz)
-
-    main()
+    cov = coverage.Coverage()
+    with cov.collect():
+        main()
+    cov.save()

@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 from typing import Any, List, TypeVar
 
+import coverage
+
 from src import unit_test_generator
 from src.unit_test_generator import (
     generate_all_tests_and_metadata,
@@ -23,7 +25,7 @@ class ClassForTesting():
 
     def __repr__(self):
         return f"ClassForTesting('{self.name}')"
-    
+
     def __eq__(self, __value: Any) -> bool:
         return self.name == __value.name
 
@@ -40,7 +42,7 @@ def append_list(this_list:List[Any], item:Any)->None:
     """
     logger.info("APPEND %s to %s", item, this_list)
     this_list.append(item)
-    
+
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def overwrite_list(this_list:List[Any])->None:
@@ -69,7 +71,7 @@ def add_to_my_set_kwargs(**kwargs):
     """
     if "my_set" in kwargs and isinstance(kwargs["my_set"], set):
         kwargs["my_set"].add(1)
-        
+
 
 def main():
     """
@@ -77,7 +79,7 @@ def main():
     """
     # Begin ad hoc tests
     # Test append_list
-    
+
     my_list = [1,2,3,4]
     append_list(my_list, 6)
     overwrite_list(my_list[::-1])
@@ -86,13 +88,13 @@ def main():
     print(f"Before: {kwargs=}")
     increment_my_list_kwargs(**kwargs)
     print(f"After: {kwargs=}")
-    
-    
+
+
     kwargs = {}
     kwargs["my_set"] = set([0,2,3])
     add_to_my_set_kwargs(**kwargs)
     print(f"After: {kwargs=}")
-    
+
     generate_all_tests_and_metadata(Path("."), Path("."))
 
 if __name__ == "__main__":
@@ -141,4 +143,7 @@ if __name__ == "__main__":
     # get_key_to_set_with_highest_value = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_key_to_set_with_highest_value) # pylint: disable=line-too-long
     # get_item_at_index = unit_test_generator_decorator(not args.disable_unit_test_generation)(get_item_at_index) # pylint: disable=line-too-long
 
-    main()
+    cov = coverage.Coverage()
+    with cov.collect():
+        main()
+    cov.save()

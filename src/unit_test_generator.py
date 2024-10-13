@@ -63,6 +63,10 @@ pp = pprint.PrettyPrinter(indent=3)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+# FUNCTIONS is a set of all function names in this file, to be populated
+# at the end of this file
+FUNCTIONS = set()
+
 recursion_depth_per_decoratee: dict[str, int] = defaultdict(int)
 
 def fullname(o:object)->str:
@@ -625,24 +629,29 @@ def get_module_import_string(my_path:Path)->str:
     files = set(sorted(sys.path))
     keep_file = None
     this_type = ""
-    for file_str in files:
-        file = Path(file_str)
+    logger.critical(f"{my_path=}")
+    logger.critical(f"{files=}")
+    for file in files:
+        #file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
-            logger.debug("os.path.relpath(file, my_path, )=%s",
+            logger.critical("os.path.relpath(file, my_path, )=%s",
                          os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
+            #break
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
+        logger.critical(f"{my_path_str=}")
         this_type = re.sub(".py$", "", my_path_str)
         if not this_type:
             raise TypeError("Can't determine type")
         this_type = re.sub(r"\\", ".", this_type)
-
+        logger.critical(f"{this_type=}")
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
-
+    else:
+        logger.critical("my_path not relative to any sys paths")
     return this_type
 
 #@unit_test_generator_decorator(sample_count=1)
@@ -658,12 +667,15 @@ def get_class_import_string(arg:typing.Any)->str:
     keep_file = None
     this_type = ""
     for file in files:
+        logger.debug(file)
         file_path = Path(file)
         if my_path.is_relative_to(file_path):
             keep_file = file_path
             this_type = f"{os.path.relpath(file_path, my_path)}"
+            logger.debug("this_type=%s", this_type)
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
+        logger.debug("my_path_str=%s", my_path_str)
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
         this_type = f'{re.sub(".py$", "", my_path_str)}.{arg.__class__.__qualname__}'
         this_type = re.sub(r"\\", ".", this_type)
@@ -954,10 +966,10 @@ class ArgsIteratorClass():
         function_name = self.this_metadata.name
         for arg_i, (arg_name, arg) in enumerate(args_dict.items()):
             if mode == "After":
-               
+
                 if  ((which_args == "args" and id(arg) != self.args_addresses[arg_name]) or \
-                    (which_args == "kwargs" and id(arg) != self.kwargs_addresses[arg_name])):                    
-                        logger.info("Discarding param #%d: %s for 'after' comparison, address has changed", 
+                    (which_args == "kwargs" and id(arg) != self.kwargs_addresses[arg_name])):
+                        logger.info("Discarding param #%d: %s for 'after' comparison, address has changed",
                                     arg_i, arg)
                         continue
                 if isinstance(arg, (int, str, float)):
@@ -1607,7 +1619,10 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
             continue
 
         local_all_metadata[function_name].coverage_io = {k:v for k,v in local_all_metadata[function_name].coverage_io.items() if v.testable}
-        result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
+        if function_name in FUNCTIONS:
+            result_file_str = f"test_{function_name.lower()}_{os.path.basename(os.getcwd())}".replace('.','_') + ".py"
+        else:
+            result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
         result_file_str = re.sub("__init__", "constructor", result_file_str)
         result_file = tests_dir.joinpath(result_file_str)
 
@@ -2394,3 +2409,12 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     h = hashlib.new('sha256')
     h.update(str(sorted(test_str_list_def_dict.items())).encode())
     return h.digest().hex()
+
+# REF: https://stackoverflow.com/questions/18451541
+copyied_locals = dict(locals())
+for key, value in copyied_locals.items():
+    value = str(value)
+    if value.startswith("<function"):
+        value = value.split()[1]
+        print(value)
+        FUNCTIONS.add(value)

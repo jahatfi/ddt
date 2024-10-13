@@ -5,7 +5,7 @@ Programmatically generated test function for divide_ints()
 import re
 import pytest
 from collections import OrderedDict
-import divide_ints
+from tests.procedural_division import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
@@ -20,7 +20,7 @@ ERROR_CODE = 0
 
 # In sum, these tests covered 100.0% of divide_ints's lines
 @pytest.mark.parametrize(
-    "a, b, exception_type, exception_message, expected_result, args_after, globals_before, globals_after",
+    "a, b, exception_type, exception_message, expected_result, args_after, globals_after",
     [
         (
             "10",
@@ -28,7 +28,6 @@ ERROR_CODE = 0
             TypeError,
             "TypeError: Variable a='10' is not an int!",
             "None",
-            {},
             {},
             {"error_code": -1},
         ),
@@ -39,10 +38,9 @@ ERROR_CODE = 0
             "ValueError: Cannot divide by zero!",
             "None",
             {},
-            {},
             {"error_code": -3},
         ),
-        (6, 2, "N/A", "N/A", "6/2=3.0", {}, {}, {"error_code": 0}),
+        (6, 2, "N/A", "N/A", "6/2=3.0", {}, {"error_code": 0}),
         (
             8,
             [],
@@ -50,20 +48,12 @@ ERROR_CODE = 0
             "TypeError: Variable b=[] is not an int!",
             "None",
             {"b": "[]"},
-            {},
             {"error_code": -2},
         ),
     ],
 )
 def test_divide_ints(
-    a,
-    b,
-    exception_type,
-    exception_message,
-    expected_result,
-    args_after,
-    globals_before,
-    globals_after,
+    a, b, exception_type, exception_message, expected_result, args_after, globals_after
 ):
     """
     Programmatically generated test function for divide_ints()
