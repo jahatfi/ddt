@@ -6,6 +6,7 @@ import argparse
 import logging
 import os
 from pathlib import Path
+import coverage
 
 from src import unit_test_generator
 from src.unit_test_generator import (
@@ -209,9 +210,11 @@ def main():
     Call test functions for Car class, then generate test files for each
     method.
     """
-    first_test()
-    second_test()
-    generate_all_tests_and_metadata(Path('.'), Path('.'))
+    cov = coverage.Coverage("../.coverage")
+    with cov.collect():
+        first_test()
+        second_test()
+        generate_all_tests_and_metadata(Path('.'), Path('.'))
 
 if __name__ == "__main__":
 

@@ -85,7 +85,7 @@ jobs:
         run: |
           cd tests/fizzbuzz
           poetry run python fizzbuzz.py
-          #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest all_types
         # continue-on-error: true
@@ -99,7 +99,7 @@ jobs:
         run: |
           cd tests/oo_car
           poetry run python car.py
-          #poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment
         # continue-on-error: true
@@ -111,6 +111,8 @@ jobs:
       - name: pytest coverage badge
         run: |
           poetry add coverage-badge
-          poetry run coverage run -m pytest .
+          poetry run coverage combine tests/fizzbuzz tests/oo_car
+          ls -lah
+          #poetry run coverage run -m pytest .
           poetry run coverage report -m --omit="*/test_*"
           poetry run coverage-badge -o coverage.svg

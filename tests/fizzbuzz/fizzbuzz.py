@@ -64,7 +64,7 @@ def main():
     Begin ad hoc tests
     """
     global mode # pylint: disable=global-statement
-    cov = coverage.Coverage(None)
+    cov = coverage.Coverage("../.coverage")
     with cov.collect():
         print(fizzbuzz(6))
         print(fizzbuzz(30))
@@ -73,13 +73,13 @@ def main():
         print(fizzbuzz(30))
         mode = "a_test"
         print(fizzbuzz(6))
-        
+    '''
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
     # result will not exist if the function threw an exception
     cov_report_ = json.loads(stdout_lines[0])
     logger.critical(cov_report_)
-    
+    '''
     
     # The generate_all_tests_and_metadata() function takes 2 Paths:
     # 1. The output directory for the unit tests (.py)
