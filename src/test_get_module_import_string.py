@@ -24,11 +24,11 @@ from pathlib import WindowsPath
     [
         (
             WindowsPath(
-                "C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py"
+                "tests/oo_car/car.py"
             ),
             "tests.oo_car.car",
             {
-                "my_path": "WindowsPath('C:/Users/James/Documents/CyberResources/ddt/tests/oo_car/car.py')"
+                "my_path": "WindowsPath('tests/oo_car/car.py')"
             },
         ),
     ],
