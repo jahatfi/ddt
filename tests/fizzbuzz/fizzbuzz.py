@@ -7,6 +7,7 @@ import logging
 import os
 from pathlib import Path
 import coverage
+import json
 
 from src import unit_test_generator
 from src.unit_test_generator import (
