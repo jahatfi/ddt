@@ -102,6 +102,6 @@ jobs:
         # continue-on-error: true
         run: |
           cd src
-          poetry run -m pytest .
+          poetry run pytest .
 
       # TODO Get full coverage

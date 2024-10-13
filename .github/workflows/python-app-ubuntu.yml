@@ -111,8 +111,11 @@ jobs:
       - name: pytest coverage badge
         run: |
           ls -lah
-          ls -lah tests/fizzbuzz
-          ls -lah tests/oo_car
+          ls -h tests/fizzbuzz
+          ls -h tests/oo_car
+          ls -h tests/all_types
+          ls -h tests/procedural_division
+          ls -h tests/pass_by_assignment
           poetry add coverage-badge
           poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/all_types/.coverage tests/procedural_division/.coverage
           ls -lah
