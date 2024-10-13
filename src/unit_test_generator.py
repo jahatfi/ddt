@@ -629,21 +629,24 @@ def get_module_import_string(my_path:Path)->str:
     files = set(sorted(sys.path))
     keep_file = None
     this_type = ""
+    logger.critical(f"{files=}")
     for file_str in files:
         file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
-            logger.debug("os.path.relpath(file, my_path, )=%s",
+            logger.critical("os.path.relpath(file, my_path, )=%s",
                          os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
+            break
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
+        logger.critical(f"{my_path_str=}")
         this_type = re.sub(".py$", "", my_path_str)
         if not this_type:
             raise TypeError("Can't determine type")
         this_type = re.sub(r"\\", ".", this_type)
-
+        logger.critical(f"{this_type=}")
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
 
