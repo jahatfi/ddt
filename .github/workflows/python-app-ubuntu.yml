@@ -123,9 +123,12 @@ jobs:
           ls -lah tests/all_types
           ls -lah tests/procedural_division
           ls -lah tests/pass_by_assignment
-          poetry add coverage-badge
+          poetry add coverage-badge 
+          poetry run pip install[all]
           poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/pass_by_assignment/.coverage tests/procedural_division/.coverage src/.coverage
           ls -lah
           #poetry run coverage run -m pytest .
           poetry run coverage report -m --omit="*/test_*"
+          poetry run coverage xml --omit="*/test_*"
           poetry run coverage-badge -o coverage.svg
+          poetrt run genbadge coverage
