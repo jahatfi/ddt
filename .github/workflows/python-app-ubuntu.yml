@@ -117,7 +117,7 @@ jobs:
           ls -lah tests/procedural_division
           ls -lah tests/pass_by_assignment
           poetry add coverage-badge
-          poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/all_types/.coverage tests/procedural_division/.coverage
+          poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/pass_by_assignment/.coverage tests/procedural_division/.coverage
           ls -lah
           #poetry run coverage run -m pytest .
           poetry run coverage report -m --omit="*/test_*"
