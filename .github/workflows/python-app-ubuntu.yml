@@ -108,20 +108,13 @@ jobs:
           poetry run python pass_by_assignment.py
           #poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
-      - name: pytest pass_by_assignment
-        # continue-on-error: true
-        run: |
-          cd src
-          poetry run coverage run -m pytest .
-  
-
       - name: pytest coverage badge
         run: |
           ls -lah
           ls -lah tests/fizzbuzz
           ls -lah tests/oo_car
           poetry add coverage-badge
-          poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/all_types/.coverage tests/procedural_division/.coverage src/.coverage
+          poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/all_types/.coverage tests/procedural_division/.coverage
           ls -lah
           #poetry run coverage run -m pytest .
           poetry run coverage report -m --omit="*/test_*"
