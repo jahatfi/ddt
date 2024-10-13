@@ -637,7 +637,7 @@ def get_module_import_string(my_path:Path)->str:
             logger.critical("os.path.relpath(file, my_path, )=%s",
                          os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
-            break
+            #break
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
