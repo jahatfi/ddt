@@ -136,3 +136,30 @@ jobs:
           ls -lah htmlcov
           poetry run coverage-badge -o coverage.svg
           poetry run genbadge coverage -i coverage.xml
+
+    name: Testing BYOB
+    steps:
+      - id: mypy
+        run: echo "##[set-output name=data;]$($MYPY_RESULT)"
+        run: echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+      - id: pylint
+        run: echo "##[set-output name=data;]$($PYLINT_RESULT)"
+        run: echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+      - name: mypybadge
+        uses: RubbaBoy/BYOB@v1
+        with:
+          NAME: mypy
+          LABEL: 'mypy'
+          STATUS: ${{ steps.mypy.outputs.data }}
+          COLOR: ${{ steps.mypy.outputs.color }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: pylint
+        uses: RubbaBoy/BYOB@v1
+        with:
+          NAME: pylint
+          LABEL: 'pylint'
+          STATUS: ${{ steps.pylint.outputs.data }}
+          COLOR: ${{ steps.pylint.outputs.color }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
