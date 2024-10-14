@@ -153,6 +153,8 @@ jobs:
           STATUS: ${{ steps.mypy.outputs.data }}
           COLOR: ${{ steps.mypy.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
+          REPOSITORY: ddt
+          ACTOR: ${{ github.actor }}
 
       - name: pylint
         uses: RubbaBoy/BYOB@v1
@@ -162,4 +164,5 @@ jobs:
           STATUS: ${{ steps.pylint.outputs.data }}
           COLOR: ${{ steps.pylint.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
- 
+          REPOSITORY: ddt
+          ACTOR: ${{ github.actor }}
