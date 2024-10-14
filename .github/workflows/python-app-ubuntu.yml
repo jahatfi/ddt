@@ -152,7 +152,7 @@ jobs:
           LABEL: 'mypy'
           STATUS: ${{ steps.mypy.outputs.data }}
           COLOR: ${{ steps.mypy.outputs.color }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
 
       - name: pylint
         uses: RubbaBoy/BYOB@v1
@@ -161,5 +161,5 @@ jobs:
           LABEL: 'pylint'
           STATUS: ${{ steps.pylint.outputs.data }}
           COLOR: ${{ steps.pylint.outputs.color }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
  
