@@ -153,7 +153,7 @@ jobs:
           STATUS: ${{ steps.mypy.outputs.data }}
           COLOR: ${{ steps.mypy.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
-          REPOSITORY: ddt
+          REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
 
       - name: pylint
@@ -164,5 +164,5 @@ jobs:
           STATUS: ${{ steps.pylint.outputs.data }}
           COLOR: ${{ steps.pylint.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
-          REPOSITORY: ddt
+          REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
