@@ -152,7 +152,7 @@ jobs:
           LABEL: 'mypy'
           STATUS: ${{ steps.mypy.outputs.data }}
           COLOR: ${{ steps.mypy.outputs.color }}
-          GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DDT }}
           REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
 
@@ -163,6 +163,6 @@ jobs:
           LABEL: 'pylint'
           STATUS: ${{ steps.pylint.outputs.data }}
           COLOR: ${{ steps.pylint.outputs.color }}
-          GITHUB_TOKEN: ${{ secrets.ACTION.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DDT }}
           REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
