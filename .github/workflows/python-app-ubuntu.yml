@@ -133,6 +133,6 @@ jobs:
           poetry run coverage html
           ls -lah
           echo "HTML?"
-          ls -lah hrmlcov
+          ls -lah htmlcov
           poetry run coverage-badge -o coverage.svg
           poetry run genbadge coverage -i coverage.xml
