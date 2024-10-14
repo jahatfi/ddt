@@ -130,5 +130,6 @@ jobs:
           #poetry run coverage run -m pytest .
           poetry run coverage report -m --omit="*/test_*"
           poetry run coverage xml --omit="*/test_*"
+          ls -lah
           poetry run coverage-badge -o coverage.svg
-          poetry run genbadge coverage
+          poetry run genbadge coverage -i coverage.xml
