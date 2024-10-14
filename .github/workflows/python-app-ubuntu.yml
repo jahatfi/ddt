@@ -132,5 +132,7 @@ jobs:
           poetry run coverage xml --omit="*/test_*"
           poetry run coverage html
           ls -lah
+          echo "HTML?"
+          ls -lah hrmlcov
           poetry run coverage-badge -o coverage.svg
           poetry run genbadge coverage -i coverage.xml
