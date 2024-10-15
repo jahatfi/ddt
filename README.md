@@ -1,4 +1,6 @@
 ![Coverage Status](./coverage-badge.svg?dummy=8484744)
+![](https://byob.yarr.is/jahatfi/ddt/pylint)
+![](https://byob.yarr.is/jahatfi/ddt/mypy)
 ![CI](https://github.com/jahatfi/ddt/actions/workflows/python-app-ubuntu.yml/badge.svg)
 ![CI](https://github.com/jahatfi/ddt/actions/workflows/python-app-windows.yml/badge.svg)
 #### TODO: Update this file - it's quite out of date as of 14 Sept 2024

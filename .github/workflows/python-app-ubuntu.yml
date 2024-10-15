@@ -137,14 +137,18 @@ jobs:
           poetry run coverage-badge -o coverage.svg
           poetry run genbadge coverage -i coverage.xml
 
-    name: Testing BYOB
-    steps:
+      
+
       - id: mypy
-        run: echo "##[set-output name=data;]$($MYPY_RESULT)"
-        run: echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+        run: |
+              echo "##[set-output name=data;]$($MYPY_RESULT)"
+              echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+
       - id: pylint
-        run: echo "##[set-output name=data;]$($PYLINT_RESULT)"
-        run: echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+        run: |
+              echo "##[set-output name=data;]$($PYLINT_RESULT)"
+              echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+
       - name: mypybadge
         uses: RubbaBoy/BYOB@v1
         with:
@@ -156,7 +160,7 @@ jobs:
           REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
 
-      - name: pylint
+      - name: pylint badge
         uses: RubbaBoy/BYOB@v1
         with:
           NAME: pylint
@@ -164,5 +168,3 @@ jobs:
           STATUS: ${{ steps.pylint.outputs.data }}
           COLOR: ${{ steps.pylint.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.DDT }}
-          REPOSITORY: ${{ github.actor }}/ddt
-          ACTOR: ${{ github.actor }}
