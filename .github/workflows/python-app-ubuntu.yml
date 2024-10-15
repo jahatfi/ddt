@@ -72,6 +72,7 @@ jobs:
           if [ $MYPY_RESULT -ne 0 ]; then
             echo "::notice::mypy found errors." && exit $MYPY_RESULT
           fi
+          echo "MYPY_RESULT=$MYPY_RESULT"
 
       - name: pytest procedural_division
         # continue-on-error: true
@@ -141,6 +142,7 @@ jobs:
 
       - id: mypy
         run: |
+              echo "MYPY_RESULT=$MYPY_RESULT"
               echo "##[set-output name=data;]$($MYPY_RESULT)"
               echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
 
