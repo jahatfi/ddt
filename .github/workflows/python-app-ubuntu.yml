@@ -70,14 +70,15 @@ jobs:
           poetry run mypy --version
           poetry run mypy unit_test_generator.py
           MYPY_RESULT=$?
+          COLOR=$(.color_picker 0 100 $MYPY_RESULT)
+          echo "color=$COLOR"
           echo "MYPY_RESULT=$MYPY_RESULT"
           echo "##[set-output name=data;]$($MYPY_RESULT)"
-          echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+          echo "##[set-output name=color;]$($COLOR)"
 
           if [ $MYPY_RESULT -ne 0 ]; then
             echo "::notice::mypy found errors." && exit $MYPY_RESULT
           fi
-          echo "MYPY_RESULT=$MYPY_RESULT"
 
       - name: mypybadge
         uses: RubbaBoy/BYOB@v1
