@@ -70,7 +70,7 @@ jobs:
           poetry run mypy --version
           poetry run mypy unit_test_generator.py
           MYPY_RESULT=$?
-          COLOR=$(.color_picker 0 100 $MYPY_RESULT)
+          COLOR="blue"
           echo "color=$COLOR"
           echo "MYPY_RESULT=$MYPY_RESULT"
           echo "##[set-output name=data;]$($MYPY_RESULT)"
