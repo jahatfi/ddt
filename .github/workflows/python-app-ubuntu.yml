@@ -74,7 +74,7 @@ jobs:
           echo "color=$COLOR"
           echo "MYPY_RESULT=$MYPY_RESULT"
           echo "##[set-output name=data;]$($MYPY_RESULT)"
-          echo "##[set-output name=color;]$($COLOR)"
+          echo "##[set-output name=color;]$(echo $COLOR)"
 
           if [ $MYPY_RESULT -ne 0 ]; then
             echo "::notice::mypy found errors." && exit $MYPY_RESULT
