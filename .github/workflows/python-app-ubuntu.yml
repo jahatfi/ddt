@@ -62,6 +62,7 @@ jobs:
           fi
 
       - name: Typecheck with mypy
+        id: mypy
         continue-on-error: true
         run: |
           set +e
@@ -155,7 +156,7 @@ jobs:
 
       
 
-      - id: mypy
+      - id: mypy2
         run: |
               echo "MYPY_RESULT=$MYPY_RESULT"
               echo "##[set-output name=data;]$($MYPY_RESULT)"
@@ -171,8 +172,8 @@ jobs:
         with:
           NAME: mypy
           LABEL: 'mypy'
-          STATUS: ${{ steps.mypy.outputs.data }}
-          COLOR: ${{ steps.mypy.outputs.color }}
+          STATUS: ${{ steps.mypy2.outputs.data }}
+          COLOR: ${{ steps.mypy2.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.DDT }}
           REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
