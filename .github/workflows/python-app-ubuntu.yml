@@ -70,13 +70,9 @@ jobs:
           poetry run mypy --version
           poetry run mypy unit_test_generator.py
           MYPY_RESULT=$?
-          COLOR="blue"
           echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
           echo "MYPY_RESULT=$MYPY_RESULT" >> "$GITHUB_OUTPUT"
-          echo "color=$COLOR"
           echo "MYPY_RESULT=$MYPY_RESULT"
-          # echo "##[set-output name=data;]$($MYPY_RESULT)"
-          # echo "##[set-output name=color;]$(echo $COLOR)"
 
           if [ $MYPY_RESULT -ne 0 ]; then
             echo "::notice::mypy found errors." && exit $MYPY_RESULT
@@ -89,7 +85,7 @@ jobs:
           MYPY_RESULT: ${{ steps.mypy.outputs.MYPY_RESULT }}
         with:
           NAME: mypy
-          LABEL: 'mypy'
+          LABEL: '# of mypy errors'
           STATUS: ${{ steps.mypy.outputs.MYPY_RESULT }}   # echo "$MYPY_RESULT" # ${{ steps.mypy.outputs.data }}
           COLOR: ${{ steps.mypy.outputs.SELECTED_COLOR }} #echo "$SELECTED_COLOR" #${{ steps.mypy.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.DDT }}
@@ -99,7 +95,6 @@ jobs:
       - name: pytest procedural_division
         # continue-on-error: true
         run: |
-          exit
           cd tests/procedural_division
           poetry run python divide_ints.py
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
