@@ -1,1 +1,1 @@
-{"mypy":{"label":"mypy","status":"echo \"$MYPY_RESULT\"","color":"echo \"$SELECTED_COLOR\""},"pylint":{"label":"pylint","status":"","color":""}}
+{"mypy":{"label":"mypy","status":"1","color":"green"},"pylint":{"label":"pylint","status":"","color":""}}
