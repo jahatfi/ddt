@@ -19,7 +19,7 @@ fi
 OUTPUT=$(mypy "$FILE" 2>&1)
 
 # Count the number of lines of code (excluding comments and blank lines) using cloc
-lines_of_code=$(cloc "$FILE" | tail -n 3 | head -n 1 | awk '{print $NF}'
+lines_of_code=$(cloc "$FILE" | tail -n 3 | head -n 1 | awk '{print $NF}')
 echo "loc = $lines_of_code"
 
 # Count the number of errors reported by mypy
