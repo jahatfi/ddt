@@ -42,6 +42,7 @@ jobs:
           # set PATH=%PATH%;C:/Users/runneradmin/.local/bin/poetry
           poetry --version
           poetry install --no-interaction --no-root
+          apt install cloc
 
       - name: Install library
         run: poetry install --no-interaction
