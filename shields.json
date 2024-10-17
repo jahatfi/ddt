@@ -1,1 +1,1 @@
-{"mypy":{"label":"mypy","status":"","color":""},"pylint":{"label":"pylint","status":"","color":""}}
+{"mypy":{"label":"# of mypy errors","status":"1","color":"green"},"pylint":{"label":"pylint","status":"","color":""}}
