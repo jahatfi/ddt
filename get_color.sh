@@ -35,6 +35,7 @@ else
   elif (( $(echo "$percentage <= 0.8333" | bc -l) )); then
     echo "yellow"
   else
-    echo "lightgreen"
+    # light green
+    echo "90EE90"
   fi
 fi
