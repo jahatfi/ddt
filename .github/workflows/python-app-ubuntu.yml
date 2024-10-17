@@ -82,7 +82,7 @@ jobs:
         with:
           NAME: pylint
           LABEL: 'pylint'
-          STATUS: ${{ steps.pylint.outputs.ERRORS }}
+          STATUS: ${{ steps.pylint.outputs.MSG }}
           COLOR: ${{ steps.pylint.outputs.COLOR }}
           GITHUB_TOKEN: ${{ secrets.DDT }}
 
