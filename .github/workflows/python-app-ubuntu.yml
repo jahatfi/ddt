@@ -72,10 +72,10 @@ jobs:
           if [ $DATA -ne 0 ]; then
             echo "::notice::Pylint recommends changes." && exit $DATA
           fi
-          echo "DATA=$DATA" >> "$GITHUB_OUTPUT"
-          echo "##[set-output name=data;]$($DATA)"
-          COLOR#$(chmod +x color_picker.sh && ./color_picker.sh 0 100 $DATA)"
-          echo "COLOR=green" >> "$GITHUB_OUTPUT"
+          #echo "DATA=$DATA" >> "$GITHUB_OUTPUT"
+          #echo "##[set-output name=data;]$($DATA)"
+          #COLOR#$(chmod +x color_picker.sh && ./color_picker.sh 0 100 $DATA)"
+          #echo "COLOR=green" >> "$GITHUB_OUTPUT"
 
       - name: pylint badge
         uses: RubbaBoy/BYOB@v1
