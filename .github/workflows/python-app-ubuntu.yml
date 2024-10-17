@@ -64,6 +64,9 @@ jobs:
         run: |
           set +e
           # stop the build if there are Python syntax errors or undefined names
+
+          chmod +x run_pylint.sh
+          ./run_pylint.sh src/unit_test_generator.py
           poetry run pylint src/unit_test_generator.py
           DATA=$?
           if [ $DATA -ne 0 ]; then
@@ -79,8 +82,8 @@ jobs:
         with:
           NAME: pylint
           LABEL: 'pylint'
-          STATUS: ${{ steps.pylint.outputs.data }}
-          COLOR: ${{ steps.pylint.outputs.color }}
+          STATUS: ${{ steps.pylint.outputs.ERRORS }}
+          COLOR: ${{ steps.pylint.outputs.COLOR }}
           GITHUB_TOKEN: ${{ secrets.DDT }}
 
       - name: Typecheck with mypy
