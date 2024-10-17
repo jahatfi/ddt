@@ -47,6 +47,9 @@ echo "Refactor: $REFS"
 echo "Info: $INFO"
 echo "Score: $SCORE"
 
+chmod +x ./get_color.sh 
+COLOR=$(./get_color.sh 0 10 $SCORE)
+
 echo "ERRORS=$ERRORS" >> "$GITHUB_OUTPUT"
 echo "WARNINGS=$WARNINGS" >> "$GITHUB_OUTPUT"
 echo "CONVENTIONS=$CONVENTIONS" >> "$GITHUB_OUTPUT"
@@ -54,3 +57,4 @@ echo "REFS=$REFS" >> "$GITHUB_OUTPUT"
 echo "INFO=$INFO" >> "$GITHUB_OUTPUT"
 echo "SCORE=$SCORE" >> "$GITHUB_OUTPUT"
 echo "MSG=$ERRORS error(s), $WARNINGS warning(s), $CONVENTIONS convention message(s), $REFS reference(s), and $INFO info message(s)" >> "$GITHUB_OUTPUT"
+echo "COLOR=$COLOR" >> "$GITHUB_OUTPUT"
