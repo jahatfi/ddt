@@ -16,7 +16,7 @@ if [ ! -f "$FILE" ]; then
 fi
 
 # Run mypy and ount the number of errors reported by mypy
-error_count=$(mypy "$FILE" 2>&1 | grep -c 'error:')
+error_count=$(poetry run mypy "$FILE" 2>&1 | grep -c 'error:')
 
 # Count the number of lines of code (excluding comments and blank lines) using cloc
 lines_of_code=$(cloc "$FILE" | tail -n 2 | head -n 1 | awk '{print $NF}')
