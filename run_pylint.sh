@@ -18,18 +18,23 @@ CONVENTIONS=0
 REFS=0
 INFO=0
 
+SCORE=0
+
 # Parse the pylint output
 while IFS= read -r line; do
     if [[ $line == *": E"* ]]; then
         ((ERRORS++))
     elif [[ $line == *": W"* ]]; then
         ((WARNINGS++))
-    elif [[ $line == *":C"* ]]; then
+    elif [[ $line == *": C"* ]]; then
         ((CONVENTIONS++))
     elif [[ $line == *": R"* ]]; then
         ((REFS++))
     elif [[ $line == *": I"* ]]; then
         ((INFO++))
+    elif [[ $line == "Your code has been rated"* ]]; then
+         SCORE=$(grep -oP '\d+\.\d+' "$line")
+        
     fi
 done <<< "$OUTPUT"
 
@@ -40,9 +45,12 @@ echo "Warnings: $WARNINGS"
 echo "Convention: $CONVENTIONS"
 echo "Refactor: $REFS"
 echo "Info: $INFO"
+echo "Score: $SCORE"
 
 echo "ERRORS=$ERRORS" >> "$GITHUB_OUTPUT"
 echo "WARNINGS=$WARNINGS" >> "$GITHUB_OUTPUT"
 echo "CONVENTIONS=$CONVENTIONS" >> "$GITHUB_OUTPUT"
 echo "REFS=$REFS" >> "$GITHUB_OUTPUT"
 echo "INFO=$INFO" >> "$GITHUB_OUTPUT"
+echo "SCORE=$SCORE" >> "$GITHUB_OUTPUT"
+echo "MSG=$ERRORS error(s), $WARNINGS warning(s), $CONVENTIONS convention message(s), $REFS reference(s), and $INFO info message(s)" >> "$GITHUB_OUTPUT"
