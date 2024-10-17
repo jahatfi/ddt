@@ -95,7 +95,7 @@ jobs:
           DATA: ${{ steps.mypy.outputs.DATA }}
         with:
           NAME: mypy
-          LABEL: '# of mypy errors'
+          LABEL: 'mypy'
           STATUS: ${{ steps.mypy.outputs.DATA }}   # echo "$DATA" # ${{ steps.mypy.outputs.data }}
           COLOR: ${{ steps.mypy.outputs.COLOR }} #echo "$COLOR" #${{ steps.mypy.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.DDT }}
