@@ -83,17 +83,8 @@ jobs:
           set +e
           chmod +x get_mypy_pct_errors.sh
           ./get_mypy_pct_errors.sh src/unit_test_generator.py
-          cd src
-          poetry run mypy --version
-          poetry run mypy unit_test_generator.py
 
-
-          DATA=$?
-          echo "COLOR=green" >> "$GITHUB_OUTPUT"
-          echo "DATA=$DATA" >> "$GITHUB_OUTPUT"
-          echo "DATA=$DATA"
-
-          if [ $DATA -ne 0 ]; then
+          if [ $? -ne 0 ]; then
             echo "::notice::mypy found errors." && exit $DATA
           fi
 
