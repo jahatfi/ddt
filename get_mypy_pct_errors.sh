@@ -15,22 +15,18 @@ if [ ! -f "$FILE" ]; then
     exit 1
 fi
 
-# Run mypy and capture the output
-OUTPUT=$(mypy "$FILE" 2>&1)
+# Run mypy and ount the number of errors reported by mypy
+error_count=$(mypy "$FILE" | grep -c 'error:')
 
 # Count the number of lines of code (excluding comments and blank lines) using cloc
 lines_of_code=$(cloc "$FILE" | tail -n 2 | head -n 1 | awk '{print $NF}')
 echo "loc = $lines_of_code"
-
-# Count the number of errors reported by mypy
-error_count=$(echo "$OUTPUT" | grep -c 'error:')
 
 # Calculate the percentage of errors per line of code
 if [ $lines_of_code -eq 0 ]; then
     echo "No lines of code to analyze."
     exit 1
 fi
-
 percentage=$(echo "scale=2; ($error_count / $lines_of_code) * 100" | bc)
 
 # Print the results
