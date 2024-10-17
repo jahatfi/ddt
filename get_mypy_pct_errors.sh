@@ -7,6 +7,7 @@ if [ $# -ne 1 ]; then
 fi
 
 FILE="$1"
+echo "FILE = $FILE"
 
 # Check if the file exists
 if [ ! -f "$FILE" ]; then
