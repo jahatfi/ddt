@@ -25,7 +25,7 @@ get_color() {
     elif (( $(echo "$percentage > 2.5" | bc -l) )); then
         echo "yellow"
     elif (( $(echo "$percentage > 0" | bc -l) )); then
-        echo "lightgreen"
+        echo "light green"
     else
         echo "green"
     fi
