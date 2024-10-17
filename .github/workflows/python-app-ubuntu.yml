@@ -55,7 +55,7 @@ jobs:
       - name: Count LoC
         id: loc
         run: |
-            lines_of_code=$(cloc "$FILE" | tail -n 2 | head -n 1 | awk '{print $NF}') 
+            lines_of_code=$(cloc src/unit_test_generator.py | tail -n 2 | head -n 1 | awk '{print $NF}') 
             echo "LOC=$lines_of_code" >>  "$GITHUB_OUTPUT"
 
       - name: Lint with pylint
