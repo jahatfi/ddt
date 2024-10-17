@@ -1,19 +1,28 @@
 #!/bin/bash
 
 # Check if a filename is provided
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <python_file>"
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <python_file> <loc>"
     exit 1
 fi
 
 FILE="$1"
 echo "FILE = $FILE"
+lines_of_code="$2"
+echo "loc = $lines_of_code"
 
 # Check if the file exists
 if [ ! -f "$FILE" ]; then
     echo "File not found: $FILE"
     exit 1
 fi
+
+# Ensure valid loc value
+if [ $lines_of_code -le 0 ]; then
+    echo "No lines of code to analyze."
+    exit 2
+fi
+
 
 get_color() {
     local percentage=$1
@@ -34,15 +43,6 @@ get_color() {
 # Run mypy and count the number of errors reported by mypy
 error_count=$(poetry run mypy "$FILE" 2>&1 | grep -c 'error:')
 
-# Count the number of lines of code (excluding comments and blank lines) using cloc
-lines_of_code=$(cloc "$FILE" | tail -n 2 | head -n 1 | awk '{print $NF}')
-echo "loc = $lines_of_code"
-
-# Calculate the percentage of errors per line of code
-if [ $lines_of_code -eq 0 ]; then
-    echo "No lines of code to analyze."
-    exit 1
-fi
 percentage=$(echo "scale=4; ($error_count / $lines_of_code) * 100" | bc)
 
 color=$(get_color $percentage)
