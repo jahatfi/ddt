@@ -50,6 +50,13 @@ jobs:
           source $VENV
           pytest --version
 
+      # Count the number of lines of code (excluding comments and blank lines) using cloc
+
+      - name: Count LoC
+        id: loc
+        run: |
+            lines_of_code=$(cloc "$FILE" | tail -n 2 | head -n 1 | awk '{print $NF}') 
+            echo "LOC=$lines_of_code" >>  "$GITHUB_OUTPUT"
 
       - name: Lint with pylint
         id: pylint
@@ -82,7 +89,7 @@ jobs:
         run: |
           set +e
           chmod +x get_mypy_pct_errors.sh
-          ./get_mypy_pct_errors.sh src/unit_test_generator.py
+          ./get_mypy_pct_errors.sh src/unit_test_generator.py ${{ steps.loc.outputs.LOC }}
 
           if [ $? -ne 0 ]; then
             echo "::notice::mypy found errors." && exit $DATA
