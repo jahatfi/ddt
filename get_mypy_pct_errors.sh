@@ -52,3 +52,6 @@ echo "Lines of code: $lines_of_code"
 echo "Mypy errors: $error_count"
 echo "Percentage of mypy errors: $percentage%"
 echo "color=$color"
+
+echo "COLOR=$color" >> "$GITHUB_OUTPUT"
+echo "DATA=$error_count error(s) ($percentage% by LoC)" >> "$GITHUB_OUTPUT"
