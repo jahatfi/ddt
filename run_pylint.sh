@@ -20,8 +20,10 @@ INFO=0
 
 SCORE=0
 
+echo "Examining each line:"
 # Parse the pylint output
 while IFS= read -r line; do
+    echo "$line"
     if [[ $line == *": E"* ]]; then
         ((ERRORS++))
     elif [[ $line == *": W"* ]]; then
