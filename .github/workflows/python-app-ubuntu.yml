@@ -40,8 +40,8 @@ jobs:
       - name: Install dependencies
         run: |
           # set PATH=%PATH%;C:/Users/runneradmin/.local/bin/poetry
-          poetry --version
-          poetry install --no-interaction --no-root
+          #poetry --version
+          #poetry install --no-interaction --no-root
           sudo apt install cloc
 
       - name: Install library
@@ -67,7 +67,7 @@ jobs:
 
           chmod +x run_pylint.sh
           ./run_pylint.sh src/unit_test_generator.py
-          poetry run pylint src/unit_test_generator.py
+          #poetry run pylint src/unit_test_generator.py
           DATA=$?
           if [ $DATA -ne 0 ]; then
             echo "::notice::Pylint recommends changes." && exit $DATA
