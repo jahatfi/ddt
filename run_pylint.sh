@@ -59,3 +59,5 @@ echo "INFO=$INFO" >> "$GITHUB_OUTPUT"
 echo "SCORE=$SCORE" >> "$GITHUB_OUTPUT"
 echo "MSG=$ERRORS error(s), $WARNINGS warning(s), $CONVENTIONS convention message(s), $REFS reference(s), and $INFO info message(s)" >> "$GITHUB_OUTPUT"
 echo "COLOR=$COLOR" >> "$GITHUB_OUTPUT"
+
+return $ERRORS+$CONVENTIONS
