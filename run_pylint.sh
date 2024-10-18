@@ -57,7 +57,7 @@ echo "CONVENTIONS=$CONVENTIONS" >> "$GITHUB_OUTPUT"
 echo "REFS=$REFS" >> "$GITHUB_OUTPUT"
 echo "INFO=$INFO" >> "$GITHUB_OUTPUT"
 echo "SCORE=$SCORE" >> "$GITHUB_OUTPUT"
-echo "MSG=$ERRORS error(s), $WARNINGS warning(s), $CONVENTIONS convention message(s), $REFS reference(s), and $INFO info message(s)" >> "$GITHUB_OUTPUT"
+echo "MSG=Score:$SCORE; #E:$ERRORS, #W:$WARNINGS, #C:$CONVENTIONS, #R:$REFS, #I:$INFO" >> "$GITHUB_OUTPUT"
 echo "COLOR=$COLOR" >> "$GITHUB_OUTPUT"
 
-return $ERRORS+$CONVENTIONS
+exit $ERRORS+$CONVENTIONS
