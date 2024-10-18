@@ -1,1 +1,1 @@
-{"mypy":{"label":"mypy","status":"2 error(s) (.1200% by LoC)","color":"90EE90"},"pylint":{"label":"pylint","status":"","color":""}}
+{"mypy":{"label":"mypy","status":"2 error(s) (.1200% by LoC)","color":"90EE90"},"pylint":{"label":"pylint","status":"0 error(s), 16 warning(s), 14 convention message(s), 5 reference(s), and 0 info message(s)","color":"90EE90"}}
