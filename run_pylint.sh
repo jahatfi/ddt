@@ -9,7 +9,7 @@ fi
 PYTHON_FILE=$1
 
 # Run pylint and store the output
-OUTPUT=$(pylint "$PYTHON_FILE" 2>&1)
+OUTPUT=$(poetry run pylint "$PYTHON_FILE" 2>&1)
 
 # Initialize counters
 ERRORS=0
