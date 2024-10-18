@@ -35,7 +35,7 @@ while IFS= read -r line; do
     elif [[ $line == *": I"* ]]; then
         ((INFO++))
     elif [[ $line == "Your code has been rated"* ]]; then
-         SCORE=$(echo "$line" | grep -oP '\d+\.\d+')
+         SCORE=$(echo "$line" | grep -oP '\d+\.\d+' | head -n 1 )
     fi
 done <<< "$OUTPUT"
 
