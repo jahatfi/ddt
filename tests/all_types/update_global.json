@@ -39,17 +39,17 @@
             "<Logger src.unit_test_generator (CRITICAL)>",
             "\"logger\"",
             "\"Before\"",
-            "CoverageInfo(args_before=['[30]','{35}'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
+            "CoverageInfo(args_before=['[32]','{37}'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
          ],
          "args_after": {
             "obj": "<Logger src.unit_test_generator (CRITICAL)>",
-            "this_coverage_info": "CoverageInfo(args_before=['[30]','{35}'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
+            "this_coverage_info": "CoverageInfo(args_before=['[32]','{37}'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
          },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "CoverageInfo(args_before=['[30]','{35}'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
+         "expected_result": "CoverageInfo(args_before=['[32]','{37}'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
             1690,

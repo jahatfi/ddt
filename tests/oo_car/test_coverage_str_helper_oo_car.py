@@ -15,17 +15,20 @@ from logging import RootLogger
 from logging import StreamHandler
 
 
-# In sum, these tests covered 53.12% of coverage_str_helper's lines
+# In sum, these tests covered 78.12% of coverage_str_helper's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1750', '1757-1759', '1761', '1763-1764', '1771-1773', '1775-1776', '1779-1780']
+# ['1750', '1761', '1775-1776', '1779-1780']
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, args_after",
     [
         (
-            [52, 54],
-            set(),
-            "['52']",
-            {"this_list": "[52, 54]", "non_code_lines": "set()"},
+            [1696, 1708, 1709, 1691, 1692, 1694, 1695],
+            {1697, 1699, 1700, 1701, 1702, 1703, 1704, 1705},
+            "['1696', '1708-1709', '1691-1692', '1694-1695']",
+            {
+                "this_list": "[1696, 1708, 1709, 1691, 1692, 1694, 1695]",
+                "non_code_lines": "{1697, 1699, 1700, 1701, 1702, 1703, 1704, 1705}",
+            },
         ),
     ],
 )

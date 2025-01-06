@@ -21,7 +21,7 @@ from logging import StreamHandler
 @pytest.mark.parametrize(
     "this_list, non_code_lines, expected_result, args_after",
     [
-        ([30], {35}, "[30]", {"this_list": "[30]", "non_code_lines": "{35}"}),
+        ([32], {37}, "[32]", {"this_list": "[32]", "non_code_lines": "{37}"}),
     ],
 )
 def test_coverage_str_helper(this_list, non_code_lines, expected_result, args_after):

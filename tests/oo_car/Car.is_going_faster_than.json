@@ -7,7 +7,7 @@
    "is_method": true,
    "source_file": null,
    "lines": [
-      126
+      127
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -25,7 +25,7 @@
          "expected_result": "True",
          "expected_type": "bool",
          "coverage": [
-            126
+            127
          ],
          "exception_type": "",
          "exception_message": "",
@@ -37,12 +37,12 @@
    "coverage_percentage": 100.0,
    "types_in_use": [
       "__main__.Car",
-      "tests.oo_car.car.Car"
+      "car.Car"
    ],
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      126
+      127
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

@@ -50,18 +50,18 @@
    "coverage_io": {
       "0": {
          "args_before": [
-            "[30]",
-            "{35}"
+            "[32]",
+            "{37}"
          ],
          "args_after": {
-            "this_list": "[30]",
-            "non_code_lines": "{35}"
+            "this_list": "[32]",
+            "non_code_lines": "{37}"
          },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "[30]",
+         "expected_result": "[32]",
          "expected_type": "list",
          "coverage": [
             1748,

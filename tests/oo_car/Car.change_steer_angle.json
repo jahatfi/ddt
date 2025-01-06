@@ -7,22 +7,22 @@
    "is_method": true,
    "source_file": null,
    "lines": [
-      79,
       80,
       81,
-      83,
-      86,
-      87,
-      86,
-      88,
-      86,
-      90
-   ],
-   "non_code_lines": [
       82,
       84,
+      87,
+      88,
+      87,
+      89,
+      87,
+      91
+   ],
+   "non_code_lines": [
+      83,
       85,
-      89
+      86,
+      90
    ],
    "coverage_io": {
       "0": {
@@ -37,9 +37,9 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            79,
             80,
-            81
+            81,
+            82
          ],
          "exception_type": "<class 'AssertionError'>",
          "exception_message": "angle=-1080    out of bounds!",
@@ -59,11 +59,11 @@
          "expected_result": "210",
          "expected_type": "int",
          "coverage": [
-            79,
             80,
-            83,
-            86,
-            90
+            81,
+            84,
+            87,
+            91
          ],
          "exception_type": "",
          "exception_message": "",
@@ -83,11 +83,11 @@
          "expected_result": "30",
          "expected_type": "int",
          "coverage": [
-            79,
             80,
-            83,
-            86,
-            90
+            81,
+            84,
+            87,
+            91
          ],
          "exception_type": "",
          "exception_message": "",
@@ -107,11 +107,11 @@
          "expected_result": "60",
          "expected_type": "int",
          "coverage": [
-            79,
             80,
-            83,
-            86,
-            90
+            81,
+            84,
+            87,
+            91
          ],
          "exception_type": "",
          "exception_message": "",
@@ -122,24 +122,24 @@
    },
    "coverage_percentage": 60.0,
    "types_in_use": [
+      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler",
-      "tests.oo_car.car.Car"
+      "logging.StreamHandler"
    ],
    "global_vars_read_from": [
       "logger"
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      79,
       80,
       81,
-      83,
-      86,
-      90
+      82,
+      84,
+      87,
+      91
    ],
    "needs_pytest": true,
    "exceptions_raised": [

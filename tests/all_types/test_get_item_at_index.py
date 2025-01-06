@@ -5,12 +5,12 @@ Programmatically generated test function for get_item_at_index()
 import re
 import pytest
 from collections import OrderedDict
-import all_types
+from tests.all_types import all_types
 
 
 # In sum, these tests covered 85.71% of get_item_at_index's lines
 # Line(s) not covered by ANY of the tests below:
-# [30]
+# [32]
 @pytest.mark.parametrize(
     "iterable, index, exception_type, exception_message, expected_result, args_after",
     [

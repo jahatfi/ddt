@@ -7,8 +7,6 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      32,
-      33,
       34,
       35,
       36,
@@ -17,7 +15,9 @@
       39,
       40,
       41,
-      42
+      42,
+      43,
+      44
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -38,10 +38,10 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            32,
-            33,
             34,
-            35
+            35,
+            36,
+            37
          ],
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable a='10' is not an int!",
@@ -66,12 +66,12 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            32,
-            33,
-            36,
-            39,
-            40,
-            41
+            34,
+            35,
+            38,
+            41,
+            42,
+            43
          ],
          "exception_type": "<class 'ValueError'>",
          "exception_message": "ValueError: Cannot divide by zero!",
@@ -96,11 +96,11 @@
          "expected_result": "6/2=3.0",
          "expected_type": "str",
          "coverage": [
-            32,
-            33,
-            36,
-            39,
-            42
+            34,
+            35,
+            38,
+            41,
+            44
          ],
          "exception_type": "",
          "exception_message": "",
@@ -127,11 +127,11 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            32,
-            33,
-            36,
-            37,
-            38
+            34,
+            35,
+            38,
+            39,
+            40
          ],
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable b=[] is not an int!",
@@ -156,8 +156,6 @@
       "error_code"
    ],
    "unified_test_coverage": [
-      32,
-      33,
       34,
       35,
       36,
@@ -166,7 +164,9 @@
       39,
       40,
       41,
-      42
+      42,
+      43,
+      44
    ],
    "needs_pytest": true,
    "exceptions_raised": [

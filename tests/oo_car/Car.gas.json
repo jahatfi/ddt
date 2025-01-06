@@ -8,12 +8,12 @@
    "is_method": true,
    "source_file": null,
    "lines": [
-      66,
       67,
       68,
       69,
       70,
-      71
+      71,
+      72
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -34,10 +34,10 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            66,
             67,
             68,
-            69
+            69,
+            70
          ],
          "exception_type": "<class 'ValueError'>",
          "exception_message": "Gas rate (m/s) must be positive.",
@@ -62,11 +62,11 @@
          "expected_result": "16",
          "expected_type": "int",
          "coverage": [
-            66,
             67,
             68,
-            70,
-            71
+            69,
+            71,
+            72
          ],
          "exception_type": "",
          "exception_message": "",
@@ -77,12 +77,12 @@
    },
    "coverage_percentage": 100.0,
    "types_in_use": [
+      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler",
-      "tests.oo_car.car.Car"
+      "logging.StreamHandler"
    ],
    "global_vars_read_from": [
       "logger",
@@ -92,12 +92,12 @@
       "method_call_counter"
    ],
    "unified_test_coverage": [
-      66,
       67,
       68,
       69,
       70,
-      71
+      71,
+      72
    ],
    "needs_pytest": true,
    "exceptions_raised": [

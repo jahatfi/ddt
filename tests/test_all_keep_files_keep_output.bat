@@ -22,3 +22,10 @@ cd pass_by_assignment
 python pass_by_assignment.py
 pytest -s -vv . 
 cd ..
+
+cd ..\src
+pytest .
+cd ..\tests
+
+coverage combine tests\fizzbuzz\.coverage tests\oo_car\.coverage tests\all_types\.coverage tests\all_types\.coverage tests\procedural_division\.coverage src\.coverage
+coverage report -m
