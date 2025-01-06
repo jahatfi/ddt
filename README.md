@@ -1,6 +1,8 @@
 ![CI](https://github.com/jahatfi/ddt/actions/workflows/python-app-ubuntu.yml/badge.svg)
 ![CI](https://github.com/jahatfi/ddt/actions/workflows/python-app-windows.yml/badge.svg)
-#### TODO: Update this file - it's quite out of date as of 14 Sept 2024
+
+# Please read the paper (ddt_paper.pdf) included herein.
+
 Notes:
 
 Need to test coverage with non-standard types, e.g. default dictionary 
