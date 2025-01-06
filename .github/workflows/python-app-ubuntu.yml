@@ -40,8 +40,9 @@ jobs:
       - name: Install dependencies
         run: |
           # set PATH=%PATH%;C:/Users/runneradmin/.local/bin/poetry
-          poetry --version
-          poetry install --no-interaction --no-root
+          #poetry --version
+          #poetry install --no-interaction --no-root
+          sudo apt install cloc
 
       - name: Install library
         run: poetry install --no-interaction
@@ -49,42 +50,64 @@ jobs:
           source $VENV
           pytest --version
 
+      # Count the number of lines of code (excluding comments and blank lines) using cloc
+
+      - name: Count LoC
+        id: loc
+        run: |
+            lines_of_code=$(cloc src/unit_test_generator.py | tail -n 2 | head -n 1 | awk '{print $NF}') 
+            echo "LOC=$lines_of_code" >>  "$GITHUB_OUTPUT"
 
       - name: Lint with pylint
+        id: pylint
         continue-on-error: true
         run: |
           set +e
           # stop the build if there are Python syntax errors or undefined names
-          poetry run pylint src/unit_test_generator.py
-          PYLINT_RESULT=$?
-          if [ $PYLINT_RESULT -ne 0 ]; then
-            echo "::notice::Pylint recommends changes." && exit $PYLINT_RESULT
+
+          chmod +x run_pylint.sh
+          ./run_pylint.sh src/unit_test_generator.py
+          #poetry run pylint src/unit_test_generator.py
+          DATA=$?
+          if [ $DATA -ne 0 ]; then
+            echo "::notice::Pylint recommends changes." && exit $DATA
           fi
+          #echo "DATA=$DATA" >> "$GITHUB_OUTPUT"
+          #echo "##[set-output name=data;]$($DATA)"
+          #COLOR#$(chmod +x color_picker.sh && ./color_picker.sh 0 100 $DATA)"
+          #echo "COLOR=green" >> "$GITHUB_OUTPUT"
+
+      - name: pylint badge
+        uses: RubbaBoy/BYOB@v1
+        with:
+          NAME: pylint
+          LABEL: 'pylint'
+          STATUS: ${{ steps.pylint.outputs.MSG }}
+          COLOR: ${{ steps.pylint.outputs.COLOR }}
+          GITHUB_TOKEN: ${{ secrets.DDT }}
 
       - name: Typecheck with mypy
+        id: mypy
         continue-on-error: true
         run: |
           set +e
-          cd src
-          poetry run mypy --version
-          poetry run mypy unit_test_generator.py
-          MYPY_RESULT=$?
-          echo "MYPY_RESULT=$MYPY_RESULT"
-          echo "##[set-output name=data;]$($MYPY_RESULT)"
-          echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
+          chmod +x get_mypy_pct_errors.sh
+          ./get_mypy_pct_errors.sh src/unit_test_generator.py ${{ steps.loc.outputs.LOC }}
 
-          if [ $MYPY_RESULT -ne 0 ]; then
-            echo "::notice::mypy found errors." && exit $MYPY_RESULT
+          if [ $? -ne 0 ]; then
+            echo "::notice::mypy found errors." && exit $DATA
           fi
-          echo "MYPY_RESULT=$MYPY_RESULT"
 
       - name: mypybadge
         uses: RubbaBoy/BYOB@v1
+        env:
+          COLOR: ${{ steps.mypy.outputs.COLOR }}
+          DATA: ${{ steps.mypy.outputs.DATA }}
         with:
           NAME: mypy
           LABEL: 'mypy'
-          STATUS: ${{ steps.mypy.outputs.data }}
-          COLOR: ${{ steps.mypy.outputs.color }}
+          STATUS: ${{ steps.mypy.outputs.DATA }}   # echo "$DATA" # ${{ steps.mypy.outputs.data }}
+          COLOR: ${{ steps.mypy.outputs.COLOR }} #echo "$COLOR" #${{ steps.mypy.outputs.color }}
           GITHUB_TOKEN: ${{ secrets.DDT }}
           REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
@@ -152,36 +175,3 @@ jobs:
           ls -lah htmlcov
           poetry run coverage-badge -o coverage.svg
           poetry run genbadge coverage -i coverage.xml
-
-      
-
-      - id: mypy
-        run: |
-              echo "MYPY_RESULT=$MYPY_RESULT"
-              echo "##[set-output name=data;]$($MYPY_RESULT)"
-              echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
-
-      - id: pylint
-        run: |
-              echo "##[set-output name=data;]$($PYLINT_RESULT)"
-              echo "##[set-output name=color;]$(.color_picker 0 100 $MYPY_RESULT)"
-
-      - name: mypybadge
-        uses: RubbaBoy/BYOB@v1
-        with:
-          NAME: mypy
-          LABEL: 'mypy'
-          STATUS: ${{ steps.mypy.outputs.data }}
-          COLOR: ${{ steps.mypy.outputs.color }}
-          GITHUB_TOKEN: ${{ secrets.DDT }}
-          REPOSITORY: ${{ github.actor }}/ddt
-          ACTOR: ${{ github.actor }}
-
-      - name: pylint badge
-        uses: RubbaBoy/BYOB@v1
-        with:
-          NAME: pylint
-          LABEL: 'pylint'
-          STATUS: ${{ steps.pylint.outputs.data }}
-          COLOR: ${{ steps.pylint.outputs.color }}
-          GITHUB_TOKEN: ${{ secrets.DDT }}

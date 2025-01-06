@@ -1,0 +1,85 @@
+# Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: BYOB Test on Ubuntu
+run-name: ${{ github.actor }} is testing out DDT on Ubuntu (latest)
+on:  #[push]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  test-ubuntu:
+    defaults:
+      run:
+        shell: bash
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          # set PATH=%PATH%;C:/Users/runneradmin/.local/bin/poetry
+          poetry --version
+          poetry install --no-interaction --no-root
+
+      - name: Install library
+        run: poetry install --no-interaction
+      - run: |
+          source $VENV
+          pytest --version
+
+      - name: Typecheck with mypy
+        id: mypy
+        continue-on-error: true
+        run: |
+          set +e
+          cd src
+          poetry run mypy --version
+          poetry run mypy unit_test_generator.py
+          MYPY_RESULT=$?
+          COLOR="blue"
+          echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
+          echo "MYPY_RESULT=$MYPY_RESULT" >> "$GITHUB_OUTPUT"
+          echo "color=$COLOR"
+          echo "MYPY_RESULT=$MYPY_RESULT"
+          # echo "##[set-output name=data;]$($MYPY_RESULT)"
+          # echo "##[set-output name=color;]$(echo $COLOR)"
+
+          if [ $MYPY_RESULT -ne 0 ]; then
+            echo "::notice::mypy found errors." && exit $MYPY_RESULT
+          fi
+
+      - name: mypybadge
+        uses: RubbaBoy/BYOB@v1
+        env:
+          SELECTED_COLOR: ${{ steps.mypy.outputs.SELECTED_COLOR }}
+          MYPY_RESULT: ${{ steps.mypy.outputs.MYPY_RESULT }}
+        with:
+          NAME: mypy
+          LABEL: 'mypy'
+          STATUS: ${{ steps.mypy.outputs.MYPY_RESULT }}   # echo "$MYPY_RESULT" # ${{ steps.mypy.outputs.data }}
+          COLOR: ${{ steps.mypy.outputs.SELECTED_COLOR }} #echo "$SELECTED_COLOR" #${{ steps.mypy.outputs.color }}
+          GITHUB_TOKEN: ${{ secrets.DDT }}
+          REPOSITORY: ${{ github.actor }}/ddt
+          ACTOR: ${{ github.actor }}
