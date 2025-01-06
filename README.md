@@ -9,23 +9,10 @@ that any argument passed in may be used by the calling function, so assert it wa
 
 # Development Driven Testing, or "Self-Testing Code"
 
-## Setup (TODO: Fill this out more)
-Use poetry 
+## Setup
+Use poetry, e.g. 
 
-## Old Setup (Outdated - not guaranteed to work as of 20 Jan 2024)
-Clone this repo to your local environment:  
-`git clone $git_repo_url`  
-Change directories into the newly cloned repo:  
-`cd ddt`  
-First initialize a Python virtual environment:  
-`python -m venv venv`  
-Activate the virtual environment:  
-Windows Users:  
-`.\venv\Scripts\activate.bat`  
-Linux/Unix Users (Untested on Mac but should work):  
-`source venv/bin/activate`
-Install required packages:
-`pip install -r requirements.txt`
+`poetry init && poetry install && poetry shell`  
 
 **Note**:
 You can exit your virtual environment easily once done:  
@@ -34,7 +21,7 @@ Windows Users:
 Linux/Unix Users (Untested on Mac but should work):  
 `deactivate`
 
-## Runing the code
+## Running the code
 
 The easiest way to get started is to run one of the provided examples.
 Note that the various functions and methods in the example Python files 
@@ -68,10 +55,10 @@ Note the **.json** and **test_*.py** files created after running the command abo
 There is no need to monkey-unpatch (i.e. call `monkeypatch.delattr()`) 
 variables after assertions to clean up the environment for the next 
 function call, as every patchable variable on which a function 
-depends is freshly patched before callling the function and 
+depends is freshly patched before calling the function and 
 asserting the results.
 To demonstrate this idea, see these results from test_divide_ints.py:
-### TODO: Add other examples (including this one) to the repo:
+
 ```python
     # Coverage: 45.45% of function lines [17-27]
     # Covered Lines: 17-18;21;24;27
@@ -110,21 +97,3 @@ used by the tested function will be set before every call.
 **Solution:**  Check the cutoff parameter.
 It might be too low for the desired executions to be hit.
 Try setting it to 50 to start.
-
-
-## Code TODO:
-[] Decorate a class constructor!   
-
-[X] Prevent deadlocks by using a unique filename 
-for each coverage or None to do it in memory (make this configurable)
-
-[X] What if the decorated function throws an exception?
-Catch all exceptions, save it, then re-raise it.
-The test should assert the same exception is thrown.
-
-[X] Do methods differ from classes?  Decorate both.
-
-## Paper TODO
-
-[ ] Add other examples to the repo
-[ ] Last: Update section references, e.g. "In sectionV/% I'll discuss...
