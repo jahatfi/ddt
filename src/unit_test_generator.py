@@ -629,29 +629,24 @@ def get_module_import_string(my_path:Path)->str:
     files = set(sorted(sys.path))
     keep_file = None
     this_type = ""
-    logger.critical(f"{my_path=}")
-    logger.critical(f"{files=}")
-    for file in files:
-        #file = Path(file_str)
+    for file_str in files:
+        file = Path(file_str)
         if my_path.is_relative_to(file):
             keep_file = file
-            logger.critical("os.path.relpath(file, my_path, )=%s",
+            logger.debug("os.path.relpath(file, my_path, )=%s",
                          os.path.relpath(file, my_path, ))
             this_type = f"{os.path.relpath(file, my_path)}"
-            #break
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
-        logger.critical(f"{my_path_str=}")
         this_type = re.sub(".py$", "", my_path_str)
         if not this_type:
             raise TypeError("Can't determine type")
         this_type = re.sub(r"\\", ".", this_type)
-        logger.critical(f"{this_type=}")
+
         # Other other OS's use forward slashes
         this_type = re.sub(r"/", ".", this_type)
-    else:
-        logger.critical("my_path not relative to any sys paths")
+
     return this_type
 
 #@unit_test_generator_decorator(sample_count=1)
@@ -667,15 +662,12 @@ def get_class_import_string(arg:typing.Any)->str:
     keep_file = None
     this_type = ""
     for file in files:
-        logger.debug(file)
         file_path = Path(file)
         if my_path.is_relative_to(file_path):
             keep_file = file_path
             this_type = f"{os.path.relpath(file_path, my_path)}"
-            logger.debug("this_type=%s", this_type)
     if keep_file:
         my_path_str = str(my_path)[len(str(keep_file)):]
-        logger.debug("my_path_str=%s", my_path_str)
         my_path_str = re.sub(r"^[\\/]", "", my_path_str)
         this_type = f'{re.sub(".py$", "", my_path_str)}.{arg.__class__.__qualname__}'
         this_type = re.sub(r"\\", ".", this_type)
@@ -951,7 +943,7 @@ class ArgsIteratorClass():
             args_dict = dict(zip(self.this_metadata.parameter_names, self.args))
 
         elif which_args == "kwargs":
-            args_dict = self.kwargs
+            args_dict = copy.deepcopy(self.kwargs)
         else:
             logger.critical("Invalid option %s!", which_args)
             sys.exit(1)
@@ -1006,11 +998,13 @@ class ArgsIteratorClass():
                 self.new_types_in_use.add(newest_import)
 
                 continue
+
             self.new_types_in_use |= get_all_types("1", arg, True, 0, function_name)
             if hasattr(arg, "__dict__"):
                 logger.debug("Adding types for function %s for arg %s", function_name, arg)
                 for v in arg.__dict__.values():
                     self.new_types_in_use |= get_all_types("1.1", v, False, 0, function_name)
+
 
                 #sys.exit(1)
             elif isinstance(arg, str):
@@ -1086,7 +1080,7 @@ class ArgsIteratorClass():
                     else:
                         self.kwargs_copy[arg_name] = class_repr
             else:
-                logger.critical(f"arg_name=%s mode=%s", arg_name, mode)
+                logger.debug(f"arg_name=%s mode=%s", arg_name, mode)
                 if which_args == "args":
                     self.args_copy[arg_name] = repr(arg)
                 else:
@@ -1131,8 +1125,9 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     per decorated function.
     """
     # pylint: disable-next=global-variable-not-assigned
-    logger.critical(function_name)
-    global all_metadata, unique_inputs
+    logger.debug("function_name = %s", function_name)
+
+    global all_metadata, hashed_inputs
     caught_exception = None
     kwargs = kwargs.get("kwargs", kwargs)
     #if 'kwargs' in kwargs:
@@ -1156,7 +1151,6 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     this_coverage_info: CoverageInfo = CoverageInfo()
 
     #args_copy = [convert_to_serializable(x) for x in args]
-    logger.critical("function_name = %s", function_name)
     class_type = ""
     if this_metadata.is_method:
         if not function_name.endswith("__init__"):
@@ -1345,7 +1339,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         #logger.critical(f"Undecorating {function_name}".center(80, '-'))
         return result
 
-    logger.debug("%s coverage @%s is not a subset", function_name, unique_input)
+    logger.debug("%s coverage @%s is not a subset", function_name, hashed_input)
 
     if caught_exception:
         caught_exception_str = str(caught_exception)
@@ -1491,7 +1485,7 @@ def update_metadata(f: Callable, this_metadata: FunctionMetaData)->None:
     dis_ = capture(dis)
     logger.debug("f=%s type(f)=%s", f.__name__, type(f))
     disassembled_function = dis_(f)
-    print(f.__name__)
+    logger.debug("Updating metadata for %s", f.__name__)
     for line in disassembled_function.splitlines():
         #print(line)
         if "faster" in f.__name__ or "gas" in f.__name__:
@@ -1696,7 +1690,7 @@ def update_global(obj,
     function skips it.
     """
     if repr(obj).startswith("<"):
-        logger.critical("Skipping %s", obj)
+        logger.debug("Skipping %s", obj)
         return this_coverage_info
     if isinstance(obj, set):
         this_entry = sorted_set_repr(obj)
@@ -2011,8 +2005,9 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     outdir = outdir.absolute()
     tests_dir = tests_dir.absolute()
     imports = ["import re\n",
+               "import itertools\n",
                "import pytest\n",
-               "from collections import OrderedDict\n"]
+               "from collections import OrderedDict, defaultdict\n"]
     if function_name == "meta_program_function_call":
         imports.append("from collections import OrderedDict\n")
 
@@ -2362,9 +2357,22 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         h.update(str(sorted(test_str_list_def_dict.items())).encode())
         return h.digest().hex()
 
-    parameterization_list[-1] += "])\n"
+
+    # Define and use counter function for the ids function in pytest, see
+    # https://docs.pytest.org/en/7.1.x/example/parametrize.html
+
+    parameterization_list[-1] += "], ids=counter)\n"
     docstring = f'\"\"\"\nProgrammatically generated test function for {function_name}()\n\"\"\"'
-    print(f"Creating {result_file}...")
+
+    header.extend(
+        [
+            "def counter(start=0)->str:\n",
+            f"{tab}while True:\n",
+            f"{tab*2}yield f\"test#-{{start}}\"\n",
+            f"{tab*2}start += 1\n\n"
+        ]
+    )
+    logger.critical("Creating %s ...", result_file)
     with open(result_file, "w", encoding="utf-8") as st:
         st.write(docstring+"\n")
         for item in [imports, header, parameterization_list]:
