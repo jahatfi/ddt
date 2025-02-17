@@ -1127,7 +1127,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
     # pylint: disable-next=global-variable-not-assigned
     logger.debug("function_name = %s", function_name)
 
-    global all_metadata, hashed_inputs
+    global all_metadata, unique_inputs
     caught_exception = None
     kwargs = kwargs.get("kwargs", kwargs)
     #if 'kwargs' in kwargs:
@@ -1339,7 +1339,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         #logger.critical(f"Undecorating {function_name}".center(80, '-'))
         return result
 
-    logger.debug("%s coverage @%s is not a subset", function_name, hashed_input)
+    logger.debug("%s coverage @%s is not a subset", function_name, unique_input)
 
     if caught_exception:
         caught_exception_str = str(caught_exception)
