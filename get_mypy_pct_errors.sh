@@ -56,4 +56,4 @@ echo "color=$color"
 echo "COLOR=$color" >> "$GITHUB_OUTPUT"
 echo "DATA=$error_count error(s) ($percentage% by LoC)" >> "$GITHUB_OUTPUT"
 
-return $error_count
+exit $error_count

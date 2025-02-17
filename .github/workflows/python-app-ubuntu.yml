@@ -55,7 +55,7 @@ jobs:
       - name: Count LoC
         id: loc
         run: |
-            lines_of_code=$(cloc src/unit_test_generator.py | tail -n 2 | head -n 1 | awk '{print $NF}') 
+            lines_of_code=$(cloc src/unit_test_generator.py | tail -n 2 | head -n 1 | awk '{print $NF}')
             echo "LOC=$lines_of_code" >>  "$GITHUB_OUTPUT"
 
       - name: Lint with pylint
@@ -113,6 +113,8 @@ jobs:
           ACTOR: ${{ github.actor }}
 
       - name: pytest procedural_division
+        env:
+          PY_COLORS: "1"
         # continue-on-error: true
         run: |
           cd tests/procedural_division
@@ -120,6 +122,8 @@ jobs:
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest fizzbuzz
+        env:
+          PY_COLORS: "1"
         # continue-on-error: true
         run: |
           cd tests/fizzbuzz
@@ -127,6 +131,8 @@ jobs:
           poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest all_types
+        env:
+          PY_COLORS: "1"
         # continue-on-error: true
         run: |
           cd tests/all_types
@@ -134,6 +140,8 @@ jobs:
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest oo_car
+        env:
+          PY_COLORS: "1"
         # continue-on-error: true
         run: |
           cd tests/oo_car
@@ -141,6 +149,8 @@ jobs:
           poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment
+        env:
+          PY_COLORS: "1"
         # continue-on-error: true
         run: |
           cd tests/pass_by_assignment
@@ -148,13 +158,17 @@ jobs:
           #poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
 
-      - name: pytest helper functions 
+      - name: pytest helper functions
+        env:
+          PY_COLORS: "1"
         # continue-on-error: true
         run: |
           cd src
           poetry run coverage run -m pytest --log-level=DEBUG -s -v .
 
       - name: pytest coverage badge
+        env:
+          PY_COLORS: "1"
         run: |
           ls -lah
           ls -lah tests/fizzbuzz
@@ -162,7 +176,7 @@ jobs:
           ls -lah tests/all_types
           ls -lah tests/procedural_division
           ls -lah tests/pass_by_assignment
-          poetry add coverage-badge 
+          poetry add coverage-badge
           poetry run pip install genbadge[all]
           poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/pass_by_assignment/.coverage tests/procedural_division/.coverage src/.coverage
           ls -lah
