@@ -92,6 +92,7 @@ jobs:
         run: |
           set +e
           chmod +x get_mypy_pct_errors.sh
+          python3 -m pip install pandas-stubs
           ./get_mypy_pct_errors.sh src/unit_test_generator.py ${{ steps.loc.outputs.LOC }}
 
           if [ $? -ne 0 ]; then
