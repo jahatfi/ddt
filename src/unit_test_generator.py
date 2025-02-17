@@ -172,10 +172,13 @@ class CoverageInfo:
         the object in Python.
         """
         args_before_repr = [repr(x) for x in self.args_before]
+        # pylint: disable-next=C0200
         for i in range(len(args_before_repr)):
             #if "<function" in arg_before_repr:
             #    logger.critical(f"{arg_before_repr=} {inspect.getmembers(self.args_before[i])=}")
-            args_before_repr[i] = re.sub(r"(<function.*__init__ at 0x[0-9a-fA-F]+>)", r"'\1'", args_before_repr[i])
+            args_before_repr[i] = re.sub(r"(<function.*__init__ at 0x[0-9a-fA-F]+>)",
+                                         r"'\1'",
+                                         args_before_repr[i])
         result = ["CoverageInfo(args_before=["+','.join(args_before_repr)+"]"]
         #logger.critical(f"{result=}")
         result.append(" args_after="+repr(self.args_after))
@@ -961,9 +964,10 @@ class ArgsIteratorClass():
 
                 if  ((which_args == "args" and id(arg) != self.args_addresses[arg_name]) or \
                     (which_args == "kwargs" and id(arg) != self.kwargs_addresses[arg_name])):
-                        logger.info("Discarding param #%d: %s for 'after' comparison, address has changed",
-                                    arg_i, arg)
-                        continue
+                    # pylint: disable-next=line-too-long
+                    logger.info("Discarding param #%d: %s for 'after' comparison, address has changed",
+                                arg_i, arg)
+                    continue
                 if isinstance(arg, (int, str, float)):
                     logger.info("After: Skip it!")
                     continue
@@ -1080,7 +1084,7 @@ class ArgsIteratorClass():
                     else:
                         self.kwargs_copy[arg_name] = class_repr
             else:
-                logger.debug(f"arg_name=%s mode=%s", arg_name, mode)
+                logger.debug("arg_name=%s mode=%s", arg_name, mode)
                 if which_args == "args":
                     self.args_copy[arg_name] = repr(arg)
                 else:
@@ -1592,7 +1596,8 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
         # Replace unique keys with numbers
         sorted_unique_keys = sorted(test_suite.keys())
         for sorted_unique_key_index, sorted_unique_key in enumerate(sorted_unique_keys):
-            test_suite[sorted_unique_key_index] = test_suite[sorted_unique_key]
+            # pylint: disable-next=line-too-long
+            test_suite[sorted_unique_key_index] = test_suite[sorted_unique_key]  # type: ignore[index]
             del test_suite[sorted_unique_key]
 
         # The json file is optional and unused but makes for
@@ -1612,9 +1617,12 @@ def generate_all_tests_and_metadata_helper( local_all_metadata:defaultdict[str, 
             logger.debug("No test record for %s", function_name)
             continue
 
-        local_all_metadata[function_name].coverage_io = {k:v for k,v in local_all_metadata[function_name].coverage_io.items() if v.testable}
+        for k,v in local_all_metadata[function_name].coverage_io.items():
+            if v.testable:
+                local_all_metadata[function_name].coverage_io[k] = v
         if function_name in FUNCTIONS:
-            result_file_str = f"test_{function_name.lower()}_{os.path.basename(os.getcwd())}".replace('.','_') + ".py"
+            tmp_str = f"test_{function_name.lower()}_{os.path.basename(os.getcwd())}"
+            result_file_str = tmp_str.replace('.','_') + ".py"
         else:
             result_file_str = f"test_{function_name.lower()}".replace('.','_') + ".py"
         result_file_str = re.sub("__init__", "constructor", result_file_str)
@@ -1817,7 +1825,7 @@ def gen_coverage_list(  function_metadata:FunctionMetaData,
     #percent_covered = 100*percent_covered
     coverage_str_list = []
     start_list = []
-    start_list.append(f"{tab}# Coverage: {percent_covered:.2f}% of function lines ")
+    start_list.append(f"{tab}# Coverage: {percent_covered:.2f}% of function lines")
     start_list.append(f"[{first_source_line_num}-{last_source_line_num}]\n")
     start_list.append(f"{tab}# Covered Lines: ")
     start = ''.join(start_list)
@@ -1957,10 +1965,19 @@ def meta_program_function_call( this_state:CoverageInfo,
         # TODO Why is this_state.args_after sometimes a tuple??
         if isinstance(this_state.args_after, dict) and this_state.args_after.keys():
             for arg_after in this_state.args_after.keys():
-                list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
+                line_list = [
+                    f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"])",
+                    f"or args_after[\"{arg_after}\"] == {arg_after}\n"
+                ]
+                list_of_lines.append(' '.join(line_list))
         if isinstance(this_state.kwargs_after, dict) and this_state.kwargs_after.keys():
             for arg_after in this_state.kwargs_after.keys():
-                list_of_lines.append(f"{indent}assert kwargs[\"{arg_after}\"] == eval(kwargs_after['{arg_after}']) or kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
+                line_list = [
+                    f"{indent}assert kwargs[\"{arg_after}\"] ==",
+                    f"eval(kwargs_after['{arg_after}']) or",
+                    f"kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n"
+                ]
+                list_of_lines.append(' '.join(line_list))
 
     else:
         for name in parameter_names:
@@ -1979,6 +1996,7 @@ def normalize_defaultdict_repr(repr_value:str)->str:
         class_name = class_name_matcher.groups()[0].split('.')[-1]
         logger.debug(class_name)
 
+    # pylint: disable-next=line-too-long
     result = re.sub(r"^(defaultdict\()(<class ')(([^']+\.)?)(?P<this_capture>[^']+)'>", r"\1\g<this_capture>",repr_value)
     #logger.debug(f"{repr_value=}")
     return result
@@ -2183,9 +2201,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         if args_after:
             these_aa :dict[str, typing.Any] = {}
             for arg_name, arg_value in state[unique_key].args_after.items():
-                #if isinstance(arg_value, (int, str, float)):
-                #    logger.info("In '%s' Skipping '%s': %s (type:%s)", function_name, arg_name, arg_value, type(arg_value))
-                #    continue
+
                 logger.debug("Keeping '%s':'%s", arg_name, arg_value)
                 these_aa[arg_name] = arg_value
             state[unique_key].args_after = these_aa
@@ -2193,9 +2209,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
         if kwargs_after:
             these_kaa :dict[str, typing.Any] = {}
             for arg_name, arg_value in state[unique_key].kwargs_after.items():
-                #if isinstance(arg_value, (int, str, float)):
-                #    logger.info("In '%s' Skipping '%s': %s (type:%s)", function_name, arg_name, arg_value, type(arg_value))
-                #    continue
+
                 logger.debug("Keeping '%s':'%s", arg_name, arg_value)
                 these_kaa[arg_name] = arg_value
             state[unique_key].kwargs_after = these_kaa
@@ -2419,8 +2433,8 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     return h.digest().hex()
 
 # REF: https://stackoverflow.com/questions/18451541
-copyied_locals = dict(locals())
-for key, value in copyied_locals.items():
+copied_locals = dict(locals())
+for value in copied_locals.values():
     value = str(value)
     if value.startswith("<function"):
         value = value.split()[1]
