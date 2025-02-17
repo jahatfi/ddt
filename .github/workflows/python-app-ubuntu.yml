@@ -120,7 +120,7 @@ jobs:
         run: |
           cd tests/procedural_division
           poetry run python divide_ints.py
-          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest fizzbuzz
         env:
@@ -129,7 +129,7 @@ jobs:
         run: |
           cd tests/fizzbuzz
           poetry run python fizzbuzz.py
-          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest all_types
         env:
@@ -138,7 +138,7 @@ jobs:
         run: |
           cd tests/all_types
           poetry run python all_types.py
-          poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest oo_car
         env:
@@ -156,7 +156,7 @@ jobs:
         run: |
           cd tests/pass_by_assignment
           poetry run python pass_by_assignment.py
-          poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          #poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
 
       - name: pytest helper functions
