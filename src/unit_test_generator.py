@@ -1965,19 +1965,10 @@ def meta_program_function_call( this_state:CoverageInfo,
         # TODO Why is this_state.args_after sometimes a tuple??
         if isinstance(this_state.args_after, dict) and this_state.args_after.keys():
             for arg_after in this_state.args_after.keys():
-                line_list = [
-                    f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"])",
-                    f"or args_after[\"{arg_after}\"] == {arg_after}\n"
-                ]
-                list_of_lines.append(' '.join(line_list))
+                list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
         if isinstance(this_state.kwargs_after, dict) and this_state.kwargs_after.keys():
             for arg_after in this_state.kwargs_after.keys():
-                line_list = [
-                    f"{indent}assert kwargs[\"{arg_after}\"] ==",
-                    f"eval(kwargs_after['{arg_after}']) or",
-                    f"kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n"
-                ]
-                list_of_lines.append(' '.join(line_list))
+                list_of_lines.append(f"{indent}assert kwargs[\"{arg_after}\"] == eval(kwargs_after['{arg_after}']) or kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
 
     else:
         for name in parameter_names:
