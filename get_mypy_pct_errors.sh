@@ -41,7 +41,9 @@ get_color() {
 }
 
 # Run mypy and count the number of errors reported by mypy
-error_count=$(poetry run mypy "$FILE" 2>&1 | grep -c 'error:')
+mypy_output=$(poetry run mypy "$FILE" 2>&1)
+echo $mypy_output
+error_count=$(cat $mypy_output | grep -c 'error:')
 
 percentage=$(echo "scale=4; ($error_count / $lines_of_code) * 100" | bc)
 
