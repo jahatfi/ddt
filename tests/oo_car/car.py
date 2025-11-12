@@ -247,7 +247,7 @@ if __name__ == "__main__":
             logger.debug("%s != %s", file.absolute().name, this_file.name)
             logger.debug("Deleting %s to ensure clean start", file.name)
             os.remove(file)
-    if args.disable_unit_test_generation():
+    if args.disable_unit_test_generation:
         main()
         sys.exit(0)
     # The code below applies the CLI arg above to selectively enable/disable
