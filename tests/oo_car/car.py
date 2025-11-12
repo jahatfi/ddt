@@ -7,6 +7,7 @@ import logging
 import os
 from pathlib import Path
 import coverage
+import sys
 
 from src import unit_test_generator
 from src.unit_test_generator import (
@@ -248,7 +249,7 @@ if __name__ == "__main__":
             os.remove(file)
     if args.disable_unit_test_generation():
         main()
-        return
+        sys.exit(0)
     # The code below applies the CLI arg above to selectively enable/disable
     # automatic unit test generation (Could not use the syntactic sugar method
     # of applying decorators as the user's input isn't parsed until now.)
