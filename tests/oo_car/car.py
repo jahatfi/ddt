@@ -246,7 +246,9 @@ if __name__ == "__main__":
             logger.debug("%s != %s", file.absolute().name, this_file.name)
             logger.debug("Deleting %s to ensure clean start", file.name)
             os.remove(file)
-
+    if args.disable_unit_test_generation():
+        main()
+        return
     # The code below applies the CLI arg above to selectively enable/disable
     # automatic unit test generation (Could not use the syntactic sugar method
     # of applying decorators as the user's input isn't parsed until now.)
