@@ -12,7 +12,6 @@ import coverage
 FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
