@@ -146,8 +146,8 @@ jobs:
         # continue-on-error: true
         run: |
           cd tests/oo_car
-          time poetry run python control_car.py
-          time poetry run python car.py
+          time poetry run python car.py -d
+          time poetry run python car.py 
           poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment
