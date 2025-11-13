@@ -122,9 +122,9 @@ jobs:
         run: |
           cd tests/procedural_division
           echo "divide_ints.py -d runtime:"
-          poetry run python divide_ints.py -d
+          time poetry run python divide_ints.py -d
           echo "divide_ints.py runtime:"
-          poetry run python divide_ints.py
+          time poetry run python divide_ints.py
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest fizzbuzz
@@ -134,9 +134,9 @@ jobs:
         run: |
           cd tests/fizzbuzz
           echo "fizzbuzz.py -d runtime:"
-          poetry run python fizzbuzz.py -d
+          time poetry run python fizzbuzz.py -d
           echo "fizzbuzz.py runtime:"
-          poetry run python fizzbuzz.py
+          time poetry run python fizzbuzz.py
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest all_types
@@ -146,9 +146,9 @@ jobs:
         run: |
           cd tests/all_types
           echo "all_types.py -d runtime:"
-          poetry run python all_types.py -d
+          time poetry run python all_types.py -d
           echo "all_types.py runtime:"
-          poetry run python all_types.py
+          time poetry run python all_types.py
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest oo_car
@@ -170,9 +170,9 @@ jobs:
         run: |
           cd tests/pass_by_assignment
           echo "pass_by_assignment -d runtime:"
-          poetry run python pass_by_assignment.py
+          time poetry run python pass_by_assignment.py
           echo "pass_by_assignment runtime:"
-          poetry run python pass_by_assignment.py
+          time poetry run python pass_by_assignment.py
           #poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
 
