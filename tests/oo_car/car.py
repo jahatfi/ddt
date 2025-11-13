@@ -249,7 +249,7 @@ if __name__ == "__main__":
             logger.debug("Deleting %s to ensure clean start", file.name)
             logger.warning(f"Removing {file=}")
             os.remove(file)
-    logger.warning("Sleep 1 s...")
+    logger.info("Sleep 1 s...")
     time.sleep(1)
     if args.disable_unit_test_generation:
         main()
