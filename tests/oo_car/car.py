@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import coverage
 import sys
+import time
 
 from src import unit_test_generator
 from src.unit_test_generator import (
@@ -246,7 +247,9 @@ if __name__ == "__main__":
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
             logger.debug("%s != %s", file.absolute().name, this_file.name)
             logger.debug("Deleting %s to ensure clean start", file.name)
+            print(f"Removing {file}")
             os.remove(file)
+    time.sleep(1)
     if args.disable_unit_test_generation:
         main()
         sys.exit(0)
