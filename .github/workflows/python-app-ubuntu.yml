@@ -160,7 +160,7 @@ jobs:
           # echo "car.py -d runtime:"
           #poetry run python car.py -d
           #echo "car.py runtime:"
-          poetry run python car.py 
+          time poetry run python car.py 
           poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment
