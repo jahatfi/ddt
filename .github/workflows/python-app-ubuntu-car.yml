@@ -1,0 +1,82 @@
+# Adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Lint and Test on Ubuntu
+run-name: ${{ github.actor }} is testing out DDT on Ubuntu (latest)
+on:  #[push]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  test-ubuntu:
+    defaults:
+      run:
+        shell: bash
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          # set PATH=%PATH%;C:/Users/runneradmin/.local/bin/poetry
+          #poetry --version
+          #poetry install --no-interaction --no-root
+          sudo apt install cloc
+
+      - name: Install library
+        run: poetry install --no-interaction
+      - run: |
+          source $VENV
+          pytest --version
+
+      - name: pytest oo_car
+        env:
+          PY_COLORS: "1"
+        # continue-on-error: true
+        run: |
+          cd tests/oo_car
+          # echo "car.py -d runtime:"
+          #poetry run python car.py -d
+          #echo "car.py runtime:"
+          poetry run python car.py 
+          poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+      - name: pytest coverage badge
+        env:
+          PY_COLORS: "1"
+        run: |
+          poetry add coverage-badge 2>&1 1>/dev/null
+          poetry run pip install genbadge[all]
+          poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/pass_by_assignment/.coverage tests/procedural_division/.coverage src/.coverage
+          ls -lah
+          #poetry run coverage run -m pytest .
+          poetry run coverage report -m --omit="*/test_*"
+          poetry run coverage xml --omit="*/test_*"
+          poetry run coverage html
+          ls -lah
+          echo "HTML?"
+          ls -lah htmlcov
+          poetry run coverage-badge -o coverage.svg
+          poetry run genbadge coverage -i coverage.xml
+
