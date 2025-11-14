@@ -8,7 +8,7 @@ from src import unit_test_generator
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1732', '1734', '1737-1738']
+# ['1777', '1779', '1782-1783']
 def counter(start=0) -> str:
     while True:
         yield f"test#-{start}"
