@@ -7,19 +7,11 @@ import logging
 import os
 from pathlib import Path
 import coverage
-import sys
-import time
 
-from src import unit_test_generator
-from src.unit_test_generator import (
-    generate_all_tests_and_metadata,
-    unit_test_generator_decorator,
-)
 
 FMT_STR = '%(levelname)-8s|%(module)-16s|%(funcName)-25s:%(lineno)-4d:%(message)s'
 logging.basicConfig(level=logging.INFO, format=FMT_STR)
 logger = logging.getLogger(__name__)
-unit_test_generator.logger.setLevel(logging.CRITICAL)
 
 # The global below is simply so the update_global() function in
 # unit_test_generator.py will be executed, without which that
@@ -247,27 +239,6 @@ if __name__ == "__main__":
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
             logger.debug("%s != %s", file.absolute().name, this_file.name)
             logger.debug("Deleting %s to ensure clean start", file.name)
-            logger.warning(f"Removing {file=}")
             os.remove(file)
-    logger.info("Sleep 1 s...")
-    time.sleep(1)
-    if args.disable_unit_test_generation:
-        main()
-        sys.exit(0)
-    # The code below applies the CLI arg above to selectively enable/disable
-    # automatic unit test generation (Could not use the syntactic sugar method
-    # of applying decorators as the user's input isn't parsed until now.)
-    # Alternatively, move the argument parsing to the very top of this file.
-    # NOTE:
-    # Decorating all functions programmatically is left as an exercise to the reader:
-    # Hint: https://stackoverflow.com/questions/3467526/
-    Car.brake = unit_test_generator_decorator(110, 100)(Car.brake)
-    Car.gas = unit_test_generator_decorator(110, 100)(Car.gas)
-    Car.change_steer_angle = unit_test_generator_decorator(110, 100, True)(Car.change_steer_angle)
-    Car.is_going_faster_than = unit_test_generator_decorator(110, 110)(Car.is_going_faster_than)
-    Car.__init__ = unit_test_generator_decorator(110, 110)(Car.__init__)
 
-    cov = coverage.Coverage()
-    with cov.collect():
-        main()
-    cov.save()
+    main()

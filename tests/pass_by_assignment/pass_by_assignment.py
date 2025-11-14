@@ -5,6 +5,7 @@ Test case to demonstrate tests for pass by assignment.
 import argparse
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Any, List, TypeVar
 
@@ -133,6 +134,12 @@ if __name__ == "__main__":
             os.remove(file)
 
     logger.info("%s", __file__)
+    
+        
+    if args.disable_unit_test_generation:
+        main()
+        sys.exit(0)
+    
     # The code below applies the CLI arg above to selectively enable/disable
     # automatic unit test generation (Could not use the syntactic sugar method
     # of applying decorators as the user's input isn't parsed until now.)

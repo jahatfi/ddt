@@ -113,13 +113,18 @@ jobs:
           REPOSITORY: ${{ github.actor }}/ddt
           ACTOR: ${{ github.actor }}
 
+
+
       - name: pytest procedural_division
         env:
           PY_COLORS: "1"
         # continue-on-error: true
         run: |
           cd tests/procedural_division
-          poetry run python divide_ints.py
+          echo "divide_ints.py -d runtime:"
+          time poetry run python divide_ints.py -d
+          echo "divide_ints.py runtime:"
+          time poetry run python divide_ints.py
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest fizzbuzz
@@ -128,7 +133,10 @@ jobs:
         # continue-on-error: true
         run: |
           cd tests/fizzbuzz
-          poetry run python fizzbuzz.py
+          echo "fizzbuzz.py -d runtime:"
+          time poetry run python fizzbuzz.py -d
+          echo "fizzbuzz.py runtime:"
+          time poetry run python fizzbuzz.py
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest all_types
@@ -137,7 +145,10 @@ jobs:
         # continue-on-error: true
         run: |
           cd tests/all_types
-          poetry run python all_types.py
+          echo "all_types.py -d runtime:"
+          time poetry run python all_types.py -d
+          echo "all_types.py runtime:"
+          time poetry run python all_types.py
           #poetry run pytest -s -v . #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest oo_car
@@ -146,7 +157,11 @@ jobs:
         # continue-on-error: true
         run: |
           cd tests/oo_car
-          poetry run python car.py
+          # echo "car.py -d runtime:"
+          poetry run python car.py -d
+          #echo "car.py runtime:"
+          poetry run python car.py 
+          sleep 1
           poetry run coverage run -m pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment
@@ -155,6 +170,9 @@ jobs:
         # continue-on-error: true
         run: |
           cd tests/pass_by_assignment
+          echo "pass_by_assignment -d runtime:"
+          time poetry run python pass_by_assignment.py
+          echo "pass_by_assignment runtime:"
           poetry run python pass_by_assignment.py
           #poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
@@ -190,3 +208,4 @@ jobs:
           ls -lah htmlcov
           poetry run coverage-badge -o coverage.svg
           poetry run genbadge coverage -i coverage.xml
+

@@ -5,6 +5,7 @@ Includes a global variable.
 import argparse
 import logging
 import os
+import sys
 from pathlib import Path
 import coverage
 import json
@@ -117,6 +118,12 @@ if __name__ == "__main__":
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
             logger.debug("Deleting %s to ensure clean start", this_file)
             os.remove(file)
+            
+    
+    if args.disable_unit_test_generation:
+        main()
+        sys.exit(0)
+            
     # The code below applies the CLI arg above to selectively enable/disable
     # automatic unit test generation (Could not use the syntactic sugar method
     # of applying decorators as the user's input isn't parsed until now.)
