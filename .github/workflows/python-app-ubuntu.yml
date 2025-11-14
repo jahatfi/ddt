@@ -199,7 +199,7 @@ jobs:
           poetry run pip install genbadge[all]  2>&1 1>/dev/null
           poetry run coverage combine tests/fizzbuzz/.coverage tests/oo_car/.coverage tests/all_types/.coverage tests/pass_by_assignment/.coverage tests/procedural_division/.coverage src/.coverage
           ls -lah
-          #poetry run coverage run -m pytest .
+          #poetry run coverage run -m pytest .  --omit="*/src"
           poetry run coverage report -m --omit="*/test_*"
           poetry run coverage xml --omit="*/test_*"
           poetry run coverage html
