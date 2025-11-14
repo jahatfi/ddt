@@ -88,7 +88,7 @@ jobs:
         # continue-on-error: true
         run: |
           cd tests\\oo_car
-          poetry run python car.py
+          poetry run python example_car.py
           poetry run pytest -s -v .  #--doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: pytest pass_by_assignment

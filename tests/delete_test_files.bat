@@ -15,7 +15,10 @@ cd ..
 
 cd oo_car
 SET "keepfile=car.py"
-FOR %%a IN (".\*") DO IF /i NOT "%%~nxa"=="%keepfile%" DEL "%%a"
+SET "keepfile2=example_car.py"
+FOR %%a IN (".\*") DO (
+    IF /i NOT "%%~nxa"=="%keepfile%" IF /i NOT "%%~nxa"=="%keepfile2%" DEL "%%a"
+)
 cd ..
 
 cd pass_by_assignment

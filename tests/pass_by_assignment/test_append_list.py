@@ -3,7 +3,7 @@ Programmatically generated test function for append_list()
 """
 
 import pytest
-import pass_by_assignment
+from tests.pass_by_assignment import pass_by_assignment
 
 # Now import modules specific to append_list:
 

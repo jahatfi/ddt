@@ -36,34 +36,36 @@
    "coverage_io": {
       "0": {
          "args_before": [
-            "<Logger __main__ (INFO)>",
-            "\"logger\"",
+            "0",
+            "\"error_code\"",
             "\"Before\"",
             "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)"
          ],
          "args_after": {
-            "obj": "<Logger __main__ (INFO)>",
-            "this_coverage_info": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)"
+            "this_coverage_info": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)"
          },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)",
+         "expected_result": "CoverageInfo(args_before=['6','2'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'error_code': 0}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
             1701,
-            1702,
-            1703
+            1704,
+            1709,
+            1717,
+            1718,
+            1721
          ],
          "exception_type": "",
          "exception_message": "",
          "constructor": "",
          "cost": 0.0,
-         "testable": false
+         "testable": true
       }
    },
-   "coverage_percentage": 23.08,
+   "coverage_percentage": 46.15,
    "types_in_use": [
       "logging.Logger",
       "logging.Manager",
@@ -78,8 +80,11 @@
    "global_vars_written_to": [],
    "unified_test_coverage": [
       1701,
-      1702,
-      1703
+      1704,
+      1709,
+      1717,
+      1718,
+      1721
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

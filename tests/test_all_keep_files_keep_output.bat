@@ -1,21 +1,25 @@
 cd fizzbuzz
 python fizzbuzz.py
-pytest -s -vv .
+coverage run -m pytest
+::pytest -s -vv .
 cd ..
 
 cd all_types
 python all_types.py
-pytest -s -vv .
+coverage run -m pytest
+::pytest -s -vv .
 cd ..
 
 cd procedural_division
 python divide_ints.py
-pytest -s -vv .
+coverage run -m pytest
+::pytest -s -vv .
 cd ..
 
 cd oo_car
-python car.py
-pytest -s -vv . 
+python example_car.py
+coverage run -m pytest
+::pytest -s -vv . 
 cd ..
 
 cd pass_by_assignment
@@ -24,8 +28,10 @@ pytest -s -vv .
 cd ..
 
 cd ..\src
-pytest .
-cd ..\tests
+:: pytest .
+coverage run -m pytest
+cd ..
 
 coverage combine tests\fizzbuzz\.coverage tests\oo_car\.coverage tests\all_types\.coverage tests\all_types\.coverage tests\procedural_division\.coverage src\.coverage
 coverage report -m
+coverage html

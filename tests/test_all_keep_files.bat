@@ -14,7 +14,7 @@ pytest -s -vv .
 cd ..
 
 cd oo_car
-python car.py >NUL  2>NUL
+python example_car.py >NUL  2>NUL
 pytest -s -vv . 
 cd ..
 

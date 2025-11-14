@@ -136,10 +136,9 @@ if __name__ == "__main__":
         if file.suffix in (".py", ".json") and file.absolute() != this_file:
             logger.debug("%s != %s", file.absolute().name, this_file.name)
             logger.debug("Deleting %s to ensure clean start", file.name)
-            logger.warning(f"Removing {file=}")
+            logger.warning("Removing file: %s", file)
             os.remove(file)
-    logger.info("Sleep 1 s...")
-    time.sleep(1)
+
     if args.disable_unit_test_generation:
         main()
         sys.exit(0)
