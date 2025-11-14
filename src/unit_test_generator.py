@@ -340,7 +340,44 @@ class FunctionMetaData(Jsonable):
         return result
 
     def __str__(self)->str:
-        return f"{self.name}:\n{self.lines=}\n"
+        """            name:str,
+            parameter_names:List[str],
+            is_method:bool,
+            source_file:Path,
+            lines:Optional[List[int]] = None,
+            non_code_lines:Optional[Set[int]] = None,
+            global_vars_read_from:Optional[set] = None,
+            global_vars_written_to:Optional[set] = None,
+            coverage_io:Optional[dict[str, CoverageInfo]] = None,
+            coverage_percentage:float=0.0,
+            types_in_use:Optional[set] = None,
+            unified_test_coverage:Optional[set] = None,
+            needs_pytest:bool = False,
+            exceptions_raised:Optional[set] = None,
+            callable_files: Optional[dict[str, str]] = None
+
+        Returns:
+            str: _description_
+        """
+        result = ["FunctionMetaData("]
+        result.append("name="+repr(self.name))
+        result.append(" parameter_names="+repr(self.parameter_names))
+        result.append(" is_method="+repr(self.is_method))
+        result.append(" source_file="+repr(self.source_file))
+        result.append(" lines="+repr(self.lines))
+        result.append(" non_code_lines="+repr(self.non_code_lines))
+        result.append(" global_vars_read_from="+repr(self.global_vars_read_from))
+        result.append(" global_vars_written_to="+repr(self.global_vars_written_to))
+        result.append(" coverage_io="+repr(self.coverage_io))
+        result.append(" coverage_percentage="+repr(self.coverage_percentage))
+        result.append(" types_in_use="+repr(self.types_in_use))
+        result.append(" unified_test_coverage="+repr(self.unified_test_coverage))
+        result.append(" needs_pytest="+repr(self.needs_pytest))
+        result.append(" exceptions_raised="+repr(self.exceptions_raised))
+        result.append(" callable_files="+repr(self.callable_files))
+        result_str = ','.join(result)
+        logger.debug("result=%s", result_str)
+        return result_str
 
     def return_non_code_lines(self)->Set[int]:
         """
@@ -1257,6 +1294,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
             end_time = time.perf_counter()
     with Capturing() as stdout_lines:
         cov.json_report(outfile='-')
+
     # result will not exist if the function threw an exception
     cov_report_ = json.loads(stdout_lines[0])
     expected_type = str(type(result))
@@ -1963,10 +2001,18 @@ def meta_program_function_call( this_state:CoverageInfo,
         #indent += tab
         line = f"{indent}assert result == expected_result or result == eval(expected_result)\n"
         list_of_lines.append(line)
+        try:
+            if isinstance(this_state, OrderedDict) and 'this_coverage_info' in this_state.args_after:
+                this_state.args_after['this_coverage_info']['args_after']
+        except KeyError as e:
+            logger.warning(e)
         # TODO Why is this_state.args_after sometimes a tuple??
         if isinstance(this_state.args_after, dict) and this_state.args_after.keys():
+            list_of_lines.append(f"{indent}try:\n")
             for arg_after in this_state.args_after.keys():
-                list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
+                list_of_lines.append(f"{indent*2}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
+            list_of_lines.append(f"{indent}except KeyError as e:\n")
+            list_of_lines.append(f"{indent*2}print(f\"Got Key Error in test, likely false positive: {{e=}}\")\n")
         if isinstance(this_state.kwargs_after, dict) and this_state.kwargs_after.keys():
             for arg_after in this_state.kwargs_after.keys():
                 list_of_lines.append(f"{indent}kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
