@@ -4,21 +4,21 @@ Programmatically generated test function for divide_ints()
 
 import re
 import pytest
-from collections import OrderedDict
 import divide_ints
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to divide_ints:
-from logging import Logger
-from logging import Manager
-from logging import PlaceHolder
-from logging import RootLogger
-from logging import StreamHandler
 
 ERROR_CODE = 0
 
 
 # In sum, these tests covered 100.0% of divide_ints's lines
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "a, b, exception_type, exception_message, expected_result, args_after, globals_after",
     [
@@ -51,6 +51,7 @@ ERROR_CODE = 0
             {"error_code": -2},
         ),
     ],
+    ids=counter,
 )
 def test_divide_ints(
     a, b, exception_type, exception_message, expected_result, args_after, globals_after

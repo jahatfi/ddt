@@ -2,25 +2,25 @@
 Programmatically generated test function for append_list()
 """
 
-import re
 import pytest
-from collections import OrderedDict
-from tests.pass_by_assignment import pass_by_assignment
+import pass_by_assignment
 
 # Now import modules specific to append_list:
-from logging import Logger
-from logging import Manager
-from logging import PlaceHolder
-from logging import RootLogger
-from logging import StreamHandler
 
 
 # In sum, these tests covered 100.0% of append_list's lines
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "this_list, item, expected_result, args_after",
     [
         ([1, 2, 3, 4], 6, "None", {"this_list": "[1, 2, 3, 4, 6]"}),
     ],
+    ids=counter,
 )
 def test_append_list(this_list, item, expected_result, args_after):
     """

@@ -4,20 +4,20 @@ Programmatically generated test function for Car.gas()
 
 import re
 import pytest
-from collections import OrderedDict
-import car
+from tests.oo_car import car
 from _pytest.monkeypatch import MonkeyPatch
 
 # Now import modules specific to Car.gas:
-from car import Car
-from logging import Logger
-from logging import Manager
-from logging import PlaceHolder
-from logging import RootLogger
-from logging import StreamHandler
+from tests.oo_car.car import Car
 
 
 # In sum, these tests covered 100.0% of Car.gas's lines
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "test_class_instance, rate, duration, exception_type, exception_message, expected_result, globals_before, globals_after",
     [
@@ -42,6 +42,7 @@ from logging import StreamHandler
             {"method_call_counter": 2},
         ),
     ],
+    ids=counter,
 )
 def test_car_gas(
     test_class_instance,

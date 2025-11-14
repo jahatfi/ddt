@@ -193,7 +193,7 @@ class CoverageInfo:
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('\"', "\""))
         result.append(" cost="+repr(self.cost))
-        result.append(" testable="+repr(self.cost)+')')
+        result.append(" testable="+repr(self.testable)+')')
 
         result_str:str = ','.join(result)
         #logger.debug("result=%s", result_str)
@@ -227,7 +227,7 @@ class CoverageInfo:
         result.append(" exception_message="+repr(self.exception_message))
         result.append(" constructor="+repr(self.constructor).replace('"', "\""))
         result.append(" cost="+repr(self.cost))
-        result.append(" testable="+repr(self.cost)+')')
+        result.append(" testable="+repr(self.testable)+')')
 
         result_str = ','.join(result)
         logger.debug("result=%s", result_str)
@@ -1203,6 +1203,7 @@ def do_the_decorator_thing(func: Callable, function_name:str,
         this_metadata.types_in_use |= these_types
 
     if kwargs:
+        logger.debug(f"{kwargs=}")
         this_coverage_info.kwargs = copy.deepcopy(kwargs)
 
     # TODO Add the function file and function name
@@ -1382,10 +1383,10 @@ def do_the_decorator_thing(func: Callable, function_name:str,
 
     args_iterator_class.args_iterator("After")
     this_coverage_info.args_after = copy.deepcopy(args_iterator_class.args_copy)
-    logger.debug("args_iterator_class.kwargs_copy=%s", args_iterator_class.kwargs_copy)
+    logger.debug("args_iterator_class.args_copy=%s", args_iterator_class.args_copy)
 
     args_iterator_class.args_iterator("After", "kwargs")
-    this_coverage_info.kwargs_after = copy.deepcopy(args_iterator_class.kwargs_copy)
+    this_coverage_info.kwargs_after = copy.deepcopy(kwargs)
     logger.debug("args_iterator_class.kwargs_copy=%s", args_iterator_class.kwargs_copy)
     #this_coverage_info.args_after = args_iterator_class.args
     this_metadata.types_in_use |= args_iterator_class.new_types_in_use
@@ -1968,7 +1969,7 @@ def meta_program_function_call( this_state:CoverageInfo,
                 list_of_lines.append(f"{indent}assert {arg_after} == eval(args_after[\"{arg_after}\"]) or args_after[\"{arg_after}\"] == {arg_after}\n")
         if isinstance(this_state.kwargs_after, dict) and this_state.kwargs_after.keys():
             for arg_after in this_state.kwargs_after.keys():
-                list_of_lines.append(f"{indent}assert kwargs[\"{arg_after}\"] == eval(kwargs_after['{arg_after}']) or kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
+                list_of_lines.append(f"{indent}kwargs[\"{arg_after}\"] == kwargs_after['{arg_after}']\n")
 
     else:
         for name in parameter_names:
@@ -2006,10 +2007,17 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
     This is the function that can automatically create a unit
     test file for each decorated function.
     The contents of the unit test file(s) are created by appending
-    to lists of strings, these lists of strings are evenutally
+    to lists of strings, these lists of strings are eventually
     written to a file, one per decorated function.
     """
+
     logger.debug("Dropping any untestable records")
+    state = {k:v for k,v in state.items() if v.testable}
+    if not state:
+        logger.warning("No testable inputs for %s, skipping it completely", function_name)
+        with open(result_file, "w", encoding="utf-8") as st:
+            st.write("\"\"\"\nNo testable inputs - see accompanying JSON file.\n\"\"\"")
+        return
     print(f"Auto-generating test for {function_name}...")
     outdir = outdir.absolute()
     tests_dir = tests_dir.absolute()
@@ -2403,7 +2411,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Re-formatted %s with black formatter", result_file)
-    '''
+
     try:
         subprocess.run( f"ruff {result_file} --fix".split(),
                         check=True,
@@ -2417,7 +2425,7 @@ def auto_generate_tests(function_metadata:FunctionMetaData,
             logger.error(e.stdout.decode())
 
     logger.info("Linted %s with ruff", result_file)
-    '''
+
     # Return hash of resulting string here
     h = hashlib.new('sha256')
     h.update(str(sorted(test_str_list_def_dict.items())).encode())

@@ -2,16 +2,20 @@
 Programmatically generated test function for Car.is_going_faster_than()
 """
 
-import re
 import pytest
-from collections import OrderedDict
-import car
 
 # Now import modules specific to Car.is_going_faster_than:
 from car import Car
+from tests.oo_car.car import Car
 
 
 # In sum, these tests covered 100.0% of Car.is_going_faster_than's lines
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "test_class_instance, other_car, expected_result, args_after",
     [
@@ -22,6 +26,7 @@ from car import Car
             {"other_car": 'Car("White", 19, 0)'},
         ),
     ],
+    ids=counter,
 )
 def test_car_is_going_faster_than(
     test_class_instance, other_car, expected_result, args_after

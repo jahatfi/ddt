@@ -7,16 +7,16 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      31,
       32,
       33,
       34,
       35,
       36,
-      38
+      37,
+      39
    ],
    "non_code_lines": [
-      37
+      38
    ],
    "coverage_io": {
       "0": {
@@ -32,10 +32,10 @@
          "expected_result": " ",
          "expected_type": "str",
          "coverage": [
-            31,
-            33,
-            35,
-            38
+            32,
+            34,
+            36,
+            39
          ],
          "exception_type": "",
          "exception_message": "",
@@ -56,10 +56,10 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            31,
-            33,
-            35,
-            36
+            32,
+            34,
+            36,
+            37
          ],
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 12], was -5",
@@ -82,9 +82,9 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            31,
-            33,
-            34
+            32,
+            34,
+            35
          ],
          "exception_type": "<class 'ValueError'>",
          "exception_message": "index must be in range [0, 9], was 50",
@@ -107,10 +107,10 @@
          "expected_result": "-1",
          "expected_type": "int",
          "coverage": [
-            31,
-            33,
-            35,
-            38
+            32,
+            34,
+            36,
+            39
          ],
          "exception_type": "",
          "exception_message": "",
@@ -124,12 +124,12 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      31,
-      33,
+      32,
       34,
       35,
       36,
-      38
+      37,
+      39
    ],
    "needs_pytest": true,
    "exceptions_raised": [

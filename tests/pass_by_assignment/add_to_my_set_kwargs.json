@@ -21,7 +21,12 @@
             ]
          },
          "kwargs_after": {
-            "my_set": "{0, 1, 2, 3}"
+            "my_set": [
+               0,
+               1,
+               2,
+               3
+            ]
          },
          "globals_before": {},
          "globals_after": {},

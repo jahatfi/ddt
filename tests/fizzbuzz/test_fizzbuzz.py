@@ -2,14 +2,18 @@
 Programmatically generated test function for fizzbuzz()
 """
 
-import re
 import pytest
-from collections import OrderedDict
-import fizzbuzz
+from tests.fizzbuzz import fizzbuzz
 from _pytest.monkeypatch import MonkeyPatch
 
 
 # In sum, these tests covered 100.0% of fizzbuzz's lines
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "number, expected_result, globals_before",
     [
@@ -17,6 +21,7 @@ from _pytest.monkeypatch import MonkeyPatch
         (30, "30 with mode='buzzfizz' yields 'buzzfizz'", {"mode": "buzzfizz"}),
         (30, "30 with mode='fizzbuzz' yields 'fizzbuzz'", {"mode": "fizzbuzz"}),
     ],
+    ids=counter,
 )
 def test_fizzbuzz(number, expected_result, globals_before):
     """

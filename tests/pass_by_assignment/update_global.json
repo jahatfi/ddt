@@ -9,29 +9,29 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      1690,
-      1691,
-      1692,
-      1693,
-      1694,
-      1695,
-      1696,
-      1698,
-      1706,
-      1707,
-      1708,
-      1709,
-      1710
-   ],
-   "non_code_lines": [
-      1697,
-      1699,
-      1700,
       1701,
       1702,
       1703,
       1704,
-      1705
+      1705,
+      1706,
+      1707,
+      1709,
+      1717,
+      1718,
+      1719,
+      1720,
+      1721
+   ],
+   "non_code_lines": [
+      1708,
+      1710,
+      1711,
+      1712,
+      1713,
+      1714,
+      1715,
+      1716
    ],
    "coverage_io": {
       "0": {
@@ -39,22 +39,22 @@
             "<Logger __main__ (INFO)>",
             "\"logger\"",
             "\"Before\"",
-            "CoverageInfo(args_before=['[1, 2, 3, 4]','6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
+            "CoverageInfo(args_before=['[1, 2, 3, 4]','6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)"
          ],
          "args_after": {
             "obj": "<Logger __main__ (INFO)>",
-            "this_coverage_info": "CoverageInfo(args_before=['[1, 2, 3, 4]','6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
+            "this_coverage_info": "CoverageInfo(args_before=['[1, 2, 3, 4]','6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)"
          },
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {},
          "globals_after": {},
-         "expected_result": "CoverageInfo(args_before=['[1, 2, 3, 4]','6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
+         "expected_result": "CoverageInfo(args_before=['[1, 2, 3, 4]','6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)",
          "expected_type": "src.unit_test_generator.CoverageInfo",
          "coverage": [
-            1690,
-            1691,
-            1692
+            1701,
+            1702,
+            1703
          ],
          "exception_type": "",
          "exception_message": "",
@@ -77,9 +77,9 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      1690,
-      1691,
-      1692
+      1701,
+      1702,
+      1703
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

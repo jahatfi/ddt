@@ -4,21 +4,20 @@ Programmatically generated test function for Car.change_steer_angle()
 
 import re
 import pytest
-from collections import OrderedDict
-import car
 
 # Now import modules specific to Car.change_steer_angle:
-from car import Car
-from logging import Logger
-from logging import Manager
-from logging import PlaceHolder
-from logging import RootLogger
-from logging import StreamHandler
+from tests.oo_car.car import Car
 
 
 # In sum, these tests covered 60.0% of Car.change_steer_angle's lines
 # Line(s) not covered by ANY of the tests below:
-# ['88-89']
+# ['90-91']
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "test_class_instance, angle, exception_type, exception_message, expected_result",
     [
@@ -33,6 +32,7 @@ from logging import StreamHandler
         (Car("Red", 9, 0), 30, "N/A", "N/A", "30"),
         (Car("White", 20, -30), 90, "N/A", "N/A", "60"),
     ],
+    ids=counter,
 )
 def test_car_change_steer_angle(
     test_class_instance, angle, exception_type, exception_message, expected_result

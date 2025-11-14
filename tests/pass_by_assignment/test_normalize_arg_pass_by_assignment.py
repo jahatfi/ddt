@@ -2,20 +2,25 @@
 Programmatically generated test function for normalize_arg()
 """
 
-import re
 import pytest
-from collections import OrderedDict
 from src import unit_test_generator
 
 
 # In sum, these tests covered 60.0% of normalize_arg's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1721', '1723', '1726-1727']
+# ['1732', '1734', '1737-1738']
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "arg, expected_result",
     [
         ("None", "None"),
     ],
+    ids=counter,
 )
 def test_normalize_arg(arg, expected_result):
     """

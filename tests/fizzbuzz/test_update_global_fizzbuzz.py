@@ -2,23 +2,22 @@
 Programmatically generated test function for update_global()
 """
 
-import re
 import pytest
-from collections import OrderedDict
 from src import unit_test_generator
 
 # Now import modules specific to update_global:
-from logging import Logger
-from logging import Manager
-from logging import PlaceHolder
-from logging import RootLogger
-from logging import StreamHandler
 from src.unit_test_generator import CoverageInfo
 
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1696', '1708-1709', '1691-1692', '1694-1695']
+# ['1702-1703', '1705-1707', '1719-1720']
+def counter(start=0) -> str:
+    while True:
+        yield f"test#-{start}"
+        start += 1
+
+
 @pytest.mark.parametrize(
     "obj, this_global, phase, this_coverage_info, expected_result, args_after",
     [
@@ -40,14 +39,15 @@ from src.unit_test_generator import CoverageInfo
                 exception_message="",
                 constructor="",
                 cost=0.0,
-                testable=0.0,
+                testable=True,
             ),
-            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)",
+            "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)",
             {
-                "this_coverage_info": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=0.0)"
+                "this_coverage_info": "CoverageInfo(args_before=['6'], args_after={}, kwargs={}, kwargs_after={}, globals_before={'mode': 'fizzbuzz'}, globals_after={}, expected_result='', expected_type='', coverage=[], exception_type='', exception_message='', constructor='', cost=0.0, testable=True)"
             },
         ),
     ],
+    ids=counter,
 )
 def test_update_global(
     obj, this_global, phase, this_coverage_info, expected_result, args_after

@@ -6,7 +6,6 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      43,
       44,
       45,
       46,
@@ -21,11 +20,12 @@
       55,
       56,
       57,
-      59,
-      60
+      58,
+      60,
+      61
    ],
    "non_code_lines": [
-      58
+      59
    ],
    "coverage_io": {
       "0": {
@@ -42,11 +42,11 @@
          "expected_result": "Mode 'a_test' invalid for fizzbuzz()",
          "expected_type": "str",
          "coverage": [
-            43,
             44,
-            51,
-            59,
-            60
+            45,
+            52,
+            60,
+            61
          ],
          "exception_type": "",
          "exception_message": "",
@@ -68,16 +68,16 @@
          "expected_result": "30 with mode='buzzfizz' yields 'buzzfizz'",
          "expected_type": "str",
          "coverage": [
-            43,
             44,
-            51,
+            45,
             52,
             53,
             54,
             55,
             56,
             57,
-            60
+            58,
+            61
          ],
          "exception_type": "",
          "exception_message": "",
@@ -99,7 +99,6 @@
          "expected_result": "30 with mode='fizzbuzz' yields 'fizzbuzz'",
          "expected_type": "str",
          "coverage": [
-            43,
             44,
             45,
             46,
@@ -107,7 +106,8 @@
             48,
             49,
             50,
-            60
+            51,
+            61
          ],
          "exception_type": "",
          "exception_message": "",
@@ -123,7 +123,6 @@
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      43,
       44,
       45,
       46,
@@ -138,8 +137,9 @@
       55,
       56,
       57,
-      59,
-      60
+      58,
+      60,
+      61
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

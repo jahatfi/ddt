@@ -8,13 +8,13 @@
    "is_method": true,
    "source_file": null,
    "lines": [
-      51,
-      52,
       53,
       54,
       55,
       56,
-      57
+      57,
+      58,
+      59
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -31,11 +31,11 @@
          "expected_result": "9",
          "expected_type": "int",
          "coverage": [
-            51,
-            52,
+            53,
             54,
             56,
-            57
+            58,
+            59
          ],
          "exception_type": "",
          "exception_message": "",
@@ -46,23 +46,23 @@
    },
    "coverage_percentage": 71.43,
    "types_in_use": [
-      "car.Car",
       "logging.Logger",
       "logging.Manager",
       "logging.PlaceHolder",
       "logging.RootLogger",
-      "logging.StreamHandler"
+      "logging.StreamHandler",
+      "tests.oo_car.car.Car"
    ],
    "global_vars_read_from": [
       "logger"
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      51,
-      52,
+      53,
       54,
       56,
-      57
+      58,
+      59
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

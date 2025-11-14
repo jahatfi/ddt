@@ -6,7 +6,6 @@
    "lines": [
       62,
       63,
-      64,
       62
    ],
    "non_code_lines": [],
@@ -21,7 +20,11 @@
             ]
          },
          "kwargs_after": {
-            "my_list": "[0, 3, 1, ClassForTesting('test')]"
+            "my_list": [
+               0,
+               3,
+               1
+            ]
          },
          "globals_before": {},
          "globals_after": {},
@@ -29,8 +32,7 @@
          "expected_type": "NoneType",
          "coverage": [
             62,
-            63,
-            64
+            63
          ],
          "exception_type": "",
          "exception_message": "",
@@ -39,16 +41,13 @@
          "testable": true
       }
    },
-   "coverage_percentage": 75.0,
-   "types_in_use": [
-      "__main__.ClassForTesting"
-   ],
+   "coverage_percentage": 66.67,
+   "types_in_use": [],
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
       62,
-      63,
-      64
+      63
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

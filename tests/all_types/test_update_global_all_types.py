@@ -1,2 +1,3 @@
-import warnings
-warnings.warn("No testable samples!")
+"""
+No testable inputs - see accompanying JSON file.
+"""

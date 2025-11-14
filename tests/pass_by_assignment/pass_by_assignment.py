@@ -48,8 +48,7 @@ def append_list(this_list:List[Any], item:Any)->None:
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def overwrite_list(this_list:List[Any])->None:
     """
-    Given a list of items of the same type T and a separate item,
-    delete the local copy.
+    Given a list of items; overwrite the local copy.
     """
     this_list = [0]
     print(this_list)
@@ -62,7 +61,7 @@ def increment_my_list_kwargs(**kwargs):
     """
     if "my_list" in kwargs and isinstance(kwargs["my_list"], list):
         kwargs["my_list"].append(1)
-        kwargs["my_list"].append(ClassForTesting("test"))
+        #kwargs["my_list"].append(ClassForTesting("test"))
 
 @unit_test_generator_decorator(sample_count=6, keep_subsets=True, percent_coverage=0)
 def add_to_my_set_kwargs(**kwargs):
@@ -86,13 +85,15 @@ def main():
     overwrite_list(my_list[::-1])
 
     kwargs = {"my_list":[0,3]}
-    print(f"Before: {kwargs=}")
+    print(f"my_list Before increment_my_list_kwargs(): {kwargs=}")
     increment_my_list_kwargs(**kwargs)
     print(f"After: {kwargs=}")
 
 
     kwargs = {}
     kwargs["my_set"] = set([0,2,3])
+    print(f"my_set Before: add_to_my_set_kwargs(): {kwargs=}")
+
     add_to_my_set_kwargs(**kwargs)
     print(f"After: {kwargs=}")
 

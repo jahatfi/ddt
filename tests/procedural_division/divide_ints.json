@@ -7,7 +7,6 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      34,
       35,
       36,
       37,
@@ -17,7 +16,8 @@
       41,
       42,
       43,
-      44
+      44,
+      45
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -38,10 +38,10 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            34,
             35,
             36,
-            37
+            37,
+            38
          ],
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable a='10' is not an int!",
@@ -66,12 +66,12 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            34,
             35,
-            38,
-            41,
+            36,
+            39,
             42,
-            43
+            43,
+            44
          ],
          "exception_type": "<class 'ValueError'>",
          "exception_message": "ValueError: Cannot divide by zero!",
@@ -96,11 +96,11 @@
          "expected_result": "6/2=3.0",
          "expected_type": "str",
          "coverage": [
-            34,
             35,
-            38,
-            41,
-            44
+            36,
+            39,
+            42,
+            45
          ],
          "exception_type": "",
          "exception_message": "",
@@ -127,11 +127,11 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            34,
             35,
-            38,
+            36,
             39,
-            40
+            40,
+            41
          ],
          "exception_type": "<class 'TypeError'>",
          "exception_message": "TypeError: Variable b=[] is not an int!",
@@ -156,7 +156,6 @@
       "error_code"
    ],
    "unified_test_coverage": [
-      34,
       35,
       36,
       37,
@@ -166,7 +165,8 @@
       41,
       42,
       43,
-      44
+      44,
+      45
    ],
    "needs_pytest": true,
    "exceptions_raised": [
