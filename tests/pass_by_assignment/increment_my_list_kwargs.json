@@ -4,9 +4,9 @@
    "is_method": false,
    "source_file": null,
    "lines": [
-      62,
-      63,
-      62
+      44,
+      45,
+      44
    ],
    "non_code_lines": [],
    "coverage_io": {
@@ -31,8 +31,8 @@
          "expected_result": "None",
          "expected_type": "NoneType",
          "coverage": [
-            62,
-            63
+            44,
+            45
          ],
          "exception_type": "",
          "exception_message": "",
@@ -46,8 +46,8 @@
    "global_vars_read_from": [],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      62,
-      63
+      44,
+      45
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

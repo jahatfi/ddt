@@ -23,6 +23,37 @@
    "coverage_io": {
       "0": {
          "args_before": [
+            "8",
+            "[]"
+         ],
+         "args_after": {
+            "b": "[]"
+         },
+         "kwargs": {},
+         "kwargs_after": {},
+         "globals_before": {
+            "error_code": -1
+         },
+         "globals_after": {
+            "error_code": -2
+         },
+         "expected_result": "None",
+         "expected_type": "NoneType",
+         "coverage": [
+            35,
+            36,
+            39,
+            40,
+            41
+         ],
+         "exception_type": "<class 'TypeError'>",
+         "exception_message": "TypeError: Variable b=[] is not an int!",
+         "constructor": "",
+         "cost": 0.0,
+         "testable": true
+      },
+      "1": {
+         "args_before": [
             "\"10\"",
             "2"
          ],
@@ -30,7 +61,7 @@
          "kwargs": {},
          "kwargs_after": {},
          "globals_before": {
-            "error_code": 0
+            "error_code": -3
          },
          "globals_after": {
             "error_code": -1
@@ -49,7 +80,7 @@
          "cost": 0.0,
          "testable": true
       },
-      "1": {
+      "2": {
          "args_before": [
             "3",
             "0"
@@ -79,7 +110,7 @@
          "cost": 0.0,
          "testable": true
       },
-      "2": {
+      "3": {
          "args_before": [
             "6",
             "2"
@@ -104,37 +135,6 @@
          ],
          "exception_type": "",
          "exception_message": "",
-         "constructor": "",
-         "cost": 0.0,
-         "testable": true
-      },
-      "3": {
-         "args_before": [
-            "8",
-            "[]"
-         ],
-         "args_after": {
-            "b": "[]"
-         },
-         "kwargs": {},
-         "kwargs_after": {},
-         "globals_before": {
-            "error_code": 0
-         },
-         "globals_after": {
-            "error_code": -2
-         },
-         "expected_result": "None",
-         "expected_type": "NoneType",
-         "coverage": [
-            35,
-            36,
-            39,
-            40,
-            41
-         ],
-         "exception_type": "<class 'TypeError'>",
-         "exception_message": "TypeError: Variable b=[] is not an int!",
          "constructor": "",
          "cost": 0.0,
          "testable": true

@@ -6,86 +6,29 @@
    "is_method": false,
    "source_file": null,
    "lines": [
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
       44,
       45,
       46,
       47,
-      48,
       49,
-      50,
-      51,
-      52,
-      53,
-      54,
-      55,
-      56,
-      57,
-      58,
-      60,
-      61
+      50
    ],
    "non_code_lines": [
-      59
+      48
    ],
    "coverage_io": {
       "0": {
-         "args_before": [
-            "6"
-         ],
-         "args_after": {},
-         "kwargs": {},
-         "kwargs_after": {},
-         "globals_before": {
-            "mode": "a_test"
-         },
-         "globals_after": {},
-         "expected_result": "Mode 'a_test' invalid for fizzbuzz()",
-         "expected_type": "str",
-         "coverage": [
-            44,
-            45,
-            52,
-            60,
-            61
-         ],
-         "exception_type": "",
-         "exception_message": "",
-         "constructor": "",
-         "cost": 0.0,
-         "testable": true
-      },
-      "1": {
-         "args_before": [
-            "30"
-         ],
-         "args_after": {},
-         "kwargs": {},
-         "kwargs_after": {},
-         "globals_before": {
-            "mode": "buzzfizz"
-         },
-         "globals_after": {},
-         "expected_result": "30 with mode='buzzfizz' yields 'buzzfizz'",
-         "expected_type": "str",
-         "coverage": [
-            44,
-            45,
-            52,
-            53,
-            54,
-            55,
-            56,
-            57,
-            58,
-            61
-         ],
-         "exception_type": "",
-         "exception_message": "",
-         "constructor": "",
-         "cost": 0.0,
-         "testable": true
-      },
-      "2": {
          "args_before": [
             "30"
          ],
@@ -99,15 +42,15 @@
          "expected_result": "30 with mode='fizzbuzz' yields 'fizzbuzz'",
          "expected_type": "str",
          "coverage": [
-            44,
-            45,
-            46,
-            47,
-            48,
-            49,
-            50,
-            51,
-            61
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            50
          ],
          "exception_type": "",
          "exception_message": "",
@@ -116,30 +59,22 @@
          "testable": true
       }
    },
-   "coverage_percentage": 100.0,
+   "coverage_percentage": 52.94,
    "types_in_use": [],
    "global_vars_read_from": [
       "mode"
    ],
    "global_vars_written_to": [],
    "unified_test_coverage": [
-      44,
-      45,
-      46,
-      47,
-      48,
-      49,
-      50,
-      51,
-      52,
-      53,
-      54,
-      55,
-      56,
-      57,
-      58,
-      60,
-      61
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      50
    ],
    "needs_pytest": false,
    "exceptions_raised": [],

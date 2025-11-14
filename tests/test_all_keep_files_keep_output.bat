@@ -1,7 +1,8 @@
 cd fizzbuzz
-python fizzbuzz.py
+python example_fizzbuzz.py
 coverage run -m pytest
 ::pytest -s -vv .
+timeout 1
 cd ..
 
 cd all_types
@@ -11,7 +12,7 @@ coverage run -m pytest
 cd ..
 
 cd procedural_division
-python divide_ints.py
+python example_divide_ints.py
 coverage run -m pytest
 ::pytest -s -vv .
 cd ..
@@ -23,8 +24,8 @@ coverage run -m pytest
 cd ..
 
 cd pass_by_assignment
-python pass_by_assignment.py
-pytest -s -vv . 
+python example_pass_by_assignment.py
+coverage run -m pytest
 cd ..
 
 cd ..\src
@@ -32,6 +33,8 @@ cd ..\src
 coverage run -m pytest
 cd ..
 
-coverage combine tests\fizzbuzz\.coverage tests\oo_car\.coverage tests\all_types\.coverage tests\all_types\.coverage tests\procedural_division\.coverage src\.coverage
+: Give time for .coverage files to hit disk
+
+coverage combine --keep tests\fizzbuzz\.coverage tests\oo_car\.coverage tests\all_types\.coverage tests\pass_by_assignment\.coverage tests\procedural_division\.coverage src\.coverage
 coverage report -m
 coverage html
