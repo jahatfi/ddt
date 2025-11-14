@@ -11,7 +11,7 @@ from src.unit_test_generator import CoverageInfo
 
 # In sum, these tests covered 46.15% of update_global's lines
 # Line(s) not covered by ANY of the tests below:
-# ['1764-1765', '1747-1748', '1750-1752']
+# ['1740-1741', '1743-1745', '1757-1758']
 def counter(start=0) -> str:
     while True:
         yield f"test#-{start}"
